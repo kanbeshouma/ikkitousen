@@ -530,12 +530,12 @@ public:
     bool GetEndTitleAnimation() { return end_title_animation; }
 private:
     AddDamageFunc damage_func;
-    ////-----------アニメーションに関係する関数,変数------------//
-    ////アニメーション遷移の関数ポインタ//
-    ////関数ポインタ
-    //typedef void(Player::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
-    ////関数ポインタの変数
-    //PlayerActivity player_activity = &Player::IdleUpdate;
+    //-----------アニメーションに関係する関数,変数------------//
+    //アニメーション遷移の関数ポインタ//
+    //関数ポインタ
+    typedef void(Player::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
+    //関数ポインタの変数
+    PlayerActivity player_activity = &Player::IdleUpdate;
 
     ////-----アニメーションの遷移に関する関数が入る-----//
     using TransitionAnimation = std::function <bool(void)>;
@@ -636,68 +636,68 @@ private:
     //アニメーション遷移(1frameだけしか呼ばないもの)
 public:
     //待機に遷移
-    bool TransitionIdle(float blend_second = 0.3f);
+    void TransitionIdle(float blend_second = 0.3f);
 private:
     //移動に遷移
-    bool TransitionMove(float blend_second = 0.3f);
+    void TransitionMove(float blend_second = 0.3f);
     //回避に遷移
-    bool TransitionAvoidance();
+    void TransitionAvoidance();
     //背後に回り込む回避に遷移
-    bool TransitionBehindAvoidance();
+    void TransitionBehindAvoidance();
     //ジャスト回避の回り込み回避に遷移
-    bool TransitionJustBehindAvoidance();
+    void TransitionJustBehindAvoidance();
     //突進開始に遷移
-    bool TransitionChargeInit();
+    void TransitionChargeInit();
     //突進に遷移
-    bool TransitionCharge(float blend_seconds = 0.3f);
+    void TransitionCharge(float blend_seconds = 0.3f);
     //１撃目に遷移
-    bool TransitionAttackType1(float blend_seconds = 0.3f);
+    void TransitionAttackType1(float blend_seconds = 0.3f);
     //２撃目に遷移
-    bool TransitionAttackType2(float blend_seconds = 0.3f);
+    void TransitionAttackType2(float blend_seconds = 0.3f);
     //３撃目に遷移
-    bool TransitionAttackType3(float blend_seconds = 0.3f);
+    void TransitionAttackType3(float blend_seconds = 0.3f);
     //ゲージ消費の突進に遷移
-    bool TransitionSpecialSurge();
+    void TransitionSpecialSurge();
     //ゲージ消費の突進後の隙に遷移
-    bool TransitionOpportunity();
+    void TransitionOpportunity();
     //ダメージ受けたときに遷移
-    bool TransitionDamage();
+    void TransitionDamage();
     //飛行機モードに遷移
-    bool TransitionTransformWing();
+    void TransitionTransformWing();
     //人型に変形に遷移
-    bool TransitionTransformHum();
+    void TransitionTransformHum();
     //覚醒状態に遷移
-    bool TransitionAwaking();
+    void TransitionAwaking();
     //通常状態に遷移
-    bool TransitionInvAwaking();
+    void TransitionInvAwaking();
     //飛行機モードの突進開始
-    bool TransitionWingDashStart();
+    void TransitionWingDashStart();
     //飛行機モードの突進中
-    bool TransitionWingDashIdle();
+    void TransitionWingDashIdle();
     //飛行機モードの突進終了
-    bool TransitionWingDashEnd();
+    void TransitionWingDashEnd();
     //死亡
-    bool TransitionDie();
+    void TransitionDie();
     //死亡中
-    bool TransitionDying();
+    void TransitionDying();
 
 public:
     //スタートモーション
-    bool TransitionStartMothin();
+    void TransitionStartMothin();
     //ステージ移動に遷移
-    bool TransitionStageMove();
+    void TransitionStageMove();
     //ステージ遷移終了
-    bool TransitionStageMoveEnd();
+    void TransitionStageMoveEnd();
     //クリアに関すること
 private:
     //モーション
     void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
     void NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome);
-    bool TransitionNamelessMotionIdle();
+    void TransitionNamelessMotionIdle();
     //クリアモーションの時の音
     int nameless_motion_se_state = 0;
     //クリアモーションに遷移
-    bool TransitionNamelessMotion();
+    void TransitionNamelessMotion();
     //クリア用モーションが終わったらtrue
     bool is_end_clear_motion{ false };
     //クリア用モーションが始まったらtrue
@@ -721,9 +721,9 @@ private:
     //移動アニメーション中の更新処理
     void ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome);
     //待機に遷移
-    bool TransitionChainIdle(float blend_second = 0.3f);
+    void TransitionChainIdle(float blend_second = 0.3f);
     //移動に遷移
-    bool TransitionChainMove(float blend_second = 0.3f);
+    void TransitionChainMove(float blend_second = 0.3f);
 
 
 private:
