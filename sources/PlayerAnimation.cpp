@@ -1,4 +1,6 @@
 #include"Player.h"
+#include<map>
+
 void Player::ExecFuncUpdate(float elapsed_time)
 {
     (this->*player_title_activity)(elapsed_time);
@@ -55,13 +57,46 @@ void Player::TransitionTitleAnimationReadyIdle()
     //タイトルはメッシュを隠さないから0にしておく
     threshold_mesh = 0.0f;
 }
+
+void Player::RegisterTransitionAnimationMap(TransEdge tuples, TransitionAnimation func)
+{
+    //==========std::getから何の値を取り出しているかを明確にする==========//
+
+    //-----遷移元のアニメーション番号-----//
+    constexpr int TransRootIndex = 0;
+
+    //-----遷移先のアニメーション番号-----//
+    constexpr int TransDestinationIndex = 1;
+
+    //==========tuplesから遷移元と遷移先のアニメーション番号を取得する==========//
+
+    //-----遷移元のアニメーション番号-----//
+    const int trans_root_index = std::get<TransRootIndex>(tuples);
+
+    //-----遷移先のアニメーション番号-----//
+    const int trans_destination_index = std::get<TransDestinationIndex>(tuples);
+
+    //-----遷移元を取得-----//
+    auto& child_map = transition_animations[trans_root_index];
+
+    //-----見つけたら遷移先の関数が既に登録されているかを調べる-----//
+    if (child_map.contains(trans_destination_index))
+    {
+        //-----もし登録されていたら終了-----//
+        return;
+    }
+
+    //-----関数を登録する-----//
+    child_map.emplace(std::make_pair(trans_destination_index, func));
+}
+
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
         //自分のクラスの関数ポインタを呼ぶ
-        (this->*player_activity)(elapsed_time, sky_dome);
+        update_animation(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
         //自分のクラスの関数ポインタを呼ぶ

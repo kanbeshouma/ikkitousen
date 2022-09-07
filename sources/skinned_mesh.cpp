@@ -243,7 +243,7 @@ void SkinnedMesh::fech_by_bone(const DirectX::XMFLOAT4X4& world, const skeleton:
 }
 
 void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
-    const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up, DirectX::XMFLOAT4X4& rotation_mat)
+    const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up, DirectX::XMFLOAT4X4 rotation_mat)
 {
     if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
     {

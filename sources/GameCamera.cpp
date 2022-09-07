@@ -131,7 +131,8 @@ void GameCamera::gameUpdate(float elapsedTime)
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 	const DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 
-	DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&player->GetTarget());
+	DirectX::XMFLOAT3 t{ player->GetTarget() };
+	DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&t);
 
 	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * up1;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
@@ -508,7 +509,8 @@ void GameCamera::UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget,float elapsedTi
 
 	DirectX::XMVECTOR PlayerToTarget = PlayerTarget - PlayerPosition;
 	PlayerToTarget = DirectX::XMVector3Normalize(PlayerToTarget);
-	DirectX::XMVECTOR CameraGoalPositionVec = -PlayerToTarget * 10 + DirectX::XMLoadFloat3(&player->GetUp()) * 2;
+	DirectX::XMFLOAT3 p_up{ player->GetUp() };
+	DirectX::XMVECTOR CameraGoalPositionVec = -PlayerToTarget * 10 + DirectX::XMLoadFloat3(&p_up) * 2;
 	const DirectX::XMVECTOR CameraGoalPosition = DirectX::XMLoadFloat3(&eyeCenter) + CameraGoalPositionVec;
 
 	DirectX::XMVECTOR CameraToGoal = CameraGoalPosition - CameraPosition;
@@ -577,12 +579,14 @@ void GameCamera::UpdateStopAttackEndEye(float elapsedTime)
 {
 	using namespace DirectX;
 	DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
-	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&player->GetPosition());
+	DirectX::XMFLOAT3 p{ player->GetPosition() };
+	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&p);
 
 	DirectX::XMVECTOR CameraToPlayer = PlayerPosition - CameraPosition;
 	CameraToPlayer = DirectX::XMVector3Normalize(CameraToPlayer);
 
-	DirectX::XMVECTOR CameraGoalPositionVec = -CameraToPlayer * 10 + DirectX::XMLoadFloat3(&player->GetUp()) * 2;
+	DirectX::XMFLOAT3 p_up{ player->GetUp() };
+	DirectX::XMVECTOR CameraGoalPositionVec = -CameraToPlayer * 10 + DirectX::XMLoadFloat3(&p_up) * 2;
 	CameraGoalPositionVec = DirectX::XMVector3Normalize(CameraGoalPositionVec);
 	const DirectX::XMVECTOR CameraGoalPosition = DirectX::XMLoadFloat3(&eyeCenter) + CameraGoalPositionVec * radius;
 

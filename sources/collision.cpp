@@ -745,7 +745,8 @@ bool Collision::ray_vs_model(const DirectX::XMFLOAT3& start, const DirectX::XMFL
         // レイをワールド空間からローカル空間へ変換
         DirectX::XMFLOAT4X4 world_mat;
         DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&model_coordinate) };
-        DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix(model_scale, model_angle, model_position)) };
+        DirectX::XMFLOAT4X4 w = Math::calc_world_matrix(model_scale, model_angle, model_position);
+        DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&w) };
         DirectX::XMStoreFloat4x4(&world_mat, C * W);
         XMMATRIX world_trans_mat;
         if (&model->get_anim_para().current_keyframe && (&model->get_anim_para().current_keyframe)->nodes.size() > 0) // アニメーションあり

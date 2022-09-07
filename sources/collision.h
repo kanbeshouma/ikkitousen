@@ -27,22 +27,22 @@ public:
     static bool sphere_vs_sphere(
         const DirectX::XMFLOAT3& center_a, float radius_a,
         const DirectX::XMFLOAT3& center_b, float radius_b,
-        DirectX::XMFLOAT3& out_center_b = DirectX::XMFLOAT3(0, 0, 0));
+        DirectX::XMFLOAT3& out_center_b);
     //--円柱と円柱の交差判定--//
     static bool cylinder_vs_cylinder(
         const DirectX::XMFLOAT3& position_a, float radius_a, float height_a,
         const DirectX::XMFLOAT3& position_b, float radius_b, float height_b,
-        DirectX::XMFLOAT3& out_position_b = DirectX::XMFLOAT3(0, 0, 0));
+        DirectX::XMFLOAT3& out_position_b);
     //--球と円柱の交差判定--//
     static bool sphere_vs_cylinder(
         const DirectX::XMFLOAT3& sphere_position, float sphere_radius,
         const DirectX::XMFLOAT3& cylinder_position, float cylinder_radius, float cylinder_height,
-        DirectX::XMFLOAT3& out_cylinder_position = DirectX::XMFLOAT3(0, 0, 0));
+        DirectX::XMFLOAT3& out_cylinder_position);
     //--直方体と直方体の交差判定--//
     static bool cuboid_vs_cuboid(
         const DirectX::XMFLOAT3& center_a, const DirectX::XMFLOAT3& radius_a,
         const DirectX::XMFLOAT3& center_b, const DirectX::XMFLOAT3& radius_b,
-        DirectX::XMFLOAT3& velocity_b = DirectX::XMFLOAT3(0, 0, 0));
+        DirectX::XMFLOAT3& velocity_b);
     //-----直方体の各パラメーター変換-----//
     // center,radius → min position
     static const DirectX::XMFLOAT3& calc_cuboid_min_pos(const DirectX::XMFLOAT3& center, const DirectX::XMFLOAT3& radius)

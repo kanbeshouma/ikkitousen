@@ -1,22 +1,22 @@
 #pragma once
 #include "BaseEnemy.h"
 //****************************************************************
-// 
-// 剣の中ボス 
-// 
+//
+// 剣の中ボス
+//
 //****************************************************************
 class SwordEnemy_Ace final :public BaseEnemy
 {
     struct DivideState
     {
-        inline static char* Start = "Start";
-        inline static char* Idle = "Idle";
-        inline static char* CounterStart = "CounterStart";
-        inline static char* CounterMiddle = "CounterMiddle";
-        inline static char* CounterAttack = "CounterAttack";
-        inline static char* CounterEnd = "CounterEnd";
-        inline static char* Move = "Move";
-        inline static char* Stun = "Stun";
+       inline static const char* Start = "Start";
+       inline static const char* Idle = "Idle";
+       inline static const char* CounterStart = "CounterStart";
+       inline static const char* CounterMiddle = "CounterMiddle";
+       inline static const char* CounterAttack = "CounterAttack";
+       inline static const char* CounterEnd = "CounterEnd";
+       inline static const char* Move = "Move";
+       inline static const char* Stun = "Stun";
     };
     enum AnimationName {
         idle,

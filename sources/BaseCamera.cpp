@@ -74,7 +74,7 @@ void BaseCamera::AttitudeControl(float elapsedTime)
 void BaseCamera::DebugGUI()
 {
 #ifdef USE_IMGUI
-	ImGui::Begin("Camera", false);
+	ImGui::Begin("Camera");
 	ImGui::SliderFloat3("Position", &eye.x, -20.0f, 10.0f);
 	ImGui::InputFloat3("target", &target.x);
 	ImGui::InputFloat2("near_far", &near_far.x);
@@ -100,7 +100,7 @@ void BaseCamera::calc_view_projection(GraphicsPipeline& graphics)
 #ifdef USE_IMGUI
 	if (display_camera_imgui)
 	{
-		ImGui::Begin("Camera", false);
+		ImGui::Begin("Camera");
 		ImGui::DragFloat4("LightDirection", &scene_constants->data.light_direction.x, 0.01f, -1, 1);
 		ImGui::ColorEdit4("light_color", &scene_constants->data.light_color.x);
 		ImGui::End();

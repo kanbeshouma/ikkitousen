@@ -360,7 +360,7 @@ void Font::Begin(ID3D11DeviceContext* context)
 }
 
 void Font::Draw(std::wstring string, DirectX::XMFLOAT2 pos, const DirectX::XMFLOAT2 scale,
-	const DirectX::XMFLOAT4 color, float angle, TEXT_ALIGN align, DirectX::XMFLOAT2& Length)
+	const DirectX::XMFLOAT4 color, float angle, TEXT_ALIGN align, DirectX::XMFLOAT2 Length)
 {
 	size_t length = ::wcslen(string.c_str());
 	size_t maximum_length = length; // ‰üs‚àŠÜ‚ß‚½ˆês“–‚½‚è‚ÌÅ‘å•¶š”
@@ -381,7 +381,7 @@ void Font::Draw(std::wstring string, DirectX::XMFLOAT2 pos, const DirectX::XMFLO
 		WORD code = characterIndices.at(word);
 		if (code == CharacterInfo::ReturnCode)
 		{
-			int now_number_of_words = (i + 1) - number_of_rows; // ¡‚Ì•¶š”
+			int now_number_of_words = (static_cast<int>(i) + 1) - number_of_rows; // ¡‚Ì•¶š”
 			if (judg_maximum_length <= now_number_of_words - previous_line_break) {
 				maximum_length = now_number_of_words - previous_line_break;
 				judg_maximum_length = maximum_length;
