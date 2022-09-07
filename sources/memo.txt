@@ -1,0 +1,39 @@
+----------課題----------
+
+<UNIT32>
+※フレームバッファは同時にレンダーターゲットビュー
+およびシェーダーリソースビューとしてシェーダーにバインドすることはできない
+
+-----
+ここからdeactivateで囲まれている部分がオフスクリーンレンダリングの対象になる
+framebuffers[0]->clear(dc.Get());
+framebuffers[0]->activate(dc.Get());
+              ・
+              ・　この間がオフスクリーンレンダリングの対象になる(オブジェクトを描画する)
+              ・
+framebuffers[0]->deactivate(dc.Get());
+
+
+
+-----
+framebuffers[1]->clear(dc.Get());
+framebuffers[1]->activate(dc.Get());
+
+// ブレンディングステートオブジェクトを設定する                                                          //
+dc->OMSetBlendState(blend_states[BLEND_STATE::NONE], nullptr, 0xFFFFFFFF);            //
+// ラスタライザステート                                                                                //
+dc->RSSetState(rasterizer_states[RASTERIZER_STATE::SOLID].Get());                     // ラスタライザーステートの設定しないと描画されない
+// 深度ステンシルステートオブジェクトを設定する                                                          //
+dc->OMSetDepthStencilState(depth_stencil_states[DEPTH_STENCIL::DEOFF_DWOFF], 1);      //
+
+bit_block_transfer->blit(dc.Get(),
+	framebuffers[0]->shader_resource_views[0].GetAddressOf(), 0, 1, pixel_shaders[0].Get());   // ramebuffers[0]から高輝度成分を抽出しframebuffers[1]に転送する
+framebuffers[1]->deactivate(dc.Get());
+
+-----
+// 最終的に画面に出力する
+ID3D11ShaderResourceView* shader_resource_views[]
+{ framebuffers[0]->shader_resource_views[0].Get(), framebuffers[1]->shader_resource_views[0].Get() };
+bit_block_transfer->blit(dc.Get(), shader_resource_views, 0, _countof(shader_resource_views), pixel_shaders[1].Get());
+
+

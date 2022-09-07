@@ -1,0 +1,19 @@
+{
+    "value0": [
+        {
+            "Timer": 10.0,
+            "Emitter": 0,
+            "Type": 0
+        },
+        {
+            "Timer": 20.0,
+            "Emitter": 0,
+            "Type": 0
+        },
+        {
+            "Timer": 30.0,
+            "Emitter": 0,
+            "Type": 0
+        }
+    ]
+}

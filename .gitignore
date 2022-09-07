@@ -30,3 +30,27 @@
 *.exe
 *.out
 *.app
+
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+*.cod
+*.cso
+# others
+*.vs
+*cereal-master
+*DirectXTK-master
+*imgui
+*x64
+*shaders
+*Effekseer153a
+imgui.ini
+*Audios
+*Effect
+*Files
+*Models
+*Tools
+#*Fonts

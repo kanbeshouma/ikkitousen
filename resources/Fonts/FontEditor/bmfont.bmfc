@@ -1,0 +1,68 @@
+# AngelCode Bitmap Font Generator configuration file
+fileVersion=1
+
+# font settings
+fontName=Yu Gothic UI Semilight
+fontFile=
+charSet=0
+fontSize=64
+aa=1
+scaleH=100
+useSmoothing=1
+isBold=0
+isItalic=0
+useUnicode=1
+disableBoxChars=1
+outputInvalidCharGlyph=0
+dontIncludeKerningPairs=0
+useHinting=1
+renderFromOutline=0
+useClearType=1
+autoFitNumPages=0
+autoFitFontSizeMin=0
+autoFitFontSizeMax=0
+
+# character alignment
+paddingDown=0
+paddingUp=0
+paddingRight=0
+paddingLeft=0
+spacingHoriz=1
+spacingVert=1
+useFixedHeight=1
+forceZero=0
+widthPaddingFactor=0.00
+
+# output file
+outWidth=2048
+outHeight=2048
+outBitDepth=8
+fontDescFormat=0
+fourChnlPacked=0
+textureFormat=png
+textureCompression=0
+alphaChnl=0
+redChnl=0
+greenChnl=0
+blueChnl=0
+invA=0
+invR=0
+invG=0
+invB=0
+
+# outline
+outlineThickness=0
+
+# selected chars
+chars=32,44,46,48-53,65-66,69-73,76-80,82-87,12290,12354,12356,12358,12360,12363-12365,12367,12369,12371
+chars=12373,12375,12377,12379,12381,12383,12387,12390-12392,12394-12395,12398-12399,12414-12415,12417
+chars=12418,12425-12427,12431,12434-12435,12450-12452,12455,12458-12459,12461,12463,12466-12467,12471
+chars=12472-12473,12479,12481,12483,12486,12488-12489,12496,12501,12503,12508,12512-12513,12515-12517
+chars=12521-12525,12531,12540,19968,20013,20102,20307,20316,20837,20840,20869,20877,20986,21021,21147
+chars=21151,21205,21512,21521,22238,22258,22580,22987,23450,23569,24230,24403,24489,24863,24907,25104
+chars=25126,25147,25246,25276,25361,25391,25563,25731,25805,25915,25973,26041,26178,26469,27770,28288
+chars=28436,29366,29983,30001,30028,30053,30330,30465,30906,31227,31684,32066,32154,32244,32722,33258
+chars=34892,35222,35226,35469,36578,36796,36817,36899,36984,36991,37266,37327,38263,38291,38899,65294
+chars=65311
+
+# imported icon images

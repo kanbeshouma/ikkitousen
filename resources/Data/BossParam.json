@@ -1,0 +1,9 @@
+{
+    "value0": {
+        "cereal_class_version": 0,
+        "BossStateNumber": 2,
+        "mShowMovie_ShipToHuman": true,
+        "mShowMovie_HumanToDragon": true,
+        "mShowMovie_DragonDie": false
+    }
+}

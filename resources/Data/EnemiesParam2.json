@@ -1,0 +1,45 @@
+{
+    "value0": [
+        {
+            "key": "Archer",
+            "value": {
+                "cereal_class_version": 1,
+                "MaxHp": 1,
+                "AttackPower": 0,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 0.0,
+                "AttackCapsuleRad": 0.0
+            }
+        },
+        {
+            "key": "Spear_Ace",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 0,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 0.0,
+                "AttackCapsuleRad": 0.0
+            }
+        },
+        {
+            "key": "Sword",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 0,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 0.0,
+                "AttackCapsuleRad": 0.0
+            }
+        },
+        {
+            "key": "Sword_Ace",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 0,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 0.0,
+                "AttackCapsuleRad": 0.0
+            }
+        }
+    ]
+}
