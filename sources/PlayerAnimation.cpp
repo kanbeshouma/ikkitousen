@@ -927,7 +927,7 @@ void Player::Awaiking()
     }
 }
 
-void Player::TransitionIdle(float blend_second)
+bool Player::TransitionIdle(float blend_second)
 {
     charge_change_direction_count = CHARGE_DIRECTION_COUNT;
 
@@ -947,10 +947,11 @@ void Player::TransitionIdle(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //待機状態の時の更新関数に切り替える
-    player_activity = &Player::IdleUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) { IdleUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionMove(float blend_second)
+bool Player::TransitionMove(float blend_second)
 {
     charge_change_direction_count = CHARGE_DIRECTION_COUNT;
 
@@ -972,10 +973,12 @@ void Player::TransitionMove(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //移動状態の時の更新関数に切り替える
-    player_activity = &Player::MoveUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {MoveUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionAvoidance()
+bool Player::TransitionAvoidance()
 {
     //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -989,30 +992,7 @@ void Player::TransitionAvoidance()
     is_avoidance = true;
     //回り込み回避かどうか
     is_behind_avoidance = false;
-    //--------------------------イージング加速の変数初期化---------------------------------//
-#if 0
-    avoidance_boost_time = 0;
-    avoidance_start = velocity;
-    if (is_lock_on)
-    {
-        leverage = 15.0f;
-        DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
-        if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
-        {
-            avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
-        }
-        else
-        {
-            avoidance_end = { movevec.x * leverage ,movevec.y * leverage,movevec.z * leverage };
-        }
-    }
-    else
-    {
-        leverage = 30.0f;
-        avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
-    }
 
-#endif // 0
     avoidance_boost_time = 0.0f;
     //方向転換の回数
     avoidance_direction_count = 3;
@@ -1031,10 +1011,12 @@ void Player::TransitionAvoidance()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //回避状態の時の更新関数に切り替える
-    player_activity = &Player::AvoidanceUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {AvoidanceUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionBehindAvoidance()
+bool Player::TransitionBehindAvoidance()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -1048,26 +1030,7 @@ void Player::TransitionBehindAvoidance()
         //ロックオンしている敵をスタンさせる
         target_enemy->fSetStun(true);
     }
-#if 0
-    if (is_just_avoidance_capsul)
-    {
-        //ロックオンしている敵をスタンさせる
-        if (target_enemy != nullptr)
-        {
-            target_enemy->fSetStun(true, true);
-        }
-        is_just_avoidance = true;
-    }
-    else
-    {
-        if (target_enemy != nullptr)
-        {
-            //ロックオンしている敵をスタンさせる
-            target_enemy->fSetStun(true);
-        }
-    }
 
-#endif // 0
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -1092,11 +1055,12 @@ void Player::TransitionBehindAvoidance()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //背後に回り込むときの関数に切り替える
-    player_activity = &Player::BehindAvoidanceUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {BehindAvoidanceUpdate(elapsed_time, dome); };
+    return true;
 
 }
 
-void Player::TransitionJustBehindAvoidance()
+bool Player::TransitionJustBehindAvoidance()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -1146,10 +1110,12 @@ void Player::TransitionJustBehindAvoidance()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //背後に回り込むときの関数に切り替える
-    player_activity = &Player::BehindAvoidanceUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {BehindAvoidanceUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionChargeInit()
+bool Player::TransitionChargeInit()
 {
     //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -1171,10 +1137,12 @@ void Player::TransitionChargeInit()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //突進の始まりの時の更新関数に切り替える
-    player_activity = &Player::ChargeInitUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {ChargeInitUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionCharge(float blend_seconds)
+bool Player::TransitionCharge(float blend_seconds)
 {
     //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -1218,10 +1186,12 @@ void Player::TransitionCharge(float blend_seconds)
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //突進中の更新関数に切り替える
-    player_activity = &Player::ChargeUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {ChargeUpdate(elapsed_time, dome); };
+
+    return true;
 
 }
-void Player::TransitionAttackType1(float blend_seconds)
+bool Player::TransitionAttackType1(float blend_seconds)
 {
     player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
@@ -1248,10 +1218,12 @@ void Player::TransitionAttackType1(float blend_seconds)
     //加速のレート
     lerp_rate = 4.0f;
     //１撃目の更新関数に切り替える
-    player_activity = &Player::AttackType1Update;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {AttackType1Update(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionAttackType2(float blend_seconds)
+bool Player::TransitionAttackType2(float blend_seconds)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
 
@@ -1286,9 +1258,12 @@ void Player::TransitionAttackType2(float blend_seconds)
     //突進中かどうかの設定
     is_charge = true;
     //２撃目の更新関数に切り替える
-    player_activity = &Player::AttackType2Update;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {AttackType2Update(elapsed_time, dome); };
+    return true;
+
 }
-void Player::TransitionAttackType3(float blend_seconds)
+
+bool Player::TransitionAttackType3(float blend_seconds)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
 
@@ -1321,10 +1296,12 @@ void Player::TransitionAttackType3(float blend_seconds)
     //突進中かどうかの設定
     is_charge = true;
     //３撃目の更新関数に切り替える
-    player_activity = &Player::AttackType3Update;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {AttackType3Update(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionSpecialSurge()
+bool Player::TransitionSpecialSurge()
 {
     //飛行機モードになるアニメーションに設定
     model->play_animation(AnimationClips::IdleWing, true,true);
@@ -1349,10 +1326,12 @@ void Player::TransitionSpecialSurge()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //ゲージ消費の突進の更新関数に切り替える
-    player_activity = &Player::SpecialSurgeUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {SpecialSurgeUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionOpportunity()
+bool Player::TransitionOpportunity()
 {
     //ゲージ消費の突進攻撃終了
     is_special_surge = false;
@@ -1365,10 +1344,12 @@ void Player::TransitionOpportunity()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //ゲージ消費の突進の隙の更新関数に切り替える
-    player_activity = &Player::OpportunityUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {OpportunityUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionDamage()
+bool Player::TransitionDamage()
 {
     PostEffect::clear_post_effect();
     velocity = {};
@@ -1385,10 +1366,12 @@ void Player::TransitionDamage()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //ダメージ受けたときの更新関数に切り替える
-    player_activity = &Player::DamageUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {DamageUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
-void Player::TransitionTransformHum()
+bool Player::TransitionTransformHum()
 {
     //人型になるアニメーションに設定
     model->play_animation(AnimationClips::TransformHum, false,true);
@@ -1397,10 +1380,11 @@ void Player::TransitionTransformHum()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //人型になってるときの更新関数に切り替える
-    player_activity = &Player::TransformHumUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {TransformHumUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionTransformWing()
+bool Player::TransitionTransformWing()
 {
     velocity = {};
     //飛行機モードになるアニメーションに設定
@@ -1410,10 +1394,11 @@ void Player::TransitionTransformWing()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //飛行機モード中の更新関数に切り替える
-    player_activity = &Player::TransformWingUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {TransformWingUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionAwaking()
+bool Player::TransitionAwaking()
 {
     invincible_timer = 2.0f;
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
@@ -1430,10 +1415,11 @@ void Player::TransitionAwaking()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //覚醒状態になる途中の更新関数に切り替える
-    player_activity = &Player::AwakingUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {AwakingUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionInvAwaking()
+bool Player::TransitionInvAwaking()
 {
     invincible_timer = 2.0f;
     //通常状態に戻るアニメーションに設定
@@ -1445,36 +1431,40 @@ void Player::TransitionInvAwaking()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //通常状態に戻ってるときの更新関数に切り替える
-    player_activity = &Player::InvAwakingUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {InvAwakingUpdate(elapsed_time, dome); };
 
+    return true;
 }
 
-void Player::TransitionWingDashStart()
+bool Player::TransitionWingDashStart()
 {
     model->play_animation(AnimationClips::WingDashStart, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    player_activity = &Player::WingDashStartUpdate;
-
+    update_animation = [=](float elapsed_time, SkyDome* dome) {WingDashStartUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionWingDashIdle()
+bool Player::TransitionWingDashIdle()
 {
     model->play_animation(AnimationClips::WingDashIdle, true, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    player_activity = &Player::WingDashIdleUpdate;
-
+    update_animation = [=](float elapsed_time, SkyDome* dome) {WingDashIdleUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionWingDashEnd()
+bool Player::TransitionWingDashEnd()
 {
+    return true;
+
 }
-void Player::TransitionDie()
+
+bool Player::TransitionDie()
 {
     //攻撃中かどうかの設定
     is_attack = false;
@@ -1488,11 +1478,14 @@ void Player::TransitionDie()
     //通常状態の時のアニメーションに設定
     else model->play_animation(AnimationClips::Die, false, true);
     //更新関数に切り替え
-    player_activity = &Player::DieUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {DieUpdate(elapsed_time, dome); };
+
     if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 1.0f);
+    return true;
+
 }
 
-void Player::TransitionDying()
+bool Player::TransitionDying()
 {
     //攻撃中かどうかの設定
     is_attack = false;
@@ -1506,11 +1499,12 @@ void Player::TransitionDying()
     //通常状態の時のアニメーションに設定
     else model->play_animation(AnimationClips::Dying, true, true);
     //更新関数に切り替え
-    player_activity = &Player::DyingUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {DyingUpdate(elapsed_time, dome); };
 
+    return true;
 }
 
-void Player::TransitionNamelessMotionIdle()
+bool Player::TransitionNamelessMotionIdle()
 {
     //攻撃中かどうかの設定
     is_attack = false;
@@ -1522,11 +1516,12 @@ void Player::TransitionNamelessMotionIdle()
     //アニメーションに設定
     model->play_animation(AnimationClips::NamelessMotionIdle, false, true);
     //更新関数に切り替え
-    player_activity = &Player::NamelessMotionIdleUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {NamelessMotionIdleUpdate(elapsed_time, dome); };
 
+    return true;
 }
 
-void Player::TransitionStartMothin()
+bool Player::TransitionStartMothin()
 {
     //攻撃中かどうかの設定
     is_attack = false;
@@ -1538,11 +1533,12 @@ void Player::TransitionStartMothin()
     //アニメーションに設定
     //model->play_animation(AnimationClips::StartMothin, false, true);
     //更新関数に切り替え
-    player_activity = &Player::StartMothinUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {StartMothinUpdate(elapsed_time, dome); };
+    return true;
 
 }
 
-void Player::TransitionNamelessMotion()
+bool Player::TransitionNamelessMotion()
 {
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
@@ -1558,10 +1554,11 @@ void Player::TransitionNamelessMotion()
     //アニメーションに設定
     model->play_animation(AnimationClips::NamelessMotion, false, true);
     //更新関数に切り替え
-    player_activity = &Player::NamelessMotionUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {NamelessMotionUpdate(elapsed_time, dome); };
+    return true;
 }
 
-void Player::TransitionStageMove()
+bool Player::TransitionStageMove()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
@@ -1578,19 +1575,23 @@ void Player::TransitionStageMove()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //通常状態に戻ってるときの更新関数に切り替える
-    player_activity = &Player::StageMoveUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {StageMoveUpdate(elapsed_time, dome); };
+
     during_clear = true;
+
+    return true;
 }
 
-void Player::TransitionStageMoveEnd()
+bool Player::TransitionStageMoveEnd()
 {
     model->play_animation(AnimationClips::WingDashEnd, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    player_activity = &Player::WingDashEndUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {WingDashEndUpdate(elapsed_time, dome); };
 
+    return true;
 }
 
 void Player::ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -1602,6 +1603,7 @@ void Player::ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome)
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
+
 void Player::ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //移動入力がなくなったら待機に遷移
@@ -1611,7 +1613,8 @@ void Player::ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
-void Player::TransitionChainIdle(float blend_second)
+
+bool Player::TransitionChainIdle(float blend_second)
 {
     if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
     //通常状態の待機アニメーションにセット
@@ -1623,9 +1626,12 @@ void Player::TransitionChainIdle(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //待機状態の時の更新関数に切り替える
-    player_activity = &Player::ChainIdleUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {ChainIdleUpdate(elapsed_time, dome); };
+    return true;
+
 }
-void Player::TransitionChainMove(float blend_second)
+
+bool Player::TransitionChainMove(float blend_second)
 {
     if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
     //通常状態の時に移動アニメーションの設定
@@ -1637,6 +1643,8 @@ void Player::TransitionChainMove(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //移動状態の時の更新関数に切り替える
-    player_activity = &Player::ChainMoveUpdate;
+    update_animation = [=](float elapsed_time, SkyDome* dome) {ChainMoveUpdate(elapsed_time, dome); };
+    return true;
+
 }
 
