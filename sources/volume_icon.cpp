@@ -204,7 +204,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (volume_numbers.count(BarType(i)))
 		{
-			volume_numbers.at(BarType(i))->set_value(((float)scales[i].size() / (float)MAX_SCALE_COUNT) * 100);
+			volume_numbers.at(BarType(i))->set_value(static_cast<int>(((float)scales[i].size() / (float)MAX_SCALE_COUNT) * 100.0f));
 			volume_numbers.at(BarType(i))->update(graphics, elapsed_time);
 		}
 	}

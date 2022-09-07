@@ -50,8 +50,8 @@ void LastBoss::fSaveParam()
 }
 
 //****************************************************************
-// 
-// 戦艦モード 
+//
+// 戦艦モード
 //
 //****************************************************************
 void LastBoss::fShipStartInit()
@@ -335,7 +335,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     {
         mSkipTimer += elapsedTime_ * 0.3f;
     }
-    
+
     mTimer += elapsedTime_;
     // SEを鳴らす
     if (mTimer >= 0.9f && mSeArrayShipToHuman[0] == false) // 57
@@ -343,22 +343,22 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         audio_manager->play_se(SE_INDEX::BOSS_SMALL_ROAR);
         mSeArrayShipToHuman[0] = true;
     }
-    if (mTimer >= 2.9f && mSeArrayShipToHuman[1] == false) // 
+    if (mTimer >= 2.9f && mSeArrayShipToHuman[1] == false) //
     {
         audio_manager->play_se(SE_INDEX::DOCKING_1);
         mSeArrayShipToHuman[1] = true;
     }
-    if (mTimer >= 3.5f && mSeArrayShipToHuman[2] == false) // 
+    if (mTimer >= 3.5f && mSeArrayShipToHuman[2] == false) //
     {
         audio_manager->play_se(SE_INDEX::FOOT_TRANSFORM);
         mSeArrayShipToHuman[2] = true;
     }
-    if (mTimer >= 5.08f && mSeArrayShipToHuman[3] == false) // 
+    if (mTimer >= 5.08f && mSeArrayShipToHuman[3] == false) //
     {
         audio_manager->play_se(SE_INDEX::DOCKING_2);
         mSeArrayShipToHuman[3] = true;
     }
-    if (mTimer >= 5.2f && mSeArrayShipToHuman[4] == false) // 
+    if (mTimer >= 5.2f && mSeArrayShipToHuman[4] == false) //
     {
         audio_manager->play_se(SE_INDEX::REVERBERATION);
         mSeArrayShipToHuman[4] = true;
@@ -954,7 +954,7 @@ void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
     if (mAwayLerp > 1.0f)
     {
         // ダメージを与える
-        mCurrentHitPoint -= (static_cast<float>(mMaxHp) * 0.1f);
+        mCurrentHitPoint -= static_cast<int>(static_cast<float>(mMaxHp) * 0.1f);
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -1165,7 +1165,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
-        mCurrentHitPoint = static_cast<float>(mMaxHp) * mkPercentToDragon;
+        mCurrentHitPoint = static_cast<int>(static_cast<float>(mMaxHp) * mkPercentToDragon);
         mPosition = {};
 
         // アニメーションを見たフラグをオンにする
@@ -1693,7 +1693,7 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     {
         graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
         fonts->yu_gothic->Begin(graphics.get_dc().Get());
-        fonts->yu_gothic->Draw(L"Bボタン長押しでスキップ", { 800.0f,600.0f }, { 0.7,0.7f }, { 1.0f,1.0f,1.0f,1.0f });
+        fonts->yu_gothic->Draw(L"Bボタン長押しでスキップ", { 800.0f,600.0f }, { 0.7f,0.7f }, { 1.0f,1.0f,1.0f,1.0f });
         fonts->yu_gothic->End(graphics.get_dc().Get());
         graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE,DEPTH_STENCIL::DEON_DWON);
     }

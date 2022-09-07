@@ -42,7 +42,7 @@ void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
         mVernierEffect->stop(effect_manager->get_effekseer_manager());
     }
 
-    
+
 
     fGuiMenu();
 }
@@ -268,7 +268,6 @@ void BossUnit::fWonderUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-        DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -315,7 +314,7 @@ void BossUnit::fAttackChargeInit()
     mTimer = 0.0f;
 }
 
-void BossUnit::fAttackChargeUpdate(float elapsedTime_, 
+void BossUnit::fAttackChargeUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
     mWarningThreshold += elapsedTime_ * 10.0f;
@@ -334,10 +333,10 @@ void BossUnit::fAttackChargeUpdate(float elapsedTime_,
 
             fTurnToPlayer(elapsedTime_, 20.0f);
             mWarningLine.fSetPosition(mPosition, mPlayerPosition);
-         
+
         }
     }
-   
+
     mTimer += elapsedTime_;
     if(mTimer>mkChargeTime)
     {
@@ -380,7 +379,7 @@ void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
         fChangeState(DivideState::Idle);
         mIsAttack = false;
     }
-   
+
 
     if (mpModel->end_of_animation(mAnimPara))
     {

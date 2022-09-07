@@ -3,7 +3,7 @@
 BossRushUnit::BossRushUnit(GraphicsPipeline& Graphics_)
     :BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_animation_fifth_dive.fbx")
 {
-   
+
 }
 
 BossRushUnit::BossRushUnit(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EntryPosition)
@@ -12,7 +12,7 @@ BossRushUnit::BossRushUnit(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3&
     fRegisterFunctions();
     mScale = { 0.5f,0.5f,0.5f };
     mCurrentHitPoint = 1000;
-    mAttackPower = 7.0f;
+    mAttackPower = 7;
     mAttackInvTime = 2.0f;
     mIsBoss = true;
 
@@ -90,7 +90,7 @@ void BossRushUnit::fChangeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     }
 
 
-    
+
 }
 
 void BossRushUnit::fRushInit()

@@ -291,6 +291,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
 #endif // USE_IMGUI
 
 }
+
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
 
