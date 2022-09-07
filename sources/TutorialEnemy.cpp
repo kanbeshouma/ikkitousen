@@ -107,7 +107,7 @@ void TutorialEnemy_NoAttack::fIdleUpdate(float elapsedTime_, GraphicsPipeline& G
 void TutorialEnemy_NoAttack::fMoveInit()
 {
    // ˆê’è”ÍˆÍ“à‚ðƒ‰ƒ“ƒ_ƒ€‚Å“®‚­
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 5);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 5);
     const int randNumber = RandTargetAdd(mt);
 
    const float radian{ DirectX::XMConvertToRadians(static_cast<float>(randNumber) * (360.0f / 6)) };
@@ -297,7 +297,7 @@ void TutorialEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void TutorialEnemy::fMoveInit()
 {
     // ˆê’è”ÍˆÍ“à‚ðƒ‰ƒ“ƒ_ƒ€‚Å“®‚­
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 5);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 5);
     const int randNumber = RandTargetAdd(mt);
 
     const float radian{ DirectX::XMConvertToRadians(static_cast<float>(randNumber) * (360.0f / 6)) };

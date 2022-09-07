@@ -422,7 +422,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     }
 
     // プレイヤーとの距離が近かったら範囲爆発攻撃を多くする
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
     // 遠い
     if (Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer*10.0f)
@@ -538,8 +538,8 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
         float dot = Math::Dot(v, front);
 
         // ターゲットの位置を基準とした乱数で着弾点を決める
-        const std::uniform_real_distribution<float> RandTargetAdd(-70.0f, -30.0f);
-        const std::uniform_int_distribution<int> switcher(0, 1);
+        std::uniform_real_distribution<float> RandTargetAdd(-70.0f, -30.0f);
+        std::uniform_int_distribution<int> switcher(0, 1);
 
         DirectX::XMFLOAT3 bulletPosition{};
 
@@ -603,7 +603,7 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+        std::uniform_int_distribution<int> RandTargetAdd(0, 9);
         if (const auto num = RandTargetAdd(mt); num < 4)
         {
             fChangeState(DivideState::HumanMove);
@@ -954,7 +954,7 @@ void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
     if (mAwayLerp > 1.0f)
     {
         // ダメージを与える
-        mCurrentHitPoint -= (mMaxHp * 0.1f);
+        mCurrentHitPoint -= (static_cast<float>(mMaxHp) * 0.1f);
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -1165,7 +1165,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
-        mCurrentHitPoint = mMaxHp * mkPercentToDragon;
+        mCurrentHitPoint = static_cast<float>(mMaxHp) * mkPercentToDragon;
         mPosition = {};
 
         // アニメーションを見たフラグをオンにする
@@ -1191,7 +1191,7 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
        return;
    }
 
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
 
     if(randNumber>8)
@@ -1276,7 +1276,7 @@ void LastBoss::fDragonBreathAppearInit()
         if (i == areaSeed) continue;;
         vec.emplace_back(i);
     }
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 2);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 2);
 
     // 目標地点のインデックスを取得
     const int areaIndex = vec.at(RandTargetAdd(mt));
@@ -1352,7 +1352,7 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
     if(mpModel->end_of_animation(mAnimPara))
     {
         // 確率でもう一度撃つ（最大三回）
-        const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+        std::uniform_int_distribution<int> RandTargetAdd(0, 9);
         const int randNumber = RandTargetAdd(mt);
         if (std::pow(mDragonBreathCount, 2) < randNumber)
         {

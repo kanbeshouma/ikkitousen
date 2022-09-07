@@ -31,7 +31,7 @@ public:
 
 	void Begin(ID3D11DeviceContext* context);
 	void Draw(std::wstring string, DirectX::XMFLOAT2 pos, const DirectX::XMFLOAT2 scale, const DirectX::XMFLOAT4 color,
-		float angle = 0, TEXT_ALIGN align = TEXT_ALIGN::MIDDLE_LEFT, DirectX::XMFLOAT2& Length = DirectX::XMFLOAT2(0, 0));
+		float angle = 0, TEXT_ALIGN align = TEXT_ALIGN::MIDDLE_LEFT, DirectX::XMFLOAT2& Length = DirectX::XMFLOAT2(0.0f, 0.0f));
 	void End(ID3D11DeviceContext* context);
 private:
 	//--------< ŠÖ” >--------//

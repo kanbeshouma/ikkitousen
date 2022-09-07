@@ -541,7 +541,7 @@ void EnemyManager::fCreateRandomEnemy(
 
     // 乱数で敵のタイプを取得
     std::mt19937 mt{ std::random_device{}() };
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 10);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 10);
     int randNumber = RandTargetAdd(mt);
 
     // チュートリアルの敵なら違う敵を出す
@@ -552,7 +552,7 @@ void EnemyManager::fCreateRandomEnemy(
 
     EnemySource source;
 
-    const std::uniform_int_distribution<int> RandTargetAdd2(-5, 5);
+    std::uniform_int_distribution<int> RandTargetAdd2(-5, 5);
     const int randPosition = RandTargetAdd2(mt);
     const int randPositionX = RandTargetAdd2(mt);
     const int randPositionY = RandTargetAdd2(mt);
@@ -888,7 +888,7 @@ void EnemyManager::fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline&
         if (mTutorialTimer > mkSeparateTutorial)
         {
             std::mt19937 mt{ std::random_device{}() };
-            const std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
+            std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
             const int randNumber1 = RandTargetAdd(mt);
             const int randNumber2 = RandTargetAdd(mt);
             DirectX::XMFLOAT3 pos{ randNumber1 * 10.0f,0.0f,randNumber2 * 10.0f };
@@ -911,7 +911,7 @@ void EnemyManager::fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics
         if (mTutorialTimer > mkSeparateTutorial)
         {
             std::mt19937 mt{ std::random_device{}() };
-            const std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
+            std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
             const int randNumber1 = RandTargetAdd(mt);
             const int randNumber2 = RandTargetAdd(mt);
             DirectX::XMFLOAT3 pos{ randNumber1 * 10.0f,0.0f,randNumber2 * 10.0f };

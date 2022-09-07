@@ -8,7 +8,7 @@
 void JsonManager::CrateNewFile(const char* FileName)
 {
 
-    
+
     std::filesystem::path path = std::string("./resources/Data/") + FileName;
     path.replace_extension(".json");
 
@@ -43,5 +43,5 @@ void JsonManager::Write(const char* FileName)
 
 void JsonManager::Read(const char* FileName)
 {
-    
+
 }

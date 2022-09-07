@@ -157,7 +157,7 @@ void BossUnit::fRegisterFunctions()
 
 void BossUnit::fSelectWonderOrAttack()
 {
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 2);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 2);
     if (RandTargetAdd(mt) == 0)
     {
         fChangeState(DivideState::AttackBegin);
@@ -231,7 +231,7 @@ void BossUnit::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void BossUnit::fWonderInit()
 {
-    const std::uniform_int_distribution<int> RandTargetAdd(0, 5);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 5);
     float rot = RandTargetAdd(mt) * 60.0f;
     rot = DirectX::XMConvertToRadians(rot);
     mMoveVec = { cosf(rot),0.0f,sinf(rot) };
@@ -303,7 +303,7 @@ void BossUnit::fAttackChargeInit()
    }
    else
    {
-       const std::uniform_real_distribution<float> RandTargetAdd(-50.0f, 50.0f);
+       std::uniform_real_distribution<float> RandTargetAdd(-50.0f, 50.0f);
 
        const DirectX::XMFLOAT3 TargetAdd = { RandTargetAdd(mt), 0, RandTargetAdd(mt) };
 
