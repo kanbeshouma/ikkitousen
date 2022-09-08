@@ -243,7 +243,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (player->GetIsAlive() == false)	is_game_over = true;
 
-	
+
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	if (player->GetIsPlayerAttack())
 	{
@@ -278,16 +278,11 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		else
 		{
-			player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
-				player->GetSwordCapsuleParam(0).start,
-				player->GetSwordCapsuleParam(0).end,
-				player->GetSwordCapsuleParam(0).rasius,
-				player->GetPlayerPower(),
-				graphics,
-				elapsed_time,
-				block
-			)
-			,block);
+			//-----UŒ‚‚É“–‚½‚Á‚½‰ñ”-----//
+			int hit_count{ enemyManager->fCalcPlayerAttackVsEnemies(
+				player->GetSwordCapsuleParam(0).start,player->GetSwordCapsuleParam(0).end,player->GetSwordCapsuleParam(0).rasius,player->GetPlayerPower(),graphics,elapsed_time,block) };
+
+			player->AddCombo(hit_count,block);
 		}
 	}
     const bool isCounter= enemyManager->fCalcEnemiesAttackVsPlayerCounter(

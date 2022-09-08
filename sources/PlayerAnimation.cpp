@@ -1345,9 +1345,9 @@ void Player::TransitionDamage()
     //攻撃中かどうかの設定
     is_attack = false;
     //覚醒状態の時のダメージアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingDamage, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingDamage, false, true,0.0f);
     //通常状態の時のアニメーションに設定
-    else model->play_animation(AnimationClips::Damage, false, true);
+    else model->play_animation(AnimationClips::Damage, false, true,0.0f);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか

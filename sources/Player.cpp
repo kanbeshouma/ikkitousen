@@ -1153,18 +1153,12 @@ void Player::AddCombo(int count, bool& block)
 {
     //ブロックされたかどうかを
     is_block = block;
+    if (is_block)return;
     if (count != 0)
     {
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(count);
-        //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
-
-    }
-    else
-    {
-        //audio_manager->play_se(SE_INDEX::SWING_SWORD);
-        //is_enemy_hit = false;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
@@ -1173,18 +1167,12 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 {
     //ブロックされたかどうかを
     is_block = block;
+    if (is_block)return;
     if (hit_count1 != 0 || hit_count2 != 0)
     {
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(hit_count1 + hit_count2);
-        //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
-
-    }
-    else
-    {
-       // audio_manager->play_se(SE_INDEX::SWING_SWORD);
-        //is_enemy_hit = false;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
