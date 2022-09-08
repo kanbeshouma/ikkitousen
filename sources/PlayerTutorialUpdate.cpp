@@ -327,7 +327,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -355,7 +355,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -384,7 +384,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -417,7 +417,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -507,7 +507,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -536,7 +536,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -566,7 +566,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -598,7 +598,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             {
                 //‰ñ”ð‚É‘JˆÚ
                 float length{ Math::calc_vector_AtoB_length(position, target) };
-                if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+                if (is_lock_on && is_just_avoidance_capsul)
                 {
                     TransitionTutorialJustBehindAvoidance();
                 }
@@ -639,17 +639,20 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     avoidance_boost_time += 1.0f * elapsed_time;
     //‰ñ”ð‚ÌŽž‚Ì‰Á‘¬
     SetAccelerationVelocity();
-    //ƒƒbƒNƒIƒ“‚µ‚Ä‚¢‚é“G‚Æˆê’è‹——£‹ß‚­‚È‚Á‚½‚ç
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (is_lock_on && length < 15.0f)
+
+    //-----UŒ‚ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚çUŒ‚‚É‘JˆÚ-----//
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
     {
-        //UŒ‚‚É‘JˆÚ
-        velocity.x *= 0.2f;
-        velocity.y *= 0.2f;
-        velocity.z *= 0.2f;
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        TransitionTutorialAttack1();
+        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+        {
+            attack_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            TransitionTutorialAttack1(attack_animation_blends_speeds.z);
+        }
     }
+
     if (avoidance_boost_time > 1.0f)
     {
         model->progress_animation();
@@ -1338,6 +1341,8 @@ void Player::TransitionTutorialBehindAvoidance()
 
 void Player::TransitionTutorialJustBehindAvoidance()
 {
+    if (invincible_timer > 0) return;
+
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());

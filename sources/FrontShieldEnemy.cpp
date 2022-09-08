@@ -16,6 +16,7 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
     // ƒ{[ƒ“‚ð‰Šú‰»
     mScale = { 0.05f,0.05f,0.05f };
     is_shield = false;
+    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)

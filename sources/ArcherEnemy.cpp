@@ -19,7 +19,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
 {
 
     // 位置を初期化
-    mPosition = EmitterPoint_;
+    //mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mScale = { 0.05f,0.05f,0.05f };
     //パラメーターの初期化
@@ -27,6 +27,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     fRegisterFunctions();
 
     mfAddFunc = BulletManager::Instance().fGetAddFunction();
+    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 

@@ -7,6 +7,7 @@ TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics,
     mPosition = entry_position;
     mScale = { 0.06f,0.06f,0.06f };
     fRegisterFunctions();
+    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics)
@@ -279,6 +280,7 @@ void TutorialEnemy::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     mDissolve -= elapsedTime_;
     if (mDissolve < 0.0f)
     {
+        is_appears = true;
         fChangeState(DivideState::Idle);
     }
 }
@@ -327,6 +329,8 @@ void TutorialEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void TutorialEnemy::fAttackStartInit()
 {
+    //-----UŒ‚“®ì‚É“ü‚Á‚½‚±‚Æ‚ð’m‚ç‚¹‚é-----//
+    fSetAttackOperation(true);
     mpModel->play_animation(mAnimPara, AnimationName::attack_ready);
 }
 
@@ -353,6 +357,7 @@ void TutorialEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     fTurnToPlayer(elapsedTime_, 10.0f);
     if(mpModel->end_of_animation(mAnimPara))
     {
+        fSetAttackOperation(false);
         mIsAttack = false;
         fChangeState(DivideState::Idle);
     }
@@ -365,6 +370,7 @@ void TutorialEnemy::fStunInit()
     audio_manager->play_se(SE_INDEX::STAN);
 
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    fSetAttackOperation(false);
     mIsAttack = false;
     mTimer = 0;
 }

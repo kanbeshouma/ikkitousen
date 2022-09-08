@@ -414,9 +414,6 @@
     <ClCompile Include="sources\transition_icon.cpp">
       <Filter>Sources\Scene\option</Filter>
     </ClCompile>
-    <ClCompile Include="sources\FrontShieldEnemy.cpp">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClCompile>
     <ClCompile Include="sources\debug_2D.cpp">
       <Filter>Sources\Debug\debug2D</Filter>
     </ClCompile>
@@ -545,6 +542,9 @@
     </ClCompile>
     <ClCompile Include="External\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\FrontShieldEnemy.cpp">
+      <Filter>Sources\Character\enemy\03_Shield</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -773,9 +773,6 @@
     <ClInclude Include="sources\transition_icon.h">
       <Filter>Sources\Scene\option</Filter>
     </ClInclude>
-    <ClInclude Include="sources\FrontShieldEnemy.h">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClInclude>
     <ClInclude Include="sources\debug_2D.h">
       <Filter>Sources\Debug\debug2D</Filter>
     </ClInclude>
@@ -887,6 +884,9 @@
     </ClInclude>
     <ClInclude Include="External\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\FrontShieldEnemy.h">
+      <Filter>Sources\Character\enemy\03_Shield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

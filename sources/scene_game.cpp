@@ -564,7 +564,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// オブジェクトの削除処理はこの下でやるルール
 	//
 	//****************************************************************
-	//enemyManager->fDeleteEnemies();
+	enemyManager->fDeleteEnemies();
 }
 
 #define OFF_SCREEN_RENDERING

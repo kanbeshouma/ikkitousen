@@ -8,6 +8,7 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_,
 {
     SpearEnemy::fRegisterFunctions();
     mScale = { 0.05f,0.05f,0.05f };
+    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_)

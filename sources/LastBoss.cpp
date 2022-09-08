@@ -103,6 +103,9 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
    auto a = this;
 
    mVernierEffect->stop(effect_manager->get_effekseer_manager());
+
+   //-----oŒ»ƒtƒ‰ƒO‚ğtrue‚É‚·‚é-----//
+   is_appears = true;
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)

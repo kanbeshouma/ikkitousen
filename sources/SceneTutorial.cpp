@@ -229,38 +229,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	BulletManager& mBulletManager = BulletManager::Instance();
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
-#if 0
-	if (mWaveManager.during_clear_performance())
-	{
-		tunnel_alpha += elapsed_time * 0.5f;
-		tunnel_alpha = (std::min)(tunnel_alpha, 1.0f);
 
-		if (!during_clear)
-		{
-			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Tunnel));
-			player->TransitionStageMove();
-			during_clear = true;
-		}
-
-		//return;
-	}
-	else
-	{
-		if (during_clear)
-		{
-			tunnel_alpha -= elapsed_time;
-			tunnel_alpha = (std::max)(tunnel_alpha, 0.0f);
-			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
-			{
-				cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
-				player->TransitionIdle();
-				tunnel_alpha = 0.0f;
-				during_clear = false;
-			}
-		}
-	}
-
-#endif // 0
 	//プレイヤーがジャスト回避したらslow
 	if (player->GetIsJustAvoidance())
 	{
@@ -347,6 +316,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetJustAvoidanceCapsuleParam().start,
 		player->GetJustAvoidanceCapsuleParam().end,
 		player->GetJustAvoidanceCapsuleParam().rasius);
+
 	player->PlayerJustAvoidance(isCounter);
 
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
@@ -422,7 +392,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// オブジェクトの削除処理はこの下でやるルール
 	//
 	//****************************************************************
-	//enemyManager->fDeleteEnemies();
+	enemyManager->fDeleteEnemies();
 
 }
 #define OFF_SCREEN_RENDERING

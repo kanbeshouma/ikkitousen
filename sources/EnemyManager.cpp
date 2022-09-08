@@ -82,7 +82,6 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 
     //--------------------<“G‚ÌXVˆ—>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
-    fDeleteEnemies();
     //--------------------<“G“¯Žm‚Ì“–‚½‚è”»’è>--------------------//
     fCollisionEnemyVsEnemy();
 
