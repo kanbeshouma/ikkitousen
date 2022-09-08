@@ -140,7 +140,7 @@ void SpearEnemy::fIdleInit()
 {
     // アニメーションを再生
     mpModel->play_animation(mAnimPara,AnimationName::idle, true);
-    
+
 }
 void SpearEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -191,6 +191,8 @@ void SpearEnemy::fThrustBeginInit()
     mpModel->play_animation(mAnimPara, AnimationName::attack_idle);
     mWaitTimer = 0.0f;
     mIsAttack = true;
+    //-----攻撃動作に入ったことを知らせる-----//
+    fSetAttackOperation(true);
 }
 void SpearEnemy::fThrustBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -246,6 +248,7 @@ void SpearEnemy::fThrustEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     {
         fChangeState(DivedState::Idle);
         mIsAttack = false;
+        fSetAttackOperation(false);
     }}
 
 void SpearEnemy::fDamageInit()
@@ -294,6 +297,7 @@ void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
     if (!mIsStun)
     {
         mIsAttack = false;
+        fSetAttackOperation(false);
         mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }

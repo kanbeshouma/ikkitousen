@@ -29,10 +29,10 @@ void SpearEnemy_Ace::fUpdateAttackCapsule()
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     DirectX::XMFLOAT3 up{};
     mpModel->fech_by_bone(mAnimPara,
-                            world, 
+                            world,
                             mpSpearBoneTop,
                           mAttackCapsule.mTop, up);
-    mpModel->fech_by_bone(mAnimPara, 
+    mpModel->fech_by_bone(mAnimPara,
                             world,
                             mpSpearBoneBottom,
                           mAttackCapsule.mBottom, up);
@@ -119,7 +119,7 @@ void SpearEnemy_Ace::fRegisterFunctions()
 
 void SpearEnemy_Ace::fStartInit()
 {
-    
+
 }
 void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -156,7 +156,7 @@ void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
     const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
     mPosition += (norm * elapsedTime_ * 60.0f);
-    if(Math::Length(vec)<=5.0f)
+    if(Math::Length(vec)<=7.0f)
     {
         fChangeState(DivideState::WipeBegin);
     }
@@ -164,6 +164,8 @@ void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void SpearEnemy_Ace::fWipeBeginInit()
 {
+    //-----UŒ‚“®ì‚É“ü‚Á‚½‚±‚Æ‚ð’m‚ç‚¹‚é-----//
+    fSetAttackOperation(true);
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_start);
 }
 
@@ -188,6 +190,7 @@ void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Gra
     {
         fChangeState(DivideState::Idle);
         mIsAttack = false;
+        fSetAttackOperation(false);
         mAnimationSpeed = 1.0f;
     }
 }
@@ -201,6 +204,7 @@ void SpearEnemy_Ace::fStunInit()
 
     mWaitTimer = mStunTime;
     mIsAttack = false;
+    fSetAttackOperation(false);
 }
 void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
 {

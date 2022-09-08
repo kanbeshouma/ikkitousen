@@ -202,6 +202,8 @@ void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void SwordEnemy::fAttackRunInit()
 {
+    //-----çUåÇìÆçÏÇ…ì¸Ç¡ÇΩÇ±Ç∆ÇímÇÁÇπÇÈ-----//
+    fSetAttackOperation(true);
     mMoveTimer = 0;
     audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
 
@@ -240,6 +242,7 @@ void SwordEnemy::fAttackEndInit()
     mpModel->play_animation(mAnimPara, AnimationName::attack_down, false, false);
     mWaitTimer = 0.0f;
     fSetAttack(true);
+    fSetAttackOperation(false);
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -248,6 +251,7 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     {
         fChangeState(DivedState::Escape);
         fSetAttack(false);
+        fSetAttackOperation(false);
     }
 }
 
@@ -279,6 +283,8 @@ void SwordEnemy::fStunInit()
 
     mWaitTimer = mStunTime ;
     mIsAttack = false;
+    //-----çUåÇìÆçÏÇ…ì¸Ç¡ÇΩÇ±Ç∆ÇímÇÁÇπÇÈ-----//
+    fSetAttackOperation(false);
 }
 
 void SwordEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

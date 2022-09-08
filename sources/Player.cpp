@@ -462,22 +462,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
 
-#if 0
-    if (is_lock_on)
-    {
-        //BehindAvoidancePosition();
-        for (const auto& point : behind_interpolated_way_points)
-        {
-            debug_figure->create_sphere(point, 1.0f, { 1,1,1,1 });
-        }
-        for (const auto& point : behind_way_points)
-        {
-            debug_figure->create_sphere(point, 1.5f, { 1,0,0,1 });
-        }
-    }
-
-#endif // 0
-
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -700,17 +684,6 @@ void Player::ChangePlayerJustificationLength()
 
 void Player::LerpCameraTarget(float elapsed_time)
 {
-    //target_lerp_rate += 0.5f * elapsed_time;
-    //if (target_lerp_rate < 1.0f)
-    //{
-    //    //float length{ Math::calc_vector_AtoB_length(end_target,target) };
-    //    //if (length < 2.0f)target_lerp_rate = 1.0f;
-    //    target = Math::lerp(old_target, end_target, target_lerp_rate);
-    //}
-    //else
-    //{
-    //    target = end_target;
-    //}
 }
 
 void Player::BehindAvoidancePosition()
@@ -785,73 +758,6 @@ bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOA
     const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
     using namespace DirectX;
-#if 0
-    behind_late = easing::Expo::easeInOut(behind_timer, 0, 1.0f, 1.5f);
-#if 0
-    const float power = 1.0f; // Usually power is 0.5f
-    XMVECTOR p0 = XMLoadFloat3(&position);
-    XMVECTOR p1 = XMLoadFloat3(&behind_point_1);
-    XMVECTOR p2 = XMLoadFloat3(&behind_point_2);
-    XMVECTOR p3 = XMLoadFloat3(&behind_point_3);
-
-    XMVECTOR v0 = (p2 - p0) * power;
-    XMVECTOR v1 = (p3 - p1) * power;
-    if (behind_timer < 1.5f)
-    {
-        const float t = behind_timer;
-        XMVECTOR p;
-        p = t * t * t * (2 * p1 - 2 * p2 + v0 + v1);
-        p += t * t * (-3 * p1 + 3 * p2 - 2 * v0 - v1);
-        p += t * v0 + p1;
-        XMFLOAT3 interpolated_point{};
-        XMStoreFloat3(&interpolated_point, p);
-        position = Math::lerp(position, interpolated_point, 2.0f * elapsed_time);
-    }
-    XMVECTOR P0 = XMLoadFloat3(&behind_point_0);
-    XMVECTOR P1 = XMLoadFloat3(&behind_point_1);
-    XMVECTOR P2 = XMLoadFloat3(&behind_point_2);
-    XMVECTOR P3 = XMLoadFloat3(&behind_point_3);
-
-    for (size_t step = 0; step < 100; ++step)
-    {
-        float t = static_cast<float>(step) / 100;
-        float alpha = .5f; /* between 0 and 1 */
-
-        XMVECTOR T0 = XMVectorZero();
-        XMVECTOR T1 = XMVectorPow(XMVector3LengthSq(P1 - P0), XMLoadFloat(&alpha) * .5f) + T0;
-        XMVECTOR T2 = XMVectorPow(XMVector3LengthSq(P2 - P1), XMLoadFloat(&alpha) * .5f) + T1;
-        XMVECTOR T3 = XMVectorPow(XMVector3LengthSq(P3 - P2), XMLoadFloat(&alpha) * .5f) + T2;
-        XMVECTOR T = XMVectorLerp(T1, T2, t);
-        XMVECTOR A1 = (T1 - T) / (T1 - T0) * P0 + (T - T0) / (T1 - T0) * P1;
-        XMVECTOR A2 = (T2 - T) / (T2 - T1) * P1 + (T - T1) / (T2 - T1) * P2;
-        XMVECTOR A3 = (T3 - T) / (T3 - T2) * P2 + (T - T2) / (T3 - T2) * P3;
-        XMVECTOR B1 = (T2 - T) / (T2 - T0) * A1 + (T - T0) / (T2 - T0) * A2;
-        XMVECTOR B2 = (T3 - T) / (T3 - T1) * A2 + (T - T1) / (T3 - T1) * A3;
-        XMVECTOR C = (T2 - T) / (T2 - T1) * B1 + (T - T1) / (T2 - T1) * B2;
-
-        XMFLOAT3 interpolated_point{};
-        XMStoreFloat3(&position, C);
-    }
-
-#else
-    behind_point.emplace_back(position);
-    behind_point.emplace_back(behind_point_1);
-    behind_point.emplace_back(behind_point_2);
-    behind_point.emplace_back(behind_point_3);
-
-    if (behind_timer < 1.0f)
-    {
-        DirectX::XMFLOAT3 old_pos{ position };
-        position = Math::HermiteFloat3(behind_point, behind_timer);
-        velocity.x = position.x - old_pos.x;
-        velocity.y = position.y - old_pos.y;
-        velocity.z = position.z - old_pos.z;
-
-    }
-    behind_point.clear();
-#endif
-
-#endif // 0
     assert(!points.empty() && "ポイントのサイズが0です");
     //index(配列の中の自分の位置)がゴールの位置にきたらtrueを返す
     //(この後の計算でindexの次の値を使うからサイズと同じ大きさでもダメ)

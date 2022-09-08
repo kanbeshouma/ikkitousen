@@ -44,11 +44,13 @@ public:
     virtual void fSetStun(bool Arg_, bool IsJust_ = false);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
+    void fSetAttackOperation(bool Arg_);
     void fSetIsLockOnOfChain(bool RockOn_);
     void fSetIsPlayerSearch(bool Arg_);
     void fSetLaunchDissolve();
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetAttack() const;
+    [[nodiscard]] bool fGetAttackOperation() const;
     [[nodiscard]] const Capsule& fGetBodyCapsule();
     [[nodiscard]] const Capsule& fGetAttackCapsule()const;
     [[nodiscard]] const DirectX::XMFLOAT3& fGetPosition()const;
@@ -91,6 +93,9 @@ protected:
 protected:
     const float mStunTime{}; // ステートの初期化でこの値をTimerに代入する
     bool mIsAttack{};
+    //-----攻撃動作に入っているかどうか-----//
+    //-----ジャスト回避用-----//
+    bool attack_operation{};
 private:
     float mCubeHalfSize{};
 protected:
@@ -121,7 +126,7 @@ protected:
     inline static const char* mkVernierPath = "./resources/Effect/sluster_enemy2.efk";
     std::unique_ptr<Effect> mStunEffect{ nullptr };
     inline static const char* mkStunPath = "./resources/Effect/stun.efk";
-    
+
 protected:
     std::unique_ptr<Effect> mBombEffect{ nullptr };
     inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";

@@ -98,7 +98,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
-            if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+            if (is_lock_on && is_just_avoidance_capsul)
             {
                 TransitionJustBehindAvoidance();
             }
@@ -145,7 +145,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
-            if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
+            if (is_lock_on && is_just_avoidance_capsul)
             {
                 TransitionJustBehindAvoidance();
             }
@@ -182,17 +182,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     avoidance_boost_time += 1.0f * elapsed_time;
     //回避の時の加速
     SetAccelerationVelocity();
-    //ロックオンしている敵と一定距離近くなったら
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (is_lock_on && length < 15.0f)
-    {
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        //攻撃に遷移
-        velocity.x *= 0.2f;
-        velocity.y *= 0.2f;
-        velocity.z *= 0.2f;
-        TransitionAttackType1();
-    }
+
     if (avoidance_boost_time > 1.0f)
     {
         model->progress_animation();
@@ -1066,6 +1056,8 @@ void Player::TransitionBehindAvoidance()
 
 void Player::TransitionJustBehindAvoidance()
 {
+    if (invincible_timer > 0) return;
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
     player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
@@ -1144,9 +1136,6 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge(float blend_seconds)
 {
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
-
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     //エフェクト再生

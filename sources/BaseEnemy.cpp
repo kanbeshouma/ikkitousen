@@ -270,6 +270,11 @@ void BaseEnemy::fSetAttack(bool Arg_)
     mIsAttack = Arg_;
 }
 
+void BaseEnemy::fSetAttackOperation(bool Arg_)
+{
+    attack_operation = Arg_;
+}
+
 void BaseEnemy::fSetIsLockOnOfChain(bool RockOn_)
 {
     mIsLockOnOfChain = RockOn_;
@@ -291,6 +296,11 @@ void BaseEnemy::fSetLaunchDissolve()
 bool BaseEnemy::fGetAttack() const
 {
     return mIsAttack;
+}
+
+bool BaseEnemy::fGetAttackOperation() const
+{
+    return attack_operation;
 }
 
 const Capsule& BaseEnemy::fGetBodyCapsule()

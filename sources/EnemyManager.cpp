@@ -222,7 +222,8 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayerCounter(DirectX::XMFLOAT3 PlayerCap
         // “–‚½‚è”»’è‚ð‚·‚é‚©Šm”F
         if (enemy->fComputeAndGetIntoCamera())
         {
-            if (enemy->fGetAttack())
+            //-----UŒ‚“®ì‚É“ü‚Á‚Ä‚¢‚½‚ç-----//
+            if (enemy->fGetAttackOperation())
             {
                 Capsule capsule = enemy->fGetAttackCapsule();
 
