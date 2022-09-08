@@ -183,6 +183,19 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //‰ñ”ð‚ÌŽž‚Ì‰Á‘¬
     SetAccelerationVelocity();
 
+    //-----UŒ‚ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚çUŒ‚‚É‘JˆÚ-----//
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+    {
+        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+        {
+            attack_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            TransitionAttackType1(attack_animation_blends_speeds.z);
+        }
+    }
+
     if (avoidance_boost_time > 1.0f)
     {
         model->progress_animation();

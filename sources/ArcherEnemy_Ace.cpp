@@ -40,7 +40,7 @@ void ArcherEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
     elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
-   
+
 }
 
 void ArcherEnemy_Ace::fUpdateAttackCapsule()
@@ -206,6 +206,8 @@ void ArcherEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     // 一定時間経過で移動に遷移
     if (mStayTimer >= SPAWN_STAY_TIME)
     {
+        //-----出現フラグをtrueにする-----//
+        is_appears = true;
         fChangeState(DivedeState::Idle);
     }
 }

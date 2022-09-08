@@ -91,7 +91,7 @@ void ShieldEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::Shield, tuple));
     }
-    
+
     {
         InitFunc ini = [=]()->void
         {
@@ -168,6 +168,8 @@ void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mWaitTimer >= mSpawnDelaySec)
     {
+        //-----出現フラグをtrueにする-----//
+        is_appears = true;
         fChangeState(DivedState::Move);
     }
 }
@@ -212,7 +214,7 @@ void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graph
         is_shield = false; //シールド効果OFF
         fChangeState(DivedState::Move);
     }
-   
+
 }
 
 void ShieldEnemy::fShieldAttackInit()
