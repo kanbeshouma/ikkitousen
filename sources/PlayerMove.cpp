@@ -1,4 +1,5 @@
 #include "PlayerMove.h"
+#include"Player.h"
 
 PlayerMove::PlayerMove()
     :MoveBehavior()
@@ -383,7 +384,7 @@ void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& pos
         //水平移動値
     float mx{ velocity.x * elapsed_time };
     float mz{ velocity.z * elapsed_time };
-    if (velocity_length_xz > 0.0f)
+    if (velocity_length_xz > Player::PLAYER_INPUT_MIN)
     {
         // レイの開始位置と終点位置
         DirectX::XMFLOAT3 start = { position.x, position.y, position.z };

@@ -504,6 +504,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat3("velocity", &velocity.x);
                 ImGui::DragFloat3("acceleration_velocity", &acceleration_velocity.x);
                 ImGui::DragFloat("max_speed", &move_speed);
+                //ImGui::DragFloat("PLAYER_INPUT_MIN", &PLAYER_INPUT_MIN);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("PlayerFlags"))

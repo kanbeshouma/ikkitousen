@@ -275,11 +275,11 @@ void Player::ChangeTutorialState(int state)
 void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     //ˆÚ“®‚É‘JˆÚ
-    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
     {
         TransitionTutorialMove();
     }
-    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
     {
         TransitionTutorialMove();
     }
@@ -664,7 +664,7 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
             is_avoidance = false;
             is_behind_avoidance = false;
             //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
             {
                 TransitionTutorialMove();
 }
@@ -712,35 +712,6 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     }
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
-#if 0
-    AvoidanceAcceleration(elapsed_time);
-    if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
-    {
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        //‚à‚µƒ`ƒ…[ƒgƒŠƒAƒ‹‚ª‰ñ”ð‚È‚ç
-        if (tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
-        //‰ñ”ð’†‚©‚Ç‚¤‚©‚ÌÝ’è
-        is_avoidance = false;
-        is_behind_avoidance = false;
-        //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
-        {
-            TransitionTutorialMove();
-        }
-        //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
-        else
-        {
-            TransitionTutoriaIdle();
-        }
-        if (tutorial_state >= TutorialState::AwaikingTutorial)   TutorialAwaiking();
-        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    }
-    else
-    {
-        UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    }
-
-#endif // 0
 }
 
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
@@ -817,7 +788,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
         end_dash_effect = true;
 
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             charge_time = 0;
@@ -1058,7 +1029,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         if (attack_time > ATTACK_TYPE3_MAX_TIME)
         {
             //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
             {
                 charge_time = 0;
                 velocity.x *= 0.2f;
@@ -1108,7 +1079,7 @@ void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::
     if (model->end_of_animation())
     {
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             TransitionTutorialMove();
         }
@@ -1125,7 +1096,7 @@ void Player::TutorialInvAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, st
     if (model->end_of_animation())
     {
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             TransitionTutorialMove();
         }

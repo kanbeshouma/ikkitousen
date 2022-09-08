@@ -118,11 +118,11 @@ void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3
 //----------------------------------------------//
 void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat,float ang)
 {
-   
+
     Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(rotate_mat);
-    
+
     Effekseer::Matrix43 base_mat = effekseer_manager->GetMatrix(effekseer_handle);
-    
+
     Effekseer::Vector3D scale{};
     base_mat.GetScale(scale);
 
@@ -160,5 +160,5 @@ Effekseer::Matrix43 Effect::transform_XMFLOAT4X4toMatrix43(DirectX::XMFLOAT4X4& 
 
     return matrix_4x3;
 }
-    
+
 

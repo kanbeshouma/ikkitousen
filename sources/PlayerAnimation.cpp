@@ -58,45 +58,13 @@ void Player::TransitionTitleAnimationReadyIdle()
     threshold_mesh = 0.0f;
 }
 
-void Player::RegisterTransitionAnimationMap(TransEdge tuples, TransitionAnimation func)
-{
-    //==========std::getから何の値を取り出しているかを明確にする==========//
-
-    //-----遷移元のアニメーション番号-----//
-    constexpr int TransRootIndex = 0;
-
-    //-----遷移先のアニメーション番号-----//
-    constexpr int TransDestinationIndex = 1;
-
-    //==========tuplesから遷移元と遷移先のアニメーション番号を取得する==========//
-
-    //-----遷移元のアニメーション番号-----//
-    const int trans_root_index = std::get<TransRootIndex>(tuples);
-
-    //-----遷移先のアニメーション番号-----//
-    const int trans_destination_index = std::get<TransDestinationIndex>(tuples);
-
-    //-----遷移元を取得-----//
-    auto& child_map = transition_animations[trans_root_index];
-
-    //-----見つけたら遷移先の関数が既に登録されているかを調べる-----//
-    if (child_map.contains(trans_destination_index))
-    {
-        //-----もし登録されていたら終了-----//
-        return;
-    }
-
-    //-----関数を登録する-----//
-    child_map.emplace(std::make_pair(trans_destination_index, func));
-}
-
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
         //自分のクラスの関数ポインタを呼ぶ
-        update_animation(elapsed_time, sky_dome);
+        (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
         //自分のクラスの関数ポインタを呼ぶ
@@ -112,11 +80,11 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //移動に遷移
     //チェイン攻撃のロックオン完了から攻撃終了の時は操作は受け付けない
-    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
     {
         TransitionMove();
     }
-    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
     {
         TransitionMove();
     }
@@ -237,7 +205,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             is_avoidance = false;
             is_behind_avoidance = false;
             //移動入力があったら移動に遷移
-            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
             {
                 player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 TransitionMove();
@@ -365,7 +333,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         velocity.z *= 0.2f;
 
         //移動入力があったら移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             charge_time = 0;
             is_charge = false;
@@ -662,7 +630,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         if (attack_time > ATTACK_TYPE3_MAX_TIME)
         {
             //移動入力があったら移動に遷移
-            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
             {
                 velocity.x *= 0.2f;
                 velocity.y *= 0.2f;
@@ -771,7 +739,7 @@ void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
         player_awaiking_effec->stop(effect_manager->get_effekseer_manager());
 
         //移動入力があったら移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             TransitionMove();
         }
@@ -788,7 +756,7 @@ void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
     if (model->end_of_animation())
     {
         //移動入力があったら移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
         {
             TransitionMove();
         }
@@ -1128,9 +1096,9 @@ void Player::TransitionJustBehindAvoidance()
     //回り込み回避かどうか
     is_behind_avoidance = true;
     //覚醒状態の時の回避アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true,0.0f);
     //通常状態の時のアニメーションの設定
-    else model->play_animation(AnimationClips::Avoidance, false, true);
+    else model->play_animation(AnimationClips::Avoidance, false, true,0.0f);
     //後ろに回り込む座標の取得
     BehindAvoidancePosition();
     //回り込むときのタイマー

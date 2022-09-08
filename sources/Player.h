@@ -142,10 +142,13 @@ private:
     static constexpr float ATTACK_TYPE3_MAX_TIME = 0.2f;
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
+
 public:
     //後ろに回り込める距離
     static constexpr float  BEHIND_LANGE_MAX = 45.0f;
     static constexpr float  BEHIND_LANGE_MIN = 5.0f;
+    //-----プレイヤーの入力値の最小値-----//
+    static constexpr float PLAYER_INPUT_MIN = 2.0f;
 private:
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 80.0f;
@@ -536,49 +539,6 @@ private:
     typedef void(Player::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
     //関数ポインタの変数
     PlayerActivity player_activity = &Player::IdleUpdate;
-
-    ////-----アニメーションの遷移に関する関数が入る-----//
-    using TransitionAnimation = std::function <bool(void)>;
-
-    ////-----アニメーション中の更新処理の関数が入る-----//
-    using UpdateAnimation = std::function <void(float,SkyDome* sky_dome)>;
-
-    ////-----アニメーション中の更新処理-----//
-    UpdateAnimation update_animation{ [=](float elapsed_time,SkyDome* sky_dome) {IdleUpdate(elapsed_time,sky_dome); } };
-
-    ////-----遷移元のアニメーションと遷移先のアニメーションの番号のペア-----//
-    //=========================================================
-    //tuple構造 : [遷移元 , 遷移先]
-    using TransEdge = std::tuple<int, int>;
-
-    ////-----今のアニメーションから遷移できるアニメーションを保存する変数-----//
-    //===========================================================
-    //マップの構造 : [今のアニメーション,[遷移先のアニメーション,遷移先のアニメーションにいく条件の関数]]
-    using TransitionAnimationsMap = std::map<int, std::map<int, TransitionAnimation>>;
-
-    ////-----遷移先のアニメーションをまとめたmap-----//
-    TransitionAnimationsMap transition_animations;
-
-    ////----------遷移元のアニメーションと遷移先のアニメーションの関数を結びつける(1つだけ)----------//
-    //===================================================================
-    //第1引数 : 元のアニメーション番号と遷移先のアニメーション番号のTuple
-    //第2引数 : 遷移先の条件関数
-    void RegisterTransitionAnimationMap(TransEdge tuples, TransitionAnimation func);
-
-    ////----------遷移元ののアニメーション遷移先のアニメーションの関数を結びつける(複数)----------//
-    ////-----std::functionの型に関数を登録するときはラムダ式でキャプチャしてあげる-----//
-    //========================================================================
-    //ラムダ式 : [=]()->bool{ return 遷移関数;}
-    template<class... Tuples>
-    void RegisterTransitionAnimations(TransitionAnimation func, Tuples&&... tuples)
-    {
-        //-----TransEdge型であることを保証している-----//
-        //-----std::forwardはinitializer_listを使うときにセットで使うもので可変長引数の先頭を取得する-----//
-        for (const auto trans_edge : std::initializer_list<TransEdge>{ std::forward<Tuples>(tuples)... })
-        {
-            RegisterTransitionAnimationMap(trans_edge, func);
-        }
-    }
 
     //自分のメンバ関数の関数ポインタを呼ぶ
     void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
