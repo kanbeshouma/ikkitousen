@@ -126,6 +126,8 @@ void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mDissolve -= elapsedTime_;
     if(mDissolve<=0.0f)
     {
+        //-----oŒ»ƒtƒ‰ƒO‚ðtrue‚É‚·‚é-----//
+        is_appears = true;
         fChangeState(DivideState::Idle);
     }
 }

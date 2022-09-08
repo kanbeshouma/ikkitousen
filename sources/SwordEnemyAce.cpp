@@ -129,6 +129,8 @@ void SwordEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mDissolve -= elapsedTime_;
     if(mDissolve<=0.0f)
     {
+        //-----oŒ»ƒtƒ‰ƒO‚ðtrue‚É‚·‚é-----//
+        is_appears = true;
         fChangeState(DivideState::Idle);
     }
 }
@@ -186,7 +188,7 @@ void SwordEnemy_Ace::fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& 
         fChangeState(DivideState::CounterAttack);
         mIsWaitCounter = false;
     }
-    
+
 }
 
 void SwordEnemy_Ace::fCounterAttackInit()
@@ -206,7 +208,7 @@ void SwordEnemy_Ace::fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& 
     mAttackCapsule.mBottom = pos;
     mAttackCapsule.mTop = pos + up * 10.0f;
     mAttackCapsule.mRadius = 5.0f;
-    
+
 
     mWaitTimer += elapsedTime_;
     if (mpModel->end_of_animation(mAnimPara))
@@ -283,7 +285,7 @@ bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time, GraphicsPipelin
             ret = true;
         }
     }
-   
+
     return ret;
 }
 

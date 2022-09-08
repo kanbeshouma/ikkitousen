@@ -156,6 +156,8 @@ void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if(mWaitTimer>=mSpawnDelaySec)
     {
+        //-----出現フラグをtrueにする-----//
+        is_appears = true;
         fChangeState(DivedState::Move);
     }
 }

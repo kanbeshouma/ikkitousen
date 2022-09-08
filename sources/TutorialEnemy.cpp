@@ -87,6 +87,8 @@ void TutorialEnemy_NoAttack::fStartUpdate(float elapsedTime_, GraphicsPipeline& 
     mDissolve -= elapsedTime_;
     if(mDissolve<0.0f)
     {
+        //-----oŒ»ƒtƒ‰ƒO‚ðtrue‚É‚·‚é-----//
+        is_appears = true;
         fChangeState(DivideState::Idle);
     }
 }

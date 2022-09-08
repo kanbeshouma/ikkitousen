@@ -211,6 +211,8 @@ void BossUnit::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mDissolve -= elapsedTime_;
     if(mDissolve<=0.0f)
     {
+        //-----oŒ»ƒtƒ‰ƒO‚ðtrue‚É‚·‚é-----//
+        is_appears = true;
         fChangeState(DivideState::Idle);
     }
 }

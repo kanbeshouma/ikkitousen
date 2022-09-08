@@ -147,6 +147,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
 
     for (const auto enemy : mEnemyVec)
     {
+        if (enemy->fGetAppears() == false) continue;
         // 当たり判定をするか確認
         if (enemy->fComputeAndGetIntoCamera())
         {
@@ -252,6 +253,8 @@ void EnemyManager::fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosi
     // 総当たりでプレイヤーからスタンこうげきを受ける
     for(const auto & enemy: mEnemyVec)
     {
+        //-----出現していなかったら判定しない-----//
+        if (enemy->fGetAppears() == false) continue;
         const DirectX::XMFLOAT3 enemyPosition = enemy->fGetPosition();
         const float enemyRad = enemy->fGetBodyCapsule().mRadius;
         if(Math::Length(mPlayerPosition-enemyPosition) <= Radius_+enemyRad)
@@ -294,7 +297,7 @@ BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
     fSort(func);
     for(const auto enemy :mEnemyVec)
     {
-        if (enemy->fGetStun()) continue;;
+        if (enemy->fGetStun() || enemy->fGetAppears() == false) continue;
 
 
         if (enemy->fComputeAndGetIntoCamera())

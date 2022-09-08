@@ -57,7 +57,7 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
     mpModel->update_animation(mAnimPara, elapsedTime_ );
     fComputeInCamera();
-    
+
     if (mCurrentHitPoint <= 0.0f)
     {
         fDie(Graphics_);
@@ -158,7 +158,7 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
     }
 }
 
-void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_, 
+void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_,
     DirectX::XMFLOAT3 Target_)
 {
     // �v���C���[�̕����ɉ�]
@@ -202,7 +202,7 @@ void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-        axis = Math::Cross(front, vToPlayer); 
+        axis = Math::Cross(front, vToPlayer);
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -368,6 +368,11 @@ float BaseEnemy::fGetPercentHitPoint() const
 bool BaseEnemy::fGetStun() const
 {
     return mIsStun;
+}
+
+bool BaseEnemy::fGetAppears() const
+{
+    return is_appears;
 }
 
 bool BaseEnemy::fIsLockOnOfChain() const

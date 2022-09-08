@@ -61,6 +61,8 @@ public:
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
+    //-----敵が出現しているかどうか----//
+    [[nodiscard]] bool fGetAppears()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;
     [[nodiscard]] float fGetDissolve()const;
     [[nodiscard]] DirectX::XMFLOAT3 fGetForward()const;
@@ -83,6 +85,10 @@ public:
 protected:
     float mAnimationSpeed{1.0f};
     bool mIsStun{}; // スタン状態かどうか
+
+    //-----敵が出現したかどうか-----//
+    bool is_appears{ false };
+
     int mCurrentHitPoint{};
     float mInvincibleTime{};
     const int mMaxHp{};

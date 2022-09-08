@@ -207,6 +207,8 @@ void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mStayTimer >= SPAWN_STAY_TIME)
     {
+        //-----出現フラグをtrueにする-----//
+        is_appears = true;
         fChangeState(DivedState::Idle);
     }
 }

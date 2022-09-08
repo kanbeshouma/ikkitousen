@@ -170,6 +170,8 @@ void ShieldEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     // 一定時間経過で移動に遷移
     if (mWaitTimer >= mSpawnDelaySec)
     {
+        //-----出現フラグをtrueにする-----//
+        is_appears = true;
         fChangeState(DivedState::Move);
     }
 }
