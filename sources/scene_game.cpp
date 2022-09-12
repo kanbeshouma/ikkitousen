@@ -285,6 +285,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			player->AddCombo(hit_count,block);
 		}
 	}
+
     const bool isCounter= enemyManager->fCalcEnemiesAttackVsPlayerCounter(
 		player->GetJustAvoidanceCapsuleParam().start,
 		player->GetJustAvoidanceCapsuleParam().end,
