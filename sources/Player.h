@@ -49,7 +49,7 @@ inline bool operator&(SePriset lhs, SePriset rhs)
 class Player :public BasePlayer, private PlayerMove
 {
 public:
-    Player(GraphicsPipeline& graphics);
+    Player(GraphicsPipeline& graphics,int object_id = 0);
     ~Player();
 private:
     enum AnimationClips
@@ -362,8 +362,6 @@ private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
     void TutorialInflectionParameters(float elpased_time);
-    //攻撃力の変化
-    void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
     //死んでるかどうか

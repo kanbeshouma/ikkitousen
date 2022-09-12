@@ -26,6 +26,12 @@ protected:
     float glow_time;
     DirectX::XMFLOAT4 emissive_color{ 1.0f,1.0f,1.0f,0.9f };
 protected:
+    //-----キャラクターそれぞれの番号-----//
+    int object_id{ -1 };
+public:
+    ////-----オブジェクトIDのゲッター-----//
+    int GetObjectId() { return object_id; }
+protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
 

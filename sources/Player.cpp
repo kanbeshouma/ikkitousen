@@ -7,7 +7,7 @@
 
 //プレイヤーの原点は腰
 
-Player::Player(GraphicsPipeline& graphics)
+Player::Player(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx",false,60.0f);
@@ -34,6 +34,9 @@ Player::Player(GraphicsPipeline& graphics)
     player_condition = std::make_unique<PlayerCondition>(graphics);
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
+
+    //-----オブジェクトID設定-----//
+    this->object_id = object_id;
 
     player_bones[0] = model->get_bone_by_name("body_joint");
     player_bones[1] = model->get_bone_by_name("face_joint");
@@ -197,6 +200,10 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
     {
         if (ImGui::Begin("Player"))
         {
+            ImGui::Separator();
+            std::string obj_id{"object_id +" + std::to_string(object_id)};
+            ImGui::Text(obj_id.c_str());
+            ImGui::Separator();
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
@@ -204,6 +211,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerDirection"))
             {
                 ImGui::DragFloat3("forward", &forward.x);
@@ -211,6 +219,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::DragFloat3("up", &up.x);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("speed"))
             {
                 ImGui::DragFloat3("velocity", &velocity.x);
@@ -218,6 +227,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::DragFloat("max_speed", &move_speed);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerFlags"))
             {
                 ImGui::Checkbox("is_avoidance", &is_avoidance);
@@ -232,6 +242,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::Checkbox("is_push_lock_on_button", &is_push_lock_on_button);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("CapsuleParam"))
             {
                 if (ImGui::TreeNode("BodyCapsuleParam"))
@@ -250,6 +261,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 }
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("easing"))
             {
                 ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time, 0.1f);
@@ -257,6 +269,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::DragFloat("leverage", &leverage, 0.1f);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
@@ -268,7 +281,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
-
+            ImGui::Separator();
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
 
@@ -469,6 +482,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     {
         if (ImGui::Begin("Player"))
         {
+            ImGui::Separator();
+            std::string obj_id{ "object_id :" + std::to_string(object_id) };
+            ImGui::Text(obj_id.c_str());
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
@@ -476,6 +492,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerDirection"))
             {
                 ImGui::DragFloat3("forward", &forward.x);
@@ -483,6 +500,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat3("up", &up.x);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("speed"))
             {
                 ImGui::DragFloat3("velocity", &velocity.x);
@@ -491,6 +509,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 //ImGui::DragFloat("PLAYER_INPUT_MIN", &PLAYER_INPUT_MIN);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerFlags"))
             {
                 ImGui::Checkbox("is_avoidance", &is_avoidance);
@@ -508,6 +527,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::Checkbox("avoidance_buttun", &avoidance_buttun);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("CapsuleParam"))
             {
                 if (ImGui::TreeNode("BodyCapsuleParam"))
@@ -526,6 +546,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 }
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("easing"))
             {
                 ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time,0.1f);
@@ -533,6 +554,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat("leverage", &leverage,0.1f);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
@@ -544,6 +566,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
+            ImGui::Separator();
 
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
@@ -795,8 +818,6 @@ void Player::InflectionParameters(float elapsed_time)
     PlayerAlive();
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
-    //攻撃力の変動
-    InflectionPower(elapsed_time);
     //足元のカプセル
     StepCapsule();
     //コンボの変動
@@ -819,8 +840,6 @@ void Player::TutorialInflectionParameters(float elpased_time)
     TutorialPlayerAlive();
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
-    //攻撃力の変動(今は使ってない)
-    InflectionPower(elpased_time);
     //コンボの変動
     InflectionCombo(elpased_time);
     //足元のカプセル
@@ -835,23 +854,6 @@ void Player::TutorialInflectionParameters(float elpased_time)
     invincible_timer -= 1.0f * elpased_time;
     //回り込み回避のクールタイム
     behaind_avoidance_cool_time -= 1.0f * elpased_time;
-}
-
-void Player::InflectionPower(float elapsed_time)
-{
-
-    //覚醒状態かどうか
-    if (is_awakening)
-    {
-        //player_attack_power *= 2;
-        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
-    }
-    else
-    {
-        //5コンボで1攻撃力が上がるようにする
-        //player_attack_power = (int)combo_count / 5;
-        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
-    }
 }
 
 void Player::InflectionCombo(float elapsed_time)
