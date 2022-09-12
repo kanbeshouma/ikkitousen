@@ -26,6 +26,7 @@
 #include "BulletManager.h"
 #include "tunnel.h"
 #include"SpriteBatch.h"
+#include"PlayerManager.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -84,7 +85,7 @@ private:
     //****************************************************************
     //EnemyManager mEnemyManager{};
     WaveManager mWaveManager{};
-    std::unique_ptr<Player> player{ nullptr };
+    std::unique_ptr<PlayerManager> player_manager{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome
     float dimension{ 0.1f };

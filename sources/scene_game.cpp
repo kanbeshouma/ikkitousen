@@ -37,21 +37,20 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
 
 	// player
-	player = std::make_unique<Player>(graphics);
+	player_manager = std::make_unique<PlayerManager>();
+
+	//-----プレイヤーを登録-----//
+	Player* player = new Player(graphics,0);
+	player_manager->RegisterPlayer(player);
+	player_manager->SetPrivateObjectId(0);
+
 	// カメラ
-	//camera = std::make_unique<Camera>(graphics,player.get());
-	//std::vector<int> cameraType{};
-	//cameraType.push_back(CameraManager::CameraTypes::Game);
-	//cameraManager = std::make_unique<CameraManager>(graphics, player.get(), cameraType);
-	//cameraManager->Initialize(graphics, player.get());
 	cameraManager = std::make_unique<CameraManager>();
 
-	cameraManager->RegisterCamera(new GameCamera(player.get()));
-	cameraManager->RegisterCamera(new ClearCamera(player.get()));
+	cameraManager->RegisterCamera(new GameCamera(player));
+	cameraManager->RegisterCamera(new ClearCamera(player));
 	cameraManager->RegisterCamera(new JointCamera(graphics));
 
-	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
-	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
 
 	last_boss_mode     = LastBoss::Mode::None;
@@ -179,7 +178,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		{
 			//player->SetPosition({ 0.0f,0.0f,20.0f });
 			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Tunnel));
-			player->TransitionStageMove();
+			player_manager->TransitionStageMove();
 			during_clear = true;
 		}
 
@@ -194,14 +193,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
 			{
 				cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
-				player->TransitionStageMoveEnd();
+				player_manager->TransitionStageMoveEnd();
 				tunnel_alpha = 0.0f;
 				during_clear = false;
 			}
 		}
 	}
 	//プレイヤーがジャスト回避したらslow
-	if (player->GetIsJustAvoidance())
+	if (player_manager->GetIsJustAvoidance())
 	{
 		slow = true;
 	}
@@ -233,79 +232,33 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		//elapsed_time *= 0.5f;
 	}
 
-	enemyManager->fSetPlayerPosition(player->GetPosition());
-	enemyManager->fSetPlayerSearch(player->during_search_time());
+	enemyManager->fSetPlayerPosition(player_manager->GetPosition());
+	enemyManager->fSetPlayerSearch(player_manager->DuringSearchTime());
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 	Camera* c = cameraManager->GetCurrentCamera();
 
-	if (player->GetIsAlive() == false)	is_game_over = true;
-
+	if (player_manager->GetIsAlive() == false)	is_game_over = true;
 
 	// 敵とのあたり判定(当たったらコンボ加算)
-	if (player->GetIsPlayerAttack())
-	{
-		bool block = false;
-		if (player->GetIsAwakening())
-		{
-				player->AwakingAddCombo
-				(
-					enemyManager->fCalcPlayerAttackVsEnemies
-					(
-					player->GetSwordCapsuleParam(0).start,
-					player->GetSwordCapsuleParam(0).end,
-					player->GetSwordCapsuleParam(0).rasius,
-					player->GetPlayerPower(),
-					graphics,
-					elapsed_time,
-					block
-					),
-					enemyManager->fCalcPlayerAttackVsEnemies
-					(
-					player->GetSwordCapsuleParam(1).start,
-					player->GetSwordCapsuleParam(1).end,
-					player->GetSwordCapsuleParam(1).rasius,
-					player->GetPlayerPower(),
-					graphics,
-					elapsed_time,
-					block
-					)
-					, block
-				);
+	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
 
-		}
-		else
-		{
-			//-----攻撃に当たった回数-----//
-			int hit_count{ enemyManager->fCalcPlayerAttackVsEnemies(
-				player->GetSwordCapsuleParam(0).start,player->GetSwordCapsuleParam(0).end,player->GetSwordCapsuleParam(0).rasius,player->GetPlayerPower(),graphics,elapsed_time,block) };
+	//-----ジャスト回避が可能かどうかの当たり判定-----//
+	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
 
-			player->AddCombo(hit_count,block);
-		}
-	}
-    const bool isCounter= enemyManager->fCalcEnemiesAttackVsPlayerCounter(
-		player->GetJustAvoidanceCapsuleParam().start,
-		player->GetJustAvoidanceCapsuleParam().end,
-		player->GetJustAvoidanceCapsuleParam().rasius);
-
-	player->PlayerJustAvoidance(isCounter);
-
-	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
-		player->GetBodyCapsuleParam().end,
-		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+	//-----敵の攻撃とプレイヤーの当たり判定-----//
+	player_manager->EnemyAttackVsPlayer(enemyManager);
 
 	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
-	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
+	player_manager->PlayerStunVsEnemy(enemyManager);
 
 	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
-	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
+	player_manager->SetPlayerChainTime(enemyManager);
 
 	//弾とプレイヤーの当たり判定
-	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
-		player->GetBodyCapsuleParam().end,
-		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+	player_manager->BulletVsPlayer(mBulletManager);
 
 	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
 	last_boss_mode = enemyManager->fGetBossMode();
@@ -314,9 +267,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipToHuman)
 	{
 		c->boss_animation = true;
-		player->SetPosition({ 0,0,-120.0f });
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
 		//プレイヤーの行動範囲変更
-		player->ChangePlayerJustificationLength();
+		player_manager->ChangePlayerJustificationLength();
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
 		purple_threshold = 0.01f;
@@ -324,9 +277,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::HumanToDragon)
 	{
 		c->boss_animation = true;
-		player->SetPosition({ 0,0,-120.0f });
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
 		//プレイヤーの行動範囲変更
-		player->ChangePlayerJustificationLength();
+		player_manager->ChangePlayerJustificationLength();
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
 		red_threshold = 0.01f;
@@ -335,9 +288,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipAppear)
 	{
 		c->boss_animation = true;
-		player->SetPosition({ 0,0,-120.0f });
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
 		//プレイヤーの行動範囲変更.
-		player->ChangePlayerJustificationLength();
+		player_manager->ChangePlayerJustificationLength();
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
 	}
@@ -396,27 +349,43 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	// camera
-    //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
-	player->SetBossCamera(mIsBossCamera);
-		player->SetCameraDirection(c->GetForward(), c->GetRight());
-		player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-		//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-		player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
-			[=]() { post_effect->clear_post_effect(); });
-		player->SetCameraPosition(c->get_eye());
-		player->SetTarget(enemy);
-		player->SetCameraTarget(c->get_target());
-		if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-	enemy_hp_gauge->update(graphics, elapsed_time);
-	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
+
+	//-----ボス用のカメラに設定する-----//
+	player_manager->SetBossCamera(mIsBossCamera);
+
+	//-----カメラの方向を設定する-----//
+	player_manager->SetCameraDirection(c->GetForward(), c->GetRight());
+
+	//-----更新処理-----//
+	player_manager->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+
+	//-----ロックオンのポストエフェクトをかける-----//
+	player_manager->LockOnPostEffect(elapsed_time, post_effect.get());
+
+	//-----カメラの位置を設定する-----//
+	player_manager->SetCameraPosition(c->get_eye());
+
+	//-----プレイヤーに一番近い敵を設定する-----//
+	player_manager->SetTarget(enemy);
+
+	//-----プレイヤーにカメラのターゲットを設定する-----//
+	player_manager->SetCameraTarget(c->get_target());
+
+	//-----プレイヤーにダッシュエフェクトをかける-----//
+	player_manager->DashPostEffect(graphics, post_effect.get());
+
+	enemy_hp_gauge->update(graphics, elapsed_time)
+		;
+	enemy_hp_gauge->focus(player_manager->GetTargetEnemy(), player_manager->GetEnemyLockOn());
+
 	boss_hp_gauge->update(graphics, elapsed_time);
 	if (last_boss_mode == LastBoss::Mode::None) { boss_hp_gauge->set_animation(false); }
 	else { boss_hp_gauge->set_animation(true); }
 
 	reticle->update(graphics, elapsed_time);
-	reticle->SetAvoidanceCharge(player->GetBehaindCharge());
-	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
+	reticle->SetAvoidanceCharge(player_manager->GetBehaindCharge());
+	reticle->focus(player_manager->GetTargetEnemy(), player_manager->GetEnemyLockOn());
 	{
 		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };
 		static DirectX::XMFLOAT2 offset{ 50.0f, 0 };
@@ -645,7 +614,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
-	if(mIsBossCamera == false)player->Render(graphics, elapsed_time);
+	if(mIsBossCamera == false)player_manager->Render(graphics, elapsed_time);
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
@@ -659,7 +628,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 		tunnel->render(graphics.get_dc().Get(), elapsed_time, tunnel_alpha, [&]() {
-			player->Render(graphics, elapsed_time);
+			player_manager->Render(graphics, elapsed_time);
 			});
 	}
 
@@ -714,10 +683,10 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// wave
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();
-	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
-	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
+	const DirectX::XMFLOAT2 p_pos = { player_manager->GetMyTerminalPosition().x,player_manager->GetMyTerminalPosition().z };
+	const DirectX::XMFLOAT2 p_forward = { player_manager->GetMyTerminalForward().x,player_manager->GetMyTerminalForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	if (mIsBossCamera == false)player->ConfigRender(graphics, elapsed_time);
+	if (mIsBossCamera == false)player_manager->ConfigRender(graphics, elapsed_time);
     if (mIsBossCamera == false && during_clear == false && is_game_clear == false)
 	{
 		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
@@ -897,7 +866,7 @@ void SceneGame::GameClearAct(float elapsed_time,GraphicsPipeline& graphics)
 		//プレイヤーのクリア用の更新処理
 		const auto enemyManager = mWaveManager.fGetEnemyManager();
 		cameraManager->Update(elapsed_time);
-		player->PlayerClearUpdate(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		player_manager->PlayerClearUpdate(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 
 		if (set_joint_camera == false)
 		{
@@ -906,8 +875,8 @@ void SceneGame::GameClearAct(float elapsed_time,GraphicsPipeline& graphics)
 		}
 		if (set_joint_camera)
 		{
-			cameraManager->GetCurrentCamera()->set_eye(player->GetEnentCameraJoint());
-			cameraManager->GetCurrentCamera()->set_target(player->GetEnentCameraEye());
+			cameraManager->GetCurrentCamera()->set_eye(player_manager->GetMyTerminalJoint());
+			cameraManager->GetCurrentCamera()->set_target(player_manager->GetMyTerminalEye());
 		}
 		//ここでタイトルに戻るの位置を決めているのは
 	   //ゲームオーバーの時にも同じものを使うから
@@ -917,7 +886,7 @@ void SceneGame::GameClearAct(float elapsed_time,GraphicsPipeline& graphics)
 		selecter1.position = { 495.3f,277.1f };
 		selecter2.position = { 801.5f,277.1f };
 		//プレイヤーのクリアモーションが終わってからしか動かないようにする
-		if (player->GetEndClearMotion())
+		if (player_manager->GetMyTerminalEndClearMotion())
 		{
 			//画面ヲ徐々に黒くする
 			if (brack_back_pram.color.w > 0.7f)

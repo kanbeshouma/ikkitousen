@@ -256,9 +256,12 @@ void EnemyManager::fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosi
         if (enemy->fGetAppears() == false) continue;
         const DirectX::XMFLOAT3 enemyPosition = enemy->fGetPosition();
         const float enemyRad = enemy->fGetBodyCapsule().mRadius;
-        if(Math::Length(mPlayerPosition-enemyPosition) <= Radius_+enemyRad)
+        for (const auto p : mPlayerPosition)
         {
-            enemy->fSetStun(true);
+            if (Math::Length(p - enemyPosition) <= Radius_ + enemyRad)
+            {
+                enemy->fSetStun(true);
+            }
         }
     }
 }
@@ -361,12 +364,32 @@ void EnemyManager::fSetIsPlayerChainTime(bool IsChain_)
     mIsPlayerChainTime = IsChain_;
 }
 
-void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
+void EnemyManager::fSetPlayerPosition(std::vector<DirectX::XMFLOAT3> Position_)
 {
     mPlayerPosition = Position_;
+
+    //-----一番近いプレイヤーの位置-----//
+    DirectX::XMFLOAT3 near_pos{};
+    //-----一番近いプレイヤーの位置との距離-----//
+    float near_length{ 100000.0f };
+    //-----計算した長さを入れる-----//
+    float length{};
+
     for(const auto& enemy:mEnemyVec)
     {
-        enemy->fSetPlayerPosition(Position_);
+        near_pos = {};
+        near_length = 100000.0f;
+        for (const auto p : Position_)
+        {
+            length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), p);
+            //-----一番近い距離と今の敵の位置との距離を比較して小さかったら値を更新-----//
+            if (near_length > length)
+            {
+                near_length = length;
+                near_pos = p;
+            }
+        }
+        enemy->fSetPlayerPosition(near_pos);
     }
 }
 
@@ -497,12 +520,33 @@ case EnemyType::Boss_Unit:
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
+    //-----一番近いプレイヤーの位置-----//
+    DirectX::XMFLOAT3 near_pos{};
+    //-----一番近いプレイヤーの位置との距離-----//
+    float near_length{ 100000.0f };
+    //-----計算した長さを入れる-----//
+    float length{};
+
     // 更新
     for (const auto enemy : mEnemyVec)
     {
+        near_pos = {};
+        near_length = 100000.0f;
+
+        for (const auto p : mPlayerPosition)
+        {
+            length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), p);
+            //-----一番近い距離と今の敵の位置との距離を比較して小さかったら値を更新-----//
+            if (near_length > length)
+            {
+                near_length = length;
+                near_pos = p;
+            }
+        }
+
         if (enemy->fGetIsAlive())
         {
-            enemy->fSetPlayerPosition(mPlayerPosition);
+            enemy->fSetPlayerPosition(near_pos);
             enemy->fUpdate(Graphics_,elapsedTime_);
         }
         else

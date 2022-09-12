@@ -102,12 +102,12 @@ public:
     //タイトル用のアップデート
     void UpdateTitle(float elapsed_time);
     //スタンしている敵がいるかどうか
-    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies);
+    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies)override;
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
-    void ConfigRender(GraphicsPipeline& graphics, float elapsed_time);
+    void ConfigRender(GraphicsPipeline& graphics, float elapsed_time)override;
     void TutorialConfigRender(GraphicsPipeline& graphics, float elapsed_time, bool condition);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
-    void ChangePlayerJustificationLength();
+    void ChangePlayerJustificationLength()override;
 private:
     //エフェクト
     //回り込み回避
@@ -440,7 +440,7 @@ public:
     int GetPlayerPower() override { return player_attack_power; }
     [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() override { return damage_func; }
 
-    [[nodiscard]] const  BaseEnemy* GetPlayerTargetEnemy() const override
+    BaseEnemy* GetPlayerTargetEnemy() const  override
     {
         if (target_enemy != nullptr && target_enemy->fComputeAndGetIntoCamera())
         {

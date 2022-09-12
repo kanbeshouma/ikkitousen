@@ -256,7 +256,9 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
 
 
-	enemyManager->fSetPlayerPosition(player->GetPosition());
+	std::vector<DirectX::XMFLOAT3> pos;
+	pos.emplace_back(player->GetPosition());
+	enemyManager->fSetPlayerPosition(pos);
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓

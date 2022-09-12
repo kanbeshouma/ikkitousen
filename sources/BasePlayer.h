@@ -17,6 +17,11 @@ public:
     virtual  void Initialize() = 0;
     virtual  void Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies) = 0;
     virtual void Render(GraphicsPipeline& graphics, float elapsed_time) = 0;
+    //スタンしている敵がいるかどうか
+    virtual bool EnemiesIsStun(std::vector<BaseEnemy*> enemies) = 0;
+    virtual void ConfigRender(GraphicsPipeline& graphics, float elapsed_time) = 0;
+    virtual void ChangePlayerJustificationLength() = 0;
+
 protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
@@ -73,7 +78,7 @@ public:
   virtual int GetPlayerPower() = 0;
   virtual [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() = 0;
 
-  virtual [[nodiscard]] const  BaseEnemy* GetPlayerTargetEnemy() const = 0;
+  virtual BaseEnemy* GetPlayerTargetEnemy() const = 0;
    //一番近い敵を持って来てその位置をセットする
   virtual void SetTarget(BaseEnemy* target_enemy) = 0;
   virtual DirectX::XMFLOAT3 GetTarget() = 0;
