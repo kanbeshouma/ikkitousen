@@ -214,6 +214,7 @@
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
+    <ClCompile Include="sources\SceneMulchGame.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
@@ -330,6 +331,7 @@
     <ClInclude Include="sources\DragonBreath.h" />
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
+    <ClInclude Include="sources\SceneMulchGame.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />

@@ -214,6 +214,9 @@
     <Filter Include="Sources\Character\player\Player">
       <UniqueIdentifier>{c2fad5e8-b3a4-47d1-a360-cf9580b63860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Scene\SceneMulchGame">
+      <UniqueIdentifier>{7c1fca8a-2a38-4d5a-a67d-be7ad195791d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -557,6 +560,9 @@
     </ClCompile>
     <ClCompile Include="sources\PlayerManager.cpp">
       <Filter>Sources\Character\player\PlayerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SceneMulchGame.cpp">
+      <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -902,6 +908,9 @@
     </ClInclude>
     <ClInclude Include="sources\PlayerManager.h">
       <Filter>Sources\Character\player\PlayerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SceneMulchGame.h">
+      <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
