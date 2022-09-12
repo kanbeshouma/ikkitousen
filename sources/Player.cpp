@@ -839,6 +839,19 @@ void Player::TutorialInflectionParameters(float elpased_time)
 
 void Player::InflectionPower(float elapsed_time)
 {
+
+    //覚醒状態かどうか
+    if (is_awakening)
+    {
+        //player_attack_power *= 2;
+        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
+    }
+    else
+    {
+        //5コンボで1攻撃力が上がるようにする
+        //player_attack_power = (int)combo_count / 5;
+        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
+    }
 }
 
 void Player::InflectionCombo(float elapsed_time)
@@ -1005,6 +1018,10 @@ void Player::StunSphere()
 
 void Player::SetTarget( BaseEnemy* target_enemies)
 {
+    //if (target_enemies == nullptr)
+    //{
+    //    target_enemy = nullptr;
+    //}
     //ロックオンボタンを押したとき
     if (game_pad->get_trigger_L())
     {
