@@ -212,6 +212,7 @@
     <ClCompile Include="sources\CannonballBullet.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
+    <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
@@ -327,6 +328,7 @@
     <ClInclude Include="sources\BossUnit.h" />
     <ClInclude Include="sources\CannonballBullet.h" />
     <ClInclude Include="sources\DragonBreath.h" />
+    <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />

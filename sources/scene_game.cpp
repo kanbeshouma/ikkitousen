@@ -177,7 +177,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 		if (!during_clear)
 		{
-			player->SetPosition({ 0.0f,0.0f,20.0f });
+			//player->SetPosition({ 0.0f,0.0f,20.0f });
 			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Tunnel));
 			player->TransitionStageMove();
 			during_clear = true;

@@ -205,6 +205,15 @@
     <Filter Include="Sources\Text">
       <UniqueIdentifier>{3fa4f5f5-7000-44e5-950e-3e6b4923db7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Character\player\PlayerManager">
+      <UniqueIdentifier>{db573eac-50b2-4b29-b82b-eab301f623ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Character\player\Base">
+      <UniqueIdentifier>{00cd1c45-4ac4-4145-b895-766d9697ac75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Character\player\Player">
+      <UniqueIdentifier>{c2fad5e8-b3a4-47d1-a360-cf9580b63860}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -312,9 +321,6 @@
     <ClCompile Include="sources\EnemyManager.cpp">
       <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
-    <ClCompile Include="sources\BasePlayer.cpp">
-      <Filter>Sources\Character\player</Filter>
-    </ClCompile>
     <ClCompile Include="sources\BaseEnemy.cpp">
       <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
@@ -324,17 +330,8 @@
     <ClCompile Include="sources\EnemyFileSystem.cpp">
       <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
-    <ClCompile Include="sources\Player.cpp">
-      <Filter>Sources\Character\player</Filter>
-    </ClCompile>
     <ClCompile Include="sources\MoveBehavior.cpp">
       <Filter>Sources\Move</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\PlayerMove.cpp">
-      <Filter>Sources\Character\player</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\PlayerAnimation.cpp">
-      <Filter>Sources\Character\player</Filter>
     </ClCompile>
     <ClCompile Include="sources\EnemyEditor.cpp">
       <Filter>Sources\Character\enemy</Filter>
@@ -435,17 +432,11 @@
     <ClCompile Include="sources\TitleCamera.cpp">
       <Filter>Sources\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="sources\PlayerTutorialUpdate.cpp">
-      <Filter>Sources\Character\player</Filter>
-    </ClCompile>
     <ClCompile Include="sources\LastBoss.cpp">
       <Filter>Sources\Character\Boss\00_LastBoss</Filter>
     </ClCompile>
     <ClCompile Include="sources\ClearCamera.cpp">
       <Filter>Sources\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\PlayerChain.cpp">
-      <Filter>Sources\Character\player</Filter>
     </ClCompile>
     <ClCompile Include="sources\ArcherEnemy.cpp">
       <Filter>Sources\Character\enemy\04_Archer</Filter>
@@ -545,6 +536,27 @@
     </ClCompile>
     <ClCompile Include="sources\FrontShieldEnemy.cpp">
       <Filter>Sources\Character\enemy\03_Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\BasePlayer.cpp">
+      <Filter>Sources\Character\player\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Player.cpp">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerAnimation.cpp">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerChain.cpp">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerMove.cpp">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerTutorialUpdate.cpp">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerManager.cpp">
+      <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -662,9 +674,6 @@
     <ClInclude Include="sources\EnemyManager.h">
       <Filter>Sources\Character\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="sources\BasePlayer.h">
-      <Filter>Sources\Character\player</Filter>
-    </ClInclude>
     <ClInclude Include="sources\BaseEnemy.h">
       <Filter>Sources\Character\enemy</Filter>
     </ClInclude>
@@ -677,14 +686,8 @@
     <ClInclude Include="sources\EnemyFileSystem.h">
       <Filter>Sources\Character\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="sources\Player.h">
-      <Filter>Sources\Character\player</Filter>
-    </ClInclude>
     <ClInclude Include="sources\MoveBehavior.h">
       <Filter>Sources\Move</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\PlayerMove.h">
-      <Filter>Sources\Character\player</Filter>
     </ClInclude>
     <ClInclude Include="sources\easing.h">
       <Filter>Sources</Filter>
@@ -887,6 +890,18 @@
     </ClInclude>
     <ClInclude Include="sources\FrontShieldEnemy.h">
       <Filter>Sources\Character\enemy\03_Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BasePlayer.h">
+      <Filter>Sources\Character\player\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Player.h">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\PlayerMove.h">
+      <Filter>Sources\Character\player\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\PlayerManager.h">
+      <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

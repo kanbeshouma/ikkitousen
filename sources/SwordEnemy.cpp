@@ -14,7 +14,6 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     mScale = { 0.05f,0.05f,0.05f };
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
-
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
     :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_sword.fbx")
 {}

@@ -369,14 +369,6 @@ private:
     //チュートリアルの時の死んでるかどうか
     void TutorialPlayerAlive();
 private:
-    //カプセル敵との当たり判定
-    struct CapsuleParam
-    {
-        DirectX::XMFLOAT3 start{};
-        DirectX::XMFLOAT3 end{};
-        float rasius{ 1.2f };
-    };
-
     float sphere_radius{ 0.0f };
     CapsuleParam sword_capsule_param[2]{};
     CapsuleParam charge_capsule_param{};
@@ -401,33 +393,33 @@ private:
     //生きているかどうか
     ConditionState condition_state{ ConditionState::Alive };
 public:
-    void SetEndDashEffect(bool a) { end_dash_effect = a; }
-    void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
-    void SetBossCamera(bool boss_c) { boss_camera = boss_c; }
-    void SetPosition(DirectX::XMFLOAT3 pos) { position = pos; }
-    DirectX::XMFLOAT3 GetForward() { return forward; }
-    DirectX::XMFLOAT3 GetRight() { return right; }
-    DirectX::XMFLOAT3 GetUp() { return up; }
-    DirectX::XMFLOAT3 GetPosition() { return position; }
-    DirectX::XMFLOAT3 GetVelocity() { return velocity; }
-    HitResult& GetPlayerHitResult() { return hit; }
-    bool GetCameraReset() { return camera_reset; }
-    bool GetCameraLockOn() { return is_camera_lock_on; }
-    bool GetEnemyLockOn() { return is_lock_on; }
-    bool GetAvoidance() { return is_avoidance; }
-    bool GetBehindAvoidance() { return is_behind_avoidance; }
-    bool GetIsPlayerAttack() { return is_attack; }
-    bool GetIsCharge() { return is_charge; }
-    bool GetIsSpecialSurge() { return is_special_surge; }
-    bool GetStartDashEffect() { return start_dash_effect; }
-    bool GetEndDashEffect() { return end_dash_effect; }
-    bool GetIsAwakening() { return is_awakening; }
-    bool GetIsAlive() { return is_alive; }
-    bool GetIsJustAvoidance() { return is_just_avoidance; }
-    bool GetBehaindCharge() { return behaind_avoidance_recharge;}
-    CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
-    CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
-    CapsuleParam GetSwordCapsuleParam(int i)
+    void SetEndDashEffect(bool a)override { end_dash_effect = a; }
+    void SetCameraTarget(DirectX::XMFLOAT3 p)override { camera_target = p; }
+    void SetBossCamera(bool boss_c) override { boss_camera = boss_c; }
+    void SetPosition(DirectX::XMFLOAT3 pos) override { position = pos; }
+    DirectX::XMFLOAT3 GetForward()override { return forward; }
+    DirectX::XMFLOAT3 GetRight()override { return right; }
+    DirectX::XMFLOAT3 GetUp()override { return up; }
+    DirectX::XMFLOAT3 GetPosition()override { return position; }
+    DirectX::XMFLOAT3 GetVelocity()override { return velocity; }
+    HitResult& GetPlayerHitResult()override { return hit; }
+    bool GetCameraReset()override { return camera_reset; }
+    bool GetCameraLockOn()override { return is_camera_lock_on; }
+    bool GetEnemyLockOn()override { return is_lock_on; }
+    bool GetAvoidance()override { return is_avoidance; }
+    bool GetBehindAvoidance()override { return is_behind_avoidance; }
+    bool GetIsPlayerAttack()override { return is_attack; }
+    bool GetIsCharge()override { return is_charge; }
+    bool GetIsSpecialSurge() override { return is_special_surge; }
+    bool GetStartDashEffect() override { return start_dash_effect; }
+    bool GetEndDashEffect() override { return end_dash_effect; }
+    bool GetIsAwakening() override { return is_awakening; }
+    bool GetIsAlive() override { return is_alive; }
+    bool GetIsJustAvoidance() override { return is_just_avoidance; }
+    bool GetBehaindCharge() override { return behaind_avoidance_recharge;}
+    CapsuleParam GetBodyCapsuleParam() override { return body_capsule_param; }
+    CapsuleParam GetJustAvoidanceCapsuleParam() override { return just_avoidance_capsule_param; }
+    CapsuleParam GetSwordCapsuleParam(int i)override
     {
         //もし突進中なら突進中の当たり判定を返す
         if (is_charge)
@@ -442,13 +434,13 @@ public:
         //普通の剣の位置を渡す
         return sword_capsule_param[0];
     }
-    float GetStunRadius() { return sphere_radius; }
-    std::vector<DirectX::XMFLOAT3> GetBehindPoint() { return behind_point; }
-    void SetRaycast(bool r) { raycast = r; }
-    int GetPlayerPower() { return player_attack_power; }
-    [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() { return damage_func; }
+    float GetStunRadius() override { return sphere_radius; }
+    std::vector<DirectX::XMFLOAT3> GetBehindPoint() override { return behind_point; }
+    void SetRaycast(bool r) override { raycast = r; }
+    int GetPlayerPower() override { return player_attack_power; }
+    [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() override { return damage_func; }
 
-    [[nodiscard]] const  BaseEnemy* GetPlayerTargetEnemy() const
+    [[nodiscard]] const  BaseEnemy* GetPlayerTargetEnemy() const override
     {
         if (target_enemy != nullptr && target_enemy->fComputeAndGetIntoCamera())
         {
@@ -457,30 +449,30 @@ public:
         return nullptr;
     }
     //一番近い敵を持って来てその位置をセットする
-    void SetTarget(BaseEnemy* target_enemy);
-    DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count, bool& block);
+    void SetTarget(BaseEnemy* target_enemy)override;
+    DirectX::XMFLOAT3 GetTarget() override { return target; };
+    void AddCombo(int count, bool& block)override;
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
-    void AwakingAddCombo(int hit_count1, int hit_count2, bool& block);
+    void AwakingAddCombo(int hit_count1, int hit_count2, bool& block)override;
     //--------------------<敵からダメージを受ける>--------------------//
-    void DamagedCheck(int damage, float InvincibleTime);
-    void TutorialDamagedCheck(int damage, float InvincibleTime);
-    void PlayerKnocKback(float elapsed_time);
+    void DamagedCheck(int damage, float InvincibleTime)override;
+    void TutorialDamagedCheck(int damage, float InvincibleTime)override;
+    void PlayerKnocKback(float elapsed_time)override;
     //プレイヤーのジャスト回避用の当たり判定に当たったら
-    void PlayerJustAvoidance(bool hit);
+    void PlayerJustAvoidance(bool hit)override;
 public:
-    void FalseCameraReset() { camera_reset = false; }
-    void FalseCameraLockOn() { is_camera_lock_on = false; }
-    void FalseAvoidance() { is_avoidance = false; }
+    void FalseCameraReset() override { camera_reset = false; }
+    void FalseCameraLockOn() override { is_camera_lock_on = false; }
+    void FalseAvoidance() override { is_avoidance = false; }
 private:
     void GetPlayerDirections();
 public:
-    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right)
+    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right) override
     {
         camera_forward = c_forward;
         camera_right = c_right;
     }
-    void SetCameraPosition(DirectX::XMFLOAT3 p) { camera_position = p; }
+    void SetCameraPosition(DirectX::XMFLOAT3 p) override { camera_position = p; }
 private:
     //回避の加速
     void AvoidanceAcceleration(float elapse_time);
@@ -594,7 +586,7 @@ private:
     //アニメーション遷移(1frameだけしか呼ばないもの)
 public:
     //待機に遷移
-    void TransitionIdle(float blend_second = 0.3f);
+    void TransitionIdle(float blend_second = 0.3f) override;
 private:
     //移動に遷移
     void TransitionMove(float blend_second = 0.3f);
@@ -641,11 +633,11 @@ private:
 
 public:
     //スタートモーション
-    void TransitionStartMothin();
+    void TransitionStartMothin()override;
     //ステージ移動に遷移
-    void TransitionStageMove();
+    void TransitionStageMove()override;
     //ステージ遷移終了
-    void TransitionStageMoveEnd();
+    void TransitionStageMoveEnd()override;
     //クリアに関すること
 private:
     //モーション
@@ -665,11 +657,11 @@ private:
     DirectX::XMFLOAT3 event_camera_eye{ 0,3.4f,0.0f };
     DirectX::XMFLOAT3 event_camera_joint{};
 public:
-    DirectX::XMFLOAT3 GetEnentCameraEye() { return event_camera_eye; }
-    DirectX::XMFLOAT3 GetEnentCameraJoint() { return event_camera_joint; }
-    bool GetEndClearMotion() { return is_end_clear_motion; }
-    bool GetStartClearMotion() { return is_start_cleear_motion; }
-    void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    DirectX::XMFLOAT3 GetEnentCameraEye() override { return event_camera_eye; }
+    DirectX::XMFLOAT3 GetEnentCameraJoint() override { return event_camera_joint; }
+    bool GetEndClearMotion() override { return is_end_clear_motion; }
+    bool GetStartClearMotion() override { return is_start_cleear_motion; }
+    void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override;
 private:
     //関数ポインタ
     typedef void(Player::* PlayerChainMoveActivity)(float elapsed_time, SkyDome* sky_dome);
@@ -732,10 +724,10 @@ private:
     void chain_parm_reset();
     float change_normal_timer{ 0.0f };
 public:
-    bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
-    bool during_chain_attack_end() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
-    bool during_chain_attack() { return is_chain_attack_aftertaste; }  // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
-    void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func);
+    bool during_search_time() override { return search_time < SEARCH_TIME && search_time > 0; }
+    bool during_chain_attack_end() override { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
+    bool during_chain_attack() override { return is_chain_attack_aftertaste; }  // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+    void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func)override;
 private:
     //--------< 変数 >--------//
     struct LockOnSuggest
