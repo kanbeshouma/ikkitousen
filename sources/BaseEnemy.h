@@ -74,6 +74,7 @@ protected:
     DirectX::XMFLOAT3 mPosition{};
     DirectX::XMFLOAT3 mScale{1.0f,1.0f,1.0f};
     DirectX::XMFLOAT4 mOrientation{ 0.0f,0.0f,0.0f,1.0f };
+    std::vector<DirectX::XMFLOAT4X4> transform{};
 
     DirectX::XMFLOAT3 mPlayerPosition{};
 

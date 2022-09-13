@@ -73,9 +73,21 @@ void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
 
     Graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
     mDissolve = (std::max)(0.0f, mDissolve);
+
+    //-----ワールド行列を計算-----//
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+
+    //-----もしキャッシュデータが設定以下ならそのまま追加-----//
+    if (transform.size() < SkinnedMesh::MAX_CASHE_SIZE) transform.emplace_back(world);
+    //-----もしキャッシュデータが多かったら先頭データを削除して挿入-----//
+    else if (transform.size() >= SkinnedMesh::MAX_CASHE_SIZE)
+    {
+        transform.erase(transform.begin());
+        transform.emplace_back(world);
+    }
+
     const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
-    mpModel->render(Graphics_.get_dc().Get(), mAnimPara, world, color,mDissolve);
+    mpModel->render(Graphics_.get_dc().Get(), mAnimPara, transform.at(0), color,mDissolve);
 }
 
 bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_)

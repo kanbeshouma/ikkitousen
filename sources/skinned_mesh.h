@@ -181,6 +181,8 @@ private:
     static const int MAX_BONE_INFLUENCES{ 4 };
     static const int MAX_BONES{ 256 };
 public:
+    //-----モデルのキャッシュ数-----//
+    static const int MAX_CASHE_SIZE = 5;
     //--------< 構造体 >--------//
     struct vertex
     {

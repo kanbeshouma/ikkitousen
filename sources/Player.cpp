@@ -625,7 +625,19 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     SkinnedMesh::mesh_tuple backpack_mdl = std::make_tuple("backpack_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple camera_mdl = std::make_tuple("camera_mesh", threshold_camera_mesh);
 
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+    //-----ワールド行列を計算-----//
+    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(scale, orientation, position);
+
+    //-----もしキャッシュデータが設定以下ならそのまま追加-----//
+    if (transform.size() < SkinnedMesh::MAX_CASHE_SIZE) transform.emplace_back(world);
+    //-----もしキャッシュデータが多かったら先頭データを削除して挿入-----//
+    else if (transform.size() >= SkinnedMesh::MAX_CASHE_SIZE)
+    {
+        transform.erase(transform.begin());
+        transform.emplace_back(world);
+    }
+    model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_start_cleear_motion == false)
