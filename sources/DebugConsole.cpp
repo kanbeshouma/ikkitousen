@@ -2,14 +2,14 @@
 
 DebugConsole::~DebugConsole()
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CONSOLE
     FreeConsole();
 #endif // DEBUG
 }
 
 void DebugConsole::CreateDebugConsole()
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CONSOLE
     AllocConsole();
     FILE* fp;
     freopen_s(&fp, "CONOUT$", "w", stdout);
@@ -23,12 +23,12 @@ void DebugConsole::CreateDebugConsole()
             TRUE,           // BOOL bAbsolute
             &window_size);// CONST SMALL_RECT *lpConsoleWindow
     }
-#endif // DEBUG
+#endif // DEBUG_CONSOLE
 }
 
 void DebugConsole::WriteDebugConsole(std::string text, TextColor color)
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CONSOLE
     std::lock_guard<std::mutex> lock(mutex);
 
     WORD code = FOREGROUND_INTENSITY;
@@ -44,5 +44,5 @@ void DebugConsole::WriteDebugConsole(std::string text, TextColor color)
     SetConsoleTextAttribute(handle, code);
     std::cout << text << std::endl;
     SetConsoleTextAttribute(handle, FOREGROUND_INTENSITY);
-#endif // DEBUG
+#endif // DEBUG_CONSOLE
 }
