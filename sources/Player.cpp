@@ -162,7 +162,6 @@ void Player::UpdateTitle(float elapsed_time)
         }
     }
 #endif // USE_IMGUI
-    //TurnTitle(elapsed_time, orientation, position, camera_position);
 
 }
 

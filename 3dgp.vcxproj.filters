@@ -217,6 +217,12 @@
     <Filter Include="Sources\Scene\SceneMulchGame">
       <UniqueIdentifier>{7c1fca8a-2a38-4d5a-a67d-be7ad195791d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\NetWork">
+      <UniqueIdentifier>{e169b3af-b094-4dcf-8eba-0b6fabdfbf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\DebugConsole">
+      <UniqueIdentifier>{1f93653a-0d36-40ce-9aed-15bc4dc75f52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -563,6 +569,18 @@
     </ClCompile>
     <ClCompile Include="sources\SceneMulchGame.cpp">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\CommunicationSystem.cpp">
+      <Filter>Sources\NetWork</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Correspondence.cpp">
+      <Filter>Sources\NetWork</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SocketCommunication.cpp">
+      <Filter>Sources\NetWork</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\DebugConsole.cpp">
+      <Filter>Sources\DebugConsole</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -911,6 +929,21 @@
     </ClInclude>
     <ClInclude Include="sources\SceneMulchGame.h">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\CommunicationSystem.h">
+      <Filter>Sources\NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Correspondence.h">
+      <Filter>Sources\NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SocketCommunication.h">
+      <Filter>Sources\NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\DebugConsole.h">
+      <Filter>Sources\DebugConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\NetWorkInformationStucture.h">
+      <Filter>Sources\NetWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

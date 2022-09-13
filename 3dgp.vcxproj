@@ -210,6 +210,9 @@
     <ClCompile Include="sources\BossRushUnit.cpp" />
     <ClCompile Include="sources\BossUnit.cpp" />
     <ClCompile Include="sources\CannonballBullet.cpp" />
+    <ClCompile Include="sources\CommunicationSystem.cpp" />
+    <ClCompile Include="sources\Correspondence.cpp" />
+    <ClCompile Include="sources\DebugConsole.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
@@ -293,6 +296,7 @@
     <ClCompile Include="sources\ShieldEnemy.cpp" />
     <ClCompile Include="sources\skinned_mesh.cpp" />
     <ClCompile Include="sources\SkyDome.cpp" />
+    <ClCompile Include="sources\SocketCommunication.cpp" />
     <ClCompile Include="sources\SpearEnemy.cpp" />
     <ClCompile Include="sources\SpearEnemy_Ace.cpp" />
     <ClCompile Include="sources\sprite.cpp" />
@@ -328,7 +332,11 @@
     <ClInclude Include="sources\BossRushUnit.h" />
     <ClInclude Include="sources\BossUnit.h" />
     <ClInclude Include="sources\CannonballBullet.h" />
+    <ClInclude Include="sources\CommunicationSystem.h" />
+    <ClInclude Include="sources\Correspondence.h" />
+    <ClInclude Include="sources\DebugConsole.h" />
     <ClInclude Include="sources\DragonBreath.h" />
+    <ClInclude Include="sources\NetWorkInformationStucture.h" />
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
     <ClInclude Include="sources\SceneMulchGame.h" />
@@ -412,6 +420,7 @@
     <ClInclude Include="sources\ShieldEnemy.h" />
     <ClInclude Include="sources\skinned_mesh.h" />
     <ClInclude Include="sources\SkyDome.h" />
+    <ClInclude Include="sources\SocketCommunication.h" />
     <ClInclude Include="sources\SpearEnemy.h" />
     <ClInclude Include="sources\SpearEnemy_Ace.h" />
     <ClInclude Include="sources\sprite.h" />
