@@ -223,6 +223,9 @@
     <Filter Include="Sources\DebugConsole">
       <UniqueIdentifier>{1f93653a-0d36-40ce-9aed-15bc4dc75f52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Character\player\ClientPlayer">
+      <UniqueIdentifier>{56c3fc9a-141b-46dd-bb1a-6a3403e552ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -581,6 +584,15 @@
     </ClCompile>
     <ClCompile Include="sources\DebugConsole.cpp">
       <Filter>Sources\DebugConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ClientPlayer.cpp">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ClientPlayerAnimation.cpp">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ClientPlayerMove.cpp">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -944,6 +956,12 @@
     </ClInclude>
     <ClInclude Include="sources\NetWorkInformationStucture.h">
       <Filter>Sources\NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ClientPlayer.h">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ClientPlayerMove.h">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
