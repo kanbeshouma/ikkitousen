@@ -223,32 +223,17 @@ void SceneMulchGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 
-	//プレイヤーがジャスト回避したらslow
-	if (player_manager->GetIsJustAvoidance())
-	{
-		slow = true;
-	}
-	else
-	{
-		slow_timer = 0.0f;
-		slow = false;
-	}
-	//slowがtrueなら
-	if (slow)
-	{
-		slow_timer += 1.0f * elapsed_time;
-		//タイマーが1.0秒以下なら遅くする
-		if (slow_timer < 1.0f)
-		{
-			elapsed_time *= slow_rate;
-		}
-	}
+	//-----	スロウ判定-----//
+	JudgeSlow(elapsed_time);
 
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 	old_last_boss_mode = last_boss_mode;
 
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	// camera
+	cameraManager->Update(elapsed_time);
 
 	//-----プレイヤーの位置を設定-----//
 	enemyManager->fSetPlayerPosition(player_manager->GetPosition());
@@ -261,153 +246,27 @@ void SceneMulchGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//-----↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓-----//
 
-	//-----プレイヤーに一番近い敵を取得-----//
-	BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
-
-	//-----カメラのインスタンスを取得-----//
-	Camera* c = cameraManager->GetCurrentCamera();
 
 	//-----プレイヤーが死んだらゲームオーバー-----//
 	if (player_manager->GetIsAlive() == false)	is_game_over = true;
 
-	//-----敵とのあたり判定(当たったらコンボ加算)-----//
-	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
+	//-----プレイヤー関係の更新処理-----//
+	PlayerManagerUpdate(graphics, elapsed_time);
 
-	//-----ジャスト回避が可能かどうかの当たり判定-----//
-	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
-
-	//-----敵の攻撃とプレイヤーの当たり判定-----//
-	player_manager->EnemyAttackVsPlayer(enemyManager);
-
-	//-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
-	player_manager->PlayerStunVsEnemy(enemyManager);
-
-	//-----プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる-----//
-	player_manager->SetPlayerChainTime(enemyManager);
-
-	//-----弾とプレイヤーの当たり判定-----//
-	player_manager->BulletVsPlayer(mBulletManager);
+	//-----プレイヤー関係の当たり判定-----//
+	PlayerManagerCollision(graphics, elapsed_time);
 
 	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
 	last_boss_mode = enemyManager->fGetBossMode();
 
-	//-----ボスが人型になる時-----//
-	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipToHuman)
-	{
-		c->boss_animation = true;
-		player_manager->SetPlayerPosition({ 0,0,-120.0f });
-		//プレイヤーの行動範囲変更
-		player_manager->ChangePlayerJustificationLength();
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
-		purple_threshold = 0.01f;
-	}
+	//-----ボスの形態によってゲームのパラメータを再設定する-----//
+	SetBossTypeGameParam();
 
-	//-----ボスがドラゴンになる時-----//
-	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::HumanToDragon)
-	{
-		c->boss_animation = true;
-		player_manager->SetPlayerPosition({ 0,0,-120.0f });
-		//プレイヤーの行動範囲変更
-		player_manager->ChangePlayerJustificationLength();
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
-		red_threshold = 0.01f;
-	}
+	SetSkyDomeColor(elapsed_time);
 
-	//-----通常時-----//
-	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipAppear)
-	{
-		c->boss_animation = true;
-		player_manager->SetPlayerPosition({ 0,0,-120.0f });
-		//プレイヤーの行動範囲変更.
-		player_manager->ChangePlayerJustificationLength();
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
-	}
+	//-----ボスのイベントカメラの設定-----//
+	BossEventCamera();
 
-	//-----再挑戦時-----//
-	if (old_last_boss_mode == LastBoss::Mode::Ship && last_boss_mode == LastBoss::Mode::ShipToHuman)
-	{
-		c->boss_animation = true;
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
-		purple_threshold = 0.01f;
-	}
-	if (old_last_boss_mode == LastBoss::Mode::Human && last_boss_mode == LastBoss::Mode::HumanToDragon)
-	{
-		c->boss_animation = true;
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
-		red_threshold = 0.01f;
-	}
-
-	//-----SkyDomeの色-----//
-	if (purple_threshold >= 0.01f && purple_threshold <= 1.0f)
-	{
-		purple_threshold += 0.2f * elapsed_time;
-		SkyDome::set_purple_threshold(purple_threshold);
-	}
-	if (red_threshold >= 0.01f && red_threshold <= 1.0f)
-	{
-		red_threshold += 0.2f * elapsed_time;
-		SkyDome::set_red_threshold(red_threshold);
-	}
-
-	//--------------------<ボスの方にカメラを向ける処理>--------------------//
-	if (enemyManager->fGetIsEventCamera() && !mIsBossCamera)
-	{
-		post_effect->clear_post_effect();
-		// まだボスのほうを向いていないとき
-		mIsBossCamera = true;
-		cameraManager->SetCamera(static_cast<int>(CameraTypes::Joint));
-	}
-
-	//-----ボスのイベントカメラになる-----//
-	if (enemyManager->fGetIsEventCamera() && mIsBossCamera)
-	{
-		const DirectX::XMFLOAT3 eye = enemyManager->fGetEye();
-		const DirectX::XMFLOAT3 focus = enemyManager->fGetFocus();
-
-		// カメラがEnemyManagerを経由し555たボスによって更新される
-		cameraManager->GetCurrentCamera()->set_eye(eye);
-		cameraManager->GetCurrentCamera()->set_target(focus);
-
-		// 敵の移動を制限
-		enemyManager->fLimitEnemies();
-	}
-
-	//-----イベントカメラ終了-----//
-	if (!enemyManager->fGetIsEventCamera() && mIsBossCamera)
-	{
-		// カメラ処理終了
-		mIsBossCamera = false;
-		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
-	}
-
-	// camera
-	cameraManager->Update(elapsed_time);
-
-	//-----ボス用のカメラに設定する-----//
-	player_manager->SetBossCamera(mIsBossCamera);
-
-	//-----カメラの方向を設定する-----//
-	player_manager->SetCameraDirection(c->GetForward(), c->GetRight());
-
-	//-----更新処理-----//
-	player_manager->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-
-	//-----ロックオンのポストエフェクトをかける-----//
-	player_manager->LockOnPostEffect(elapsed_time, post_effect.get());
-
-	//-----カメラの位置を設定する-----//
-	player_manager->SetCameraPosition(c->get_eye());
-
-	//-----プレイヤーに一番近い敵を設定する-----//
-	player_manager->SetTarget(enemy);
-
-	//-----プレイヤーにカメラのターゲットを設定する-----//
-	player_manager->SetCameraTarget(c->get_target());
 
 	//-----プレイヤーにダッシュエフェクトをかける-----//
 	player_manager->DashPostEffect(graphics, post_effect.get());
@@ -868,7 +727,7 @@ void SceneMulchGame::GameClearAct(float elapsed_time, GraphicsPipeline& graphics
 		//プレイヤーのクリアモーションが終わってからしか動かないようにする
 		if (player_manager->GetMyTerminalEndClearMotion())
 		{
-			//画面ヲ徐々に黒くする
+			//画面を徐々に黒くする
 			if (brack_back_pram.color.w > 0.7f)
 			{
 				if (is_set_black == false)
@@ -890,4 +749,199 @@ void SceneMulchGame::GameClearAct(float elapsed_time, GraphicsPipeline& graphics
 			}
 		}
 	}
+}
+
+void SceneMulchGame::JudgeSlow(float& elapsed_time)
+{
+	//プレイヤーがジャスト回避したらslow
+	if (player_manager->GetIsJustAvoidance())
+	{
+		slow = true;
+	}
+	else
+	{
+		slow_timer = 0.0f;
+		slow = false;
+	}
+	//slowがtrueなら
+	if (slow)
+	{
+		slow_timer += 1.0f * elapsed_time;
+		//タイマーが1.0秒以下なら遅くする
+		if (slow_timer < 1.0f)
+		{
+			elapsed_time *= slow_rate;
+		}
+	}
+}
+
+void SceneMulchGame::SetBossTypeGameParam()
+{
+	//-----カメラのインスタンスを取得-----//
+	Camera* c = cameraManager->GetCurrentCamera();
+
+	//-----ボスが人型になる時-----//
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipToHuman)
+	{
+		c->boss_animation = true;
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更
+		player_manager->ChangePlayerJustificationLength();
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+		purple_threshold = 0.01f;
+	}
+
+	//-----ボスがドラゴンになる時-----//
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::HumanToDragon)
+	{
+		c->boss_animation = true;
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更
+		player_manager->ChangePlayerJustificationLength();
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+		red_threshold = 0.01f;
+	}
+
+	//-----通常時-----//
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipAppear)
+	{
+		c->boss_animation = true;
+		player_manager->SetPlayerPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更.
+		player_manager->ChangePlayerJustificationLength();
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
+	}
+
+	//-----再挑戦時-----//
+	if (old_last_boss_mode == LastBoss::Mode::Ship && last_boss_mode == LastBoss::Mode::ShipToHuman)
+	{
+		c->boss_animation = true;
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+		purple_threshold = 0.01f;
+	}
+	if (old_last_boss_mode == LastBoss::Mode::Human && last_boss_mode == LastBoss::Mode::HumanToDragon)
+	{
+		c->boss_animation = true;
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+		red_threshold = 0.01f;
+	}
+}
+
+void SceneMulchGame::BossEventCamera()
+{
+	//-----敵のインスタンスを生成-----//
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	//--------------------<ボスの方にカメラを向ける処理>--------------------//
+	if (enemyManager->fGetIsEventCamera() && !mIsBossCamera)
+	{
+		post_effect->clear_post_effect();
+		// まだボスのほうを向いていないとき
+		mIsBossCamera = true;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Joint));
+	}
+
+	//-----ボスのイベントカメラになる-----//
+	if (enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+		const DirectX::XMFLOAT3 eye = enemyManager->fGetEye();
+		const DirectX::XMFLOAT3 focus = enemyManager->fGetFocus();
+
+		// カメラがEnemyManagerを経由し555たボスによって更新される
+		cameraManager->GetCurrentCamera()->set_eye(eye);
+		cameraManager->GetCurrentCamera()->set_target(focus);
+
+		// 敵の移動を制限
+		enemyManager->fLimitEnemies();
+	}
+
+	//-----イベントカメラ終了-----//
+	if (!enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+		// カメラ処理終了
+		mIsBossCamera = false;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
+	}
+}
+
+void SceneMulchGame::SetSkyDomeColor(float elapsed_time)
+{
+	//-----SkyDomeの色-----//
+	if (purple_threshold >= 0.01f && purple_threshold <= 1.0f)
+	{
+		purple_threshold += 0.2f * elapsed_time;
+		SkyDome::set_purple_threshold(purple_threshold);
+	}
+	if (red_threshold >= 0.01f && red_threshold <= 1.0f)
+	{
+		red_threshold += 0.2f * elapsed_time;
+		SkyDome::set_red_threshold(red_threshold);
+	}
+}
+
+void SceneMulchGame::PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time)
+{
+	//-----敵のインスタンスを生成-----//
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	//-----プレイヤーに一番近い敵を取得-----//
+	BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
+
+	//-----カメラのインスタンスを取得-----//
+	Camera* c = cameraManager->GetCurrentCamera();
+
+	//-----ボス用のカメラに設定する-----//
+	player_manager->SetBossCamera(mIsBossCamera);
+
+	//-----カメラの方向を設定する-----//
+	player_manager->SetCameraDirection(c->GetForward(), c->GetRight());
+
+	//-----更新処理-----//
+	player_manager->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+
+	//-----ロックオンのポストエフェクトをかける-----//
+	player_manager->LockOnPostEffect(elapsed_time, post_effect.get());
+
+	//-----カメラの位置を設定する-----//
+	player_manager->SetCameraPosition(c->get_eye());
+
+	//-----プレイヤーに一番近い敵を設定する-----//
+	player_manager->SetTarget(enemy);
+
+	//-----プレイヤーにカメラのターゲットを設定する-----//
+	player_manager->SetCameraTarget(c->get_target());
+
+
+}
+
+void SceneMulchGame::PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time)
+{
+	//-----弾のインスタンスを生成-----//
+	BulletManager& mBulletManager = BulletManager::Instance();
+
+	//-----敵のインスタンスを生成-----//
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	//-----敵とのあたり判定(当たったらコンボ加算)-----//
+	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
+
+	//-----ジャスト回避が可能かどうかの当たり判定-----//
+	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
+
+	//-----敵の攻撃とプレイヤーの当たり判定-----//
+	player_manager->EnemyAttackVsPlayer(enemyManager);
+
+	//-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
+	player_manager->PlayerStunVsEnemy(enemyManager);
+
+	//-----プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる-----//
+	player_manager->SetPlayerChainTime(enemyManager);
+
+	//-----弾とプレイヤーの当たり判定-----//
+	player_manager->BulletVsPlayer(mBulletManager);
 }

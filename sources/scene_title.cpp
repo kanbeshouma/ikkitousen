@@ -5,6 +5,7 @@
 #include "framework.h"
 #include "scene_title.h"
 #include "scene_game.h"
+#include"SceneMulchGame.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "ModelCashe.h"
@@ -594,7 +595,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (have_tutorial_state == 1) /* チュートリアルなし */
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			SceneManager::scene_switching(new SceneLoading(new SceneMulchGame()), DISSOLVE_TYPE::HORIZON, 2.0f);
 		}
 		else
 		{

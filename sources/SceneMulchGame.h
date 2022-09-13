@@ -181,5 +181,22 @@ private:
     bool slow{ false };
     float slow_timer{ 0.0f };
     float slow_rate{ 0.05f };
+    //----------ゲームのスロウ判定----------//
+    void JudgeSlow(float& elapsed_time);
+
+    //-----------ボスの形態でのパラメータの再設定----------//
+    void SetBossTypeGameParam();
+
+    //----------ボスのイベントカメラの設定----------//
+    void BossEventCamera();
+
+    //----------スカイドームの色----------//
+    void SetSkyDomeColor(float elapsed_time);
+
+    //----------プレイヤーの更新処理----------//
+    void PlayerManagerUpdate(GraphicsPipeline& graphics,float elapsed_time);
+
+    //---------プレイヤー関係の当たり判定----------//
+    void PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time);
 
 };
