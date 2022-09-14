@@ -960,30 +960,6 @@ void Player::TransitionAvoidance()
     is_avoidance = true;
     //回り込み回避かどうか
     is_behind_avoidance = false;
-    //--------------------------イージング加速の変数初期化---------------------------------//
-#if 0
-    avoidance_boost_time = 0;
-    avoidance_start = velocity;
-    if (is_lock_on)
-    {
-        leverage = 15.0f;
-        DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
-        if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
-        {
-            avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
-        }
-        else
-        {
-            avoidance_end = { movevec.x * leverage ,movevec.y * leverage,movevec.z * leverage };
-        }
-    }
-    else
-    {
-        leverage = 30.0f;
-        avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
-    }
-
-#endif // 0
     avoidance_boost_time = 0.0f;
     //方向転換の回数
     avoidance_direction_count = 3;

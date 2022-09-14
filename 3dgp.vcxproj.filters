@@ -594,6 +594,9 @@
     <ClCompile Include="sources\ClientPlayerMove.cpp">
       <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="sources\ClientPlayerTransitionAnimation.cpp">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">

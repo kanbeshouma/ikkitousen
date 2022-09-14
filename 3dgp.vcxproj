@@ -213,6 +213,7 @@
     <ClCompile Include="sources\ClientPlayer.cpp" />
     <ClCompile Include="sources\ClientPlayerAnimation.cpp" />
     <ClCompile Include="sources\ClientPlayerMove.cpp" />
+    <ClCompile Include="sources\ClientPlayerTransitionAnimation.cpp" />
     <ClCompile Include="sources\CommunicationSystem.cpp" />
     <ClCompile Include="sources\Correspondence.cpp" />
     <ClCompile Include="sources\DebugConsole.cpp" />
