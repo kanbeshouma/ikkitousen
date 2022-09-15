@@ -13,6 +13,7 @@
 #include "user.h"
 #include "volume_icon.h"
 #include "LastBoss.h"
+#include"ClientPlayer.h"
 
 SceneMulchGame::SceneMulchGame()
 {
@@ -36,10 +37,21 @@ void SceneMulchGame::initialize(GraphicsPipeline& graphics)
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
+
+	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
-	Player* player = new Player(graphics, 0);
-	player_manager->RegisterPlayer(player);
-	player_manager->SetPrivateObjectId(0);
+		Player* player = new Player(graphics, 0);
+		player_manager->RegisterPlayer(player);
+		player_manager->SetPrivateObjectId(0);
+
+	{
+		ClientPlayer* p = new ClientPlayer(graphics, 1);
+		player_manager->RegisterPlayer(p);
+	}
+	{
+		ClientPlayer* p = new ClientPlayer(graphics, 2);
+		player_manager->RegisterPlayer(p);
+	}
 
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
@@ -181,7 +193,7 @@ void SceneMulchGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//-----ステージ中のウェーブの更新処理-----//
-	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	//mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())

@@ -44,6 +44,8 @@ protected:
 protected:
     //-----キャラクターそれぞれの番号-----//
     int object_id{ -1 };
+    SkinnedMesh::anim_Parameters anim_parm{};
+
 public:
     ////-----オブジェクトIDのゲッター-----//
     int GetObjectId() { return object_id; }

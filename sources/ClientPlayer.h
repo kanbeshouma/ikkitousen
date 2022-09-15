@@ -73,49 +73,47 @@ private:
     enum ActionState
     {
         //-----待機-----//
-        Idle,
+        ActionIdle,
         //-----移動-----//
-        Move,
+        ActionMove,
         //-----回避-----//
-        Avoidance,
+        ActionAvoidance,
         //-----攻撃1-----//
-        Attack1,
+        ActionAttack1,
         //-----攻撃2-----//
-        Attack2,
+        ActionAttack2,
         //-----攻撃3-----//
-        Attack3,
+        ActionAttack3,
         //-----突進開始-----//
-        ChargeInit,
+        ActionChargeInit,
         //-----突進中-----//
-        Charge,
+        ActionCharge,
         //-----ダメージ-----//
-        Damage,
+        ActionDamage,
         //-----覚醒-----//
-        Awaking,
+        ActionAwaking,
         //-----通常状態になる-----//
-        InvAwaking,
+        ActionInvAwaking,
         //-----死亡-----//
-        Die,
+        ActionDie,
         //-----死亡中-----//
-        Dying,
-        //-----飛行機モード-----//
-        TransformWing,
+        ActionDying,
         //-----飛行機モード待機-----//
-        IdleWing,
-        //-----人型モード-----//
-        TransformHum,
+        ActionIdleWing,
         //-----ステージ移動-----//
-        StageMove,
+        ActionStageMove,
+        //-----ステージ移動中-----//
+        ActionStageMoveIdle,
         //-----ステージ移動終了-----//
-        StageMoveEnd
+        ActionStageMoveEnd
     };
 
     ////-----アニメーションのステート-----//
-    ActionState action_state{ ActionState::Idle };
+    ActionState action_state{ ActionState::ActionIdle };
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override;
-    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies)override {};
+    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies)override { return false; };
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time)override {};
     void ChangePlayerJustificationLength()override {};
@@ -341,14 +339,14 @@ private:
     void SetCameraTarget(DirectX::XMFLOAT3 p)override { camera_target = p; }
     void SetBossCamera(bool boss_c) override { boss_camera = boss_c; }
     void SetPosition(DirectX::XMFLOAT3 pos) override { position = pos; }
-    DirectX::XMFLOAT3 GetForward()override {}
-    DirectX::XMFLOAT3 GetRight()override {}
-    DirectX::XMFLOAT3 GetUp()override {}
+    DirectX::XMFLOAT3 GetForward()override { return {}; }
+    DirectX::XMFLOAT3 GetRight()override { return {}; }
+    DirectX::XMFLOAT3 GetUp()override { return {}; }
     DirectX::XMFLOAT3 GetPosition()override { return position; }
     DirectX::XMFLOAT3 GetVelocity()override { return velocity; }
     HitResult& GetPlayerHitResult()override { return hit; }
-    bool GetCameraReset()override {}
-    bool GetCameraLockOn()override {}
+    bool GetCameraReset()override { return false; }
+    bool GetCameraLockOn()override { return false; }
     bool GetEnemyLockOn()override { return is_lock_on; }
     bool GetAvoidance()override { return is_avoidance; }
     bool GetBehindAvoidance()override { return is_behind_avoidance; }
@@ -379,10 +377,10 @@ private:
         return sword_capsule_param[0];
     }
     float GetStunRadius() override { return sphere_radius; }
-    std::vector<DirectX::XMFLOAT3> GetBehindPoint() override {}
+    std::vector<DirectX::XMFLOAT3> GetBehindPoint() override { return {}; }
     void SetRaycast(bool r) override { raycast = r; }
     int GetPlayerPower() override { return player_attack_power; }
-    [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() override {}
+    [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() override { return damage_func; }
 
     BaseEnemy* GetPlayerTargetEnemy() const  override
     {
@@ -408,11 +406,26 @@ public:
     void FalseCameraReset() override {}
     void FalseCameraLockOn() override {}
     void FalseAvoidance() override {}
+    DirectX::XMFLOAT3 GetEnentCameraEye()override { return {}; };
+    DirectX::XMFLOAT3 GetEnentCameraJoint()override { return {}; };
+    bool GetEndClearMotion()override { return false; };
+    bool GetStartClearMotion()override { return false; };
+    void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override {};
+public:
+    bool during_search_time()override { return false; }
+    bool during_chain_attack_end()override { return false; }
+    bool during_chain_attack()override { return false; }
+    void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func) override {}
+
 private:
     void GetPlayerDirections();
 public:
     void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right) override{}
     void SetCameraPosition(DirectX::XMFLOAT3 p) override {}
+private:
+        AddDamageFunc damage_func;
+        bool display_scape_imgui;
+
 private:
     ////-----アニメーションの遷移に関する関数が入る-----//
     using TransitionAnimation = std::function <void(void)>;
@@ -466,7 +479,7 @@ private:
     void ActivationTransitionMap(int root_animation_index);
 public:
     //待機に遷移
-    void TransitionIdle(float blend_second = 0.3f) override {};
+    void TransitionIdle(float blend_second) override {};
 private:
     void TransitionIdle();
     //移動に遷移
@@ -485,10 +498,6 @@ private:
     void TransitionAttackType3();
     //ダメージ受けたときに遷移
     void TransitionDamage();
-    //飛行機モードに遷移
-    void TransitionTransformWing();
-    //人型に変形に遷移
-    void TransitionTransformHum();
     //覚醒状態に遷移
     void TransitionAwaking();
     //通常状態に遷移
@@ -497,7 +506,8 @@ private:
     void TransitionDie();
     //死亡中
     void TransitionDying();
-
+    //ステージ移動中
+    void TransitionStageMoveIdle();
 private:
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
@@ -505,8 +515,6 @@ private:
     void MoveUpdate(float elapsed_time, SkyDome* sky_dome);
     //回避アニメーション中の更新処理
     void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
-    //後ろに回り込む回避の更新処理
-    void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
     //突進開始アニメーション中の更新処理
     void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);
     //突進中の更新処理
@@ -519,25 +527,20 @@ private:
     void AttackType3Update(float elapsed_time, SkyDome* sky_dome);
     //ダメージ受けたとき
     void DamageUpdate(float elapsed_time, SkyDome* sky_dome);
-    //人型に戻る
-    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);
-    //飛行機モード
-    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);
     //覚醒状態に変形するときの更新
     void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //通常状態に変形するときの更新
     void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //ステージ移動の時の更新
     void StageMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ステージ移動中の待機
+    void StageMoveIdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //ステージ移動の時の更新
     void StageMoveEndUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡
     void DieUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡中
     void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
-    //モーション
-    void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
-
 public:
     //スタートモーション
     void TransitionStartMothin()override {};
