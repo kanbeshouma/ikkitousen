@@ -1,8 +1,11 @@
+//通信コマンド
+char cmd[4]{};
 #pragma once
 #include<vector>
 #include<memory>
 #include<DirectXMath.h>
 #include"SocketCommunication.h"
+#include"game_pad.h"
 //---------------------------------------------------------------
 //
 //通信で必要なコマンド，構造体を宣言する
@@ -24,6 +27,14 @@ enum CommandList
     //IPアドレス取得
     IpAddress,
 };
+
+enum UpdateCommand
+{
+    //-----プレイヤーの動きとターゲットに関するデータ-----//
+    PlayerMainCommand,
+
+};
+
 
 ////-----ログイン情報------//
 struct LoginData
@@ -56,4 +67,23 @@ struct MachingEndData
 {
     //通信コマンド
     char cmd[4]{};
+};
+
+//-----プレイヤーが送る動きとターゲットのデータ-----//
+struct PlayerMainData
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //-----入力方向-----//
+    DirectX::XMFLOAT3 move_vec{};
+
+    //-----ボタンの入力-----//
+    GamePadButton new_button_state = 0;
+
+    //-----ロックオンしている敵の番号-----//
+    int lock_on_enemy_id{ -1 };
+
+    //-----ロックオンしてるかどうか-----//
+    bool lock_on{ false };
 };
