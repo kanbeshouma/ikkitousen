@@ -1,249 +1,714 @@
 #include"ClientPlayer.h"
 
-void ClientPlayer::RegisterTransitionAnimationMap(TransEdge tuples, TransitionAnimation func)
+void ClientPlayer::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
-    //==========std::getから何の値を取り出しているかを明確にする==========//
-
-    //-----遷移元のアニメーション番号-----//
-    constexpr int TransRootIndex = 0;
-
-    //-----遷移先のアニメーション番号-----//
-    constexpr int TransDestinationIndex = 1;
-
-    //==========tuplesから遷移元と遷移先のアニメーション番号を取得する==========//
-
-    //-----遷移元のアニメーション番号-----//
-    const int trans_root_index = std::get<TransRootIndex>(tuples);
-
-    //-----遷移先のアニメーション番号-----//
-    const int trans_destination_index = std::get<TransDestinationIndex>(tuples);
-
-    //-----遷移元を取得-----//
-    auto& child_map = transition_animations[trans_root_index];
-
-    //-----見つけたら遷移先の関数が既に登録されているかを調べる-----//
-    if (child_map.contains(trans_destination_index))
-    {
-        //-----もし登録されていたら終了-----//
-        return;
-    }
-
-    //-----関数を登録する-----//
-    child_map.emplace(std::make_pair(trans_destination_index, func));
+    (this->*player_activity)(elapsed_time,sky_dome);
 }
-
-void ClientPlayer::RegisterAnimationFunctions()
-{
-    RegisterTransitionAnimations([=]() {TransitionIdle(); },
-        TransEdge(ActionState::ActionMove, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionAvoidance, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionAwaking, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionDamage, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionInvAwaking, ActionState::ActionIdle),
-        TransEdge(ActionState::ActionStageMoveEnd, ActionState::ActionIdle)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionMove(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionMove),
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionMove),
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionMove),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionMove),
-        TransEdge(ActionState::ActionAvoidance, ActionState::ActionMove),
-        TransEdge(ActionState::ActionAwaking, ActionState::ActionMove),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionMove),
-        TransEdge(ActionState::ActionDamage, ActionState::ActionMove),
-        TransEdge(ActionState::ActionInvAwaking, ActionState::ActionMove),
-        TransEdge(ActionState::ActionStageMoveEnd, ActionState::ActionMove)
-        );
-
-    RegisterTransitionAnimations([=]() {TransitionAvoidance(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionAvoidance),
-        TransEdge(ActionState::ActionMove, ActionState::ActionAvoidance)
-        );
-
-    RegisterTransitionAnimations([=]() {TransitionChargeInit(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionChargeInit),
-        TransEdge(ActionState::ActionMove, ActionState::ActionChargeInit)
-        );
-
-    RegisterTransitionAnimations([=]() {TransitionCharge(); },
-        TransEdge(ActionState::ActionChargeInit, ActionState::ActionCharge),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionCharge)
-        );
-
-    RegisterTransitionAnimations([=]() {TransitionAttackType1(); },
-        TransEdge(ActionState::ActionAvoidance, ActionState::ActionAttack1),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionAttack1)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionAttackType2(); },
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionAttack2)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionAttackType3(); },
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionAttack3)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionDamage(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionDamage),
-        TransEdge(ActionState::ActionMove, ActionState::ActionDamage),
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionDamage),
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionDamage),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionDamage)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionAwaking(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionAwaking),
-        TransEdge(ActionState::ActionMove, ActionState::ActionAwaking),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionAwaking)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionInvAwaking(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionInvAwaking),
-        TransEdge(ActionState::ActionMove, ActionState::ActionInvAwaking),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionInvAwaking)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionStageMove(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionMove, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionChargeInit, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionStageMove),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionStageMove)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionStageMoveIdle(); },
-        TransEdge(ActionState::ActionStageMove, ActionState::ActionStageMoveIdle)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionStageMoveEnd(); },
-        TransEdge(ActionState::ActionStageMoveIdle, ActionState::ActionStageMoveEnd)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionDie(); },
-        TransEdge(ActionState::ActionIdle, ActionState::ActionDie),
-        TransEdge(ActionState::ActionMove, ActionState::ActionDie),
-        TransEdge(ActionState::ActionAttack1, ActionState::ActionDie),
-        TransEdge(ActionState::ActionAttack2, ActionState::ActionDie),
-        TransEdge(ActionState::ActionAttack3, ActionState::ActionDie),
-        TransEdge(ActionState::ActionAvoidance, ActionState::ActionDie),
-        TransEdge(ActionState::ActionAwaking, ActionState::ActionDie),
-        TransEdge(ActionState::ActionCharge, ActionState::ActionDie),
-        TransEdge(ActionState::ActionDamage, ActionState::ActionDie),
-        TransEdge(ActionState::ActionInvAwaking, ActionState::ActionDie),
-        TransEdge(ActionState::ActionStageMoveEnd, ActionState::ActionDie)
-    );
-
-    RegisterTransitionAnimations([=]() {TransitionDying(); },
-        TransEdge(ActionState::ActionDie, ActionState::ActionDying)
-    );
-
-}
-
-void ClientPlayer::ActivationTransitionMap(int root_animation_index)
-{
-    //-----遷移関数が保存されているmapを回す-----//
-    //-----構造化束縛で呼び出す-----//
-    for (auto& [key, map] : transition_animations)
-    {
-        //-----最初のkeyが今のアニメーション番号じゃなかったら次にいく-----//
-        if (key != root_animation_index) continue;
-
-        //-----要素の中にあるmapを回す-----//
-        for (auto& [no_use, func] : map)
-        {
-            //-----要素の中にある関数を呼ぶ-----//
-            //-----trueが帰って来たら遷移するのでぬける-----//
-            func();
-        }
-    }
-
-    //-----どこにも遷移しない-----//
-}
-
 
 void ClientPlayer::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionIdle);
+    //移動に遷移
+    //チェイン攻撃のロックオン完了から攻撃終了の時は操作は受け付けない
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+    {
+        TransitionMove();
+    }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+    {
+        TransitionMove();
+    }
+
+    //チェイン攻撃から戻ってきて数秒間は移動しかできない
+    //チェイン攻撃の状態では移動以外の操作は受け付けない
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
+    {
+        //回避に遷移
+        float length{ Math::calc_vector_AtoB_length(position, target) };
+        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+        {
+            //ジャスト回避なら
+            if (is_lock_on && is_just_avoidance_capsul)
+            {
+                TransitionJustBehindAvoidance();
+            }
+            else
+            {
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionAvoidance();
+            }
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionChargeInit();
+        }
+
+        Awaiking();
+    }
 }
 
 void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionMove);
+
+    //移動入力がなくなったら待機に遷移
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        TransitionIdle();
+    }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        TransitionIdle();
+    }
+    //チェイン攻撃から戻ってきて数秒間は移動しかできない
+    //チェイン攻撃の状態では移動以外の操作は受け付けない
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
+    {
+        //回避に遷移
+        float length{ Math::calc_vector_AtoB_length(position, target) };
+        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+        {
+            //ジャスト回避なら
+            if (is_lock_on && is_just_avoidance_capsul)
+            {
+                TransitionJustBehindAvoidance();
+            }
+            else
+            {
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else
+                {
+                    TransitionAvoidance();
+                }
+            }
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionChargeInit();
+        }
+
+        Awaiking();
+    }
 }
 
 void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionAvoidance);
+
+    //-----攻撃ボタンを押したら攻撃に遷移-----//
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+    {
+        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+        {
+            attack_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            TransitionAttackType1(attack_animation_blends_speeds.z);
+        }
+    }
+
+    if (avoidance_boost_time > 1.0f)
+    {
+        model->progress_animation();
+        if (model->end_of_animation())
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            //回避中かどうかの設定
+            is_avoidance = false;
+            is_behind_avoidance = false;
+            //移動入力があったら移動に遷移
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+            {
+                TransitionMove();
+            }
+            //移動入力がなかったら待機に遷移
+            else
+            {
+                TransitionIdle();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.2f)
+        {
+            model->pause_animation();
+        }
+        //連続回避の回数が0より大きいときに
+        if (avoidance_direction_count > 0)
+        {
+            //回避ボタンを押したら入力方向に方向転換
+            if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_direction_count--;
+                avoidance_buttun = true;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = GetMoveVec();
+                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                {
+                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                }
+                else
+                {
+                    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+                }
+                audio_manager->play_se(SE_INDEX::AVOIDANCE);
+                //覚醒状態の時の回避アニメーションの設定
+                if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+                //通常状態の時のアニメーションの設定
+                else model->play_animation(AnimationClips::Avoidance, false, true);
+                avoidance_boost_time = 0.0f;
+            }
+        }
+    }
+}
+
+void ClientPlayer::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
+    {
+        if (is_just_avoidance)
+        {
+            behaind_avoidance_recharge = false;
+            behaind_avoidance_cool_time = 0.0f;
+        }
+        else
+        {
+            behaind_avoidance_recharge = true;
+            behaind_avoidance_cool_time = 1.0f;
+        }
+        //回避中かどうかの設定
+        is_avoidance = false;
+        is_behind_avoidance = false;
+        //ジャスト回避のフラグを初期化
+        is_just_avoidance = false;
+        TransitionIdle();
+    }
+    else
+    {
+        is_lock_on = true;
+    }
 }
 
 void ClientPlayer::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionChargeInit);
+    if (model->end_of_animation())
+    {
+        TransitionCharge(attack_animation_blends_speeds.x);
+    }
+    //ChargeAcceleration(elapsed_time);
 }
 
 void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionCharge);
+    //ブロックされていたら剣をふって怯む
+    if (is_block)
+    {
+        TransitionAttackType1(attack_animation_blends_speeds.y);
+    }
+    //突進時間を超えたらそれぞれの遷移にとぶ
+    if (charge_time > CHARGE_MAX_TIME)
+    {
+
+        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+        PostEffect::clear_post_effect();
+        velocity.x *= 0.2f;
+        velocity.y *= 0.2f;
+        velocity.z *= 0.2f;
+
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+        {
+            charge_time = 0;
+            is_charge = false;
+            TransitionMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            charge_time = 0;
+            is_charge = false;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+            TransitionIdle();
+        }
+        Awaiking();
+    }
+    else
+    {
+        if (is_enemy_hit)
+        {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            PostEffect::clear_post_effect();
+            //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+            is_enemy_hit = false;
+            is_attack = false;
+            TransitionAttackType1(attack_animation_blends_speeds.y);
+        }
+        if (is_lock_on == false && charge_change_direction_count > 0)
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+                audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
+                charge_change_direction_count--;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = GetMoveVec();
+                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                {
+                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                }
+                else
+                {
+                    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+                }
+                //SetAccelerationVelocity();
+                charge_time = 0;
+                //TransitionCharge();
+            }
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
 }
 
 void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionAttack1);
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.16f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.11f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+
+    if (model->end_of_animation())
+    {
+
+        is_attack = false;
+        attack_time += attack_add_time * elapsed_time;
+        //猶予時間を超えたら待機に遷移
+        if (attack_time > ATTACK_TYPE1_MAX_TIME)
+        {
+            attack_time = 0;
+            TransitionIdle();
+        }
+        else
+        {
+            //猶予時間よりも早く押したら攻撃2撃目に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    attack_time = 0;
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    TransitionAttackType2(attack_animation_blends_speeds.z);
+                }
+            }
+        }
+
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
 }
 
 void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionAttack2);
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.25f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.26f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+
+    if (is_update_animation == false)
+    {
+        attack_time += attack_add_time * elapsed_time;
+        if (is_enemy_hit)
+        {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            is_attack = false;
+            attack_time = 0;
+            is_update_animation = true;
+            is_enemy_hit = false;
+        }
+        if (attack_time >= 0.6f)
+        {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionIdle();
+        }
+
+    }
+    if (model->end_of_animation())
+    {
+        attack_time += attack_add_time * elapsed_time;
+        //猶予時間を超えたら待機に遷移
+        if (attack_time > ATTACK_TYPE2_MAX_TIME)
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionIdle();
+        }
+        else
+        {
+            //猶予時間よりも早く押したら攻撃3撃目に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    attack_time = 0;
+                    TransitionAttackType3(attack_animation_blends_speeds.w);
+                }
+            }
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
 }
 
 void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionAttack3);
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.37f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.35f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+
+    //敵に当たったか時間が2秒たったら加速を終わる
+
+    if (is_update_animation == false)
+    {
+        attack_time += attack_add_time * elapsed_time;
+        if (is_enemy_hit)
+        {
+
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            is_attack = false;
+            attack_time = 0;
+            is_update_animation = true;
+            is_enemy_hit = false;
+        }
+        if (attack_time >= 0.6f)
+        {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionIdle();
+        }
+    }
+    if (model->end_of_animation())
+    {
+        attack_time += attack_add_time * elapsed_time;
+        if (attack_time > ATTACK_TYPE3_MAX_TIME)
+        {
+            //移動入力があったら移動に遷移
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+            {
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
+                charge_time = 0;
+                TransitionMove();
+            }
+            //移動入力がなかったら待機に遷移
+            else
+            {
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
+                charge_time = 0;
+                TransitionIdle();
+            }
+
+        }
+        else
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    attack_time = 0;
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    TransitionCharge(attack_animation_blends_speeds.z);
+                }
+            }
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+}
+
+void ClientPlayer::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void ClientPlayer::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    opportunity_timer += 1.0f * elapsed_time;
+    if (special_surge_combo_count > 0)special_surge_opportunity = 2.0f / special_surge_combo_count;
+    else special_surge_opportunity = 2.0f;
+
+    //設定した隙よりも時間がたったらそれぞれの行動に遷移する
+    if (opportunity_timer > special_surge_opportunity)
+    {
+        special_surge_combo_count = 0;
+        TransitionTransformHum();
+    }
 }
 
 void ClientPlayer::DamageUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionDamage);
+    if (model->end_of_animation())
+    {
+        TransitionIdle();
+    }
+}
+
+void ClientPlayer::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
+    if (model->end_of_animation())
+    {
+        //クリア演出中なら解除する
+        if (during_clear) during_clear = false;
+        TransitionIdle();
+    }
+}
+
+void ClientPlayer::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (model->end_of_animation())
+    {
+        TransitionSpecialSurge();
+    }
 }
 
 void ClientPlayer::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionAwaking);
+    if (model->end_of_animation())
+    {
+
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+        {
+            TransitionMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionIdle();
+        }
+    }
 }
 
 void ClientPlayer::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionInvAwaking);
+    if (model->end_of_animation())
+    {
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
+        {
+            TransitionMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionIdle();
+        }
+    }
 }
 
 void ClientPlayer::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionStageMove);
+    if (model->end_of_animation())
+    {
+        TransitionWingDashStart();
+    }
 }
 
-void ClientPlayer::StageMoveIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+void ClientPlayer::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionStageMoveIdle);
+    if (model->end_of_animation())
+    {
+        TransitionWingDashIdle();
+    }
+
+}
+void ClientPlayer::WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    position.y = Math::lerp(position.y, 2.0f, 1.0f * elapsed_time);
 }
 
-void ClientPlayer::StageMoveEndUpdate(float elapsed_time, SkyDome* sky_dome)
+void ClientPlayer::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionStageMoveEnd);
+    position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
+
+    if (model->end_of_animation())
+    {
+        TransitionTransformHum();
+    }
 }
 
 void ClientPlayer::DieUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionDie);
+    if (model->end_of_animation())
+    {
+        TransitionDying();
+    }
 }
 
 void ClientPlayer::DyingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ActivationTransitionMap(ActionState::ActionDying);
+    is_dying_update = true;
+    threshold += 1.0f * elapsed_time;
+    threshold_mesh += 1.0f * elapsed_time;
+    if (threshold > 1.0f && threshold_mesh > 1.0f)
+    {
+        is_alive = false;
+    }
 }
+
+void ClientPlayer::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+
+void ClientPlayer::Awaiking()
+{
+    //チェイン攻撃中は覚醒状態の各遷移にはとばない
+    if (behavior_state == Behavior::Normal)
+    {
+        //ボタン入力
+        if (game_pad->get_button() & GamePad::BTN_A)
+        {
+            if (combo_count >= MAX_COMBO_COUNT && is_awakening == false)
+            {
+                TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+            }
+        }
+        if (is_awakening && combo_count <= 0)
+        {
+            //覚醒状態かどうかの設定
+            is_awakening = false;
+            TransitionInvAwaking();//覚醒状態のときにカウントが0になったら通常状態になる
+        }
+    }
+}
+

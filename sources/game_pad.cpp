@@ -229,3 +229,19 @@ bool GamePad::set_vibration(float R, float L, float StopTime)
 	vib.wRightMotorSpeed = (WORD)R * MotorSpeedMax;
 	return XInputSetState(slot, &vib) == ERROR_SUCCESS;
 }
+
+void GamePad::SetButton(GamePadButton input)
+{
+	//-----‚Ğ‚Æ‚Â‘O‚Ìƒ{ƒ^ƒ“‚ğ•Û‘¶-----//
+	button_state[1] = button_state[0];
+
+	//-----İ’è-----//
+	button_state[0] = input;
+
+	//-----‰Ÿ‚µ‚½uŠÔ-----//
+	button_down = ~button_state[1] & input;
+
+	//-----—£‚µ‚½uŠÔ-----//
+	button_up = ~input & button_state[1];
+
+}

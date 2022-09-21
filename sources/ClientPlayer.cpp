@@ -35,8 +35,6 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     player_bones[10] = model->get_bone_by_name("foot_L_top_joint");
     player_bones[11] = model->get_bone_by_name("foot_R_top_joint");
 
-    //-----アニメーション遷移登録-----//
-    RegisterAnimationFunctions();
 }
 
 ClientPlayer::~ClientPlayer()
@@ -52,8 +50,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     if (condition_state == ConditionState::Die)
     {
         if (is_update_animation)model->update_animation(anim_parm, elapsed_time * animation_speed);
-        //ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
-        update_animation(elapsed_time, sky_dome);
+        ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
         return;
     }
     if (boss_camera)
@@ -64,8 +61,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
         return;
     }
 
-    //ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
-     update_animation(elapsed_time, sky_dome);
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
 
     //クリア演出中
     if (during_clear)
@@ -418,4 +414,122 @@ void ClientPlayer::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 
 void ClientPlayer::GetPlayerDirections()
 {
+    using namespace DirectX;
+    XMVECTOR orientation_vec{ XMLoadFloat4(&orientation) };
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    DirectX::XMVECTOR right_vec, forward_vec, up_vec;
+
+    right_vec = { m4x4._11, m4x4._12, m4x4._13 };
+    up_vec = { m4x4._21, m4x4._22, m4x4._23 };
+    forward_vec = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMStoreFloat3(&right, right_vec);
+    XMStoreFloat3(&up, up_vec);
+    XMStoreFloat3(&forward, forward_vec);
 }
+
+void ClientPlayer::BehindAvoidancePosition()
+{
+    //もし配列の中に何か入っていたら削除する
+    if (!behind_way_points.empty()) behind_way_points.clear();
+    if (!behind_interpolated_way_points.empty()) behind_interpolated_way_points.clear();
+
+    using namespace DirectX;
+    XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
+    float length_radius = Math::calc_vector_AtoB_length(p, target);//距離(半径)
+    float diameter = length_radius * 0.6f;//(直径)
+    //どっちのvelocityで左右判定するか
+    DirectX::XMFLOAT3 r{ right };
+    DirectX::XMFLOAT3 behind_point_4{};
+    if (game_pad->get_axis_LX() < 0)
+    {
+        r.x = -r.x;
+        r.y = -r.y;
+        r.z = -r.z;
+    }
+    ////----------------中継１---------------------//
+    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6f));//敵の後ろ側
+    behind_point_1.y = position.y;//敵の後ろ側
+    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6f));//敵の後ろ側
+    ////--------------------------------------------//
+    ////----------------中継2---------------------//
+    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4f));//敵の後ろ側
+    behind_point_2.y = position.y;//敵の後ろ側
+    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4f));//敵の後ろ側
+    //--------------------------------------------//
+    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4f));//敵の後ろ側
+    behind_point_3.y = position.y;//敵の後ろ側
+    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4f));//敵の後ろ側
+    //-----------------ゴール地点---------------//
+    behind_point_4.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0f));//敵の後ろ側
+    behind_point_4.y = position.y;//敵の後ろ側
+    behind_point_4.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0f));//敵の後ろ側
+
+    behind_way_points.emplace_back(position); // この時点でのプレイヤーの位置
+    behind_way_points.emplace_back(behind_point_1); // この時点でのプレイヤーの位置
+    behind_way_points.emplace_back(behind_point_2); // プレイヤーの位置とゴールの位置の中間地点
+    behind_way_points.emplace_back(behind_point_3); // 中継地点
+    behind_way_points.emplace_back(behind_point_4); //ゴールの位置
+
+    {
+        const size_t step = 3;
+        // way_pointsを通るカーブを作成
+        CatmullRomSpline curve(behind_way_points);
+        curve.interpolate(behind_interpolated_way_points, step);
+
+        behind_transit_index = 0;
+#if 1
+        //自分の位置とウェイポイントのベクトルを求める
+    //+1しているのはindex番目の値が自分の位置だからその次の値を取得するため
+        XMVECTOR vec = XMLoadFloat3(&behind_interpolated_way_points.at(0)) - XMLoadFloat3(&behind_interpolated_way_points.at(1));
+        //長さを求めて
+        XMVECTOR length_vec = DirectX::XMVector3Length(vec);
+        //その値を取得(4dベクトルのxの値を取ってくる関数)
+        //一区分当たりの距離
+        float length = DirectX::XMVectorGetX(length_vec);
+        const float behind_time{ 0.5f };
+        //一区分当たりの時間
+        const float time = behind_time / (static_cast<float>(step) * 4.0f);
+        behind_speed = length / time;
+
+#endif // 1
+    }
+    //--------------------------------------------//
+}
+
+bool ClientPlayer::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed, const std::vector<DirectX::XMFLOAT3>& points, float play)
+{
+    using namespace DirectX;
+    assert(!points.empty() && "ポイントのサイズが0です");
+    //index(配列の中の自分の位置)がゴールの位置にきたらtrueを返す
+    //(この後の計算でindexの次の値を使うからサイズと同じ大きさでもダメ)
+    if (index >= points.size() - 1) return true;
+
+    XMFLOAT3 velo{};
+    //自分の位置とウェイポイントのベクトルを求める
+    //+1しているのはindex番目の値が自分の位置だからその次の値を取得するため
+    XMVECTOR vec = XMLoadFloat3(&points.at(index + 1)) - XMLoadFloat3(&position);
+    XMVECTOR norm_vec = XMVector3Normalize(vec);
+    XMStoreFloat3(&velo, norm_vec);
+    //長さを求めて
+    XMVECTOR length_vec = DirectX::XMVector3Length(vec);
+    //その値を取得(4dベクトルのxの値を取ってくる関数)
+    float length = DirectX::XMVectorGetX(length_vec);
+    //もし長さが設定されてる値よりも小さくなったら
+    if (length <= play)
+    {
+        //indexを１増やして
+        ++index;
+        //自分の位置に代入する(+1された値がゴールだったから)
+        position = points.at(index);
+    }
+
+    position.x += velo.x * speed * elapsed_time;
+    position.y += velo.y * speed * elapsed_time;
+    position.z += velo.z * speed * elapsed_time;
+
+    return false;
+}
+

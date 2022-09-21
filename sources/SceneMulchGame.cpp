@@ -48,10 +48,6 @@ void SceneMulchGame::initialize(GraphicsPipeline& graphics)
 		ClientPlayer* p = new ClientPlayer(graphics, 1);
 		player_manager->RegisterPlayer(p);
 	}
-	{
-		ClientPlayer* p = new ClientPlayer(graphics, 2);
-		player_manager->RegisterPlayer(p);
-	}
 
 	// ƒJƒƒ‰
 	cameraManager = std::make_unique<CameraManager>();

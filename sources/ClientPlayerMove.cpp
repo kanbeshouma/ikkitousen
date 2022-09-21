@@ -11,7 +11,7 @@ ClientPlayerMove::~ClientPlayerMove()
 
 void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
-    DirectX::XMFLOAT3 movevec{};
+    
 
     SetDirections(orientation);
     //ê˘âÒèàóù

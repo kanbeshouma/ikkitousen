@@ -425,96 +425,65 @@ public:
 private:
         AddDamageFunc damage_func;
         bool display_scape_imgui;
-
+        float change_normal_timer{ 0.0f };
 private:
-    ////-----アニメーションの遷移に関する関数が入る-----//
-    using TransitionAnimation = std::function <void(void)>;
-
-    ////-----アニメーション中の更新処理の関数が入る-----//
-    using UpdateAnimation = std::function <void(float, SkyDome*)>;
-
-    ////-----アニメーション中の更新処理-----//
-    UpdateAnimation update_animation{ [=](float elapsed_time,SkyDome* sky_dome) {IdleUpdate(elapsed_time,sky_dome); } };
-
-    ////-----遷移元のアニメーションと遷移先のアニメーションの番号のペア-----//
-    //=========================================================
-    //tuple構造 : [遷移元 , 遷移先]
-    using TransEdge = std::tuple<int, int>;
-
-    ////-----今のアニメーションから遷移できるアニメーションを保存する変数-----//
-    //===========================================================
-    //マップの構造 : [今のアニメーション,[遷移先のアニメーション,遷移先のアニメーションにいく条件の関数]]
-    using TransitionAnimationsMap = std::map<int, std::map<int, TransitionAnimation>>;
-
-    ////-----遷移先のアニメーションをまとめたmap-----//
-    TransitionAnimationsMap transition_animations;
-
-    ////----------遷移元のアニメーションと遷移先のアニメーションの関数を結びつける(1つだけ)----------//
-    //===================================================================
-    //第1引数 : 元のアニメーション番号と遷移先のアニメーション番号のTuple
-    //第2引数 : 遷移先の条件関数
-    void RegisterTransitionAnimationMap(TransEdge tuples, TransitionAnimation func);
-
-    ////----------遷移元ののアニメーション遷移先のアニメーションの関数を結びつける(複数)----------//
-    ////-----std::functionの型に関数を登録するときはラムダ式でキャプチャしてあげる-----//
-    //========================================================================
-    //ラムダ式 : [=]()->bool{ return 遷移関数;}
-    template<class... Tuples>
-    void RegisterTransitionAnimations(TransitionAnimation func, Tuples&&... tuples)
+    enum class Behavior
     {
-        //-----TransEdge型であることを保証している-----//
-        //-----std::forwardはinitializer_listを使うときにセットで使うもので可変長引数の先頭を取得する-----//
-        for (const auto trans_edge : std::initializer_list<TransEdge>{ std::forward<Tuples>(tuples)... })
-        {
-            RegisterTransitionAnimationMap(trans_edge, func);
-        }
-    }
-
-    ////----------遷移関数を登録する----------//
-    void RegisterAnimationFunctions();
-
-    ////----------遷移関数のmapを回す----------//
-    //==============================
-    //第1引数 : 今のアニメーション番号
-    void ActivationTransitionMap(int root_animation_index);
-public:
-    //待機に遷移
-    void TransitionIdle(float blend_second) override {};
+        //通常状態
+        Normal,
+        //スタンした敵に攻撃する状態
+        Chain
+    };
+    Behavior behavior_state{ Behavior::Normal };
 private:
-    void TransitionIdle();
-    //移動に遷移
-    void TransitionMove();
-    //回避に遷移
-    void TransitionAvoidance();
-    //突進開始に遷移
-    void TransitionChargeInit();
-    //突進に遷移
-    void TransitionCharge();
-    //１撃目に遷移
-    void TransitionAttackType1();
-    //２撃目に遷移
-    void TransitionAttackType2();
-    //３撃目に遷移
-    void TransitionAttackType3();
-    //ダメージ受けたときに遷移
-    void TransitionDamage();
-    //覚醒状態に遷移
-    void TransitionAwaking();
-    //通常状態に遷移
-    void TransitionInvAwaking();
-    //死亡
-    void TransitionDie();
-    //死亡中
-    void TransitionDying();
-    //ステージ移動中
-    void TransitionStageMoveIdle();
+    //後ろに回り込むための計算する関数
+    void BehindAvoidancePosition();
+    //スプライン曲線を使うための途中の点
+    DirectX::XMFLOAT3 behind_point_0{};//スタート
+    DirectX::XMFLOAT3 behind_point_1{};//中継地点
+    DirectX::XMFLOAT3 behind_point_2{};//中継地点
+    DirectX::XMFLOAT3 behind_point_3{};//ゴール
+
+    //回り込むスピード
+    float behind_speed{ 0.0f };
+    float behind_test_timer{ 0.0f };
+
+    int behind_transit_index = 0;
+    std::vector<DirectX::XMFLOAT3> behind_way_points;
+    std::vector<DirectX::XMFLOAT3> behind_interpolated_way_points;
+
+    //背後に回り込む点
+    std::vector<DirectX::XMFLOAT3> behind_point{};
+    bool BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
+        const std::vector<DirectX::XMFLOAT3>& points, float play);
+    //背後に回り込むときに進むタイマー
+    float behind_timer{};
+    //背後に回り込むときのレート
+    float behind_late{};
 private:
+    //プレイヤーの各方向
+    DirectX::XMFLOAT3 forward;
+    DirectX::XMFLOAT3 right;
+    DirectX::XMFLOAT3 up;
+
+private:
+    //-----------アニメーションに関係する関数,変数------------//
+    //アニメーション遷移の関数ポインタ//
+    //関数ポインタ
+    typedef void(ClientPlayer::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
+    //関数ポインタの変数
+    PlayerActivity player_activity = &ClientPlayer::IdleUpdate;
+
+    //自分のメンバ関数の関数ポインタを呼ぶ
+    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理
     void MoveUpdate(float elapsed_time, SkyDome* sky_dome);
     //回避アニメーション中の更新処理
     void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
+    //後ろに回り込む回避の更新処理
+    void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
     //突進開始アニメーション中の更新処理
     void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);
     //突進中の更新処理
@@ -525,28 +494,92 @@ private:
     void AttackType2Update(float elapsed_time, SkyDome* sky_dome);
     //攻撃3撃目の更新処理
     void AttackType3Update(float elapsed_time, SkyDome* sky_dome);
+    //ゲージ消費する突進
+    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ゲージ消費突進が終わってからの隙
+    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);
     //ダメージ受けたとき
     void DamageUpdate(float elapsed_time, SkyDome* sky_dome);
+    //人型に戻る
+    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モード
+    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);
     //覚醒状態に変形するときの更新
     void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //通常状態に変形するときの更新
     void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //ステージ移動の時の更新
     void StageMoveUpdate(float elapsed_time, SkyDome* sky_dome);
-    //ステージ移動中の待機
-    void StageMoveIdleUpdate(float elapsed_time, SkyDome* sky_dome);
-    //ステージ移動の時の更新
-    void StageMoveEndUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進開始
+    void WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進中
+    void WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進終了
+    void WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡
     void DieUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡中
     void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡の更新処理に入ったらtrue
+    bool is_dying_update{ false };
+    //モーション
+    void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
+
+
+    void Awaiking();//覚醒状態のON,OFF
+    //アニメーション遷移(1frameだけしか呼ばないもの)
+public:
+    //待機に遷移
+    void TransitionIdle(float blend_second = 0.3f) override;
+private:
+    //移動に遷移
+    void TransitionMove(float blend_second = 0.3f);
+    //回避に遷移
+    void TransitionAvoidance();
+    //背後に回り込む回避に遷移
+    void TransitionBehindAvoidance();
+    //ジャスト回避の回り込み回避に遷移
+    void TransitionJustBehindAvoidance();
+    //突進開始に遷移
+    void TransitionChargeInit();
+    //突進に遷移
+    void TransitionCharge(float blend_seconds = 0.3f);
+    //１撃目に遷移
+    void TransitionAttackType1(float blend_seconds = 0.3f);
+    //２撃目に遷移
+    void TransitionAttackType2(float blend_seconds = 0.3f);
+    //３撃目に遷移
+    void TransitionAttackType3(float blend_seconds = 0.3f);
+    //ゲージ消費の突進に遷移
+    void TransitionSpecialSurge();
+    //ゲージ消費の突進後の隙に遷移
+    void TransitionOpportunity();
+    //ダメージ受けたときに遷移
+    void TransitionDamage();
+    //飛行機モードに遷移
+    void TransitionTransformWing();
+    //人型に変形に遷移
+    void TransitionTransformHum();
+    //覚醒状態に遷移
+    void TransitionAwaking();
+    //通常状態に遷移
+    void TransitionInvAwaking();
+    //飛行機モードの突進開始
+    void TransitionWingDashStart();
+    //飛行機モードの突進中
+    void TransitionWingDashIdle();
+    //飛行機モードの突進終了
+    void TransitionWingDashEnd();
+    //死亡
+    void TransitionDie();
+    //死亡中
+    void TransitionDying();
+
 public:
     //スタートモーション
-    void TransitionStartMothin()override {};
+    void TransitionStartMothin()override;
     //ステージ移動に遷移
     void TransitionStageMove()override;
     //ステージ遷移終了
     void TransitionStageMoveEnd()override;
-
 };

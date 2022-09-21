@@ -12,6 +12,11 @@ public:
     void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome);
     //プレイヤーの位置矯正
     void PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos);
+    //-----入力方向の設定-----//
+    void SetMoveVec(DirectX::XMFLOAT3 vec) { movevec = vec; }
+    //-----入力方向のゲッター-----//
+    DirectX::XMFLOAT3 GetMoveVec() { return movevec; }
+
 private:
     //垂直速力更新処理
     void UpdateVerticalVelocity(float elapsedFrame);
@@ -31,6 +36,8 @@ protected:
     //ターゲット
     DirectX::XMFLOAT3 target{};
 private:
+    //-----入力方向-----//
+    DirectX::XMFLOAT3 movevec{};
     //プレイヤーの前方向
     DirectX::XMFLOAT3 player_forward{};
     //方向取得
