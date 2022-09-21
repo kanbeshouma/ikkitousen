@@ -103,6 +103,9 @@ void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    avoidance_boost_time += 1.0f * elapsed_time;
+    //‰ñ”ð‚ÌŽž‚Ì‰Á‘¬
+    SetAccelerationVelocity();
 
     //-----UŒ‚ƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚çUŒ‚‚É‘JˆÚ-----//
     if (button_down & GamePad::BTN_ATTACK_B)
@@ -218,6 +221,10 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionAttackType1(attack_animation_blends_speeds.y);
     }
+    charge_time += charge_add_time * elapsed_time;
+    //UŒ‚‚Ì‰Á‘¬‚ÌÝ’è
+    SetAccelerationVelocity();
+
     //“ËiŽžŠÔ‚ð’´‚¦‚½‚ç‚»‚ê‚¼‚ê‚Ì‘JˆÚ‚É‚Æ‚Ô
     if (charge_time > CHARGE_MAX_TIME)
     {

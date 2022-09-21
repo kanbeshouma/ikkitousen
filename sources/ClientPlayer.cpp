@@ -80,6 +80,15 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
         //プレイヤーのパラメータの変更
         InflectionParameters(elapsed_time);
 
+        if (avoidance_buttun)
+        {
+            if (game_pad->get_trigger_R() < 0.1f && !(button_down & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_buttun = false;
+            }
+        }
+
+
         if (is_awakening)
         {
             for (int i = 0; i < 2; ++i)
@@ -196,9 +205,15 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
                 {
                     newButtonState |= GamePad::BTN_ATTACK_B;
                 }
+                if (ImGui::Button("BTN_RIGHT_SHOULDER"))
+                {
+                    newButtonState |= GamePad::BTN_RIGHT_SHOULDER;
+                }
                 SetSendButton(newButtonState);
 
                 ImGui::DragFloat("triggerR", &triggerR, 0.1f, 0, 1.0f);
+                ImGui::DragFloat3("target", &target.x, 0.1f);
+                ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
                 ImGui::TreePop();
             }
             ImGui::Separator();
@@ -547,6 +562,33 @@ bool ClientPlayer::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::
     position.z += velo.z * speed * elapsed_time;
 
     return false;
+}
+
+void ClientPlayer::SetAccelerationVelocity()
+{
+    if (is_lock_on)
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        velocity.x = v.x * charge_length_magnification;
+        velocity.y = v.y * charge_length_magnification;
+        velocity.z = v.z * charge_length_magnification;
+        //position = Math::lerp(position, target, 10.0f * elapse_time);
+    }
+    else
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+        float length{ Math::calc_vector_AtoB_length(position,charge_point) };
+
+        velocity.x = v.x * 100.0f;
+        velocity.y = v.y * 100.0f;
+        velocity.z = v.z * 100.0f;
+
+        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+    }
 }
 
 void ClientPlayer::SetSendButton(GamePadButton input)

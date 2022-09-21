@@ -12,6 +12,7 @@ ClientPlayerMove::~ClientPlayerMove()
 void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, SkyDome* sky_dome)
 {
     SetDirections(orientation);
+    MovingProcess(movevec.x, movevec.z, move_speed);
     //ù‰ñˆ—
     Turn(elapsed_time, movevec, turn_speed, position, orientation);
     //Œo‰ßƒtƒŒ[ƒ€

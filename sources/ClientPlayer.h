@@ -460,6 +460,8 @@ private:
     float behind_timer{};
     //背後に回り込むときのレート
     float behind_late{};
+    //攻撃の加速の設定
+    void SetAccelerationVelocity();
 private:
     //プレイヤーの各方向
     DirectX::XMFLOAT3 forward;
