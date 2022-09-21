@@ -179,6 +179,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    behind_test_timer += 1.0f * elapsed_time;
 
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {

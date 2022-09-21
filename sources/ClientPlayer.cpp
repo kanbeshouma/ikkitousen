@@ -82,7 +82,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
 
         if (avoidance_buttun)
         {
-            if (game_pad->get_trigger_R() < 0.1f && !(button_down & GamePad::BTN_RIGHT_SHOULDER))
+            if (triggerR < 0.1f && !(button_down & GamePad::BTN_RIGHT_SHOULDER))
             {
                 avoidance_buttun = false;
             }
@@ -214,6 +214,8 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
                 ImGui::DragFloat("triggerR", &triggerR, 0.1f, 0, 1.0f);
                 ImGui::DragFloat3("target", &target.x, 0.1f);
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::Checkbox("is_lock_on", &is_lock_on);
+                debug_figure->create_sphere(target, 0.2f, { 1.0f,1.0f,0.0f,1.0f });
                 ImGui::TreePop();
             }
             ImGui::Separator();

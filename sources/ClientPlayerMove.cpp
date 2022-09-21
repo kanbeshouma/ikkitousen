@@ -13,8 +13,15 @@ void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
 {
     SetDirections(orientation);
     MovingProcess(movevec.x, movevec.z, move_speed);
-    //ù‰ñˆ—
-    Turn(elapsed_time, movevec, turn_speed, position, orientation);
+    if (is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+    }
+    else
+    {
+        //ù‰ñˆ—
+        Turn(elapsed_time, movevec, turn_speed, position, orientation);
+    }
     //Œo‰ßƒtƒŒ[ƒ€
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);
