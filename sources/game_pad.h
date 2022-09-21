@@ -57,6 +57,8 @@ public:
 
 	//-----どのボタンを押したかを取得する-----//
 	GamePadButton GetButtonState() { return button_state[0]; }
+	GamePadButton GetButtonDown() { return button_down; }
+	GamePadButton GetButtonUp() { return button_up; }
 
 	//-----ボタンの入力情報を設定-----//
 	void SetButton(GamePadButton input);

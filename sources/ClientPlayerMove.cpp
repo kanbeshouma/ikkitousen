@@ -9,14 +9,11 @@ ClientPlayerMove::~ClientPlayerMove()
 {
 }
 
-void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, SkyDome* sky_dome)
 {
-    
-
     SetDirections(orientation);
     //ê˘âÒèàóù
     Turn(elapsed_time, movevec, turn_speed, position, orientation);
-    const DirectX::XMFLOAT3 cameraForward = camera_forward;
     //åoâﬂÉtÉåÅ[ÉÄ
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);

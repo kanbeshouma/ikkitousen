@@ -20,11 +20,11 @@ void ClientPlayer::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
     //チェイン攻撃の状態では移動以外の操作は受け付けない
-    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
+    if (change_normal_timer <= 0 && behavior_state == Behavior::Normal)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
-        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+        if (avoidance_buttun == false && (triggerR || button_down & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
             if (is_lock_on && is_just_avoidance_capsul)
@@ -43,7 +43,7 @@ void ClientPlayer::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
             }
         }
         //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (button_down & GamePad::BTN_ATTACK_B)
         {
             TransitionChargeInit();
         }
@@ -70,7 +70,7 @@ void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
-        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+        if (avoidance_buttun == false && (triggerR || button_down & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
             if (is_lock_on && is_just_avoidance_capsul)
@@ -92,7 +92,7 @@ void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
             }
         }
         //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (button_down & GamePad::BTN_ATTACK_B)
         {
             TransitionChargeInit();
         }
@@ -105,7 +105,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
 
     //-----攻撃ボタンを押したら攻撃に遷移-----//
-    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+    if (button_down & GamePad::BTN_ATTACK_B)
     {
         if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
         {
@@ -120,7 +120,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     if (avoidance_boost_time > 1.0f)
     {
         model->progress_animation();
-        if (model->end_of_animation())
+        if (model->end_of_animation(anim_parm))
         {
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -150,7 +150,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         if (avoidance_direction_count > 0)
         {
             //回避ボタンを押したら入力方向に方向転換
-            if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+            if (avoidance_buttun == false && (triggerR > 0.5f || button_down & GamePad::BTN_RIGHT_SHOULDER))
             {
                 avoidance_direction_count--;
                 avoidance_buttun = true;
@@ -164,11 +164,10 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 {
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
-                audio_manager->play_se(SE_INDEX::AVOIDANCE);
                 //覚醒状態の時の回避アニメーションの設定
-                if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+                if (is_awakening)model->play_animation(anim_parm,AnimationClips::AwakingAvoidance, false, true);
                 //通常状態の時のアニメーションの設定
-                else model->play_animation(AnimationClips::Avoidance, false, true);
+                else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
                 avoidance_boost_time = 0.0f;
             }
         }
@@ -205,7 +204,7 @@ void ClientPlayer::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionCharge(attack_animation_blends_speeds.x);
     }
@@ -223,8 +222,6 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     if (charge_time > CHARGE_MAX_TIME)
     {
 
-        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-        PostEffect::clear_post_effect();
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
@@ -250,8 +247,6 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         if (is_enemy_hit)
         {
-            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-            PostEffect::clear_post_effect();
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity.x *= 0.2f;
@@ -264,11 +259,8 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         }
         if (is_lock_on == false && charge_change_direction_count > 0)
         {
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            if (button_down & GamePad::BTN_ATTACK_B)
             {
-                audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-                audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
-
                 charge_change_direction_count--;
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = GetMoveVec();
@@ -322,7 +314,7 @@ void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         }
     }
 
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
 
         is_attack = false;
@@ -336,7 +328,7 @@ void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         else
         {
             //猶予時間よりも早く押したら攻撃2撃目に遷移
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            if (button_down & GamePad::BTN_ATTACK_B)
             {
                 if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
                 {
@@ -391,7 +383,6 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         attack_time += attack_add_time * elapsed_time;
         if (is_enemy_hit)
         {
-            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -403,7 +394,6 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         }
         if (attack_time >= 0.6f)
         {
-            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -413,7 +403,7 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         }
 
     }
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         attack_time += attack_add_time * elapsed_time;
         //猶予時間を超えたら待機に遷移
@@ -428,7 +418,7 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         else
         {
             //猶予時間よりも早く押したら攻撃3撃目に遷移
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            if (button_down & GamePad::BTN_ATTACK_B)
             {
                 if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
                 {
@@ -484,8 +474,6 @@ void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         attack_time += attack_add_time * elapsed_time;
         if (is_enemy_hit)
         {
-
-            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -497,7 +485,6 @@ void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         }
         if (attack_time >= 0.6f)
         {
-            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -506,7 +493,7 @@ void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         attack_time += attack_add_time * elapsed_time;
         if (attack_time > ATTACK_TYPE3_MAX_TIME)
@@ -533,7 +520,7 @@ void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         }
         else
         {
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            if (button_down & GamePad::BTN_ATTACK_B)
             {
                 if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
                 {
@@ -575,7 +562,7 @@ void ClientPlayer::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::DamageUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionIdle();
     }
@@ -584,7 +571,7 @@ void ClientPlayer::DamageUpdate(float elapsed_time, SkyDome* sky_dome)
 void ClientPlayer::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         //クリア演出中なら解除する
         if (during_clear) during_clear = false;
@@ -594,7 +581,7 @@ void ClientPlayer::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionSpecialSurge();
     }
@@ -602,7 +589,7 @@ void ClientPlayer::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
 
         //移動入力があったら移動に遷移
@@ -620,7 +607,7 @@ void ClientPlayer::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > PLAYER_INPUT_MIN)
@@ -637,7 +624,7 @@ void ClientPlayer::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionWingDashStart();
     }
@@ -645,7 +632,7 @@ void ClientPlayer::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionWingDashIdle();
     }
@@ -660,7 +647,7 @@ void ClientPlayer::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
 
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionTransformHum();
     }
@@ -668,7 +655,7 @@ void ClientPlayer::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::DieUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
+    if (model->end_of_animation(anim_parm))
     {
         TransitionDying();
     }

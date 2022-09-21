@@ -102,6 +102,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     if (is_update_animation)model->update_animation(anim_parm,elapsed_time * animation_speed);
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
+    UpdateVelocity(elapsed_time, position, orientation, sky_dome);
 
 #ifdef USE_IMGUI
     std::string obj_id{ "ClientPlayer : object_id :" + std::to_string(object_id) };
@@ -185,7 +186,22 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
                 ImGui::TreePop();
             }
             ImGui::Separator();
+            if (ImGui::TreeNode("SendData"))
+            {
+                static DirectX::XMFLOAT3 input{};
+                ImGui::DragFloat3("movevec", &input.x, 0.1f);
+                SetMoveVec(input);
+                GamePadButton newButtonState = 0;
+                if (ImGui::Button("B"))
+                {
+                    newButtonState |= GamePad::BTN_ATTACK_B;
+                }
+                SetSendButton(newButtonState);
 
+                ImGui::DragFloat("triggerR", &triggerR, 0.1f, 0, 1.0f);
+                ImGui::TreePop();
+            }
+            ImGui::Separator();
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
 
@@ -533,3 +549,17 @@ bool ClientPlayer::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::
     return false;
 }
 
+void ClientPlayer::SetSendButton(GamePadButton input)
+{
+    //-----Ç–Ç∆Ç¬ëOÇÃÉ{É^ÉìÇï€ë∂-----//
+    button_state[1] = button_state[0];
+
+    //-----ê›íË-----//
+    button_state[0] = input;
+
+    //-----âüÇµÇΩèuä‘-----//
+    button_down = ~button_state[1] & input;
+
+    //-----ó£ÇµÇΩèuä‘-----//
+    button_up = ~input & button_state[1];
+}

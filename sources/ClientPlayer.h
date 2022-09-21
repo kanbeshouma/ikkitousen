@@ -465,6 +465,18 @@ private:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up;
+private:
+    //-----ボタンの入力情報-----//
+    GamePadButton		button_state[2] = {};
+    GamePadButton		button_down = 0;
+    GamePadButton		button_up = 0;
+    //----RTボタンの入力値-----//
+    float	triggerR = 0.0f;
+public:
+    //-----ボタンの入力情報を設定-----//
+    void SetSendButton(GamePadButton input);
+    //-----RTの入力情報設定-----//
+    void SetTriggerR(float input) { triggerR = input; }
 
 private:
     //-----------アニメーションに関係する関数,変数------------//

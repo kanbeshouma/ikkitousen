@@ -7,9 +7,9 @@ void ClientPlayer::TransitionIdle(float blend_second)
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
     //覚醒状態の時の待機アニメーションにセット
-    if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingIdle, true, true, blend_second);
     //通常状態の待機アニメーションにセット
-    else model->play_animation(AnimationClips::Idle, true, true, blend_second);
+    else model->play_animation(anim_parm, AnimationClips::Idle, true, true, blend_second);
     //攻撃中かどうかの設定
     is_attack = false;
     //アニメーション速度
@@ -27,9 +27,9 @@ void ClientPlayer::TransitionMove(float blend_second)
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
     //覚醒状態の時の移動アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingMove, true, true, blend_second);
     //通常状態の時に移動アニメーションの設定
-    else model->play_animation(AnimationClips::Move, true, true, blend_second);
+    else model->play_animation(anim_parm, AnimationClips::Move, true, true, blend_second);
     //攻撃中かどうかの設定
     is_attack = false;
     //アニメーション速度
@@ -50,9 +50,9 @@ void ClientPlayer::TransitionAvoidance()
     avoidance_direction_count = 3;
     //-----------------------------------------------------------------------------------------//
     //覚醒状態の時の回避アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingAvoidance, false, true);
     //通常状態の時のアニメーションの設定
-    else model->play_animation(AnimationClips::Avoidance, false, true);
+    else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
     //攻撃中かどうかの設定
     is_attack = false;
     //アニメーションの速度
@@ -71,9 +71,9 @@ void ClientPlayer::TransitionBehindAvoidance()
     //回り込み回避かどうか
     is_behind_avoidance = true;
     //覚醒状態の時の回避アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingAvoidance, false, true);
     //通常状態の時のアニメーションの設定
-    else model->play_animation(AnimationClips::Avoidance, false, true);
+    else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
     //後ろに回り込む座標の取得
     BehindAvoidancePosition();
 
@@ -103,9 +103,9 @@ void ClientPlayer::TransitionJustBehindAvoidance()
     //回り込み回避かどうか
     is_behind_avoidance = true;
     //覚醒状態の時の回避アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true, 0.0f);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingAvoidance, false, true, 0.0f);
     //通常状態の時のアニメーションの設定
-    else model->play_animation(AnimationClips::Avoidance, false, true, 0.0f);
+    else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true, 0.0f);
     //後ろに回り込む座標の取得
     BehindAvoidancePosition();
     //移動速度の初期化
@@ -123,9 +123,9 @@ void ClientPlayer::TransitionJustBehindAvoidance()
 void ClientPlayer::TransitionChargeInit()
 {
     //覚醒状態の時の突進の始まりのアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false, true);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingChargeInit, false, true);
     //通常状態の時の突進の始まりのアニメーションに設定
-    else model->play_animation(AnimationClips::ChargeInit, false, true);
+    else model->play_animation(anim_parm, AnimationClips::ChargeInit, false, true);
     //攻撃中かどうかの設定
     is_attack = true;
     //突進中かどうかの設定
@@ -149,14 +149,14 @@ void ClientPlayer::TransitionCharge(float blend_seconds)
     {
         //プレイヤーの攻撃力
         player_attack_power = CHARGE_AWAIKING_ATTACK_POWER;
-        model->play_animation(AnimationClips::AwakingCharge, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AwakingCharge, false, true, blend_seconds);
     }
     //通常状態の時の突進アニメーションに設定
     else
     {
         //プレイヤーの攻撃力
         player_attack_power = CHARGE_NORMAL_ATTACK_POWER;
-        model->play_animation(AnimationClips::Charge, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::Charge, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
     is_attack = true;
@@ -187,14 +187,14 @@ void ClientPlayer::TransitionAttackType1(float blend_seconds)
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE1_AWAIKING_ATTACK_POWER;
-        model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AwakingAttackType1, false, true, blend_seconds);
     }
     //通常状態の時の１撃目のアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE1_NORMAL_ATTACK_POWER;
-        model->play_animation(AnimationClips::AttackType1, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AttackType1, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
     is_attack = true;
@@ -216,14 +216,14 @@ void ClientPlayer::TransitionAttackType2(float blend_seconds)
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE2_AWAIKING_ATTACK_POWER;
-        model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AwakingAttackType2, false, true, blend_seconds);
     }
     //通常状態の時の２撃目のアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE2_NORMAL_ATTACK_POWER;
-        model->play_animation(AnimationClips::AttackType2, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AttackType2, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
     is_attack = true;
@@ -248,14 +248,14 @@ void ClientPlayer::TransitionAttackType3(float blend_seconds)
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE3_AWAIKING_ATTACK_POWER;
-        model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AwakingAttackType3, false, true, blend_seconds);
     }
     //通常状態の時の３撃目ののアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
         player_attack_power = ATTACK_TYPE3_NORMAL_ATTACK_POWER;
-        model->play_animation(AnimationClips::AttackType3, false, true, blend_seconds);
+        model->play_animation(anim_parm, AnimationClips::AttackType3, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
     is_attack = true;
@@ -278,7 +278,7 @@ void ClientPlayer::TransitionAttackType3(float blend_seconds)
 void ClientPlayer::TransitionSpecialSurge()
 {
     //飛行機モードになるアニメーションに設定
-    model->play_animation(AnimationClips::IdleWing, true, true);
+    model->play_animation(anim_parm, AnimationClips::IdleWing, true, true);
     //ゲージ消費の突進中に当たった敵の数を初期化
     special_surge_combo_count = 0;
     //ゲージ消費の突進かどうかの設定
@@ -321,9 +321,9 @@ void ClientPlayer::TransitionDamage()
     //攻撃中かどうかの設定
     is_attack = false;
     //覚醒状態の時のダメージアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingDamage, false, true, 0.0f);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingDamage, false, true, 0.0f);
     //通常状態の時のアニメーションに設定
-    else model->play_animation(AnimationClips::Damage, false, true, 0.0f);
+    else model->play_animation(anim_parm, AnimationClips::Damage, false, true, 0.0f);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -335,7 +335,7 @@ void ClientPlayer::TransitionDamage()
 void ClientPlayer::TransitionTransformHum()
 {
     //人型になるアニメーションに設定
-    model->play_animation(AnimationClips::TransformHum, false, true);
+    model->play_animation(anim_parm, AnimationClips::TransformHum, false, true);
     //アニメーション速度の設定
     animation_speed = TRANSFORM_HUM_ANIMATION_SPEED;
     //アニメーションをしていいかどうか
@@ -348,7 +348,7 @@ void ClientPlayer::TransitionTransformWing()
 {
     velocity = {};
     //飛行機モードになるアニメーションに設定
-    model->play_animation(AnimationClips::TransformWing, false, true);
+    model->play_animation(anim_parm, AnimationClips::TransformWing, false, true);
     //アニメーション速度の設定
     animation_speed = TRANSFORM_WING_ANIMATION_SPEED;
     //アニメーションをしていいかどうか
@@ -362,7 +362,7 @@ void ClientPlayer::TransitionAwaking()
     invincible_timer = 2.0f;
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
-    model->play_animation(AnimationClips::Awaking, false, true);
+    model->play_animation(anim_parm, AnimationClips::Awaking, false, true);
     //覚醒状態かどうかの設定
     is_awakening = true;
     //アニメーション速度の設定
@@ -377,7 +377,7 @@ void ClientPlayer::TransitionInvAwaking()
 {
     invincible_timer = 2.0f;
     //通常状態に戻るアニメーションに設定
-    model->play_animation(AnimationClips::InvAwaking, false, true);
+    model->play_animation(anim_parm, AnimationClips::InvAwaking, false, true);
     //覚醒状態かどうかの設定
     is_awakening = false;
     //アニメーション速度の設定
@@ -391,7 +391,7 @@ void ClientPlayer::TransitionInvAwaking()
 
 void ClientPlayer::TransitionWingDashStart()
 {
-    model->play_animation(AnimationClips::WingDashStart, false, true);
+    model->play_animation(anim_parm, AnimationClips::WingDashStart, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -402,7 +402,7 @@ void ClientPlayer::TransitionWingDashStart()
 
 void ClientPlayer::TransitionWingDashIdle()
 {
-    model->play_animation(AnimationClips::WingDashIdle, true, true);
+    model->play_animation(anim_parm, AnimationClips::WingDashIdle, true, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -425,9 +425,9 @@ void ClientPlayer::TransitionDie()
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //覚醒状態の時のダメージアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingDie, false, true);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingDie, false, true);
     //通常状態の時のアニメーションに設定
-    else model->play_animation(AnimationClips::Die, false, true);
+    else model->play_animation(anim_parm, AnimationClips::Die, false, true);
     //更新関数に切り替え
     player_activity = &ClientPlayer::DieUpdate;
 }
@@ -442,9 +442,9 @@ void ClientPlayer::TransitionDying()
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //覚醒状態の時のダメージアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingDying, true, true);
+    if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingDying, true, true);
     //通常状態の時のアニメーションに設定
-    else model->play_animation(AnimationClips::Dying, true, true);
+    else model->play_animation(anim_parm, AnimationClips::Dying, true, true);
     //更新関数に切り替え
     player_activity = &ClientPlayer::DyingUpdate;
 
@@ -475,7 +475,7 @@ void ClientPlayer::TransitionStageMove()
     //player_health += RECOVERY_HEALTH;
     velocity = {};
     //移動のアニメーションにする()
-    model->play_animation(AnimationClips::TransformWing, false);
+    model->play_animation(anim_parm, AnimationClips::TransformWing, false);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -487,7 +487,7 @@ void ClientPlayer::TransitionStageMove()
 
 void ClientPlayer::TransitionStageMoveEnd()
 {
-    model->play_animation(AnimationClips::WingDashEnd, false, true);
+    model->play_animation(anim_parm, AnimationClips::WingDashEnd, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか

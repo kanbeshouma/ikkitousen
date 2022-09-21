@@ -9,7 +9,7 @@ public:
 protected:
     float max_length = 300.0f;
 public:
-    void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome);
+    void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, SkyDome* sky_dome);
     //プレイヤーの位置矯正
     void PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos);
     //-----入力方向の設定-----//
