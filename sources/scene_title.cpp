@@ -235,6 +235,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	CorrespondenceManager::Instance().AcquisitionMyIpAddress();
 	standby_matching_timer = 0.0f;
 
+
 	// ボスの状態をリセット
 	LastBoss::fLoadParam();
 	LastBoss::fResetLoadRaram();

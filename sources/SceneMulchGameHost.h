@@ -27,12 +27,13 @@
 #include "tunnel.h"
 #include"SpriteBatch.h"
 #include"PlayerManager.h"
+#include"DebugConsole.h"
 
 class SceneMulchGameHost : public Scene, public PracticalEntities
 {
 public:
     SceneMulchGameHost();
-    ~SceneMulchGameHost()override {};
+    ~SceneMulchGameHost();
     ////----------初期化---------//
     void initialize(GraphicsPipeline& graphics) override;
 
@@ -201,5 +202,36 @@ private:
 
     //---------プレイヤー関係の当たり判定----------//
     void PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time);
+
+private:
+    //-----ログインを管理するスレッド-----//
+    std::thread login_thread;
+
+    //-----排他制御-----//
+    static std::mutex mutex;
+private:
+    //-----ログインスレッドを終了するかのフラグ-----//
+    static bool end_login_thread;
+
+    //-----プレイヤーを追加するかどうか-----//
+    static bool register_player;
+
+    //-----追加するプレイヤーの番号-----//
+    static int register_player_id;
+
+private:
+    //----------通信関係(マルチスレッド)----------//
+    //-----プレイヤーのログイン用のマルチスレッド-----//
+    static void ReceiveLoginData();
+
+    ////------プレイヤーのログイン処理------//
+    //===========================
+    //第1引数 : 通信相手の番号
+    static void Login(int client_id, char* data);
+private:
+    //----------通信関係----------//
+
+    ////----------クライアントがログインして来た時にプレイヤーを追加する-----------//
+    void RegisterPlayer(GraphicsPipeline& graphics);
 
 };

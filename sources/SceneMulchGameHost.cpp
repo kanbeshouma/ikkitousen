@@ -20,9 +20,27 @@
 #include"SocketCommunication.h"
 #include"Correspondence.h"
 
+//-----ログインスレッドを終了するかのフラグ-----//
+bool SceneMulchGameHost::end_login_thread = false;
+//-----プレイヤーが登録されたかどうか-----//
+bool SceneMulchGameHost::register_player = false;
+//-----追加されたプレイヤーの番号-----//
+int SceneMulchGameHost::register_player_id = -1;
+//-----ブロッキング-----//
+std::mutex SceneMulchGameHost::mutex;
 
 SceneMulchGameHost::SceneMulchGameHost()
 {
+
+}
+
+SceneMulchGameHost::~SceneMulchGameHost()
+{
+	end_login_thread = true;
+
+	//-----ログインスレッドを終了する-----//
+	login_thread.join();
+	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
 
 }
 
@@ -57,6 +75,11 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	if (CorrespondenceManager::Instance().InitializeServer())
 	{
 		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に成功しました", TextColor::Green);
+
+		//-----ログイン用のマルチスレッドを立ち上げる-----//
+		end_login_thread = false;
+		std::thread t(ReceiveLoginData);
+		t.swap(login_thread);
 	}
 	else
 	{
@@ -137,10 +160,17 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
 
+	//-----マルチスレッドで使用する変数を初期化する-----//
+
+	//-----プレイヤー追加変数の初期化-----//
+	register_player = false;
+	register_player_id = -1;
+
 }
 
 void SceneMulchGameHost::uninitialize()
 {
+
 	audio_manager->stop_all_se();
 	audio_manager->stop_all_bgm();
 
@@ -272,6 +302,9 @@ void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//-----プレイヤーが死んだらゲームオーバー-----//
 	if (player_manager->GetIsAlive() == false)	is_game_over = true;
+
+	//-----ログインしたプレイヤーの生成-----//
+	RegisterPlayer(graphics);
 
 	//-----プレイヤー関係の更新処理-----//
 	PlayerManagerUpdate(graphics, elapsed_time);
@@ -967,4 +1000,24 @@ void SceneMulchGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, floa
 
 	//-----弾とプレイヤーの当たり判定-----//
 	player_manager->BulletVsPlayer(mBulletManager);
+}
+
+void SceneMulchGameHost::RegisterPlayer(GraphicsPipeline& graphics)
+{
+	//-----	排他制御-----//
+	std::lock_guard<std::mutex> lock(mutex);
+
+	//クライアントがログインして来たら
+	if (register_player && register_player_id >= 0)
+	{
+		ClientPlayer* player = new ClientPlayer(graphics, register_player_id);
+		player_manager->RegisterPlayer(player);
+
+		//プレイヤーを追加
+		std::string text = std::to_string(register_player_id) + "番目にプレイヤーを追加しました";
+		DebugConsole::Instance().WriteDebugConsole(text, TextColor::Green);
+		//追加する時に必要なパラメータとフラグの初期化
+		register_player_id = -1;
+		register_player = false;
+	}
 }
