@@ -570,7 +570,7 @@
     <ClCompile Include="sources\PlayerManager.cpp">
       <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClCompile>
-    <ClCompile Include="sources\SceneMulchGame.cpp">
+    <ClCompile Include="sources\SceneMulchGameHost.cpp">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClCompile>
     <ClCompile Include="sources\CommunicationSystem.cpp">
@@ -878,7 +878,6 @@
     <ClInclude Include="sources\player_condition.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="sources\codinate_convert.h">
       <Filter>Sources\CodinateConvert</Filter>
     </ClInclude>
@@ -942,7 +941,7 @@
     <ClInclude Include="sources\PlayerManager.h">
       <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClInclude>
-    <ClInclude Include="sources\SceneMulchGame.h">
+    <ClInclude Include="sources\SceneMulchGameHost.h">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClInclude>
     <ClInclude Include="sources\CommunicationSystem.h">
@@ -965,6 +964,9 @@
     </ClInclude>
     <ClInclude Include="sources\ClientPlayerMove.h">
       <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\resource\resource.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

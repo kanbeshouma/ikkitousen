@@ -129,7 +129,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\External\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug;%(AdditionalLibraryDirectories);.\External\Effekseer153a\lib\vs2019\MD\$(PlatformTarget)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseerd.lib;EffekseerRendererDX11d.lib;liblua53.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseerd.lib;EffekseerRendererDX11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -189,7 +189,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\DirectXTK-master\Bin\Desktop_2019\x64\Release;.\External\FBX\FBX SDK\2020.2\lib\vs2019\x64\release;%(AdditionalLibraryDirectories);.\External\Effekseer153a\lib\vs2019\MD\$(PlatformTarget)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseer.lib;EffekseerRendererDX11.lib;liblua53.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -221,7 +221,7 @@
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
-    <ClCompile Include="sources\SceneMulchGame.cpp" />
+    <ClCompile Include="sources\SceneMulchGameHost.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
@@ -332,7 +332,6 @@
     <ClInclude Include="External\imgui\imstb_rectpack.h" />
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="sources\BossRushUnit.h" />
     <ClInclude Include="sources\BossUnit.h" />
     <ClInclude Include="sources\CannonballBullet.h" />
@@ -345,7 +344,8 @@
     <ClInclude Include="sources\NetWorkInformationStucture.h" />
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
-    <ClInclude Include="sources\SceneMulchGame.h" />
+    <ClInclude Include="sources\resource\resource.h" />
+    <ClInclude Include="sources\SceneMulchGameHost.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />

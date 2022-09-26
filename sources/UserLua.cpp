@@ -1,3 +1,4 @@
+#if 0
 #include"UserLua.h"
 #include <stdexcept>
 #include<Windows.h>
@@ -27,7 +28,7 @@ void LuaWorld::fClose() const
 void LuaWorld::fLoadFile(const char* FileName_) const
 {
     const auto Result = luaL_dofile(mLuaState, FileName_);  // Luaファイルを開く
-        // Luaファイルを開けなかったらエラーメッセージを出力
+    // Luaファイルを開けなかったらエラーメッセージを出力
     assert(!Result);
 }
 
@@ -79,7 +80,7 @@ double LuaWorld::fGetDouble(int StackPoint_) const
 
 bool LuaWorld::fGetBool(int StackPoint_) const
 {
-    return lua_toboolean(mLuaState,StackPoint_);
+    return lua_toboolean(mLuaState, StackPoint_);
 }
 
 void LuaWorld::fDebugShowStack()
@@ -102,7 +103,7 @@ void LuaWorld::fDebugShowStack()
             OutputDebugStringA("Nil");
             break;
         case LUA_TBOOLEAN:
-           OutputDebugStringA(lua_toboolean(mLuaState, i) ? "true" : "false");
+            OutputDebugStringA(lua_toboolean(mLuaState, i) ? "true" : "false");
             break;
         case LUA_TLIGHTUSERDATA:
             OutputDebugStringA("LIGHTUSERDATA");
@@ -129,3 +130,5 @@ void LuaWorld::fDebugShowStack()
         OutputDebugStringA("\n");
     }
 }
+
+#endif // 0

@@ -1,7 +1,7 @@
 #include <time.h>
 
 #include "framework.h"
-#include "../resource.h"
+#include "resource/resource.h"
 
 LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {

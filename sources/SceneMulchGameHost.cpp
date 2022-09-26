@@ -1,4 +1,4 @@
-#include "SceneMulchGame.h"
+#include "SceneMulchGameHost.h"
 #include "scene_title.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
@@ -15,12 +15,12 @@
 #include "LastBoss.h"
 #include"ClientPlayer.h"
 
-SceneMulchGame::SceneMulchGame()
+SceneMulchGameHost::SceneMulchGameHost()
 {
 
 }
 
-void SceneMulchGame::initialize(GraphicsPipeline& graphics)
+void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 {
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
@@ -124,7 +124,7 @@ void SceneMulchGame::initialize(GraphicsPipeline& graphics)
 
 }
 
-void SceneMulchGame::uninitialize()
+void SceneMulchGameHost::uninitialize()
 {
 	audio_manager->stop_all_se();
 	audio_manager->stop_all_bgm();
@@ -134,13 +134,13 @@ void SceneMulchGame::uninitialize()
 	BulletManager::Instance().fFinalize();
 }
 
-void SceneMulchGame::effect_liberation(GraphicsPipeline& graphics)
+void SceneMulchGameHost::effect_liberation(GraphicsPipeline& graphics)
 {
 	effect_manager->finalize();
 	effect_manager->initialize(graphics);
 }
 
-void SceneMulchGame::update(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-----ゲームクリア、ゲームオーバーでもないとき-----//
 	if (is_game_clear == false && is_game_over == false)
@@ -406,7 +406,7 @@ void SceneMulchGame::update(GraphicsPipeline& graphics, float elapsed_time)
 #define OFF_SCREEN_RENDERING
 #define SHADOW_MAP
 
-void SceneMulchGame::render(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMulchGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 #ifdef OFF_SCREEN_RENDERING
 	post_effect->begin(graphics.get_dc().Get());
@@ -595,12 +595,12 @@ void SceneMulchGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 }
 
-void SceneMulchGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMulchGameHost::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
 	return;
 }
 
-void SceneMulchGame::GameOverAct(float elapsed_time)
+void SceneMulchGameHost::GameOverAct(float elapsed_time)
 {
 	if (is_game_over)
 	{
@@ -696,7 +696,7 @@ void SceneMulchGame::GameOverAct(float elapsed_time)
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneMulchGame()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
 				}
 				break;
 			default:
@@ -706,7 +706,7 @@ void SceneMulchGame::GameOverAct(float elapsed_time)
 	}
 }
 
-void SceneMulchGame::GameClearAct(float elapsed_time, GraphicsPipeline& graphics)
+void SceneMulchGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& graphics)
 {
 	if (is_game_clear)
 	{
@@ -759,7 +759,7 @@ void SceneMulchGame::GameClearAct(float elapsed_time, GraphicsPipeline& graphics
 	}
 }
 
-void SceneMulchGame::JudgeSlow(float& elapsed_time)
+void SceneMulchGameHost::JudgeSlow(float& elapsed_time)
 {
 	//プレイヤーがジャスト回避したらslow
 	if (player_manager->GetIsJustAvoidance())
@@ -783,7 +783,7 @@ void SceneMulchGame::JudgeSlow(float& elapsed_time)
 	}
 }
 
-void SceneMulchGame::SetBossTypeGameParam()
+void SceneMulchGameHost::SetBossTypeGameParam()
 {
 	//-----カメラのインスタンスを取得-----//
 	Camera* c = cameraManager->GetCurrentCamera();
@@ -840,7 +840,7 @@ void SceneMulchGame::SetBossTypeGameParam()
 	}
 }
 
-void SceneMulchGame::BossEventCamera()
+void SceneMulchGameHost::BossEventCamera()
 {
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
@@ -877,7 +877,7 @@ void SceneMulchGame::BossEventCamera()
 	}
 }
 
-void SceneMulchGame::SetSkyDomeColor(float elapsed_time)
+void SceneMulchGameHost::SetSkyDomeColor(float elapsed_time)
 {
 	//-----SkyDomeの色-----//
 	if (purple_threshold >= 0.01f && purple_threshold <= 1.0f)
@@ -892,7 +892,7 @@ void SceneMulchGame::SetSkyDomeColor(float elapsed_time)
 	}
 }
 
-void SceneMulchGame::PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMulchGameHost::PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
@@ -927,7 +927,7 @@ void SceneMulchGame::PlayerManagerUpdate(GraphicsPipeline& graphics, float elaps
 
 }
 
-void SceneMulchGame::PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMulchGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();

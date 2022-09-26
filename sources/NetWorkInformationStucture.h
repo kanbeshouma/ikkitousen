@@ -18,7 +18,7 @@ enum CommandList
 {
     //ログイン
     Login = 1,
-    //マッチング終了かつtcp通信切断
+    //マッチング終了
     MachingEnd,
     //ログアウト
     Logout,
