@@ -258,43 +258,13 @@ void SceneTitle::effect_liberation(GraphicsPipeline& graphics)
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	//-- audio volume --//
-	const float BGM_VOLUME = 2.0f;
-	const float SE_VOLUME = 2.0f;
 
-
+	//-----オーディオの設定-----//
 	audio_manager->set_all_volume_bgm(BGM_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(SE_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
-	//--logo_parameters--//
-	const int FRAMW_COUNT_X = 7;
-	const int FRAMW_COUNT_Y = 4;
-	const float LOGO_ANIMATION_WAIT_TIME = 2.0f;
-	static float logo_animation_speed    = 0.03f;
-
-	if (logo_parameters.timer > LOGO_ANIMATION_WAIT_TIME) { logo_parameters.start_anim = true; }
-
-	int frame_x;
-	if (!logo_parameters.start_anim) frame_x = 0;
-	else frame_x = static_cast<int>(logo_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
-#ifdef USE_IMGUI
-	ImGui::Begin("title");
-	if (ImGui::TreeNode("logo animation"))
-	{
-		ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
-		ImGui::Text("timer:%f", logo_parameters.timer);
-		ImGui::Text("frame_x:%d", frame_x);
-		ImGui::Text("frame_y:%d", logo_parameters.frame_y);
-		if (ImGui::Button("restart"))
-		{
-			logo_parameters.timer = 0;
-			frame_x = 0;
-			logo_parameters.frame_y = 0;
-		}
-		ImGui::TreePop();
-	}
-	ImGui::End();
-#endif // USE_IMGUI
+	//-----ロゴのアニメーション-----//
+	LogoAnimation(elapsed_time);
 
 #ifdef Telecommunications
 	ImGui::Begin("host_ip_adress");
@@ -303,46 +273,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::End();
 #endif // Telecommunications
-
-
-	if (frame_x >= FRAMW_COUNT_X)
-	{
-		// 1行下のアニメーションへ
-		if (logo_parameters.frame_y < FRAMW_COUNT_Y - 1)
-		{
-			logo_parameters.timer = 0;
-			++logo_parameters.frame_y;
-		}
-	}
-	else
-	{
-		// アニメーション
-		if (logo_parameters.start_anim)
-		{
-			logo_parameters.animation.texpos.x = frame_x * logo_parameters.animation.texsize.x;
-			logo_parameters.animation.texpos.y = logo_parameters.frame_y * logo_parameters.animation.texsize.y;
-		}
-		logo_parameters.timer += elapsed_time;
-	}
-	// リセット
-	if (logo_parameters.frame_y >= FRAMW_COUNT_Y - 1)
-	{
-		logo_parameters.reset_timer += elapsed_time;
-		logo_parameters.glow_horizon -= logo_parameters.reset_timer * 0.1f;
-		logo_parameters.glow_horizon = (std::max)(logo_parameters.glow_horizon, -12.0f);
-
-		const float RESET_TIME = 5.0f;
-
-		if (logo_parameters.reset_timer > RESET_TIME)
-		{
-			logo_parameters.reset_timer = 0.0f;
-			logo_parameters.glow_horizon = 0.0f;
-
-			frame_x = 0;
-			logo_parameters.timer = 0;
-			logo_parameters.frame_y = 0;
-		}
-	}
 
 	//----<3D関連>----//
 	// cameraManager
@@ -355,178 +285,10 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetCameraPosition(c->get_eye());
 	player->UpdateTitle(elapsed_time);
 
-	// スティックを傾け続けたら少し間をおいて入力を許可する
-	if (!can_axis)
-	{
-		axis_wait_timer += elapsed_time;
-		if (axis_wait_timer > AXIS_WAIT_TIME)
-		{
-			axis_wait_timer = 0;
-			can_axis = true;
-		}
-	}
 
-	auto r_up = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
-	{
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
-		{
-			audio_manager->play_se(SE_INDEX::SELECT);
-			this->state = state;
-			this->arrival_pos1 = arrival_pos1;
-			this->arrival_pos2 = arrival_pos2;
+	//-----タイトルの項目選択-----//
+	TitleSelectEntry(elapsed_time);
 
-			can_axis = false;
-		}
-	};
-	auto r_down = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
-	{
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f)|| (can_axis && game_pad->get_axis_RY() < -0.5f))
-		{
-			audio_manager->play_se(SE_INDEX::SELECT);
-			this->state = state;
-			this->arrival_pos1 = arrival_pos1;
-			this->arrival_pos2 = arrival_pos2;
-
-			can_axis = false;
-		}
-	};
-
-	if (player->GetStartTitleAnimation() == false)
-	{
-		switch (state)
-		{
-		case 0: // beginning
-			// tutorial_tab
-			if (tutorial_tab.display)
-			{
-				auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
-				{
-					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
-					{
-						audio_manager->play_se(SE_INDEX::SELECT);
-						have_tutorial_state = state;
-						tutorial_tab.arrival_posL = arrival_posL;
-						tutorial_tab.arrival_posR = arrival_posR;
-
-						can_axis = false;
-					}
-				};
-				auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
-				{
-					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f)|| (can_axis && game_pad->get_axis_RY() < -0.5f))
-					{
-						audio_manager->play_se(SE_INDEX::SELECT);
-						have_tutorial_state = state;
-						tutorial_tab.arrival_posL = arrival_posL;
-						tutorial_tab.arrival_posR = arrival_posR;
-
-						can_axis = false;
-					}
-				};
-				switch (have_tutorial_state)
-				{
-				case 0: // はい
-					r_down_tutorial(1, { 580,395 }, { 706,395 });
-					break;
-
-				case 1: // いいえ
-					r_up_tutorial(0, { 587, 335 }, { 692, 335 });
-					break;
-				}
-
-				tutorial_tab.selecterL.position = Math::lerp(tutorial_tab.selecterL.position, tutorial_tab.arrival_posL, 10.0f * elapsed_time);
-				tutorial_tab.selecterR.position = Math::lerp(tutorial_tab.selecterR.position, tutorial_tab.arrival_posR, 10.0f * elapsed_time);
-
-				// Aボタンで戻る
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_A)
-				{
-					audio_manager->play_se(SE_INDEX::SELECT);
-					tutorial_tab.display = false;
-				}
-				// 決定
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
-				{
-#if 0
-					// ステージ番号0から
-					WaveFile::get_instance().set_stage_to_start(0);
-#else
-					// ステージ番号ボス手前から
-					WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
-#endif
-					WaveFile::get_instance().save();
-
-					audio_manager->play_se(SE_INDEX::DECISION);
-					player->StartTitleAnimation();
-					tutorial_tab.display = false;
-					return;
-				}
-			}
-			else
-			{
-				if (has_stageNo_json) r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-				else r_down(2, { 980.0f, 627.0f }, { 1190.0f, 627.0f });
-
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
-				{
-					if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
-					{
-						audio_manager->play_se(SE_INDEX::SELECT);
-						tutorial_tab.display = true;
-					}
-					else
-					{
-#if 0
-						// ステージ番号0から
-						WaveFile::get_instance().set_stage_to_start(0);
-#else
-						// ステージ番号ボス手前から
-						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
-#endif
-						WaveFile::get_instance().save();
-
-						audio_manager->play_se(SE_INDEX::DECISION);
-						player->StartTitleAnimation();
-						return;
-					}
-				}
-			}
-			break;
-
-		case 1: // succession
-			r_up(0, { 990.0f, 545.0f }, { 1167.0f, 545.0f });
-			r_down(2, { 980.0f, 650.0f }, { 1190.0f, 650.0f });
-			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
-			{
-				have_tutorial_state = 1; // チュートリアルなし
-				audio_manager->play_se(SE_INDEX::DECISION);
-				player->StartTitleAnimation();
-				return;
-			}
-			break;
-
-		case 2: // exit
-			if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-			else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
-			if (game_pad->get_button_down() & GamePad::BTN_B)
-			{
-				audio_manager->play_se(SE_INDEX::DECISION);
-				PostQuitMessage(0);
-				return;
-			}
-			break;
-		}
-	}
-	else
-	{
-		slashing_wait_timer += elapsed_time;
-		if (has_stageNo_json && (game_pad->get_button_down() & GamePad::BTN_B))
-		{
-			slashing_power = SLASHING_MAX;
-		}
-	}
-
-	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
-	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
 	static float speed = 15000.0f;
 #ifdef USE_IMGUI
@@ -833,4 +595,247 @@ bool SceneTitle::step_string(float elapsed_time, std::wstring full_text,
 	}
 
 	return false;
+}
+
+void SceneTitle::LogoAnimation(float elapsed_time)
+{
+	if (logo_parameters.timer > LOGO_ANIMATION_WAIT_TIME) { logo_parameters.start_anim = true; }
+
+	if (!logo_parameters.start_anim) frame_x = 0;
+	else frame_x = static_cast<int>(logo_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+#ifdef USE_IMGUI
+	ImGui::Begin("title");
+	if (ImGui::TreeNode("logo animation"))
+	{
+		ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+		ImGui::Text("timer:%f", logo_parameters.timer);
+		ImGui::Text("frame_x:%d", frame_x);
+		ImGui::Text("frame_y:%d", logo_parameters.frame_y);
+		if (ImGui::Button("restart"))
+		{
+			logo_parameters.timer = 0;
+			frame_x = 0;
+			logo_parameters.frame_y = 0;
+		}
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif // USE_IMGUI
+	if (frame_x >= FRAMW_COUNT_X)
+	{
+		// 1行下のアニメーションへ
+		if (logo_parameters.frame_y < FRAMW_COUNT_Y - 1)
+		{
+			logo_parameters.timer = 0;
+			++logo_parameters.frame_y;
+		}
+	}
+	else
+	{
+		// アニメーション
+		if (logo_parameters.start_anim)
+		{
+			logo_parameters.animation.texpos.x = frame_x * logo_parameters.animation.texsize.x;
+			logo_parameters.animation.texpos.y = logo_parameters.frame_y * logo_parameters.animation.texsize.y;
+		}
+		logo_parameters.timer += elapsed_time;
+	}
+	// リセット
+	if (logo_parameters.frame_y >= FRAMW_COUNT_Y - 1)
+	{
+		logo_parameters.reset_timer += elapsed_time;
+		logo_parameters.glow_horizon -= logo_parameters.reset_timer * 0.1f;
+		logo_parameters.glow_horizon = (std::max)(logo_parameters.glow_horizon, -12.0f);
+
+		const float RESET_TIME = 5.0f;
+
+		if (logo_parameters.reset_timer > RESET_TIME)
+		{
+			logo_parameters.reset_timer = 0.0f;
+			logo_parameters.glow_horizon = 0.0f;
+
+			frame_x = 0;
+			logo_parameters.timer = 0;
+			logo_parameters.frame_y = 0;
+		}
+	}
+
+}
+
+void SceneTitle::TitleSelectEntry(float elapsed_time)
+{
+	// スティックを傾け続けたら少し間をおいて入力を許可する
+	if (!can_axis)
+	{
+		axis_wait_timer += elapsed_time;
+		if (axis_wait_timer > AXIS_WAIT_TIME)
+		{
+			axis_wait_timer = 0;
+			can_axis = true;
+		}
+	}
+
+	auto r_up = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+	{
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+		{
+			audio_manager->play_se(SE_INDEX::SELECT);
+			this->state = state;
+			this->arrival_pos1 = arrival_pos1;
+			this->arrival_pos2 = arrival_pos2;
+
+			can_axis = false;
+		}
+	};
+	auto r_down = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+	{
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
+		{
+			audio_manager->play_se(SE_INDEX::SELECT);
+			this->state = state;
+			this->arrival_pos1 = arrival_pos1;
+			this->arrival_pos2 = arrival_pos2;
+
+			can_axis = false;
+		}
+	};
+
+	if (player->GetStartTitleAnimation() == false)
+	{
+		switch (state)
+		{
+		case 0: // beginning
+			// tutorial_tab
+			if (tutorial_tab.display)
+			{
+				auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+				{
+					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+					{
+						audio_manager->play_se(SE_INDEX::SELECT);
+						have_tutorial_state = state;
+						tutorial_tab.arrival_posL = arrival_posL;
+						tutorial_tab.arrival_posR = arrival_posR;
+
+						can_axis = false;
+					}
+				};
+				auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+				{
+					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
+					{
+						audio_manager->play_se(SE_INDEX::SELECT);
+						have_tutorial_state = state;
+						tutorial_tab.arrival_posL = arrival_posL;
+						tutorial_tab.arrival_posR = arrival_posR;
+
+						can_axis = false;
+					}
+				};
+				switch (have_tutorial_state)
+				{
+				case 0: // はい
+					r_down_tutorial(1, { 580,395 }, { 706,395 });
+					break;
+
+				case 1: // いいえ
+					r_up_tutorial(0, { 587, 335 }, { 692, 335 });
+					break;
+				}
+
+				tutorial_tab.selecterL.position = Math::lerp(tutorial_tab.selecterL.position, tutorial_tab.arrival_posL, 10.0f * elapsed_time);
+				tutorial_tab.selecterR.position = Math::lerp(tutorial_tab.selecterR.position, tutorial_tab.arrival_posR, 10.0f * elapsed_time);
+
+				// Aボタンで戻る
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_A)
+				{
+					audio_manager->play_se(SE_INDEX::SELECT);
+					tutorial_tab.display = false;
+				}
+				// 決定
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+#if 0
+					// ステージ番号0から
+					WaveFile::get_instance().set_stage_to_start(0);
+#else
+					// ステージ番号ボス手前から
+					WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+#endif
+					WaveFile::get_instance().save();
+
+					audio_manager->play_se(SE_INDEX::DECISION);
+					player->StartTitleAnimation();
+					tutorial_tab.display = false;
+					return;
+				}
+			}
+			else
+			{
+				if (has_stageNo_json) r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+				else r_down(2, { 980.0f, 627.0f }, { 1190.0f, 627.0f });
+
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
+					{
+						audio_manager->play_se(SE_INDEX::SELECT);
+						tutorial_tab.display = true;
+					}
+					else
+					{
+#if 0
+						// ステージ番号0から
+						WaveFile::get_instance().set_stage_to_start(0);
+#else
+						// ステージ番号ボス手前から
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+#endif
+						WaveFile::get_instance().save();
+
+						audio_manager->play_se(SE_INDEX::DECISION);
+						player->StartTitleAnimation();
+						return;
+					}
+				}
+			}
+			break;
+
+		case 1: // succession
+			r_up(0, { 990.0f, 545.0f }, { 1167.0f, 545.0f });
+			r_down(2, { 980.0f, 650.0f }, { 1190.0f, 650.0f });
+			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				have_tutorial_state = 1; // チュートリアルなし
+				audio_manager->play_se(SE_INDEX::DECISION);
+				player->StartTitleAnimation();
+				return;
+			}
+			break;
+
+		case 2: // exit
+			if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+			else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				audio_manager->play_se(SE_INDEX::DECISION);
+				PostQuitMessage(0);
+				return;
+			}
+			break;
+		}
+	}
+	else
+	{
+		slashing_wait_timer += elapsed_time;
+		if (has_stageNo_json && (game_pad->get_button_down() & GamePad::BTN_B))
+		{
+			slashing_power = SLASHING_MAX;
+		}
+	}
+
+	//-----セレクターの動き-----//
+	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
+	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
+
 }

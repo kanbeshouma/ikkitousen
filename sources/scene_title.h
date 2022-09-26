@@ -19,7 +19,7 @@
 #include "shadow_map.h"
 #include "point_light.h"
 
-class SceneTitle : public Scene , public PracticalEntities
+class SceneTitle : public Scene, public PracticalEntities
 {
 public:
     //--------<constructor/destructor>--------//
@@ -38,6 +38,26 @@ public:
     void render(GraphicsPipeline& graphics, float elapsed_time) override;
     //シャドウマップ登録
     void register_shadowmap(GraphicsPipeline& graphics, float elapsed_time) override;
+private:
+    //-- audio volume --//
+    const float BGM_VOLUME = 2.0f;
+    const float SE_VOLUME = 2.0f;
+    //--logo_parameters--//
+    const int FRAMW_COUNT_X = 7;
+    const int FRAMW_COUNT_Y = 4;
+    const float LOGO_ANIMATION_WAIT_TIME = 2.0f;
+private:
+    //-----ロゴのアニメーション速度-----//
+    float logo_animation_speed = 0.03f;
+
+    //-----ロゴのtexpos.xの動くレート-----//
+    int frame_x{};
+
+    //-----ロゴのアニメーション-----//
+    void LogoAnimation(float elapsed_time);
+private:
+    //-----タイトル項目の選択-----//
+    void TitleSelectEntry(float elapsed_time);
 private:
     //----<3D関連>----//
     std::unique_ptr<CameraManager> cameraManager;

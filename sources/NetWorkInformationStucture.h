@@ -1,5 +1,3 @@
-//通信コマンド
-char cmd[4]{};
 #pragma once
 #include<vector>
 #include<memory>
