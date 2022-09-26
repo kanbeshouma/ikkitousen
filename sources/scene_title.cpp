@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include <thread>
 #include <wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
@@ -12,7 +14,13 @@
 #include"SceneTutorial.h"
 #include "WaveManager.h"
 #include "LastBoss.h"
+#include"SocketCommunication.h"
+#include"Correspondence.h"
+
 bool SceneTitle::is_load_ready = false;
+
+//-----マッチング待機時間-----//
+float SceneTitle::standby_matching_timer = 0.0f;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
@@ -221,6 +229,11 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//スレッドの管理を放棄
 	thread.detach();
 
+	//-----ネットワーク関係の変数を初期化する-----//
+	SocketCommunicationManager::Instance().ClearData();
+	//自分のIPAddressを取得
+	CorrespondenceManager::Instance().AcquisitionMyIpAddress();
+	standby_matching_timer = 0.0f;
 
 	// ボスの状態をリセット
 	LastBoss::fLoadParam();
@@ -281,6 +294,16 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	ImGui::End();
 #endif // USE_IMGUI
+
+#ifdef Telecommunications
+	ImGui::Begin("host_ip_adress");
+	ImGui::InputText("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
+	ImGui::End();
+#endif // Telecommunications
+
+
 	if (frame_x >= FRAMW_COUNT_X)
 	{
 		// 1行下のアニメーションへ

@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "SceneMulchGameHost.h"
 #include "scene_title.h"
 #include "scene_loading.h"
@@ -14,6 +16,10 @@
 #include "volume_icon.h"
 #include "LastBoss.h"
 #include"ClientPlayer.h"
+
+#include"SocketCommunication.h"
+#include"Correspondence.h"
+
 
 SceneMulchGameHost::SceneMulchGameHost()
 {
@@ -111,6 +117,7 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	game_over_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\gameover.png", 1);
 	game_over_sprite_pram.position = { 415.9f,0.0f };
 	game_over_sprite_pram.texsize = { 512.0f,512.0f };
+
 	//font
 	game_over_text.s = L"ゲームオーバー";
 	game_over_text.position = { 553.1f,124.3f };
@@ -121,6 +128,9 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	again.scale = { 1.0f,1.0f };
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
+
+	//-----ネットワーク関係の初期化-----//
+	CorrespondenceManager::Instance().InitializeServer();
 
 }
 

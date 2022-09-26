@@ -11,7 +11,7 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <wrl.h>
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 #include "../External/imgui/imgui.h"
 #include "../External/imgui/imgui_internal.h"
 #include "../External/imgui/imgui_impl_dx11.h"

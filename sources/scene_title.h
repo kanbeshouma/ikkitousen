@@ -185,4 +185,12 @@ private:
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_load_ready;
+
+private:
+    //-----通信用の変数-----//
+
+    //-----マッチング待機時間-----//
+    static float standby_matching_timer;
+
+
 };

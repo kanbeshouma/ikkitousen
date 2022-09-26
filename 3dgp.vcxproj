@@ -119,7 +119,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>USE_IMGUI;_DEBUG;_WINDOWS;DEBUG_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_IMGUI;_DEBUG;_WINDOWS;DEBUG_CONSOLE;Telecommunications;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>.\DirectXTK-master\Inc;.\External\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -176,7 +176,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;USE_IMGUI;DEBUG_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;DEBUG_CONSOLE;Telecommunications;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>.\DirectXTK-master\Inc;.\External\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>

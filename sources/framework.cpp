@@ -37,7 +37,7 @@ bool framework::initialize()
 
 void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 {
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -152,7 +152,7 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 	}
 #endif
 
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	// Update and Render additional Platform Windows
@@ -188,7 +188,7 @@ int framework::run()
 		return 0;
 	}
 
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::GetIO().Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 14.0f, nullptr, glyphRangesJapanese);
@@ -235,7 +235,7 @@ int framework::run()
 		}
 	}
 
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -255,7 +255,7 @@ int framework::run()
 
 LRESULT framework::handle_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) { return true; }
 #endif
 

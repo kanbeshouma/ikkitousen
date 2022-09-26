@@ -1,5 +1,5 @@
 #pragma once
 
-#ifdef USE_IMGUI
+#ifdef Telecommunications
 #include "../External/imgui/imgui.h"
 #endif
