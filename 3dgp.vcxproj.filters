@@ -187,9 +187,6 @@
     <Filter Include="Sources\Scene">
       <UniqueIdentifier>{2411a1fa-79c0-4f69-9162-fc798630f01d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Scene\option">
-      <UniqueIdentifier>{16b96f21-2db9-4793-a69a-3f08dd4d758c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Shader">
       <UniqueIdentifier>{21373fe7-ec4b-4554-b9f9-76b5542da9fd}</UniqueIdentifier>
     </Filter>
@@ -225,6 +222,27 @@
     </Filter>
     <Filter Include="Sources\Character\player\ClientPlayer">
       <UniqueIdentifier>{56c3fc9a-141b-46dd-bb1a-6a3403e552ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneMulchGameClient">
+      <UniqueIdentifier>{5e0c298f-800a-40d9-8778-6c8a050e0e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneGame">
+      <UniqueIdentifier>{d5c6645b-183a-474e-9d55-2de13957a9be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneLoading">
+      <UniqueIdentifier>{420bfe14-484e-47fe-a24b-7b40f6a7d5ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneManager">
+      <UniqueIdentifier>{f203e635-33be-4289-bf29-43ee57dcd507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneTitle">
+      <UniqueIdentifier>{d2d27651-a547-4f40-ab03-7ec1de4f1974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Scene\SceneTutorial">
+      <UniqueIdentifier>{51441db0-a0c8-4616-8309-bdd1b01f2d33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\option">
+      <UniqueIdentifier>{16b96f21-2db9-4793-a69a-3f08dd4d758c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -267,19 +285,7 @@
     <ClCompile Include="sources\game_pad.cpp">
       <Filter>Sources\Device</Filter>
     </ClCompile>
-    <ClCompile Include="sources\scene_game.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\scene_title.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="sources\scene.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\scene_manager.cpp">
-      <Filter>Sources\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\scene_loading.cpp">
       <Filter>Sources\Scene</Filter>
     </ClCompile>
     <ClCompile Include="sources\post_effect.cpp">
@@ -412,22 +418,22 @@
       <Filter>Sources\99_Lua</Filter>
     </ClCompile>
     <ClCompile Include="sources\scene_option.cpp">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClCompile>
     <ClCompile Include="sources\icon_base.cpp">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClCompile>
     <ClCompile Include="sources\volume_icon.cpp">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClCompile>
     <ClCompile Include="sources\transition_icon.cpp">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClCompile>
     <ClCompile Include="sources\debug_2D.cpp">
       <Filter>Sources\Debug\debug2D</Filter>
     </ClCompile>
     <ClCompile Include="sources\game_icon.cpp">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClCompile>
     <ClCompile Include="sources\SwordEnemy.cpp">
       <Filter>Sources\Character\enemy\01_Sword</Filter>
@@ -470,9 +476,6 @@
     </ClCompile>
     <ClCompile Include="sources\LastBossBehavior.cpp">
       <Filter>Sources\Character\Boss\00_LastBoss</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\SceneTutorial.cpp">
-      <Filter>Sources\Scene</Filter>
     </ClCompile>
     <ClCompile Include="sources\Turret.cpp">
       <Filter>Sources\Character\Boss\00_LastBoss</Filter>
@@ -597,6 +600,24 @@
     <ClCompile Include="sources\ClientPlayerTransitionAnimation.cpp">
       <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SceneMulchGameClient.cpp">
+      <Filter>Sources\Scene\SceneMulchGameClient</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene_game.cpp">
+      <Filter>Sources\Scene\SceneGame</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene_loading.cpp">
+      <Filter>Sources\Scene\SceneLoading</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene_manager.cpp">
+      <Filter>Sources\Scene\SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene_title.cpp">
+      <Filter>Sources\Scene\SceneTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SceneTutorial.cpp">
+      <Filter>Sources\Scene\SceneTutorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">
@@ -644,19 +665,7 @@
     <ClInclude Include="sources\game_pad.h">
       <Filter>Sources\Device</Filter>
     </ClInclude>
-    <ClInclude Include="sources\scene_game.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\scene_title.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="sources\scene.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\scene_manager.h">
-      <Filter>Sources\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\scene_loading.h">
       <Filter>Sources\Scene</Filter>
     </ClInclude>
     <ClInclude Include="sources\post_effect.h">
@@ -801,19 +810,19 @@
       <Filter>Sources\99_Lua</Filter>
     </ClInclude>
     <ClInclude Include="sources\scene_option.h">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClInclude>
     <ClInclude Include="sources\icon_base.h">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClInclude>
     <ClInclude Include="sources\game_icon.h">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClInclude>
     <ClInclude Include="sources\volume_icon.h">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClInclude>
     <ClInclude Include="sources\transition_icon.h">
-      <Filter>Sources\Scene\option</Filter>
+      <Filter>Sources\option</Filter>
     </ClInclude>
     <ClInclude Include="sources\debug_2D.h">
       <Filter>Sources\Debug\debug2D</Filter>
@@ -856,9 +865,6 @@
     </ClInclude>
     <ClInclude Include="sources\ModelCashe.h">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\SceneTutorial.h">
-      <Filter>Sources\Scene</Filter>
     </ClInclude>
     <ClInclude Include="sources\CannonballBullet.h">
       <Filter>Sources\Bbullet</Filter>
@@ -967,6 +973,24 @@
     </ClInclude>
     <ClInclude Include="sources\resource\resource.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SceneMulchGameClient.h">
+      <Filter>Sources\Scene\SceneMulchGameClient</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_game.h">
+      <Filter>Sources\Scene\SceneGame</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_loading.h">
+      <Filter>Sources\Scene\SceneLoading</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_manager.h">
+      <Filter>Sources\Scene\SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_title.h">
+      <Filter>Sources\Scene\SceneTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SceneTutorial.h">
+      <Filter>Sources\Scene\SceneTutorial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

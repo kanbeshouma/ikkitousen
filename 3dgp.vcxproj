@@ -221,6 +221,7 @@
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
+    <ClCompile Include="sources\SceneMulchGameClient.cpp" />
     <ClCompile Include="sources\SceneMulchGameHost.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
@@ -345,6 +346,7 @@
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
     <ClInclude Include="sources\resource\resource.h" />
+    <ClInclude Include="sources\SceneMulchGameClient.h" />
     <ClInclude Include="sources\SceneMulchGameHost.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
