@@ -19,6 +19,9 @@
 
 bool SceneTitle::is_load_ready = false;
 
+//-----ログイン処理が成功した場合のシーン切替をしていいかどうか----//
+bool SceneTitle::change_scene_thread = false;
+
 //-----マッチング待機時間-----//
 float SceneTitle::standby_matching_timer = 0.0f;
 
@@ -78,13 +81,15 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//--selecter--//
 	sprite_selecter    = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\selecter.png", 2);
 	selecter1.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	if (has_stageNo_json) selecter1.position = { 990.0f, 545.0f };
-	else selecter1.position = { 990.0f, 565.0f };
+	//if (has_stageNo_json) selecter1.position = { 990.0f, 545.0f };
+	//else selecter1.position = { 990.0f, 565.0f };
+    selecter1.position = { 1001.0f,516.3f };
 	selecter1.scale    = { 0.2f, 0.1f };
 
 	selecter2.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	if (has_stageNo_json) selecter2.position = { 1167.0f, 545.0f };
-	else selecter2.position = { 1167.0f, 565.0f };
+	//if (has_stageNo_json) selecter2.position = { 1167.0f, 545.0f };
+	//else selecter2.position = { 1167.0f, 565.0f };
+	selecter2.position = { 1155.0f,516.3f };
 	selecter2.scale    = { 0.2f, 0.1f };
 
 	arrival_pos1 = selecter1.position;
@@ -92,9 +97,13 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	//--font--//
 	beginning.s = L"初めから";
-	if (has_stageNo_json) beginning.position = { 1032, 522 };
-	else beginning.position = { 1032, 545 };
+	if (has_stageNo_json) beginning.position = { 1032, 495.0f };
+	else beginning.position = { 1032, 495.0f };
 	beginning.scale = { 0.7f,0.7f };
+
+	multiplay.s = L"マルチプレイ";
+	multiplay.position = { 1019.0f, 550.0f };
+	multiplay.scale = { 0.7f,0.7f };
 
 	succession.s = L"続きから";
 	succession.position = { 1035, 575 };
@@ -109,7 +118,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	now_loading.scale = { 0.6f,0.6f };
 
 	//--state--//
-	state = 0;
+	state = TitleEntry::Beginning;
 
 #if 0
 	std::filesystem::path path = "./resources/Data/tutorial.json";
@@ -233,8 +242,10 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	SocketCommunicationManager::Instance().ClearData();
 	//自分のIPAddressを取得
 	CorrespondenceManager::Instance().AcquisitionMyIpAddress();
-	standby_matching_timer = 0.0f;
 
+	//-----マルチスレッド変数の初期化-----//
+	standby_matching_timer = 0.0f;
+	change_scene_thread = false;
 
 	// ボスの状態をリセット
 	LastBoss::fLoadParam();
@@ -510,7 +521,10 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	step_string(elapsed_time, L"ロード中...", now_loading, 2.0f, true);
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	r_font_render("beginning", beginning);
-	if (has_stageNo_json) r_font_render("succession", succession);
+	//if (has_stageNo_json) r_font_render("succession", succession);
+
+	r_font_render("multiplay", multiplay);
+
 	r_font_render("exit", exit);
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
@@ -704,7 +718,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 	{
 		switch (state)
 		{
-		case 0: // beginning
+		case TitleEntry::Beginning: // beginning
 			// tutorial_tab
 			if (tutorial_tab.display)
 			{
@@ -772,8 +786,13 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 			}
 			else
 			{
-				if (has_stageNo_json) r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-				else r_down(2, { 980.0f, 627.0f }, { 1190.0f, 627.0f });
+				////-----jsonファイルがあるかどうか-----//
+				//if (has_stageNo_json) r_down(TitleEntry::Succession, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+				////-----なかったら続きからがないからマルチプレイの方に行く
+				//else r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+
+				//-----一つ下の項目に行く-----//
+				r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
 
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -801,9 +820,9 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 			}
 			break;
 
-		case 1: // succession
-			r_up(0, { 990.0f, 545.0f }, { 1167.0f, 545.0f });
-			r_down(2, { 980.0f, 650.0f }, { 1190.0f, 650.0f });
+		case TitleEntry::Succession: // succession
+			r_up(TitleEntry::Beginning, { 990.0f, 516.0f }, { 1167.0f, 516.0f });
+			r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
 			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 			{
 				have_tutorial_state = 1; // チュートリアルなし
@@ -812,10 +831,16 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				return;
 			}
 			break;
+		case TitleEntry::Multiplay:
+			r_up(TitleEntry::Beginning, { 1001.1f, 516.3f }, { 1155.0f, 516.3f });
+			r_down(TitleEntry::Exit, { 984.7f,626.8f }, { 1176.8f,626.8f });
+			break;
+		case TitleEntry::Exit: // exit
+			//if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+			//else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
 
-		case 2: // exit
-			if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-			else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
+			r_up(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
 				audio_manager->play_se(SE_INDEX::DECISION);
@@ -834,8 +859,28 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 		}
 	}
 
-	//-----セレクターの動き-----//
+	////-----セレクターの動き-----//
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
+}
+
+void SceneTitle::StandbyMatching()
+{
+	DebugConsole::Instance().WriteDebugConsole("スレッド開始");
+	CorrespondenceManager::Instance().Login();
+	for (;;)
+	{
+		if (standby_matching_timer > 10.0f)
+		{
+			DebugConsole::Instance().WriteDebugConsole("マッチングに失敗しました", TextColor::Red);
+			break;
+		}
+		if (CorrespondenceManager::Instance().LoginReceive())
+		{
+			DebugConsole::Instance().WriteDebugConsole("マッチングに成功しました", TextColor::Green);
+			change_scene_thread = true;
+			break;
+		}
+	}
 }

@@ -110,6 +110,7 @@ private:
         int index = 0;
     };
     StepFontElement beginning;    // 初めから
+    StepFontElement multiplay;    // マルチプレイ
     StepFontElement succession;   // 続きから
     StepFontElement exit;         // ゲーム終了
     StepFontElement now_loading;  // ロード中
@@ -136,6 +137,14 @@ private:
     DirectX::XMFLOAT2 arrival_pos2{};
 
     int state = 0;
+
+    enum TitleEntry
+    {
+        Beginning,
+        Succession,
+        Multiplay,
+        Exit,
+    };
     int have_tutorial_state = -1; // -1:チュートリアルデータなし 0:チュートリアルあり 1:チュートリアルなし
 
     //--tutorial tab--//
@@ -207,10 +216,18 @@ private:
     static bool is_load_ready;
 
 private:
-    //-----通信用の変数-----//
+    //-----マルチスレッド-----//
+    std::thread standby_thread;
+
+private:
+    //----------通信関係--------//
+
+    //-----ログイン処理が成功した場合のシーン切替をしていいかどうか----//
+    static bool change_scene_thread;
 
     //-----マッチング待機時間-----//
     static float standby_matching_timer;
-
-
+private:
+    //------------マッチング--------------//
+    static void StandbyMatching();
 };
