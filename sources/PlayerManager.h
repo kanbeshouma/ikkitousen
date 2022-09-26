@@ -129,4 +129,5 @@ private:
     int private_object_id{ -1 };
 public:
     void SetPrivateObjectId(int id) { private_object_id = id; }
+     int GetPrivatePlayerId() { return private_object_id; }
 };

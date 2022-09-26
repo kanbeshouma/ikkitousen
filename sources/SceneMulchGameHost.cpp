@@ -46,13 +46,21 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
-		Player* player = new Player(graphics, 0);
-		player_manager->RegisterPlayer(player);
-		player_manager->SetPrivateObjectId(0);
+    Player* player = new Player(graphics, PlayerPrivateObjectId);
+    player_manager->RegisterPlayer(player);
+    player_manager->SetPrivateObjectId(PlayerPrivateObjectId);
 
+	//----------プレイヤー(操作することができる自分のこと)の番号を保存
+	CorrespondenceManager::Instance().SetOperationPrivateId(player_manager->GetPrivatePlayerId());
+
+	//-----サーバーのソケット情報の初期化-----//
+	if (CorrespondenceManager::Instance().InitializeServer())
 	{
-		ClientPlayer* p = new ClientPlayer(graphics, 1);
-		player_manager->RegisterPlayer(p);
+		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に成功しました", TextColor::Green);
+	}
+	else
+	{
+		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に失敗しました", TextColor::Red);
 	}
 
 	// カメラ
@@ -128,9 +136,6 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	again.scale = { 1.0f,1.0f };
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
-
-	//-----ネットワーク関係の初期化-----//
-	CorrespondenceManager::Instance().InitializeServer();
 
 }
 

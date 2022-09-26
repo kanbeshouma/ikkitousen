@@ -2,6 +2,7 @@
 
 #include "framework.h"
 #include "resource/resource.h"
+#include"DebugConsole.h"
 
 LRESULT CALLBACK window_procedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -35,6 +36,7 @@ int WINAPI WinMain(_In_ HINSTANCE instance, _In_opt_  HINSTANCE prev_instance, _
 	wcex.lpszClassName = APPLICATION_NAME;
 	wcex.hIconSm = 0;
 	RegisterClassExW(&wcex);
+	DebugConsole::Instance().CreateDebugConsole();
 
 	RECT rc{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);

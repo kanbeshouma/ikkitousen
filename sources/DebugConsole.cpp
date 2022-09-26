@@ -4,7 +4,7 @@ DebugConsole::~DebugConsole()
 {
 #ifdef DEBUG_CONSOLE
     FreeConsole();
-#endif // DEBUG
+#endif // DEBUG_CONSOLE
 }
 
 void DebugConsole::CreateDebugConsole()

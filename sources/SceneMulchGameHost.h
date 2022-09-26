@@ -51,6 +51,9 @@ public:
     ////----------シャドウマップ登録----------//
     void register_shadowmap(GraphicsPipeline& graphics, float elapsed_time) override;
 private:
+    //-----ホストになるプレイヤーの番号-----//
+    static const int PlayerPrivateObjectId = 0;
+private:
     std::unique_ptr<CameraManager> cameraManager;
 public:
     enum class CameraTypes
