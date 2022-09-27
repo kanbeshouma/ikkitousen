@@ -23,8 +23,14 @@ bool SceneTitle::is_load_ready = false;
 //-----ログイン処理が成功した場合のシーン切替をしていいかどうか----//
 bool SceneTitle::change_scene_thread = false;
 
+//-----マッチングが始まったかどうか-----//
+bool SceneTitle::start_matching = false;
+
 //-----マッチング待機時間-----//
 float SceneTitle::standby_matching_timer = 0.0f;
+
+//-----ブロッキング-----//
+std::mutex SceneTitle::mutex;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
@@ -133,6 +139,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	now_loading.position = { 15,675 };
 	now_loading.scale = { 0.6f,0.6f };
 
+	//-----マッチング中-----//
+	now_matching.position = { 15,675 };
+	now_matching.scale = { 0.6f,0.6f };
 
 	//--state--//
 	state = TitleEntry::Beginning;
@@ -263,7 +272,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//-----マルチスレッド変数の初期化-----//
 	standby_matching_timer = 0.0f;
 	change_scene_thread = false;
-
+	start_matching = false;
 	// ボスの状態をリセット
 	LastBoss::fLoadParam();
 	LastBoss::fResetLoadRaram();
@@ -300,6 +309,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::Text("state%d", state);
+	ImGui::Text("mulch_play_entry_state%d", mulch_play_entry_state);
 	ImGui::End();
 #endif // Telecommunications
 
@@ -580,6 +590,13 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		r_font_render("mulch_paly_entry_back", mulch_paly_entry_back);
 
 	}
+
+	if (start_matching)
+	{
+		step_string(elapsed_time, L"マッチング中...", now_matching, 2.0f, true);
+		r_font_render("now_matching", now_matching);
+	}
+
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 	// config
@@ -746,6 +763,22 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 
 	if (player->GetStartTitleAnimation() == false)
 	{
+		//-----マッチング中は選択処理は行えないようにする-----//
+		if (start_matching)
+		{
+			//-----マッチングタイマーを進める-----//
+			standby_matching_timer += 1.0f * elapsed_time;
+			return;
+		}
+
+		//-----マッチングに成功した場合も処理を行わないようにする-----//
+		if (change_scene_thread)
+		{
+			have_tutorial_state = 1; // チュートリアルなし
+			player->StartTitleAnimation();
+			return;
+		}
+
 		//-----マルチプレイを選択していない場合-----//
 		if (select_mulch_play == false)
 		{
@@ -929,8 +962,20 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					//-----マッチング処理を書く-----//
+					if (CorrespondenceManager::Instance().InitializeClient())
+					{
+						DebugConsole::Instance().WriteDebugConsole("初期化に成功しました", TextColor::Green);
 
+						//-----マルチスレッドを開始-----//
+						std::thread t(StandbyMatching);
+						t.swap(standby_thread);
+						standby_thread.detach();
 
+						//-----ブロッキング設定をする-----//
+						std::lock_guard<std::mutex> lock(mutex);
+						//-----マッチング開始フラグを立てる-----//
+						start_matching = true;
+					}
 					return;
 				}
 
@@ -983,12 +1028,26 @@ void SceneTitle::StandbyMatching()
 		if (standby_matching_timer > 10.0f)
 		{
 			DebugConsole::Instance().WriteDebugConsole("マッチングに失敗しました", TextColor::Red);
+			//-----ブロッキング設定をする-----//
+			std::lock_guard<std::mutex> lock(mutex);
+
+			//-----マッチング開始フラグを解除する-----//
+			start_matching = false;
 			break;
 		}
 		if (CorrespondenceManager::Instance().LoginReceive())
 		{
 			DebugConsole::Instance().WriteDebugConsole("マッチングに成功しました", TextColor::Green);
+
+			//-----シーン切替をしていいことを伝える-----//
 			change_scene_thread = true;
+
+			//-----ブロッキング設定をする-----//
+			std::lock_guard<std::mutex> lock(mutex);
+
+			//-----マッチング開始フラグを解除する-----//
+			start_matching = false;
+
 			break;
 		}
 	}

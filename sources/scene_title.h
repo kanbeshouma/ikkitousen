@@ -153,6 +153,9 @@ private:
     // ロード中
     StepFontElement now_loading;
 
+    //-----マッチング中-----//
+    StepFontElement now_matching;
+
     //-----ホストプレイ-----//
     StepFontElement host_play_font;
 
@@ -282,6 +285,9 @@ private:
     //-----マルチスレッド-----//
     std::thread standby_thread;
 
+    //-----排他制御-----//
+    static std::mutex mutex;
+
 private:
     //----------通信関係--------//
 
@@ -290,6 +296,8 @@ private:
 
     //-----マッチング待機時間-----//
     static float standby_matching_timer;
+
+    static bool start_matching;
 private:
     //------------マッチング--------------//
     static void StandbyMatching();

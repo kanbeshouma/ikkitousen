@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "SceneMulchGameClient.h"
 #include "scene_title.h"
 #include "scene_loading.h"
@@ -14,6 +16,7 @@
 #include "volume_icon.h"
 #include "LastBoss.h"
 #include"ClientPlayer.h"
+#include"Correspondence.h"
 
 SceneMulchGameClient::SceneMulchGameClient()
 {
@@ -39,12 +42,15 @@ void SceneMulchGameClient::initialize(GraphicsPipeline& graphics)
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
-	Player* player = new Player(graphics, 0);
+	Player* player = new Player(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
 	player_manager->RegisterPlayer(player);
-	player_manager->SetPrivateObjectId(0);
+	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
 
+	for(int i = 0; i < MAX_CLIENT; i++)
 	{
-		ClientPlayer* p = new ClientPlayer(graphics, 1);
+		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
+		if (id < 0) continue;
+		ClientPlayer* p = new ClientPlayer(graphics, id);
 		player_manager->RegisterPlayer(p);
 	}
 
