@@ -114,8 +114,24 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	else exit.position = { 1025, 605 };
 	exit.scale = { 0.7f,0.7f };
 
+
+	host_play_font.s = L"ホストプレイ";
+	host_play_font.position = { 1020.0f,500.0f };
+	host_play_font.scale = { 0.7f,0.7f };
+
+	client_play_font.s = L"ゲームに参加する";
+	client_play_font.position = { 987.0f,557.0f };
+	client_play_font.scale = { 0.7f,0.7f };
+
+	mulch_paly_entry_back.s = L"戻る";
+	mulch_paly_entry_back.position = { 1066.0f,618.0f };
+	mulch_paly_entry_back.scale = { 0.7f,0.7f };
+
+
+
 	now_loading.position = { 15,675 };
 	now_loading.scale = { 0.6f,0.6f };
+
 
 	//--state--//
 	state = TitleEntry::Beginning;
@@ -282,6 +298,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::InputText("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
+	ImGui::Text("state%d", state);
 	ImGui::End();
 #endif // Telecommunications
 
@@ -519,13 +536,30 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--font--//
 	step_string(elapsed_time, L"ロード中...", now_loading, 2.0f, true);
-	fonts->yu_gothic->Begin(graphics.get_dc().Get());
-	r_font_render("beginning", beginning);
-	//if (has_stageNo_json) r_font_render("succession", succession);
 
-	r_font_render("multiplay", multiplay);
+	//-----マルチプレイ項目を選択していない時-----//
+	if (select_mulch_play == false)
+	{
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render("beginning", beginning);
+		//if (has_stageNo_json) r_font_render("succession", succession);
+		r_font_render("multiplay", multiplay);
 
-	r_font_render("exit", exit);
+		r_font_render("exit", exit);
+	}
+	//-----マルチプレイ項目を選択したとき-----//
+	else
+	{
+		//-----ホストプレイ-----//
+		r_font_render("host_play_font", host_play_font);
+
+		//-----クライアントプレイ-----//
+		r_font_render("client_play_font", client_play_font);
+
+		//-----ひとつ前の項目に戻る-----//
+		r_font_render("mulch_paly_entry_back", mulch_paly_entry_back);
+
+	}
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 	// config
@@ -689,119 +723,64 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 		}
 	}
 
-	auto r_up = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
-	{
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
-		{
-			audio_manager->play_se(SE_INDEX::SELECT);
-			this->state = state;
-			this->arrival_pos1 = arrival_pos1;
-			this->arrival_pos2 = arrival_pos2;
-
-			can_axis = false;
-		}
-	};
-	auto r_down = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
-	{
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
-		{
-			audio_manager->play_se(SE_INDEX::SELECT);
-			this->state = state;
-			this->arrival_pos1 = arrival_pos1;
-			this->arrival_pos2 = arrival_pos2;
-
-			can_axis = false;
-		}
-	};
 
 	if (player->GetStartTitleAnimation() == false)
 	{
-		switch (state)
+		//-----マルチプレイを選択していない場合-----//
+		if (select_mulch_play == false)
 		{
-		case TitleEntry::Beginning: // beginning
-			// tutorial_tab
-			if (tutorial_tab.display)
+			switch (state)
 			{
-				auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+			case TitleEntry::Beginning: // beginning
+				// tutorial_tab
+				if (tutorial_tab.display)
 				{
-					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+					auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+					{
+						if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+						{
+							audio_manager->play_se(SE_INDEX::SELECT);
+							have_tutorial_state = state;
+							tutorial_tab.arrival_posL = arrival_posL;
+							tutorial_tab.arrival_posR = arrival_posR;
+
+							can_axis = false;
+						}
+					};
+					auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+					{
+						if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
+						{
+							audio_manager->play_se(SE_INDEX::SELECT);
+							have_tutorial_state = state;
+							tutorial_tab.arrival_posL = arrival_posL;
+							tutorial_tab.arrival_posR = arrival_posR;
+
+							can_axis = false;
+						}
+					};
+					switch (have_tutorial_state)
+					{
+					case 0: // はい
+						r_down_tutorial(1, { 580,395 }, { 706,395 });
+						break;
+
+					case 1: // いいえ
+						r_up_tutorial(0, { 587, 335 }, { 692, 335 });
+						break;
+					}
+
+					tutorial_tab.selecterL.position = Math::lerp(tutorial_tab.selecterL.position, tutorial_tab.arrival_posL, 10.0f * elapsed_time);
+					tutorial_tab.selecterR.position = Math::lerp(tutorial_tab.selecterR.position, tutorial_tab.arrival_posR, 10.0f * elapsed_time);
+
+					// Aボタンで戻る
+					if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_A)
 					{
 						audio_manager->play_se(SE_INDEX::SELECT);
-						have_tutorial_state = state;
-						tutorial_tab.arrival_posL = arrival_posL;
-						tutorial_tab.arrival_posR = arrival_posR;
-
-						can_axis = false;
+						tutorial_tab.display = false;
 					}
-				};
-				auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
-				{
-					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
-					{
-						audio_manager->play_se(SE_INDEX::SELECT);
-						have_tutorial_state = state;
-						tutorial_tab.arrival_posL = arrival_posL;
-						tutorial_tab.arrival_posR = arrival_posR;
-
-						can_axis = false;
-					}
-				};
-				switch (have_tutorial_state)
-				{
-				case 0: // はい
-					r_down_tutorial(1, { 580,395 }, { 706,395 });
-					break;
-
-				case 1: // いいえ
-					r_up_tutorial(0, { 587, 335 }, { 692, 335 });
-					break;
-				}
-
-				tutorial_tab.selecterL.position = Math::lerp(tutorial_tab.selecterL.position, tutorial_tab.arrival_posL, 10.0f * elapsed_time);
-				tutorial_tab.selecterR.position = Math::lerp(tutorial_tab.selecterR.position, tutorial_tab.arrival_posR, 10.0f * elapsed_time);
-
-				// Aボタンで戻る
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_A)
-				{
-					audio_manager->play_se(SE_INDEX::SELECT);
-					tutorial_tab.display = false;
-				}
-				// 決定
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
-				{
-#if 0
-					// ステージ番号0から
-					WaveFile::get_instance().set_stage_to_start(0);
-#else
-					// ステージ番号ボス手前から
-					WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
-#endif
-					WaveFile::get_instance().save();
-
-					audio_manager->play_se(SE_INDEX::DECISION);
-					player->StartTitleAnimation();
-					tutorial_tab.display = false;
-					return;
-				}
-			}
-			else
-			{
-				////-----jsonファイルがあるかどうか-----//
-				//if (has_stageNo_json) r_down(TitleEntry::Succession, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-				////-----なかったら続きからがないからマルチプレイの方に行く
-				//else r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
-
-				//-----一つ下の項目に行く-----//
-				r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
-
-				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
-				{
-					if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
-					{
-						audio_manager->play_se(SE_INDEX::SELECT);
-						tutorial_tab.display = true;
-					}
-					else
+					// 決定
+					if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 					{
 #if 0
 						// ステージ番号0から
@@ -814,41 +793,131 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 
 						audio_manager->play_se(SE_INDEX::DECISION);
 						player->StartTitleAnimation();
+						tutorial_tab.display = false;
 						return;
-					}
 				}
 			}
-			break;
+				else
+				{
+					////-----jsonファイルがあるかどうか-----//
+					//if (has_stageNo_json) r_down(TitleEntry::Succession, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+					////-----なかったら続きからがないからマルチプレイの方に行く
+					//else r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
 
-		case TitleEntry::Succession: // succession
-			r_up(TitleEntry::Beginning, { 990.0f, 516.0f }, { 1167.0f, 516.0f });
-			r_down(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
-			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+					//-----一つ下の項目に行く-----//
+					TitleEntryDown(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+
+					if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+					{
+						if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
+						{
+							audio_manager->play_se(SE_INDEX::SELECT);
+							tutorial_tab.display = true;
+						}
+						else
+						{
+#if 0
+							// ステージ番号0から
+							WaveFile::get_instance().set_stage_to_start(0);
+#else
+							// ステージ番号ボス手前から
+							WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+#endif
+							WaveFile::get_instance().save();
+
+							audio_manager->play_se(SE_INDEX::DECISION);
+							player->StartTitleAnimation();
+							return;
+						}
+					}
+				}
+				break;
+			case TitleEntry::Succession: // succession
+				TitleEntryUp(TitleEntry::Beginning, { 990.0f, 516.0f }, { 1167.0f, 516.0f });
+				TitleEntryDown(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					have_tutorial_state = 1; // チュートリアルなし
+					audio_manager->play_se(SE_INDEX::DECISION);
+					player->StartTitleAnimation();
+					return;
+				}
+				break;
+				//-----マルチプレイ-----//
+			case TitleEntry::Multiplay:
+				TitleEntryUp(TitleEntry::Beginning, { 1001.1f, 516.3f }, { 1155.0f, 516.3f });
+				TitleEntryDown(TitleEntry::Exit, { 984.7f,626.8f }, { 1176.8f,626.8f });
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					//----マルチプレイを選択した-----//
+					select_mulch_play = true;
+
+					//-----ステートを初期化-----//
+					mulch_play_entry_state = MulchPlayEntry::Host;
+
+					//-----セレクトバーの位置を設定-----//
+					arrival_pos1 = { 994.1f,520.0f };
+					arrival_pos2 = { 1176.1f,520.0f };
+
+					audio_manager->play_se(SE_INDEX::DECISION);
+					return;
+				}
+				break;
+			case TitleEntry::Exit: // exit
+				//if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+				//else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
+
+				TitleEntryUp(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+
+				if (game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					audio_manager->play_se(SE_INDEX::DECISION);
+					PostQuitMessage(0);
+					return;
+				}
+				break;
+	         }
+        }
+		//-----マルチプレイを選択した場合-----//
+		else
+	    {
+			switch (mulch_play_entry_state)
 			{
-				have_tutorial_state = 1; // チュートリアルなし
-				audio_manager->play_se(SE_INDEX::DECISION);
-				player->StartTitleAnimation();
-				return;
-			}
-			break;
-		case TitleEntry::Multiplay:
-			r_up(TitleEntry::Beginning, { 1001.1f, 516.3f }, { 1155.0f, 516.3f });
-			r_down(TitleEntry::Exit, { 984.7f,626.8f }, { 1176.8f,626.8f });
-			break;
-		case TitleEntry::Exit: // exit
-			//if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-			//else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
+				//-----ホストプレイ-----//
+			case MulchPlayEntry::Host:
+				MulchPlayEntryDown(MulchPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
+				break;
+				//-----ゲームに参加-----//
+			case MulchPlayEntry::Client:
 
-			r_up(TitleEntry::Multiplay, { 990.0f,570.0f }, { 1177.0f,570.0f });
+				MulchPlayEntryUp(MulchPlayEntry::Host, { 994.1f,520.0f }, { 1176.1f,520.0f });
 
-			if (game_pad->get_button_down() & GamePad::BTN_B)
-			{
-				audio_manager->play_se(SE_INDEX::DECISION);
-				PostQuitMessage(0);
-				return;
+				MulchPlayEntryDown(MulchPlayEntry::Back, { 1030.0f,640.0f }, { 1139.0f,640.0f });
+				break;
+				//-----ひとつ前の項目に戻る-----//
+			case MulchPlayEntry::Back:
+
+				MulchPlayEntryUp(MulchPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
+
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					select_mulch_play = false;
+					//-----ステートを初期化-----//
+					state = TitleEntry::Beginning;
+
+					//-----セレクトバーの位置を設定-----//
+					arrival_pos1 = { 990.0f, 516.0f };
+					arrival_pos2 = { 1167.0f, 516.0f };
+
+					audio_manager->play_se(SE_INDEX::DECISION);
+				}
+				break;
+			default:
+				break;
 			}
-			break;
-		}
+
+	    }
+
 	}
 	else
 	{
@@ -882,5 +951,59 @@ void SceneTitle::StandbyMatching()
 			change_scene_thread = true;
 			break;
 		}
+	}
+}
+
+void SceneTitle::TitleEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+{
+	if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+	{
+		audio_manager->play_se(SE_INDEX::SELECT);
+		state = next_state;
+		this->arrival_pos1 = arrival_pos1;
+		this->arrival_pos2 = arrival_pos2;
+
+		can_axis = false;
+	}
+
+}
+
+void SceneTitle::TitleEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+{
+	if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
+	{
+		audio_manager->play_se(SE_INDEX::SELECT);
+		state = next_state;
+		this->arrival_pos1 = arrival_pos1;
+		this->arrival_pos2 = arrival_pos2;
+
+		can_axis = false;
+	}
+
+}
+
+void SceneTitle::MulchPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+{
+	if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
+	{
+		audio_manager->play_se(SE_INDEX::SELECT);
+		this->mulch_play_entry_state = next_state;
+		this->arrival_pos1 = arrival_pos1;
+		this->arrival_pos2 = arrival_pos2;
+
+		can_axis = false;
+	}
+}
+
+void SceneTitle::MulchPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+{
+	if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
+	{
+		audio_manager->play_se(SE_INDEX::SELECT);
+		this->mulch_play_entry_state = next_state;
+		this->arrival_pos1 = arrival_pos1;
+		this->arrival_pos2 = arrival_pos2;
+
+		can_axis = false;
 	}
 }

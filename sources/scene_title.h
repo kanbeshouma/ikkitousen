@@ -58,6 +58,39 @@ private:
 private:
     //-----タイトル項目の選択-----//
     void TitleSelectEntry(float elapsed_time);
+
+private:
+    //-----マルチプレイの項目-----//
+    enum MulchPlayEntry
+    {
+        //-----ゲーム部屋を作る-----//
+        Host,
+        //-----ゲーム部屋に入る-----//
+        Client,
+        //-----選択項目を出る-----//
+        Back,
+    };
+
+    //-----マルチプレイ項目ステート-----//
+    int mulch_play_entry_state{ MulchPlayEntry::Host };
+
+    //-----マルチプレイの項目を選択したかどうか-----//
+    bool select_mulch_play{ false };
+
+private:
+    //-----MulchPlayEntryのコントローラー動作-----//
+
+    ////-----セレクトバーを上に動かす-----//
+    //============================
+    //第1引数 : 次のステート
+    //第2 , 3引数 : 選択バーの位置
+    void MulchPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
+
+    ////-----セレクトバーを下に動かす-----//
+    //============================
+    //第1引数 : 次のステート
+    //第2 , 3引数 : 選択バーの位置
+    void MulchPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
 private:
     //----<3D関連>----//
     std::unique_ptr<CameraManager> cameraManager;
@@ -109,11 +142,25 @@ private:
         int step = 0;
         int index = 0;
     };
-    StepFontElement beginning;    // 初めから
-    StepFontElement multiplay;    // マルチプレイ
-    StepFontElement succession;   // 続きから
-    StepFontElement exit;         // ゲーム終了
-    StepFontElement now_loading;  // ロード中
+    // 初めから
+    StepFontElement beginning;
+    // マルチプレイ
+    StepFontElement multiplay;
+    // 続きから
+    StepFontElement succession;
+    // ゲーム終了
+    StepFontElement exit;
+    // ロード中
+    StepFontElement now_loading;
+
+    //-----ホストプレイ-----//
+    StepFontElement host_play_font;
+
+    //-----クライアントプレイ-----//
+    StepFontElement client_play_font;
+
+    //-----ひとつ前の項目に戻る-----//
+    StepFontElement mulch_paly_entry_back;
 
     bool step_string(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element,
         float speed = 1.0f, bool loop = false);
@@ -145,6 +192,22 @@ private:
         Multiplay,
         Exit,
     };
+private:
+    //-----TitleEntryのコントローラー動作-----//
+
+    ////-----セレクトバーを上に動かす-----//
+    //============================
+    //第1引数 : 次のステート
+    //第2 , 3引数 : 選択バーの位置
+    void TitleEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
+
+    ////-----セレクトバーを下に動かす-----//
+    //============================
+    //第1引数 : 次のステート
+    //第2 , 3引数 : 選択バーの位置
+    void TitleEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
+
+private:
     int have_tutorial_state = -1; // -1:チュートリアルデータなし 0:チュートリアルあり 1:チュートリアルなし
 
     //--tutorial tab--//
