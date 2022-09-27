@@ -8,6 +8,7 @@
 #include "scene_title.h"
 #include "scene_game.h"
 #include"SceneMulchGameHost.h"
+#include"SceneMulchGameClient.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "ModelCashe.h"
@@ -409,7 +410,26 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (have_tutorial_state == 1) /* チュートリアルなし */
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneMulchGameHost()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			if (select_mulch_play)
+			{
+				switch (mulch_play_entry_state)
+				{
+				case MulchPlayEntry::Host:
+					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameHost()), DISSOLVE_TYPE::HORIZON, 2.0f);
+					DebugConsole::Instance().WriteDebugConsole("ホストプレイ開始");
+					break;
+				case MulchPlayEntry::Client:
+					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameClient()), DISSOLVE_TYPE::HORIZON, 2.0f);
+					DebugConsole::Instance().WriteDebugConsole("ゲームに参加");
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			}
 		}
 		else
 		{
@@ -795,8 +815,8 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 						player->StartTitleAnimation();
 						tutorial_tab.display = false;
 						return;
+					}
 				}
-			}
 				else
 				{
 					////-----jsonファイルがあるかどうか-----//
@@ -876,16 +896,28 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 					return;
 				}
 				break;
-	         }
-        }
+			}
+		}
 		//-----マルチプレイを選択した場合-----//
 		else
-	    {
+		{
 			switch (mulch_play_entry_state)
 			{
 				//-----ホストプレイ-----//
 			case MulchPlayEntry::Host:
 				MulchPlayEntryDown(MulchPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
+
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+						// ステージ番号ボス手前から
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+						WaveFile::get_instance().save();
+						have_tutorial_state = 1; // チュートリアルなし
+						audio_manager->play_se(SE_INDEX::DECISION);
+						player->StartTitleAnimation();
+						return;
+			    }
+
 				break;
 				//-----ゲームに参加-----//
 			case MulchPlayEntry::Client:
@@ -893,6 +925,15 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				MulchPlayEntryUp(MulchPlayEntry::Host, { 994.1f,520.0f }, { 1176.1f,520.0f });
 
 				MulchPlayEntryDown(MulchPlayEntry::Back, { 1030.0f,640.0f }, { 1139.0f,640.0f });
+
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					//-----マッチング処理を書く-----//
+
+
+					return;
+				}
+
 				break;
 				//-----ひとつ前の項目に戻る-----//
 			case MulchPlayEntry::Back:
@@ -916,8 +957,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				break;
 			}
 
-	    }
-
+		}
 	}
 	else
 	{
