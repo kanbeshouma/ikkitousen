@@ -6,7 +6,7 @@
 void SceneMulchGameHost::ReceiveLoginData()
 {
     CoInitializeEx(NULL,NULL);
-    DebugConsole::Instance().WriteDebugConsole("マルチスレッド開始");
+    DebugConsole::Instance().WriteDebugConsole("ログインスレッド開始");
     for (;;)
     {
         if (end_login_thread)
@@ -57,6 +57,7 @@ void SceneMulchGameHost::Login(int client_id, char* data)
 	//----------自分の番号を保存する----------//
 	login.host_id = CorrespondenceManager::Instance().GetOperationPrivateId();
 
+
 	//------------通信相手以外のプレイヤーの番号を保存----------------//
 	std::string txt{};
 	for (int i = 0; i < MAX_CLIENT; i++)
@@ -85,7 +86,8 @@ void SceneMulchGameHost::Login(int client_id, char* data)
 	instance.game_udp_server_addr[client_id] = create;
 
 	//-----------ホストの管理するIDの中に今接続して来たプレイヤーの番号を保存-------------//
-	CorrespondenceManager::Instance().GetOpponentPlayerId().at(client_id) = client_id;
+	CorrespondenceManager::Instance().SetOpponentPlayerId(client_id);
+
 
 	//-----------通信相手以外のプレイヤーに自分を入れる-------------//
 	//基本的に自分の操作しているプレイヤー番号番目に値が入る
@@ -95,7 +97,26 @@ void SceneMulchGameHost::Login(int client_id, char* data)
 	//--------新しくログインして来た相手にデータを送信---------//
 	CorrespondenceManager::Instance().TcpSend(client_id, (char*)&login, sizeof(LoginData));
 
-	//----------今現在までにログインしてきている相手にデータを送信UDPで----------//
+	//-----今つながっているクライアントに新しくログインしてきた相手のデータを送る-----//
+
+	//-----データを設定-----//
+	SendClientLoginData client_send{};
+	client_send.cmd[0] = CommandList::Login;
+	client_send.new_client_id = client_id;
+	client_send.addr = create;
+
+	for (int i = 0; i < MAX_CLIENT; i++)
+	{
+		//-----今接続している相手のIDを取得-----//
+		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
+
+		//-----IDが0未満か今接続してきた者と同じならとばす-----//
+		if (id < 0 || id == client_id) continue;
+
+		//--------新しくログインして来た相手にデータを送信---------//
+		CorrespondenceManager::Instance().TcpSend(id, (char*)&client_send, sizeof(LoginData));
+
+	}
 
 	//-----プレイヤーの追加フラグとIDを設定-----//
 	register_player = true;

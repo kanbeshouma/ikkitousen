@@ -32,7 +32,7 @@ class SceneMulchGameClient : public Scene, public PracticalEntities
 {
 public:
     SceneMulchGameClient();
-    ~SceneMulchGameClient() override {};
+    ~SceneMulchGameClient() override;
 public:
     ////----------初期化---------//
     void initialize(GraphicsPipeline& graphics) override;
@@ -196,4 +196,32 @@ private:
 
     //----------プレイヤーの更新処理----------//
     void PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time);
+
+private:
+    //-----ログインを管理するスレッド-----//
+    std::thread login_thread;
+
+    //-----排他制御-----//
+    static std::mutex mutex;
+
+private:
+    //-----ログインスレッドを終了するかのフラグ-----//
+    static bool end_login_thread;
+
+    //-----プレイヤーを追加するかどうか-----//
+    static bool register_player;
+
+    //-----追加するプレイヤーの番号-----//
+    static int register_player_id;
+
+private:
+    //----------通信関係(マルチスレッド)----------//
+    //-----プレイヤーのログイン用のマルチスレッド-----//
+    static void ReceiveLoginData();
+
+private:
+    //----------通信関係----------//
+
+    ////----------クライアントがログインして来た時にプレイヤーを追加する-----------//
+    void RegisterPlayer(GraphicsPipeline& graphics);
 };

@@ -150,7 +150,7 @@ bool CorrespondenceManager::LoginReceive()
             opponent_player_id.at(i) = login->opponent_player_id[i];
             //IpƒAƒhƒŒƒX‚ð•Û‘¶
             SocketCommunicationManager::Instance().game_udp_server_addr[i] = login->game_udp_server_addr[i];
-            std::string ip = std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
+            std::string ip = std::to_string(opponent_player_id.at(i)) + "”Ô–Ú :" +  std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
             DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
         }
 

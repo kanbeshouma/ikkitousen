@@ -102,6 +102,7 @@ public:
     //--------------------------セッター---------------------------//
     void SetOperationPrivateId(int id) { operation_private_id = id; }
     void SetOpponentPlayerId(std::vector<int> id) { opponent_player_id = id; }
+    void SetOpponentPlayerId(int id) { opponent_player_id.at(id) = id; }
     char* GetUdpPort(int id) { return udp_port; }
 
     //--------------------------ゲッター---------------------------//
@@ -117,7 +118,7 @@ private:
     //自分の番号を保存
     int operation_private_id{ -1 };
 
-    //それ以外のプレイヤーの番号
+    //自分以外のプレイヤーの番号
     std::vector<int> opponent_player_id;
 
     //TCP用のポート番号

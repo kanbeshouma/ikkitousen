@@ -60,6 +60,17 @@ struct SendHostLoginData
 };
 
 
+////-----今繋がっているクライアントに送るログインデータ-----//
+struct SendClientLoginData
+{
+    //通信コマンド
+    char cmd[4]{};
+    //接続してきたクライアント番号
+    int new_client_id{ -1 };
+    //今接続している(自分も含める)クライアントのアドレスを取得
+    sockaddr_in addr;
+};
+
 ////------マッチング終了に送るデータ-----//
 struct MachingEndData
 {

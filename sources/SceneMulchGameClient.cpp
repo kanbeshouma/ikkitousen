@@ -18,8 +18,27 @@
 #include"ClientPlayer.h"
 #include"Correspondence.h"
 
+
+//-----ログインスレッドを終了するかのフラグ-----//
+bool SceneMulchGameClient::end_login_thread = false;
+//-----プレイヤーが登録されたかどうか-----//
+bool SceneMulchGameClient::register_player = false;
+//-----追加されたプレイヤーの番号-----//
+int SceneMulchGameClient::register_player_id = -1;
+//-----ブロッキング-----//
+std::mutex SceneMulchGameClient::mutex;
+
 SceneMulchGameClient::SceneMulchGameClient()
 {
+}
+
+SceneMulchGameClient::~SceneMulchGameClient()
+{
+	end_login_thread = true;
+
+	//-----ログインスレッドを終了する-----//
+	login_thread.join();
+	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
 }
 
 void SceneMulchGameClient::initialize(GraphicsPipeline& graphics)
@@ -49,10 +68,17 @@ void SceneMulchGameClient::initialize(GraphicsPipeline& graphics)
 	for(int i = 0; i < MAX_CLIENT; i++)
 	{
 		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
-		if (id < 0) continue;
+		if (id < 0 || i == player_manager->GetPrivatePlayerId()) continue;
 		ClientPlayer* p = new ClientPlayer(graphics, id);
 		player_manager->RegisterPlayer(p);
 	}
+
+	//-----ログイン用のマルチスレッドを立ち上げる-----//
+	end_login_thread = false;
+	std::thread t(ReceiveLoginData);
+	t.swap(login_thread);
+
+
 
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
@@ -261,6 +287,9 @@ void SceneMulchGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 
 	//-----プレイヤーが死んだらゲームオーバー-----//
 	if (player_manager->GetIsAlive() == false)	is_game_over = true;
+
+	//-----ログインしたプレイヤーの生成-----//
+	RegisterPlayer(graphics);
 
 	//-----プレイヤー関係の更新処理-----//
 	PlayerManagerUpdate(graphics, elapsed_time);
@@ -928,4 +957,25 @@ void SceneMulchGameClient::PlayerManagerUpdate(GraphicsPipeline& graphics, float
 
 	//-----プレイヤーにカメラのターゲットを設定する-----//
 	player_manager->SetCameraTarget(c->get_target());
+}
+
+void SceneMulchGameClient::RegisterPlayer(GraphicsPipeline& graphics)
+{
+	//-----	排他制御-----//
+	std::lock_guard<std::mutex> lock(mutex);
+
+	//クライアントがログインして来たら
+	if (register_player && register_player_id >= 0)
+	{
+		ClientPlayer* player = new ClientPlayer(graphics, register_player_id);
+		player_manager->RegisterPlayer(player);
+
+		//プレイヤーを追加
+		std::string text = std::to_string(register_player_id) + "番目にプレイヤーを追加しました";
+		DebugConsole::Instance().WriteDebugConsole(text, TextColor::Green);
+		//追加する時に必要なパラメータとフラグの初期化
+		register_player_id = -1;
+		register_player = false;
+	}
+
 }

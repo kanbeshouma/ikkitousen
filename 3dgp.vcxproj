@@ -219,6 +219,7 @@
     <ClCompile Include="sources\DebugConsole.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
+    <ClCompile Include="sources\MulchGameClientTcp.cpp" />
     <ClCompile Include="sources\MulchGameHostTcp.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
