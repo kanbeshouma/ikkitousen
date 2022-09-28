@@ -144,6 +144,10 @@ bool CorrespondenceManager::LoginReceive()
         LoginData* login = (LoginData*)data;
         //------自分の番号を保存-----//
         operation_private_id = login->operation_private_id;
+
+        //-----ホストの番号を保存-----//
+        host_id = login->host_id;
+
         //-----自分以外のプレイヤーの番号を保存----//
         for (int i = 0; i < MAX_CLIENT; i++)
         {

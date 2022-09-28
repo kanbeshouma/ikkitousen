@@ -103,10 +103,17 @@ public:
     void SetOperationPrivateId(int id) { operation_private_id = id; }
     void SetOpponentPlayerId(std::vector<int> id) { opponent_player_id = id; }
     void SetOpponentPlayerId(int id) { opponent_player_id.at(id) = id; }
+    ////-----引数-----//
+    //===========
+    //第1引数 : 設定したい場所
+    //第2引数 : 設定したい値
+    void SetOpponentPlayerId(int id,int num) { opponent_player_id.at(id) = num; }
+    void SetHostId(int id) { host_id = id; }
     char* GetUdpPort(int id) { return udp_port; }
 
     //--------------------------ゲッター---------------------------//
     int GetOperationPrivateId() { return operation_private_id;}
+    int GetHostId() { return host_id; }
     std::vector<int> GetOpponentPlayerId() { return opponent_player_id; }
     std::mutex& GetMutex() { return mutex; }
 
@@ -123,6 +130,9 @@ private:
 
     //TCP用のポート番号
     char tcp_port[8];
+
+    //ホストのID
+    int host_id{ -1 };
 public:
     //UDP用のポート番号
     char udp_port[8];

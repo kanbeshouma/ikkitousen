@@ -394,17 +394,22 @@ void CommunicationSystem::TcpAccept(char* port)
     timeval tv;
     //-----秒-----//
     tv.tv_sec = 0;
+
     //-----ミリ秒-----//
     tv.tv_usec = 0;
+
     //-----fd_workにコピーする-----//
     memcpy(&fd_work, &instance.tcp_fds, sizeof(fd_set));
+
     //-----fdsに設定されたソケットが読み込み可能になるまで待つ-----//
     int n = select(static_cast<int>(instance.tcp_sock + 1), &fd_work, NULL, NULL, &tv);
+
     //----------タイムアウトの場合selectは0を返す----------//
     if (n <= 0) return;
     int len = sizeof(sockaddr_in);
     sockaddr_in addr;
     SOCKET sock{ INVALID_SOCKET };
+
     //----------接続を待機する----------//
     sock = accept(instance.tcp_sock, (sockaddr*)&addr, &len);
     if (sock == INVALID_SOCKET)

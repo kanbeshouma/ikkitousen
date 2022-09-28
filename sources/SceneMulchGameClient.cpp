@@ -17,14 +17,17 @@
 #include "LastBoss.h"
 #include"ClientPlayer.h"
 #include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
 
 
 //-----ログインスレッドを終了するかのフラグ-----//
-bool SceneMulchGameClient::end_login_thread = false;
+bool SceneMulchGameClient::end_tcp_thread = false;
 //-----プレイヤーが登録されたかどうか-----//
 bool SceneMulchGameClient::register_player = false;
 //-----追加されたプレイヤーの番号-----//
 int SceneMulchGameClient::register_player_id = -1;
+//-----ログアウトするプレイヤーの番号-----//
+std::vector<int> SceneMulchGameClient::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMulchGameClient::mutex;
 
@@ -34,10 +37,10 @@ SceneMulchGameClient::SceneMulchGameClient()
 
 SceneMulchGameClient::~SceneMulchGameClient()
 {
-	end_login_thread = true;
+	end_tcp_thread = true;
 
 	//-----ログインスレッドを終了する-----//
-	login_thread.join();
+	tcp_thread.join();
 	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
 }
 
@@ -74,9 +77,9 @@ void SceneMulchGameClient::initialize(GraphicsPipeline& graphics)
 	}
 
 	//-----ログイン用のマルチスレッドを立ち上げる-----//
-	end_login_thread = false;
-	std::thread t(ReceiveLoginData);
-	t.swap(login_thread);
+	end_tcp_thread = false;
+	std::thread t(ReceiveTcpData);
+	t.swap(tcp_thread);
 
 
 
@@ -162,6 +165,13 @@ void SceneMulchGameClient::uninitialize()
 
 	mWaveManager.fFinalize();
 	BulletManager::Instance().fFinalize();
+
+	LogoutData data;
+	data.cmd[0] = CommandList::Logout;
+	data.id = player_manager->GetPrivatePlayerId();
+
+	//-----ログアウトデータをホストに送信-----//
+	CorrespondenceManager::Instance().TcpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&data, sizeof(LogoutData));
 }
 
 void SceneMulchGameClient::effect_liberation(GraphicsPipeline& graphics)
@@ -240,7 +250,6 @@ void SceneMulchGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	}
 	else
 	{
-
 		if (during_clear)
 		{
 			//-----トンネルを薄くしていく-----//
@@ -977,5 +986,30 @@ void SceneMulchGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 		register_player_id = -1;
 		register_player = false;
 	}
+
+}
+
+void SceneMulchGameClient::DeletePlayer()
+{
+	//-----排他制御-----//
+	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
+	std::lock_guard<std::mutex> lock2(mutex);
+	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
+	//-----ログアウトしたプレイヤーを削除する-----//
+	for (auto id : logout_id)
+	{
+		//-----接続者の番号をリセット-----//
+		CorrespondenceManager::Instance().SetOpponentPlayerId(id, -1);
+
+		//-----アドレスを削除-----//
+		instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
+
+		//-----プレイヤーの削除-----//
+		player_manager->DeletePlayer(id);
+	}
+
+	//-----ログアウトデータを削除する-----//
+	logout_id.clear();
 
 }

@@ -71,6 +71,16 @@ struct SendClientLoginData
     sockaddr_in addr;
 };
 
+////-----ログアウト時に送るデータ-----//
+struct LogoutData
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //自分のID
+    int id{ -1 };
+};
+
 ////------マッチング終了に送るデータ-----//
 struct MachingEndData
 {

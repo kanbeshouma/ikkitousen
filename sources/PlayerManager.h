@@ -32,6 +32,11 @@ public:
     ////-----プレイヤー登録関数-----//
     void RegisterPlayer(BasePlayer* player);
 
+    ////-----プレイヤーを削除-----//
+    //=====================
+    //第1引数 : 削除するプレイヤーのID
+    void DeletePlayer(int id);
+
     ////-----プレイヤーの行動範囲を設定-----//
     void ChangePlayerJustificationLength();
 

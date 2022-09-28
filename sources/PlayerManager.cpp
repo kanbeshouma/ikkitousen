@@ -108,6 +108,28 @@ bool PlayerManager::GetMyTerminalEndClearMotion()
     return false;
 }
 
+void PlayerManager::DeletePlayer(int id)
+{
+    //for (auto& player : players)
+    //{
+    //    auto del = std::find(players.begin(), players.end(), player);
+    //    if ((*del)->GetObjectId() == id)
+    //    {
+    //        players.erase(del);
+    //    }
+    //}
+
+    for (std::vector<std::shared_ptr<BasePlayer>>::iterator it = players.begin(); it != players.end(); ++it)
+    {
+
+        if ((*it)->GetObjectId() != id) continue;
+
+        //-----‚à‚µˆø”‚Åó‚¯æ‚Á‚½ID‚Æ“¯‚¶‚È‚çíœ‚·‚é-----//
+        players.erase(it);
+    }
+
+}
+
 void PlayerManager::ChangePlayerJustificationLength()
 {
     for (auto& player : players)

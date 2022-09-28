@@ -46,7 +46,7 @@ public:
     //-----TCPクライアントのソケットの読み込み監視用-----//
     fd_set client_tcp_fds;
 
-    //-----TCPクライアントのfdsの接続数をカウント-----//
+    //-----TCPクライアントのfdの接続数をカウント-----//
     int client_tcp_fds_count{ 0 };
 
     //ホストのIPアドレス

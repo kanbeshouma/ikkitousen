@@ -21,11 +21,13 @@
 #include"Correspondence.h"
 
 //-----ログインスレッドを終了するかのフラグ-----//
-bool SceneMulchGameHost::end_login_thread = false;
+bool SceneMulchGameHost::end_tcp_thread = false;
 //-----プレイヤーが登録されたかどうか-----//
 bool SceneMulchGameHost::register_player = false;
 //-----追加されたプレイヤーの番号-----//
 int SceneMulchGameHost::register_player_id = -1;
+//-----ログアウトするプレイヤーの番号-----//
+std::vector<int> SceneMulchGameHost::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMulchGameHost::mutex;
 
@@ -36,10 +38,10 @@ SceneMulchGameHost::SceneMulchGameHost()
 
 SceneMulchGameHost::~SceneMulchGameHost()
 {
-	end_login_thread = true;
+	end_tcp_thread = true;
 
-	//-----ログインスレッドを終了する-----//
-	login_thread.join();
+	//-----TCPスレッドを終了する-----//
+	tcp_thread.join();
 	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
 
 }
@@ -77,9 +79,9 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に成功しました", TextColor::Green);
 
 		//-----ログイン用のマルチスレッドを立ち上げる-----//
-		end_login_thread = false;
-		std::thread t(ReceiveLoginData);
-		t.swap(login_thread);
+		end_tcp_thread = false;
+		std::thread t(ReceiveTcpData);
+		t.swap(tcp_thread);
 	}
 	else
 	{
@@ -1020,4 +1022,39 @@ void SceneMulchGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 		register_player_id = -1;
 		register_player = false;
 	}
+}
+
+void SceneMulchGameHost::DeletePlayer()
+{
+	//-----排他制御-----//
+	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
+	std::lock_guard<std::mutex> lock2(mutex);
+	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
+	//-----ログアウトしたプレイヤーを削除する-----//
+	for (auto id : logout_id)
+	{
+		//-----接続者の番号をリセット-----//
+		CorrespondenceManager::Instance().SetOpponentPlayerId(id, -1);
+
+		//-----アドレスを削除-----//
+	    instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
+
+		//-----FDから削除する-----//
+		FD_CLR(instance.login_client_sock[id], &instance.client_tcp_fds);
+
+		//-----ホストはtcp通信用のソケット削除-----//
+		closesocket(instance.login_client_sock[id]);
+		instance.login_client_sock[id] = INVALID_SOCKET;
+
+		//-----接続数を減らす-----//
+		instance.client_tcp_fds_count--;
+
+		//-----プレイヤーの削除-----//
+		player_manager->DeletePlayer(id);
+	}
+
+	//-----ログアウトデータを削除する-----//
+	logout_id.clear();
+
 }

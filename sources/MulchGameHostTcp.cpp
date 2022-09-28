@@ -3,13 +3,13 @@
 #include"SceneMulchGameHost.h"
 #include"Correspondence.h"
 #include"NetWorkInformationStucture.h"
-void SceneMulchGameHost::ReceiveLoginData()
+void SceneMulchGameHost::ReceiveTcpData()
 {
     CoInitializeEx(NULL,NULL);
     DebugConsole::Instance().WriteDebugConsole("ログインスレッド開始");
     for (;;)
     {
-        if (end_login_thread)
+        if (end_tcp_thread)
         {
             DebugConsole::Instance().WriteDebugConsole("ログインスレッドを終了");
             break;
@@ -25,8 +25,20 @@ void SceneMulchGameHost::ReceiveLoginData()
 		//-----データを受信したらログイン情報を作成してそれを送信-----//
 		if (client_id >= 0)
 		{
-			//-----ログイン処理-----//
-			Login(client_id, data);
+			switch (data[0])
+			{
+			case CommandList::Login:
+				//-----ログイン処理-----//
+				Login(client_id, data);
+				break;
+			case CommandList::Logout:
+				//-----ログアウト処理-----//
+				Logout(data);
+				break;
+			default:
+				break;
+			}
+
 		}
 	}
 
@@ -124,5 +136,32 @@ void SceneMulchGameHost::Login(int client_id, char* data)
 
 
 	DebugConsole::Instance().WriteDebugConsole("プレイヤーがログインしてきました", TextColor::Green);
+
+}
+
+void SceneMulchGameHost::Logout(char* data)
+{
+	//-------------------------------排他制御をする----------------------------//
+	//------mutexをロック-------//
+	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
+	std::lock_guard<std::mutex> lock2(mutex);
+
+	LogoutData* logout_data = (LogoutData*)data;
+
+	//-----ログアウトするプレイヤーのIDを保存-----//
+	logout_id.emplace_back(logout_data->id);
+
+	for (int i = 0; i < MAX_CLIENT; i++)
+	{
+		//-----今接続している相手のIDを取得-----//
+		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
+
+		//-----IDが0未満か今接続してきた者と同じならとばす-----//
+		if (id < 0 || id == logout_data->id) continue;
+
+		//--------新しくログインして来た相手にデータを送信---------//
+		CorrespondenceManager::Instance().TcpSend(id, (char*)&data, sizeof(LogoutData));
+
+	}
 
 }
