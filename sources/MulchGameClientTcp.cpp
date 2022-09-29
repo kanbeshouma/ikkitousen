@@ -8,12 +8,12 @@
 void SceneMulchGameClient::ReceiveTcpData()
 {
     CoInitializeEx(NULL, NULL);
-    DebugConsole::Instance().WriteDebugConsole("ログインスレッド開始");
+    DebugConsole::Instance().WriteDebugConsole("TCPスレッド開始");
     for (;;)
     {
         if (end_tcp_thread)
         {
-            DebugConsole::Instance().WriteDebugConsole("ログインスレッドを終了");
+            DebugConsole::Instance().WriteDebugConsole("TCPスレッドを終了");
             break;
         }
         char data[256]{};
@@ -43,15 +43,27 @@ void SceneMulchGameClient::ReceiveTcpData()
             }
             case CommandList::Logout:
             {
+                DebugConsole::Instance().WriteDebugConsole("クライアント : ログアウトデータを受信");
                 std::lock_guard<std::mutex> lock(mutex);
 
-                LogoutData* logout_data = (LogoutData*)data;
-                //-----ログアウトするプレイヤーのIDを保存-----//
-                logout_id.emplace_back(logout_data->id);
 
+                LogoutData* logout_data = (LogoutData*)data;
+                //-----もしIDが自分ならスレッド終了フラグを立てる-----//
+                if (logout_data->id == CorrespondenceManager::Instance().GetOperationPrivateId())
+                {
+                    end_tcp_thread = true;
+                }
+                //------それ以外なら自分以外がログアウトするからログアウトデータを入れる-----//
+                else
+                {
+                    //-----ログアウトするプレイヤーのIDを保存-----//
+                    logout_id.emplace_back(logout_data->id);
+                }
                 break;
             }
             default:
+                std::string text = "コマンド :" + std::to_string(data[0]);
+                DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
                 break;
             }
         }

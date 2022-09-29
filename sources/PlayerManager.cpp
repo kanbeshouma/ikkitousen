@@ -110,24 +110,14 @@ bool PlayerManager::GetMyTerminalEndClearMotion()
 
 void PlayerManager::DeletePlayer(int id)
 {
-    //for (auto& player : players)
-    //{
-    //    auto del = std::find(players.begin(), players.end(), player);
-    //    if ((*del)->GetObjectId() == id)
-    //    {
-    //        players.erase(del);
-    //    }
-    //}
-
-    for (std::vector<std::shared_ptr<BasePlayer>>::iterator it = players.begin(); it != players.end(); ++it)
+    for (auto& player : players)
     {
-
-        if ((*it)->GetObjectId() != id) continue;
-
-        //-----‚à‚µˆø”‚ÅŽó‚¯Žæ‚Á‚½ID‚Æ“¯‚¶‚È‚çíœ‚·‚é-----//
-        players.erase(it);
+        auto del = std::find(players.begin(), players.end(), player);
+        if ((*del)->GetObjectId() == id)
+        {
+            players.erase(del);
+        }
     }
-
 }
 
 void PlayerManager::ChangePlayerJustificationLength()

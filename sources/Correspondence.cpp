@@ -61,6 +61,11 @@ void CorrespondenceManager::TcpSend(int id, char* data, int size)
     communication_system->TcpSend(id, data, size);
 }
 
+void CorrespondenceManager::TcpSend(char* data, int size)
+{
+    communication_system->TcpSend(data, size);
+}
+
 bool CorrespondenceManager::CloseTcpHost()
 {
     MachingEndData data;
@@ -113,7 +118,6 @@ int CorrespondenceManager::TcpClientReceive(char* data, int size)
 {
     //----------クライアント側の受信をする----------//
    int receive = communication_system->TcpClientReceive(data, size);
-   if (data[0] == -1) return -1;
    return receive;
 }
 

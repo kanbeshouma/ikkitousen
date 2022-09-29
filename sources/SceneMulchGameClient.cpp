@@ -37,8 +37,6 @@ SceneMulchGameClient::SceneMulchGameClient()
 
 SceneMulchGameClient::~SceneMulchGameClient()
 {
-	end_tcp_thread = true;
-
 	//-----ログインスレッドを終了する-----//
 	tcp_thread.join();
 	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
@@ -171,7 +169,8 @@ void SceneMulchGameClient::uninitialize()
 	data.id = player_manager->GetPrivatePlayerId();
 
 	//-----ログアウトデータをホストに送信-----//
-	CorrespondenceManager::Instance().TcpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&data, sizeof(LogoutData));
+	CorrespondenceManager::Instance().TcpSend((char*)&data, sizeof(LogoutData));
+
 }
 
 void SceneMulchGameClient::effect_liberation(GraphicsPipeline& graphics)
@@ -440,6 +439,9 @@ void SceneMulchGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	//
 	//****************************************************************
 	enemyManager->fDeleteEnemies();
+
+	//-----ログアウトしたプレイヤーを削除する-----//
+	DeletePlayer();
 }
 
 
@@ -991,10 +993,14 @@ void SceneMulchGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 
 void SceneMulchGameClient::DeletePlayer()
 {
+	//-----配列が空なら処理をしない-----//
+	if (logout_id.empty()) return;
+
 	//-----排他制御-----//
+	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
 	std::lock_guard<std::mutex> lock2(mutex);
-	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+	std::lock_guard<std::mutex> lock3(instance.GetMutex());
 
 	//-----ログアウトしたプレイヤーを削除する-----//
 	for (auto id : logout_id)

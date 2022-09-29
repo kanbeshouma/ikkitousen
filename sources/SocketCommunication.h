@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <mutex>
 #pragma comment(lib, "Ws2_32.lib")
 #define MAX_CLIENT 4
 //==========================================================
@@ -54,5 +55,11 @@ public:
     char my_ip[32]{ "127.0.0.1" };
 
 public:
+    std::mutex& GetMutex() { return mutex; }
+
+public:
     void ClearData();
+private:
+    std::mutex mutex;
+
 };

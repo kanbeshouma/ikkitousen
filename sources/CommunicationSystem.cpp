@@ -64,6 +64,7 @@ bool CommunicationSystem::InitializeHost(char* tco_port, char* udp_port, int pri
 bool CommunicationSystem::InitializeHostUdpSocket(char* port, int private_id)
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
     //--------ソケット情報変数--------//
     addrinfo hints;
     //-----所得したアドレスを保存する-----//
@@ -458,7 +459,9 @@ void CommunicationSystem::TcpAccept(char* port)
 
 int CommunicationSystem::TcpHostReceive(char* data, int size, int operation_private_id)
 {
+
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+    std::lock_guard<std::mutex> lock(instance.GetMutex());
 
     fd_set client_fd{};
     timeval tv;
@@ -484,7 +487,7 @@ int CommunicationSystem::TcpHostReceive(char* data, int size, int operation_priv
                 if (tcp_error_num != WSAGetLastError())
                 {
                     tcp_error_num = WSAGetLastError();
-                    DebugConsole::Instance().WriteDebugConsole("ログイン : receive failed", TextColor::Red);
+                    DebugConsole::Instance().WriteDebugConsole("TCP : receive failed", TextColor::Red);
                     std::string text = "error number:" + std::to_string(tcp_error_num);
                     DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
                     continue;
@@ -492,7 +495,7 @@ int CommunicationSystem::TcpHostReceive(char* data, int size, int operation_priv
             }
             else
             {
-                DebugConsole::Instance().WriteDebugConsole("ログインデータを受信しました", TextColor::White);
+                DebugConsole::Instance().WriteDebugConsole("TCP : データを受信しました", TextColor::White);
                 return i;
             }
         }
@@ -525,7 +528,7 @@ int CommunicationSystem::TcpClientReceive(char* data, int size)
             if (tcp_error_num != WSAGetLastError())
             {
                 tcp_error_num = WSAGetLastError();
-                DebugConsole::Instance().WriteDebugConsole("ログイン : receive failed", TextColor::Red);
+                DebugConsole::Instance().WriteDebugConsole("TCP : receive failed", TextColor::Red);
                 std::string text = "error number:" + std::to_string(tcp_error_num);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
                 return -1;
@@ -533,7 +536,8 @@ int CommunicationSystem::TcpClientReceive(char* data, int size)
         }
         else
         {
-            DebugConsole::Instance().WriteDebugConsole("ログインデータを受信しました", TextColor::White);
+            std::string text =std::to_string(recv_size) + "バイトTCPで受信しました";
+            DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
             return recv_size;
         }
     }
@@ -560,7 +564,32 @@ void CommunicationSystem::TcpSend(int id, char* data, int size)
     }
     else
     {
-        std::string text = std::to_string(id) + "番目にTCP通信で" + std::to_string(send_size) + "バイト送信しました";
+        std::string text = std::to_string(id) + "番目にTCP通信で" + "コマンド :"+std::to_string(data[0]) +" で"+std::to_string(send_size) + "バイト送信しました";
+
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
+    }
+}
+
+void CommunicationSystem::TcpSend(char* data, int size)
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+    //----------データをサーバー(ホスト)に送信する----------//
+    int send_size = send(instance.tcp_sock, data, size, 0);
+    //エラーの時はSOCKET_ERRORが入る
+    if (send_size == SOCKET_ERROR)
+    {
+        //コンソール画面に出力
+        if (tcp_error_num != WSAGetLastError())
+        {
+            tcp_error_num = WSAGetLastError();
+            DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+            std::string text = "error number:" + std::to_string(tcp_error_num);
+            DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        }
+    }
+    else
+    {
+        std::string text = "サーバー(ホスト)に" + std::to_string(send_size) + "バイト送信しました";
 
         DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
     }

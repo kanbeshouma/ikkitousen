@@ -451,6 +451,9 @@ void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	//
 	//****************************************************************
 	enemyManager->fDeleteEnemies();
+
+	//-----ログアウトしたプレイヤーを削除する-----//
+	DeletePlayer();
 }
 
 #define OFF_SCREEN_RENDERING
@@ -1026,10 +1029,15 @@ void SceneMulchGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 
 void SceneMulchGameHost::DeletePlayer()
 {
+
+	//-----配列が空なら処理をしない-----//
+	if (logout_id.empty()) return;
+
 	//-----排他制御-----//
+	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
 	std::lock_guard<std::mutex> lock2(mutex);
-	SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+	std::lock_guard<std::mutex> lock3(instance.GetMutex());
 
 	//-----ログアウトしたプレイヤーを削除する-----//
 	for (auto id : logout_id)
