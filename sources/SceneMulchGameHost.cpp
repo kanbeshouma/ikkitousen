@@ -33,7 +33,6 @@ std::mutex SceneMulchGameHost::mutex;
 
 SceneMulchGameHost::SceneMulchGameHost()
 {
-
 }
 
 SceneMulchGameHost::~SceneMulchGameHost()
@@ -66,7 +65,7 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----ƒvƒŒƒCƒ„[‚ð“o˜^-----//
-    Player* player = new Player(graphics, PlayerPrivateObjectId);
+	ClientPlayer* player = new ClientPlayer(graphics, PlayerPrivateObjectId);
     player_manager->RegisterPlayer(player);
     player_manager->SetPrivateObjectId(PlayerPrivateObjectId);
 

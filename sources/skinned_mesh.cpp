@@ -117,7 +117,7 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
         std::ifstream ifs(cereal_filename.c_str(), std::ios::binary);
         cereal::BinaryInputArchive deserialization(ifs);
         deserialization(scene_view, meshes, materials, animation_clips);
-        
+
     }
     else
     {
@@ -1213,7 +1213,7 @@ void SkinnedMesh::update_animation(float elapsed_time)
 void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
 {
     // アサート
-    if (end_of_animation()) return;
+    if (end_of_animation(para)) return;
     assert("!!アニメーションが無いのにupdate_animation関数を呼び出しています!!"
         && animation_clips.size() > 0);
 

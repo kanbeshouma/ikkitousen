@@ -129,6 +129,9 @@ public:
 private:
     ////-----プレイヤーを入れる変数-----//
     std::vector<std::shared_ptr<BasePlayer>> players;
+
+    ////-----削除するプレイヤーを入れる変数-----//
+    std::vector<std::shared_ptr<BasePlayer>> remove_players;
 private:
     //-----この端末で操作することができるプレイヤーのオブジェクト番号-----//
     int private_object_id{ -1 };

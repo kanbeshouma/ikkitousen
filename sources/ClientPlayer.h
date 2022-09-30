@@ -339,9 +339,9 @@ private:
     void SetCameraTarget(DirectX::XMFLOAT3 p)override { camera_target = p; }
     void SetBossCamera(bool boss_c) override { boss_camera = boss_c; }
     void SetPosition(DirectX::XMFLOAT3 pos) override { position = pos; }
-    DirectX::XMFLOAT3 GetForward()override { return {}; }
-    DirectX::XMFLOAT3 GetRight()override { return {}; }
-    DirectX::XMFLOAT3 GetUp()override { return {}; }
+    DirectX::XMFLOAT3 GetForward()override { return forward; }
+    DirectX::XMFLOAT3 GetRight()override { return right; }
+    DirectX::XMFLOAT3 GetUp()override { return up; }
     DirectX::XMFLOAT3 GetPosition()override { return position; }
     DirectX::XMFLOAT3 GetVelocity()override { return velocity; }
     HitResult& GetPlayerHitResult()override { return hit; }

@@ -6,6 +6,7 @@
 #include "practical_entities.h"
 #include "constants.h"
 #include "Player.h"
+#include"BasePlayer.h"
 
 #if 0
 class camera : public BaseCamera
@@ -54,7 +55,7 @@ private:
 class Camera :public BaseCamera
 {
 public:
-    Camera(Player* p) :player(p){}
+    Camera(BasePlayer* p) :player(p){}
     Camera(){}
     ~Camera() {}
 
@@ -64,14 +65,14 @@ public:
     bool boss_animation{};//ボスがアニメーション
 
 protected:
-    Player* player;
+    BasePlayer* player;
 
 };
 
 class TitleCamera : public Camera
 {
 public:
-    TitleCamera(Player* player) : Camera(player) {};
+    TitleCamera(BasePlayer* player) : Camera(player) {};
     ~TitleCamera(){};
 
     void Initialize(GraphicsPipeline& graphics);
@@ -81,7 +82,7 @@ public:
 class GameCamera : public Camera
 {
 public:
-    GameCamera(Player* player) : Camera(player) {};
+    GameCamera(BasePlayer* player) : Camera(player) {};
     ~GameCamera(){};
 
     void Initialize(GraphicsPipeline& graphics);
@@ -145,7 +146,7 @@ private:
 class ClearCamera : public Camera
 {
 public:
-    ClearCamera(Player * player):Camera(player){}
+    ClearCamera(BasePlayer* player):Camera(player){}
     ~ClearCamera(){}
 
     void Initialize(GraphicsPipeline& graphics);

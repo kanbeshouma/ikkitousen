@@ -112,12 +112,23 @@ void PlayerManager::DeletePlayer(int id)
 {
     for (auto& player : players)
     {
-        auto del = std::find(players.begin(), players.end(), player);
-        if ((*del)->GetObjectId() == id)
+        if (player->GetObjectId() == id)
         {
-            players.erase(del);
+            //-----オブジェクト番号と削除するプレイヤーのIDが同じなら削除変数に入れる-----//
+            remove_players.emplace_back(player);
         }
     }
+
+    //-----削除変数に入っているプレイヤーを削除する-----//
+    for (auto& p : remove_players)
+    {
+        auto e = std::find(players.begin(), players.end(), p);
+        if (e != players.end())
+        {
+            players.erase(e);
+        }
+    }
+    remove_players.clear();
 }
 
 void PlayerManager::ChangePlayerJustificationLength()
@@ -161,13 +172,10 @@ bool PlayerManager::GetIsJustAvoidance()
 std::vector<DirectX::XMFLOAT3> PlayerManager::GetPosition()
 {
     std::vector<DirectX::XMFLOAT3> pos;
-    //-----vector型配列を今のプレイヤーの数分リサイズする-----//
-    pos.resize(players.size());
-
     for (auto& player : players)
     {
-        //-----プレイヤーのオブジェクト番号番目に値を入れる-----//
-        pos.at(player->GetObjectId()) = player->GetPosition();
+        //-----値を入れる-----//
+        pos.emplace_back(player->GetPosition());
     }
     return pos;
 }
