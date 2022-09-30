@@ -420,7 +420,12 @@ public:
 private:
     void GetPlayerDirections();
 public:
-    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right) override{}
+    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right) override
+    {
+        camera_forward = c_forward;
+        camera_right = c_right;
+    }
+
     void SetCameraPosition(DirectX::XMFLOAT3 p) override {}
 private:
         AddDamageFunc damage_func;
@@ -467,6 +472,10 @@ private:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up;
+private:
+    DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
+    DirectX::XMFLOAT3 camera_right{};//カメラの右方向
+    DirectX::XMFLOAT3 camera_position{};//カメラの右方向
 private:
     //-----ボタンの入力情報-----//
     GamePadButton		button_state[2] = {};

@@ -158,7 +158,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 avoidance_direction_count--;
                 avoidance_buttun = true;
                 velocity = {};
-                DirectX::XMFLOAT3 movevec = GetMoveVec();
+                DirectX::XMFLOAT3 movevec = GetMoveVecter();
                 if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
                 {
                     charge_point = Math::calc_designated_point(position, movevec, 200.0f);
@@ -271,7 +271,7 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             {
                 charge_change_direction_count--;
                 velocity = {};
-                DirectX::XMFLOAT3 movevec = GetMoveVec();
+                DirectX::XMFLOAT3 movevec = GetMoveVecter();
                 if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
                 {
                     charge_point = Math::calc_designated_point(position, movevec, 200.0f);

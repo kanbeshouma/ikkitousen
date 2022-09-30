@@ -114,7 +114,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     if (is_update_animation)model->update_animation(anim_parm,elapsed_time * animation_speed);
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
-    UpdateVelocity(elapsed_time, position, orientation, sky_dome);
+    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right ,sky_dome);
 
 #ifdef USE_IMGUI
     std::string obj_id{ "ClientPlayer : object_id :" + std::to_string(object_id) };
@@ -200,9 +200,9 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
             ImGui::Separator();
             if (ImGui::TreeNode("SendData"))
             {
-                static DirectX::XMFLOAT3 input{};
+                DirectX::XMFLOAT3 input{ GetInputMoveVec() };
                 ImGui::DragFloat3("movevec", &input.x, 0.1f);
-                SetMoveVec(input);
+                SetMoveVecter(input);
                 GamePadButton newButtonState = 0;
                 if (ImGui::Button("B"))
                 {

@@ -9,8 +9,11 @@ ClientPlayerMove::~ClientPlayerMove()
 {
 }
 
-void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, SkyDome* sky_dome)
+void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome)
 {
+    input_move = SetMoveVec(camera_forward, camera_right);
+
+
     SetDirections(orientation);
     MovingProcess(movevec.x, movevec.z, move_speed);
     if (is_lock_on)
