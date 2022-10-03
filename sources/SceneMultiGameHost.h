@@ -268,5 +268,6 @@ private:
     void SetReceiveData();
 
 private:
+    //-----受信データを入れる-----//
     static AllDataStruct receive_all_data;
 };

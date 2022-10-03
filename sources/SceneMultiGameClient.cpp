@@ -20,16 +20,25 @@
 #include"NetWorkInformationStucture.h"
 
 
-//-----ログインスレッドを終了するかのフラグ-----//
+//-----TCPを終了するかのフラグ-----//
 bool SceneMultiGameClient::end_tcp_thread = false;
+
+//-----UDPを終了するかのフラグ-----//
+bool SceneMultiGameClient::end_udp_thread = false;
+
 //-----プレイヤーが登録されたかどうか-----//
 bool SceneMultiGameClient::register_player = false;
+
 //-----追加されたプレイヤーの番号-----//
 int SceneMultiGameClient::register_player_id = -1;
+
 //-----ログアウトするプレイヤーの番号-----//
 std::vector<int> SceneMultiGameClient::logout_id = {};
+
 //-----ブロッキング-----//
 std::mutex SceneMultiGameClient::mutex;
+
+AllDataStruct SceneMultiGameClient::receive_all_data;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -37,9 +46,13 @@ SceneMultiGameClient::SceneMultiGameClient()
 
 SceneMultiGameClient::~SceneMultiGameClient()
 {
-	//-----ログインスレッドを終了する-----//
+	//-----TCPスレッドを終了する-----//
 	tcp_thread.join();
-	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
+
+	end_udp_thread = true;
+
+	//-----UDPスレッドを終了する-----//
+	udp_thread.join();
 }
 
 void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
@@ -74,12 +87,19 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		player_manager->RegisterPlayer(p);
 	}
 
-	//-----ログイン用のマルチスレッドを立ち上げる-----//
-	end_tcp_thread = false;
-	std::thread t(ReceiveTcpData);
-	t.swap(tcp_thread);
+	//-----TCP用のマルチスレッドを立ち上げる-----//
+	{
+		end_tcp_thread = false;
+		std::thread t(ReceiveTcpData);
+		t.swap(tcp_thread);
+	}
 
-
+	//-----UDP用のマルチスレッドを立ち上げる-----//
+	{
+		end_udp_thread = false;
+		std::thread t(ReceiveUdpData);
+		t.swap(udp_thread);
+	}
 
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
@@ -268,6 +288,9 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 			}
 		}
 	}
+
+	//-----受信データを設定する-----//
+	SetReceiveData();
 
 	//-----	スロウ判定-----//
 	JudgeSlow(elapsed_time);
@@ -1017,5 +1040,23 @@ void SceneMultiGameClient::DeletePlayer()
 
 	//-----ログアウトデータを削除する-----//
 	logout_id.clear();
+
+}
+
+void SceneMultiGameClient::SetReceiveData()
+{
+	//-----プレイヤーのデータが入っている場合-----//
+	if (receive_all_data.player_main_data.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		//-----データを設定する-----//
+		for (const auto& p_data : receive_all_data.player_main_data)
+		{
+			player_manager->SetPlayerMainData(p_data);
+		}
+
+		//-----データを削除する-----//
+		receive_all_data.player_main_data.clear();
+	}
 
 }

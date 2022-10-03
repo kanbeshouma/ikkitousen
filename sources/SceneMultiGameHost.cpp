@@ -50,14 +50,10 @@ SceneMultiGameHost::~SceneMultiGameHost()
 
 	//-----TCPスレッドを終了する-----//
 	tcp_thread.join();
-	DebugConsole::Instance().WriteDebugConsole("TCPスレッド終了");
-
 	end_udp_thread = true;
 
 	//-----UDPスレッドを終了する-----//
 	udp_thread.join();
-	DebugConsole::Instance().WriteDebugConsole("UDPスレッド終了");
-
 }
 
 void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)

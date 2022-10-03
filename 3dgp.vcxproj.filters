@@ -627,6 +627,9 @@
     <ClCompile Include="sources\MultiGameHostUdp.cpp">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClCompile>
+    <ClCompile Include="sources\MultiGameClientUdp.cpp">
+      <Filter>Sources\Scene\SceneMulchGameClient</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">
