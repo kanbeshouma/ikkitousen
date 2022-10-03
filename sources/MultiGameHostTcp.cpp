@@ -1,9 +1,10 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
-#include"SceneMulchGameHost.h"
+#include "SceneMultiGameHost.h"
 #include"Correspondence.h"
 #include"NetWorkInformationStucture.h"
-void SceneMulchGameHost::ReceiveTcpData()
+
+void SceneMultiGameHost::ReceiveTcpData()
 {
     CoInitializeEx(NULL,NULL);
     DebugConsole::Instance().WriteDebugConsole("TCPスレッド開始");
@@ -45,7 +46,7 @@ void SceneMulchGameHost::ReceiveTcpData()
     CoUninitialize();
 }
 
-void SceneMulchGameHost::Login(int client_id, char* data)
+void SceneMultiGameHost::Login(int client_id, char* data)
 {
 	//----------既に登録されている場合は止める----------//
 	if (CorrespondenceManager::Instance().GetOpponentPlayerId().at(client_id) != -1) return;
@@ -139,7 +140,7 @@ void SceneMulchGameHost::Login(int client_id, char* data)
 
 }
 
-void SceneMulchGameHost::Logout(char* data)
+void SceneMultiGameHost::Logout(char* data)
 {
 	//-------------------------------排他制御をする----------------------------//
 	//------mutexをロック-------//

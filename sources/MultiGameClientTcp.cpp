@@ -1,11 +1,11 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
-#include"SceneMulchGameClient.h"
+#include"SceneMultiGameClient.h"
 #include"Correspondence.h"
 #include"SocketCommunication.h"
 #include"NetWorkInformationStucture.h"
 
-void SceneMulchGameClient::ReceiveTcpData()
+void SceneMultiGameClient::ReceiveTcpData()
 {
     CoInitializeEx(NULL, NULL);
     DebugConsole::Instance().WriteDebugConsole("TCPスレッド開始");

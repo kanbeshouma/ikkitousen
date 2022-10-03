@@ -28,11 +28,11 @@
 #include"SpriteBatch.h"
 #include"PlayerManager.h"
 
-class SceneMulchGameClient : public Scene, public PracticalEntities
+class SceneMultiGameClient : public Scene, public PracticalEntities
 {
 public:
-    SceneMulchGameClient();
-    ~SceneMulchGameClient() override;
+    SceneMultiGameClient();
+    ~SceneMultiGameClient() override;
 public:
     ////----------‰Šú‰»---------//
     void initialize(GraphicsPipeline& graphics) override;

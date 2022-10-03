@@ -61,7 +61,7 @@ private:
 
 private:
     //-----マルチプレイの項目-----//
-    enum MulchPlayEntry
+    enum MultiPlayEntry
     {
         //-----ゲーム部屋を作る-----//
         Host,
@@ -72,25 +72,25 @@ private:
     };
 
     //-----マルチプレイ項目ステート-----//
-    int mulch_play_entry_state{ MulchPlayEntry::Host };
+    int multi_play_entry_state{ MultiPlayEntry::Host };
 
     //-----マルチプレイの項目を選択したかどうか-----//
     bool select_mulch_play{ false };
 
 private:
-    //-----MulchPlayEntryのコントローラー動作-----//
+    //-----MultiPlayEntryのコントローラー動作-----//
 
     ////-----セレクトバーを上に動かす-----//
     //============================
     //第1引数 : 次のステート
     //第2 , 3引数 : 選択バーの位置
-    void MulchPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
+    void MultiPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
 
     ////-----セレクトバーを下に動かす-----//
     //============================
     //第1引数 : 次のステート
     //第2 , 3引数 : 選択バーの位置
-    void MulchPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
+    void MultiPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2);
 private:
     //----<3D関連>----//
     std::unique_ptr<CameraManager> cameraManager;
@@ -163,7 +163,7 @@ private:
     StepFontElement client_play_font;
 
     //-----ひとつ前の項目に戻る-----//
-    StepFontElement mulch_paly_entry_back;
+    StepFontElement multi_paly_entry_back;
 
     bool step_string(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element,
         float speed = 1.0f, bool loop = false);

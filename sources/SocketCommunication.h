@@ -5,7 +5,7 @@
 #include <ws2tcpip.h>
 #include <mutex>
 #pragma comment(lib, "Ws2_32.lib")
-#define MAX_CLIENT 4
+#define MAX_CLIENT 8
 //==========================================================
 //
 //                今回の通信に必要な情報を持っている管理クラス

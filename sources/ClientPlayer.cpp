@@ -1,4 +1,10 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "ClientPlayer.h"
+#include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
+
+
 
 ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
@@ -109,6 +115,8 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
+        //-----プレイヤーのデータ送信-----//
+        SendPlayerData();
     }
 
     if (is_update_animation)model->update_animation(anim_parm,elapsed_time * animation_speed);
@@ -251,6 +259,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
 #endif // USE_IMGUI
     debug_figure->create_capsule(just_avoidance_capsule_param.start, just_avoidance_capsule_param.end, just_avoidance_capsule_param.rasius, { 1.0f,1.0f,1.0f,1.0f });
 
+
 }
 
 void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -292,6 +301,12 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
+
+}
+
+void ClientPlayer::SendPlayerData()
+{
+
 
 }
 

@@ -1,6 +1,6 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
-#include "SceneMulchGameHost.h"
+#include "SceneMultiGameClient.h"
 #include "scene_title.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
@@ -16,36 +16,33 @@
 #include "volume_icon.h"
 #include "LastBoss.h"
 #include"ClientPlayer.h"
-
-#include"SocketCommunication.h"
 #include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
+
 
 //-----ログインスレッドを終了するかのフラグ-----//
-bool SceneMulchGameHost::end_tcp_thread = false;
+bool SceneMultiGameClient::end_tcp_thread = false;
 //-----プレイヤーが登録されたかどうか-----//
-bool SceneMulchGameHost::register_player = false;
+bool SceneMultiGameClient::register_player = false;
 //-----追加されたプレイヤーの番号-----//
-int SceneMulchGameHost::register_player_id = -1;
+int SceneMultiGameClient::register_player_id = -1;
 //-----ログアウトするプレイヤーの番号-----//
-std::vector<int> SceneMulchGameHost::logout_id = {};
+std::vector<int> SceneMultiGameClient::logout_id = {};
 //-----ブロッキング-----//
-std::mutex SceneMulchGameHost::mutex;
+std::mutex SceneMultiGameClient::mutex;
 
-SceneMulchGameHost::SceneMulchGameHost()
+SceneMultiGameClient::SceneMultiGameClient()
 {
 }
 
-SceneMulchGameHost::~SceneMulchGameHost()
+SceneMultiGameClient::~SceneMultiGameClient()
 {
-	end_tcp_thread = true;
-
-	//-----TCPスレッドを終了する-----//
+	//-----ログインスレッドを終了する-----//
 	tcp_thread.join();
 	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
-
 }
 
-void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
+void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 {
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
@@ -65,27 +62,24 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
-	ClientPlayer* player = new ClientPlayer(graphics, PlayerPrivateObjectId);
-    player_manager->RegisterPlayer(player);
-    player_manager->SetPrivateObjectId(PlayerPrivateObjectId);
+	ClientPlayer* player = new ClientPlayer(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
+	player_manager->RegisterPlayer(player);
+	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
 
-	//----------プレイヤー(操作することができる自分のこと)の番号を保存
-	CorrespondenceManager::Instance().SetOperationPrivateId(player_manager->GetPrivatePlayerId());
-
-	//-----サーバーのソケット情報の初期化-----//
-	if (CorrespondenceManager::Instance().InitializeServer())
+	for(int i = 0; i < MAX_CLIENT; i++)
 	{
-		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に成功しました", TextColor::Green);
+		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
+		if (id < 0 || i == player_manager->GetPrivatePlayerId()) continue;
+		ClientPlayer* p = new ClientPlayer(graphics, id);
+		player_manager->RegisterPlayer(p);
+	}
 
-		//-----ログイン用のマルチスレッドを立ち上げる-----//
-		end_tcp_thread = false;
-		std::thread t(ReceiveTcpData);
-		t.swap(tcp_thread);
-	}
-	else
-	{
-		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に失敗しました", TextColor::Red);
-	}
+	//-----ログイン用のマルチスレッドを立ち上げる-----//
+	end_tcp_thread = false;
+	std::thread t(ReceiveTcpData);
+	t.swap(tcp_thread);
+
+
 
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
@@ -149,7 +143,6 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	game_over_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\gameover.png", 1);
 	game_over_sprite_pram.position = { 415.9f,0.0f };
 	game_over_sprite_pram.texsize = { 512.0f,512.0f };
-
 	//font
 	game_over_text.s = L"ゲームオーバー";
 	game_over_text.position = { 553.1f,124.3f };
@@ -160,33 +153,33 @@ void SceneMulchGameHost::initialize(GraphicsPipeline& graphics)
 	again.scale = { 1.0f,1.0f };
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
-
-	//-----マルチスレッドで使用する変数を初期化する-----//
-
-	//-----プレイヤー追加変数の初期化-----//
-	register_player = false;
-	register_player_id = -1;
-
 }
 
-void SceneMulchGameHost::uninitialize()
+void SceneMultiGameClient::uninitialize()
 {
-
 	audio_manager->stop_all_se();
 	audio_manager->stop_all_bgm();
 
 
 	mWaveManager.fFinalize();
 	BulletManager::Instance().fFinalize();
+
+	LogoutData data;
+	data.cmd[0] = CommandList::Logout;
+	data.id = player_manager->GetPrivatePlayerId();
+
+	//-----ログアウトデータをホストに送信-----//
+	CorrespondenceManager::Instance().TcpSend((char*)&data, sizeof(LogoutData));
+
 }
 
-void SceneMulchGameHost::effect_liberation(GraphicsPipeline& graphics)
+void SceneMultiGameClient::effect_liberation(GraphicsPipeline& graphics)
 {
 	effect_manager->finalize();
 	effect_manager->initialize(graphics);
 }
 
-void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-----ゲームクリア、ゲームオーバーでもないとき-----//
 	if (is_game_clear == false && is_game_over == false)
@@ -256,7 +249,6 @@ void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	else
 	{
-
 		if (during_clear)
 		{
 			//-----トンネルを薄くしていく-----//
@@ -309,9 +301,6 @@ void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//-----プレイヤー関係の更新処理-----//
 	PlayerManagerUpdate(graphics, elapsed_time);
-
-	//-----プレイヤー関係の当たり判定-----//
-	PlayerManagerCollision(graphics, elapsed_time);
 
 	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
 	last_boss_mode = enemyManager->fGetBossMode();
@@ -455,10 +444,11 @@ void SceneMulchGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	DeletePlayer();
 }
 
+
 #define OFF_SCREEN_RENDERING
 #define SHADOW_MAP
 
-void SceneMulchGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 #ifdef OFF_SCREEN_RENDERING
 	post_effect->begin(graphics.get_dc().Get());
@@ -645,14 +635,15 @@ void SceneMulchGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//-----オプションを開いてる時にオプションを描画-----//
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
+
 }
 
-void SceneMulchGameHost::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMultiGameClient::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
 	return;
 }
 
-void SceneMulchGameHost::GameOverAct(float elapsed_time)
+void SceneMultiGameClient::GameOverAct(float elapsed_time)
 {
 	if (is_game_over)
 	{
@@ -748,7 +739,7 @@ void SceneMulchGameHost::GameOverAct(float elapsed_time)
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameClient()), DISSOLVE_TYPE::TYPE1, 2.0f);
 				}
 				break;
 			default:
@@ -758,7 +749,7 @@ void SceneMulchGameHost::GameOverAct(float elapsed_time)
 	}
 }
 
-void SceneMulchGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& graphics)
+void SceneMultiGameClient::GameClearAct(float elapsed_time, GraphicsPipeline& graphics)
 {
 	if (is_game_clear)
 	{
@@ -809,9 +800,10 @@ void SceneMulchGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& grap
 			}
 		}
 	}
+
 }
 
-void SceneMulchGameHost::JudgeSlow(float& elapsed_time)
+void SceneMultiGameClient::JudgeSlow(float& elapsed_time)
 {
 	//プレイヤーがジャスト回避したらslow
 	if (player_manager->GetIsJustAvoidance())
@@ -835,7 +827,7 @@ void SceneMulchGameHost::JudgeSlow(float& elapsed_time)
 	}
 }
 
-void SceneMulchGameHost::SetBossTypeGameParam()
+void SceneMultiGameClient::SetBossTypeGameParam()
 {
 	//-----カメラのインスタンスを取得-----//
 	Camera* c = cameraManager->GetCurrentCamera();
@@ -892,7 +884,7 @@ void SceneMulchGameHost::SetBossTypeGameParam()
 	}
 }
 
-void SceneMulchGameHost::BossEventCamera()
+void SceneMultiGameClient::BossEventCamera()
 {
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
@@ -927,9 +919,10 @@ void SceneMulchGameHost::BossEventCamera()
 		mIsBossCamera = false;
 		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	}
+
 }
 
-void SceneMulchGameHost::SetSkyDomeColor(float elapsed_time)
+void SceneMultiGameClient::SetSkyDomeColor(float elapsed_time)
 {
 	//-----SkyDomeの色-----//
 	if (purple_threshold >= 0.01f && purple_threshold <= 1.0f)
@@ -944,7 +937,7 @@ void SceneMulchGameHost::SetSkyDomeColor(float elapsed_time)
 	}
 }
 
-void SceneMulchGameHost::PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time)
+void SceneMultiGameClient::PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
@@ -975,38 +968,9 @@ void SceneMulchGameHost::PlayerManagerUpdate(GraphicsPipeline& graphics, float e
 
 	//-----プレイヤーにカメラのターゲットを設定する-----//
 	player_manager->SetCameraTarget(c->get_target());
-
-
 }
 
-void SceneMulchGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time)
-{
-	//-----弾のインスタンスを生成-----//
-	BulletManager& mBulletManager = BulletManager::Instance();
-
-	//-----敵のインスタンスを生成-----//
-	const auto enemyManager = mWaveManager.fGetEnemyManager();
-
-	//-----敵とのあたり判定(当たったらコンボ加算)-----//
-	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
-
-	//-----ジャスト回避が可能かどうかの当たり判定-----//
-	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
-
-	//-----敵の攻撃とプレイヤーの当たり判定-----//
-	player_manager->EnemyAttackVsPlayer(enemyManager);
-
-	//-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
-	player_manager->PlayerStunVsEnemy(enemyManager);
-
-	//-----プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる-----//
-	player_manager->SetPlayerChainTime(enemyManager);
-
-	//-----弾とプレイヤーの当たり判定-----//
-	player_manager->BulletVsPlayer(mBulletManager);
-}
-
-void SceneMulchGameHost::RegisterPlayer(GraphicsPipeline& graphics)
+void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 {
 	//-----	排他制御-----//
 	std::lock_guard<std::mutex> lock(mutex);
@@ -1024,11 +988,11 @@ void SceneMulchGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 		register_player_id = -1;
 		register_player = false;
 	}
+
 }
 
-void SceneMulchGameHost::DeletePlayer()
+void SceneMultiGameClient::DeletePlayer()
 {
-
 	//-----配列が空なら処理をしない-----//
 	if (logout_id.empty()) return;
 
@@ -1045,17 +1009,7 @@ void SceneMulchGameHost::DeletePlayer()
 		CorrespondenceManager::Instance().SetOpponentPlayerId(id, -1);
 
 		//-----アドレスを削除-----//
-	    instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
-
-		//-----FDから削除する-----//
-		FD_CLR(instance.login_client_sock[id], &instance.client_tcp_fds);
-
-		//-----ホストはtcp通信用のソケット削除-----//
-		closesocket(instance.login_client_sock[id]);
-		instance.login_client_sock[id] = INVALID_SOCKET;
-
-		//-----接続数を減らす-----//
-		instance.client_tcp_fds_count--;
+		instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
 
 		//-----プレイヤーの削除-----//
 		player_manager->DeletePlayer(id);

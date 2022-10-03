@@ -29,11 +29,11 @@
 #include"PlayerManager.h"
 #include"DebugConsole.h"
 
-class SceneMulchGameHost : public Scene, public PracticalEntities
+class SceneMultiGameHost : public Scene, public PracticalEntities
 {
 public:
-    SceneMulchGameHost();
-    ~SceneMulchGameHost();
+    SceneMultiGameHost();
+    ~SceneMultiGameHost();
     ////----------èâä˙âª---------//
     void initialize(GraphicsPipeline& graphics) override;
 

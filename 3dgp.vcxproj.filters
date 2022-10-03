@@ -573,7 +573,7 @@
     <ClCompile Include="sources\PlayerManager.cpp">
       <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClCompile>
-    <ClCompile Include="sources\SceneMulchGameHost.cpp">
+    <ClCompile Include="sources\SceneMultiGameHost.cpp">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClCompile>
     <ClCompile Include="sources\CommunicationSystem.cpp">
@@ -600,7 +600,7 @@
     <ClCompile Include="sources\ClientPlayerTransitionAnimation.cpp">
       <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClCompile>
-    <ClCompile Include="sources\SceneMulchGameClient.cpp">
+    <ClCompile Include="sources\SceneMultiGameClient.cpp">
       <Filter>Sources\Scene\SceneMulchGameClient</Filter>
     </ClCompile>
     <ClCompile Include="sources\scene_game.cpp">
@@ -618,10 +618,10 @@
     <ClCompile Include="sources\SceneTutorial.cpp">
       <Filter>Sources\Scene\SceneTutorial</Filter>
     </ClCompile>
-    <ClCompile Include="sources\MulchGameHostTcp.cpp">
+    <ClCompile Include="sources\MultiGameHostTcp.cpp">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClCompile>
-    <ClCompile Include="sources\MulchGameClientTcp.cpp">
+    <ClCompile Include="sources\MultiGameClientTcp.cpp">
       <Filter>Sources\Scene\SceneMulchGameClient</Filter>
     </ClCompile>
   </ItemGroup>
@@ -953,7 +953,7 @@
     <ClInclude Include="sources\PlayerManager.h">
       <Filter>Sources\Character\player\PlayerManager</Filter>
     </ClInclude>
-    <ClInclude Include="sources\SceneMulchGameHost.h">
+    <ClInclude Include="sources\SceneMultiGameHost.h">
       <Filter>Sources\Scene\SceneMulchGame</Filter>
     </ClInclude>
     <ClInclude Include="sources\CommunicationSystem.h">
@@ -980,7 +980,7 @@
     <ClInclude Include="sources\resource\resource.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="sources\SceneMulchGameClient.h">
+    <ClInclude Include="sources\SceneMultiGameClient.h">
       <Filter>Sources\Scene\SceneMulchGameClient</Filter>
     </ClInclude>
     <ClInclude Include="sources\scene_game.h">

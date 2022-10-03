@@ -7,8 +7,8 @@
 #include "framework.h"
 #include "scene_title.h"
 #include "scene_game.h"
-#include"SceneMulchGameHost.h"
-#include"SceneMulchGameClient.h"
+#include"SceneMultiGameHost.h"
+#include "SceneMultiGameClient.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "ModelCashe.h"
@@ -130,9 +130,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	client_play_font.position = { 987.0f,557.0f };
 	client_play_font.scale = { 0.7f,0.7f };
 
-	mulch_paly_entry_back.s = L"戻る";
-	mulch_paly_entry_back.position = { 1066.0f,618.0f };
-	mulch_paly_entry_back.scale = { 0.7f,0.7f };
+	multi_paly_entry_back.s = L"戻る";
+	multi_paly_entry_back.position = { 1066.0f,618.0f };
+	multi_paly_entry_back.scale = { 0.7f,0.7f };
 
 
 
@@ -309,7 +309,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::Text("state%d", state);
-	ImGui::Text("mulch_play_entry_state%d", mulch_play_entry_state);
+	ImGui::Text("multi_play_entry_state%d", multi_play_entry_state);
 	ImGui::End();
 #endif // Telecommunications
 
@@ -422,14 +422,14 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		{
 			if (select_mulch_play)
 			{
-				switch (mulch_play_entry_state)
+				switch (multi_play_entry_state)
 				{
-				case MulchPlayEntry::Host:
-					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameHost()), DISSOLVE_TYPE::HORIZON, 2.0f);
+				case MultiPlayEntry::Host:
+					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::HORIZON, 2.0f);
 					DebugConsole::Instance().WriteDebugConsole("ホストプレイ開始");
 					break;
-				case MulchPlayEntry::Client:
-					SceneManager::scene_switching(new SceneLoading(new SceneMulchGameClient()), DISSOLVE_TYPE::HORIZON, 2.0f);
+				case MultiPlayEntry::Client:
+					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameClient()), DISSOLVE_TYPE::HORIZON, 2.0f);
 					DebugConsole::Instance().WriteDebugConsole("ゲームに参加");
 					break;
 				default:
@@ -587,7 +587,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		r_font_render("client_play_font", client_play_font);
 
 		//-----ひとつ前の項目に戻る-----//
-		r_font_render("mulch_paly_entry_back", mulch_paly_entry_back);
+		r_font_render("multi_paly_entry_back", multi_paly_entry_back);
 
 	}
 
@@ -906,7 +906,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 					select_mulch_play = true;
 
 					//-----ステートを初期化-----//
-					mulch_play_entry_state = MulchPlayEntry::Host;
+					multi_play_entry_state = MultiPlayEntry::Host;
 
 					//-----セレクトバーの位置を設定-----//
 					arrival_pos1 = { 994.1f,520.0f };
@@ -934,11 +934,11 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 		//-----マルチプレイを選択した場合-----//
 		else
 		{
-			switch (mulch_play_entry_state)
+			switch (multi_play_entry_state)
 			{
 				//-----ホストプレイ-----//
-			case MulchPlayEntry::Host:
-				MulchPlayEntryDown(MulchPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
+			case MultiPlayEntry::Host:
+				MultiPlayEntryDown(MultiPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
 
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -953,11 +953,11 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 
 				break;
 				//-----ゲームに参加-----//
-			case MulchPlayEntry::Client:
+			case MultiPlayEntry::Client:
 
-				MulchPlayEntryUp(MulchPlayEntry::Host, { 994.1f,520.0f }, { 1176.1f,520.0f });
+				MultiPlayEntryUp(MultiPlayEntry::Host, { 994.1f,520.0f }, { 1176.1f,520.0f });
 
-				MulchPlayEntryDown(MulchPlayEntry::Back, { 1030.0f,640.0f }, { 1139.0f,640.0f });
+				MultiPlayEntryDown(MultiPlayEntry::Back, { 1030.0f,640.0f }, { 1139.0f,640.0f });
 
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -981,9 +981,9 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 
 				break;
 				//-----ひとつ前の項目に戻る-----//
-			case MulchPlayEntry::Back:
+			case MultiPlayEntry::Back:
 
-				MulchPlayEntryUp(MulchPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
+				MultiPlayEntryUp(MultiPlayEntry::Client, { 954.6f,579.0f }, { 1218.0f,579.0f });
 
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -1081,12 +1081,12 @@ void SceneTitle::TitleEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, 
 
 }
 
-void SceneTitle::MulchPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+void SceneTitle::MultiPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 {
 	if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
 	{
 		audio_manager->play_se(SE_INDEX::SELECT);
-		this->mulch_play_entry_state = next_state;
+		this->multi_play_entry_state = next_state;
 		this->arrival_pos1 = arrival_pos1;
 		this->arrival_pos2 = arrival_pos2;
 
@@ -1094,12 +1094,12 @@ void SceneTitle::MulchPlayEntryUp(int next_state, DirectX::XMFLOAT2 arrival_pos1
 	}
 }
 
-void SceneTitle::MulchPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
+void SceneTitle::MultiPlayEntryDown(int next_state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 {
 	if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f) || (can_axis && game_pad->get_axis_RY() < -0.5f))
 	{
 		audio_manager->play_se(SE_INDEX::SELECT);
-		this->mulch_play_entry_state = next_state;
+		this->multi_play_entry_state = next_state;
 		this->arrival_pos1 = arrival_pos1;
 		this->arrival_pos2 = arrival_pos2;
 

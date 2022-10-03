@@ -219,12 +219,12 @@
     <ClCompile Include="sources\DebugConsole.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
-    <ClCompile Include="sources\MulchGameClientTcp.cpp" />
-    <ClCompile Include="sources\MulchGameHostTcp.cpp" />
+    <ClCompile Include="sources\MultiGameClientTcp.cpp" />
+    <ClCompile Include="sources\MultiGameHostTcp.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
-    <ClCompile Include="sources\SceneMulchGameClient.cpp" />
-    <ClCompile Include="sources\SceneMulchGameHost.cpp" />
+    <ClCompile Include="sources\SceneMultiGameClient.cpp" />
+    <ClCompile Include="sources\SceneMultiGameHost.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
@@ -348,8 +348,8 @@
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />
     <ClInclude Include="sources\resource\resource.h" />
-    <ClInclude Include="sources\SceneMulchGameClient.h" />
-    <ClInclude Include="sources\SceneMulchGameHost.h" />
+    <ClInclude Include="sources\SceneMultiGameClient.h" />
+    <ClInclude Include="sources\SceneMultiGameHost.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />
