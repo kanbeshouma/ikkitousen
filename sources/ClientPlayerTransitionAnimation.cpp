@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"ClientPlayer.h"
 
 void ClientPlayer::TransitionIdle(float blend_second)

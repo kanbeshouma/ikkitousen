@@ -28,6 +28,7 @@
 #include"SpriteBatch.h"
 #include"PlayerManager.h"
 #include"DebugConsole.h"
+#include"NetWorkInformationStucture.h"
 
 class SceneMultiGameHost : public Scene, public PracticalEntities
 {
@@ -260,8 +261,12 @@ private:
     ////----------クライアントがログインして来た時にプレイヤーを追加する-----------//
     void RegisterPlayer(GraphicsPipeline& graphics);
 
-
     ////-----ログアウトしたプレイヤーを削除する-----//
     void DeletePlayer();
 
+    ////-----受信データを設定する-----//
+    void SetReceiveData();
+
+private:
+    static AllDataStruct receive_all_data;
 };

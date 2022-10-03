@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"Player.h"
 #include"imgui_include.h"
 #include"user.h"

@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "scene_option.h"
 #include "scene_title.h"
 #include "scene_loading.h"

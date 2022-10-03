@@ -1,10 +1,6 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
 #include "ClientPlayer.h"
-#include"Correspondence.h"
-#include"NetWorkInformationStucture.h"
-
-
 
 ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
@@ -115,8 +111,6 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
-        //-----プレイヤーのデータ送信-----//
-        SendPlayerData();
     }
 
     if (is_update_animation)model->update_animation(anim_parm,elapsed_time * animation_speed);
@@ -304,33 +298,10 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 }
 
-void ClientPlayer::SendPlayerData()
+void ClientPlayer::SetReceiveData(PlayerMainData data)
 {
-    PlayerMainData data;
-    //-----どのタイプかを設定-----//
-    data.cmd[ComLocation::ComList] = CommandList::Update;
-
-    //-----どのタイプのデータかを設定-----//
-    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMainCommand;
-
-    //-----プレイヤーのID設定-----//
-    data.player_id = object_id;
-
-    //-----入力情報-----//
-    data.move_vec = GetInputMoveVec();
-
-    //-----ボタンの入力-----//
-
-
-    //-----ロックオンしている敵の番号-----//
-
-
-    //-----ロックオンしてるかどうか-----//
-
-
-    //-----ホストにデータ送信-----//
-    CorrespondenceManager& instance = CorrespondenceManager::Instance();
-    //instance.UdpSend(instance.GetHostId(),(char*)&data,sizeof(PlayerMainData));
+    //-----入力データ設定する-----//
+    SetMoveVecter(data.move_vec);
 }
 
 void ClientPlayer::StepCapsule()

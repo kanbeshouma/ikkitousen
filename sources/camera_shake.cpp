@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "camera_shake.h"
 #include "imgui_include.h"
 #include "framework.h"

@@ -117,9 +117,7 @@ public:
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time)override {};
     void ChangePlayerJustificationLength()override {};
-private:
-    //-----データを送信する-----//
-    void SendPlayerData();
+    void SetReceiveData(PlayerMainData data) override;
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;

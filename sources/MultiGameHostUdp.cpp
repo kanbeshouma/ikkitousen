@@ -42,6 +42,8 @@ void SceneMultiGameHost::ReceiveUdpData()
 
 void SceneMultiGameHost::CheckDataCommand(char com, char* data)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     switch (com)
     {
         //-----プレイヤーのメインデータ-----//
@@ -49,6 +51,9 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
     {
         //-----データをキャスト-----//
         PlayerMainData* p_data = (PlayerMainData*)data;
+
+        //-----データを保存-----//
+        receive_all_data.player_main_data.emplace_back(*p_data);
         break;
     }
     default:

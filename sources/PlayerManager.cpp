@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "PlayerManager.h"
 
 PlayerManager::PlayerManager()
@@ -106,6 +108,18 @@ bool PlayerManager::GetMyTerminalEndClearMotion()
         return player->GetEndClearMotion();
     }
     return false;
+}
+
+void PlayerManager::SetPlayerMainData(PlayerMainData data)
+{
+    for (auto& player : players)
+    {
+        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
+        if (player->GetObjectId() == data.player_id)
+        {
+            player->SetReceiveData(data);
+        }
+    }
 }
 
 void PlayerManager::DeletePlayer(int id)

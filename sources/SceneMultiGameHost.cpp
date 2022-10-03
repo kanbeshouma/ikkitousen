@@ -38,6 +38,8 @@ std::vector<int> SceneMultiGameHost::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMultiGameHost::mutex;
 
+AllDataStruct SceneMultiGameHost::receive_all_data;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -298,6 +300,9 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 			}
 		}
 	}
+
+	//-----受信データを設定する-----//
+	SetReceiveData();
 
 	//-----	スロウ判定-----//
 	JudgeSlow(elapsed_time);
@@ -1086,4 +1091,21 @@ void SceneMultiGameHost::DeletePlayer()
 	//-----ログアウトデータを削除する-----//
 	logout_id.clear();
 
+}
+
+void SceneMultiGameHost::SetReceiveData()
+{
+	//-----プレイヤーのデータが入っている場合-----//
+	if (receive_all_data.player_main_data.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		//-----データを設定する-----//
+		for (const auto& p_data : receive_all_data.player_main_data)
+		{
+			player_manager->SetPlayerMainData(p_data);
+		}
+
+		//-----データを削除する-----//
+		receive_all_data.player_main_data.clear();
+	}
 }

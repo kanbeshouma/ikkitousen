@@ -7,6 +7,7 @@
 #include"SkyDome.h"
 #include "BaseEnemy.h"
 #include"Common.h"
+#include"NetWorkInformationStucture.h"
 
 class BasePlayer :public PracticalEntities
 {
@@ -83,13 +84,13 @@ public:
   virtual int GetPlayerPower() = 0;
   virtual [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() = 0;
 
-  virtual BaseEnemy* GetPlayerTargetEnemy() const = 0;
+    virtual BaseEnemy* GetPlayerTargetEnemy() const = 0;
    //一番近い敵を持って来てその位置をセットする
-  virtual void SetTarget(BaseEnemy* target_enemy) = 0;
-  virtual DirectX::XMFLOAT3 GetTarget() = 0;
-  virtual  void AddCombo(int count, bool& block) = 0;
+    virtual void SetTarget(BaseEnemy* target_enemy) = 0;
+    virtual DirectX::XMFLOAT3 GetTarget() = 0;
+    virtual  void AddCombo(int count, bool& block) = 0;
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
- virtual void AwakingAddCombo(int hit_count1, int hit_count2, bool& block) = 0;
+    virtual void AwakingAddCombo(int hit_count1, int hit_count2, bool& block) = 0;
     //--------------------<敵からダメージを受ける>--------------------//
     virtual  void DamagedCheck(int damage, float InvincibleTime) = 0;
     virtual void TutorialDamagedCheck(int damage, float InvincibleTime) = 0;
@@ -111,6 +112,9 @@ public:
     virtual void TransitionStageMove() = 0;
     //ステージ遷移終了
     virtual void TransitionStageMoveEnd() = 0;
+
+    //-----受信データを設定する-----//
+    virtual void SetReceiveData(PlayerMainData data) = 0;
 public:
     virtual DirectX::XMFLOAT3 GetEnentCameraEye() = 0;
     virtual DirectX::XMFLOAT3 GetEnentCameraJoint() = 0;

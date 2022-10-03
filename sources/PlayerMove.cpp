@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "PlayerMove.h"
 #include"Player.h"
 
@@ -12,8 +14,9 @@ PlayerMove::~PlayerMove()
 
 void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right,const DirectX::XMFLOAT3& camera_pos ,SkyDome* sky_dome)
 {
-    DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
-    MovingProcess(movevec.x, movevec.z, move_speed);
+    input_move = SetMoveVec(camera_forward, camera_right);
+
+    MovingProcess(input_move.x, input_move.z, move_speed);
     //move_vec_y = movevec.y;//MovingProcess関数は敵でも使ってるからここに書いておく
     SetDirections(orientation);
     //敵にロックオンしたら敵の方向を向く
@@ -28,7 +31,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     else
     {
         //旋回処理
-        Turn(elapsed_time, movevec, turn_speed, position, orientation);
+        Turn(elapsed_time, input_move, turn_speed, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
         //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);

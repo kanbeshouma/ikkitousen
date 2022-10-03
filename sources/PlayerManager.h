@@ -1,4 +1,6 @@
 #pragma once
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include<memory>
 #include<vector>
 
@@ -7,6 +9,7 @@
 #include"graphics_pipeline.h"
 #include"BulletManager.h"
 #include"post_effect.h"
+#include"NetWorkInformationStucture.h"
 
 //===================================//
 ////----------プレイヤーを管理するクラス----------//
@@ -125,6 +128,11 @@ public:
 
     ////-----この端末のプレイヤーのイベントモーションが終わったかどうかを取得する-----//
     bool GetMyTerminalEndClearMotion();
+
+    ////-----データを設定する-----//
+    //=====================
+    //第1引数 : データ
+    void SetPlayerMainData(PlayerMainData data);
 
 private:
     ////-----プレイヤーを入れる変数-----//

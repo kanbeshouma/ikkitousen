@@ -62,7 +62,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----ƒvƒŒƒCƒ„[‚ð“o˜^-----//
-	ClientPlayer* player = new ClientPlayer(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
+	Player* player = new Player(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
 	player_manager->RegisterPlayer(player);
 	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
 

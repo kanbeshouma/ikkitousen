@@ -1,8 +1,12 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "Player.h"
 #include"imgui_include.h"
 #include"user.h"
 #include"easing.h"
 #include "BaseCamera.h"
+#include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
 
 
 //プレイヤーの原点は腰
@@ -468,6 +472,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
+        SendPlayerData();
     }
 
     if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
@@ -713,6 +718,35 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 void Player::ChangePlayerJustificationLength()
 {
     max_length = 500.0f;
+}
+
+void Player::SendPlayerData()
+{
+    PlayerMainData data;
+    //-----どのタイプかを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    //-----どのタイプのデータかを設定-----//
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMainCommand;
+
+    //-----プレイヤーのID設定-----//
+    data.player_id = object_id;
+
+    //-----入力情報-----//
+    data.move_vec = GetInputMoveVec();
+
+    //-----ボタンの入力-----//
+
+
+    //-----ロックオンしている敵の番号-----//
+
+
+    //-----ロックオンしてるかどうか-----//
+
+
+    //-----データ送信-----//
+    CorrespondenceManager& instance = CorrespondenceManager::Instance();
+    instance.UdpSend((char*)&data,sizeof(PlayerMainData));
 }
 
 

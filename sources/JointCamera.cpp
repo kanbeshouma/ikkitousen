@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "camera.h"
 
 // eyeとtarget(focus)を外から指定できるカメラ

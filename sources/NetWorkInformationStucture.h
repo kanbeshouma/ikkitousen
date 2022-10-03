@@ -2,8 +2,8 @@
 #include<vector>
 #include<memory>
 #include<DirectXMath.h>
-#include"SocketCommunication.h"
 #include"game_pad.h"
+#include"SocketCommunication.h"
 //---------------------------------------------------------------
 //
 //通信で必要なコマンド，構造体を宣言する
@@ -118,4 +118,11 @@ struct PlayerMainData
 
     //-----ロックオンしてるかどうか-----//
     bool lock_on{ false };
+};
+
+
+struct AllDataStruct
+{
+    //-----プレイヤーのメインデータ-----//
+    std::vector<PlayerMainData> player_main_data;
 };
