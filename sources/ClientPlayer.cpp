@@ -302,6 +302,9 @@ void ClientPlayer::SetReceiveData(PlayerMainData data)
 {
     //-----入力データ設定する-----//
     SetMoveVecter(data.move_vec);
+
+    //-----ボタンの入力情報を入れる-----//
+    SetSendButton(data.new_button_state);
 }
 
 void ClientPlayer::StepCapsule()

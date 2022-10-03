@@ -736,7 +736,7 @@ void Player::SendPlayerData()
     data.move_vec = GetInputMoveVec();
 
     //-----ボタンの入力-----//
-
+    data.new_button_state = game_pad->GetButtonState();
 
     //-----ロックオンしている敵の番号-----//
 

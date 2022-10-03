@@ -68,7 +68,7 @@ void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
     //チェイン攻撃の状態では移動以外の操作は受け付けない
-    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
+    if (change_normal_timer <= 0 && behavior_state == Behavior::Normal)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
