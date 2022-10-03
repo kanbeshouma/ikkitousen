@@ -207,11 +207,17 @@ private:
     //-----TCP通信を管理するスレッド-----//
     std::thread tcp_thread;
 
+    //-----UDP通信を管理するスレッド-----//
+    std::thread udp_thread;
+
     //-----排他制御-----//
     static std::mutex mutex;
 private:
-    //-----ログインスレッドを終了するかのフラグ-----//
+    //-----TCPスレッドを終了するかのフラグ-----//
     static bool end_tcp_thread;
+
+    //-----UDPスレッドを終了するかのフラグ-----//
+    static bool end_udp_thread;
 
     //-----プレイヤーを追加するかどうか-----//
     static bool register_player;
@@ -236,6 +242,17 @@ private:
     //==============================
     //第1引数 : 受信データ
     static void Logout(char* data);
+
+private:
+    //-----UDP用のマルチスレッド-----//
+    static void ReceiveUdpData();
+
+    ////-----データの種類の確認-----//
+    //=======================
+    //第1引数 : コマンド
+    //第2引数 : 受信データ
+    static void CheckDataCommand(char com, char* data);
+
 
 private:
     //----------通信関係----------//

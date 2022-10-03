@@ -81,7 +81,7 @@ bool CorrespondenceManager::CloseTcpClient()
 void CorrespondenceManager::Login()
 {
     SendHostLoginData login;
-    login.cmd[0] = CommandList::Login;
+    login.cmd[ComLocation::ComList] = CommandList::Login;
     snprintf(login.port, 8, CorrespondenceManager::Instance().udp_port);
     int size = sizeof(SendHostLoginData);
     communication_system->LoginSend((char*)&login, size);

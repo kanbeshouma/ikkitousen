@@ -30,6 +30,16 @@ enum UpdateCommand
 {
     //-----プレイヤーの動きとターゲットに関するデータ-----//
     PlayerMainCommand,
+};
+
+
+//-----コマンドを入れる配列のデータの種類-----//
+enum ComLocation
+{
+    //-----コマンドの0番目-----//
+    ComList,
+    //-----コマンドの1番目-----//
+    UpdateCom,
 
 };
 
@@ -93,6 +103,9 @@ struct PlayerMainData
 {
     //通信コマンド
     char cmd[4]{};
+
+    //-----プレイヤーの番号-----//
+    int player_id{ -1 };
 
     //-----入力方向-----//
     DirectX::XMFLOAT3 move_vec{};

@@ -221,6 +221,7 @@
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\MultiGameClientTcp.cpp" />
     <ClCompile Include="sources\MultiGameHostTcp.cpp" />
+    <ClCompile Include="sources\MultiGameHostUdp.cpp" />
     <ClCompile Include="sources\PlayerManager.cpp" />
     <ClCompile Include="sources\player_condition.cpp" />
     <ClCompile Include="sources\SceneMultiGameClient.cpp" />

@@ -20,14 +20,21 @@
 #include"SocketCommunication.h"
 #include"Correspondence.h"
 
-//-----ログインスレッドを終了するかのフラグ-----//
+//-----TCPスレッドを終了するかのフラグ-----//
 bool SceneMultiGameHost::end_tcp_thread = false;
+
+//-----UDPスレッドを終了するかのフラグ-----//
+bool SceneMultiGameHost::end_udp_thread = false;
+
 //-----プレイヤーが登録されたかどうか-----//
 bool SceneMultiGameHost::register_player = false;
+
 //-----追加されたプレイヤーの番号-----//
 int SceneMultiGameHost::register_player_id = -1;
+
 //-----ログアウトするプレイヤーの番号-----//
 std::vector<int> SceneMultiGameHost::logout_id = {};
+
 //-----ブロッキング-----//
 std::mutex SceneMultiGameHost::mutex;
 
@@ -41,7 +48,13 @@ SceneMultiGameHost::~SceneMultiGameHost()
 
 	//-----TCPスレッドを終了する-----//
 	tcp_thread.join();
-	DebugConsole::Instance().WriteDebugConsole("ログインスレッド終了");
+	DebugConsole::Instance().WriteDebugConsole("TCPスレッド終了");
+
+	end_udp_thread = true;
+
+	//-----UDPスレッドを終了する-----//
+	udp_thread.join();
+	DebugConsole::Instance().WriteDebugConsole("UDPスレッド終了");
 
 }
 
@@ -77,10 +90,19 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	{
 		DebugConsole::Instance().WriteDebugConsole("ホスト: ソケットの作成に成功しました", TextColor::Green);
 
-		//-----ログイン用のマルチスレッドを立ち上げる-----//
-		end_tcp_thread = false;
-		std::thread t(ReceiveTcpData);
-		t.swap(tcp_thread);
+		//-----TCP用のマルチスレッドを立ち上げる-----//
+		{
+			end_tcp_thread = false;
+			std::thread t(ReceiveTcpData);
+			t.swap(tcp_thread);
+		}
+
+	    //-----UDP用のマルチスレッドを立ち上げる-----//
+		{
+			end_udp_thread = false;
+			std::thread t(ReceiveUdpData);
+			t.swap(udp_thread);
+		}
 	}
 	else
 	{

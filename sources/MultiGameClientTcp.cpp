@@ -22,7 +22,7 @@ void SceneMultiGameClient::ReceiveTcpData()
         if (CorrespondenceManager::Instance().TcpClientReceive(data, size) > 0)
         {
             //-----コマンドがログインの場合-----//
-            switch (data[0])
+            switch (data[ComLocation::ComList])
             {
             case  CommandList::Login:
             {
@@ -62,7 +62,7 @@ void SceneMultiGameClient::ReceiveTcpData()
                 break;
             }
             default:
-                std::string text = "コマンド :" + std::to_string(data[0]);
+                std::string text = "コマンド :" + std::to_string(data[ComLocation::ComList]);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
                 break;
             }

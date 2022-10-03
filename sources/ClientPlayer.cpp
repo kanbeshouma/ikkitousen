@@ -306,8 +306,31 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 void ClientPlayer::SendPlayerData()
 {
+    PlayerMainData data;
+    //-----どのタイプかを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    //-----どのタイプのデータかを設定-----//
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMainCommand;
+
+    //-----プレイヤーのID設定-----//
+    data.player_id = object_id;
+
+    //-----入力情報-----//
+    data.move_vec = GetInputMoveVec();
+
+    //-----ボタンの入力-----//
 
 
+    //-----ロックオンしている敵の番号-----//
+
+
+    //-----ロックオンしてるかどうか-----//
+
+
+    //-----ホストにデータ送信-----//
+    CorrespondenceManager& instance = CorrespondenceManager::Instance();
+    //instance.UdpSend(instance.GetHostId(),(char*)&data,sizeof(PlayerMainData));
 }
 
 void ClientPlayer::StepCapsule()
