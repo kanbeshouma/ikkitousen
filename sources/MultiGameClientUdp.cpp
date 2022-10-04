@@ -53,9 +53,18 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
         PlayerMoveData* p_data = (PlayerMoveData*)data;
 
         //-----データを保存-----//
-        receive_all_data.player_main_data.emplace_back(*p_data);
+        receive_all_data.player_move_data.emplace_back(*p_data);
         break;
     }
+    case UpdateCommand::PlayerPositionCommand:
+    {
+        //-----データをキャスト-----//
+        PlayerPositionData* p_data = (PlayerPositionData*)data;
+        //-----データを保存-----//
+        receive_all_data.player_position_data.emplace_back(*p_data);
+        break;
+    }
+
     default:
         break;
     }

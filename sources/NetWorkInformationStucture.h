@@ -30,6 +30,9 @@ enum UpdateCommand
 {
     //-----プレイヤーの動きとターゲットに関するデータ-----//
     PlayerMoveCommand,
+
+    //-----プレイヤーの位置データ-----//
+    PlayerPositionCommand,
 };
 
 
@@ -121,8 +124,8 @@ struct PlayerMoveData
 };
 
 
-//-----プレイヤーのスナップショット-----//
-struct PlayerSnapShot
+//-----プレイヤーの位置データ-----//
+struct PlayerPositionData
 {
     //通信コマンド
     char cmd[4]{};
@@ -137,8 +140,8 @@ struct PlayerSnapShot
 struct AllDataStruct
 {
     //-----プレイヤーのメインデータ-----//
-    std::vector<PlayerMoveData> player_main_data;
+    std::vector<PlayerMoveData> player_move_data;
 
     //-----プレイヤーのスナップショット-----//
-    std::vector<PlayerSnapShot> player_snap_data;
+    std::vector<PlayerPositionData> player_position_data;
 };

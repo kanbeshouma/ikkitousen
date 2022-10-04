@@ -118,6 +118,7 @@ public:
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time)override {};
     void ChangePlayerJustificationLength()override {};
     void SetReceiveData(PlayerMoveData data) override;
+    void SetReceivePositionData(PlayerPositionData data)override;
 private:
     //ƒvƒŒƒCƒ„[‚ÌÅ‘å‘Ì—Í
     static constexpr int MAX_HEALTH = 100;

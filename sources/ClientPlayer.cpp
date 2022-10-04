@@ -307,6 +307,12 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
     SetSendButton(data.new_button_state);
 }
 
+void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
+{
+    position = data.position;
+}
+
+
 void ClientPlayer::StepCapsule()
 {
     {

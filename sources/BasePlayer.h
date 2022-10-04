@@ -115,6 +115,7 @@ public:
 
     //-----受信データを設定する-----//
     virtual void SetReceiveData(PlayerMoveData data) = 0;
+    virtual void SetReceivePositionData(PlayerPositionData data) = 0;
 public:
     virtual DirectX::XMFLOAT3 GetEnentCameraEye() = 0;
     virtual DirectX::XMFLOAT3 GetEnentCameraJoint() = 0;

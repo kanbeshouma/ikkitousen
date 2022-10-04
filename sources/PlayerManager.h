@@ -132,7 +132,13 @@ public:
     ////-----データを設定する-----//
     //=====================
     //第1引数 : データ
-    void SetPlayerMainData(PlayerMoveData data);
+    void SetPlayerMoveData(PlayerMoveData data);
+
+    ////-----データを設定する-----//
+    //=====================
+    //第1引数 : データ
+    void SetPlayerPositionData(PlayerPositionData data);
+
 
 private:
     ////-----プレイヤーを入れる変数-----//

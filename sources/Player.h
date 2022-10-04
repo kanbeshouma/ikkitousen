@@ -109,12 +109,24 @@ public:
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
     void ChangePlayerJustificationLength()override;
     void SetReceiveData(PlayerMoveData data) override {}
+    void SetReceivePositionData(PlayerPositionData data)override {}
+
 private:
     //-----データを送信する-----//
-    void SendPlayerData();
+    void SendPlayerData(float elapsed_time);
+
+    //-----MoveDataを設定-----//
+    void SendMoveData();
+
+    //-----PositionDataを設定-----//
+    void SendPositionData();
 
     //-----ミリ秒-----//
     float milliseconds{};
+
+    //-----秒-----//
+    float send_position_timer{};
+
 private:
     //エフェクト
     //回り込み回避

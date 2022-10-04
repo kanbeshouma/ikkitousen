@@ -488,7 +488,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
-        SendPlayerData();
+        SendPlayerData(elapsed_time);
     }
 
     if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
@@ -610,6 +610,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             int a = static_cast<int>(behavior_state);
             ImGui::Text("behavior_state%d", a);
             ImGui::Text("change_normal_timer%f", change_normal_timer);
+            ImGui::Text("send_position_timer%f", send_position_timer);
             bool b = during_chain_attack();
             ImGui::Checkbox("during_chain_attack", &b);
 
@@ -736,46 +737,91 @@ void Player::ChangePlayerJustificationLength()
     max_length = 500.0f;
 }
 
-void Player::SendPlayerData()
+void Player::SendPlayerData(float elapsed_time)
 {
-
+    //-----時間を取得-----//
     static auto start = std::chrono::system_clock::now();
-
     auto end = std::chrono::system_clock::now();
 
+    //-----スタートとエンドの差分を出す-----//
     auto dur = end - start;
 
+    //-----ミリ秒に変換する----//
     milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
 
-    if (milliseconds > 400)
+    //-----位置データの送信用タイマー-----//
+    send_position_timer += 1.0f * elapsed_time;
+
+    if (send_position_timer < 5.0f)
     {
-        start = std::chrono::system_clock::now();
-        PlayerMoveData data;
-        //-----どのタイプかを設定-----//
-        data.cmd[ComLocation::ComList] = CommandList::Update;
+        if (milliseconds > 400)
+        {
+            //-----タイマーを初期化-----//
+            start = std::chrono::system_clock::now();
 
-        //-----どのタイプのデータかを設定-----//
-        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMoveCommand;
-
-        //-----プレイヤーのID設定-----//
-        data.player_id = object_id;
-
-        //-----入力情報-----//
-        data.move_vec = GetInputMoveVec();
-
-        //-----ボタンの入力-----//
-        data.new_button_state = game_pad->GetButtonState();
-
-        //-----ロックオンしている敵の番号-----//
-
-
-        //-----ロックオンしてるかどうか-----//
-
-
-        //-----データ送信-----//
-        CorrespondenceManager& instance = CorrespondenceManager::Instance();
-        instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
+            //-----MoveDataを設定して送信-----//
+            SendMoveData();
+        }
     }
+    else
+    {
+        //-----PositionDataを設定して送信-----//
+        SendPositionData();
+
+        //-----タイマー初期化-----//
+        send_position_timer = 0.0f;
+    }
+}
+
+void Player::SendMoveData()
+{
+    PlayerMoveData data;
+    //-----どのタイプかを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    //-----どのタイプのデータかを設定-----//
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMoveCommand;
+
+    //-----プレイヤーのID設定-----//
+    data.player_id = object_id;
+
+    //-----入力情報-----//
+    data.move_vec = GetInputMoveVec();
+
+    //-----ボタンの入力-----//
+    data.new_button_state = game_pad->GetButtonState();
+
+    //-----ロックオンしている敵の番号-----//
+
+
+    //-----ロックオンしてるかどうか-----//
+
+
+    //-----データ送信-----//
+    CorrespondenceManager& instance = CorrespondenceManager::Instance();
+    instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
+
+}
+
+void Player::SendPositionData()
+{
+    PlayerPositionData data;
+
+    //-----どのタイプかを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    //-----どのタイプのデータかを設定-----//
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerPositionCommand;
+
+    //-----プレイヤーのID設定-----//
+    data.player_id = object_id;
+
+    //-----位置設定-----//
+    data.position = position;
+
+    //-----データ送信-----//
+    CorrespondenceManager& instance = CorrespondenceManager::Instance();
+    instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
 
 }
 

@@ -110,7 +110,7 @@ bool PlayerManager::GetMyTerminalEndClearMotion()
     return false;
 }
 
-void PlayerManager::SetPlayerMainData(PlayerMoveData data)
+void PlayerManager::SetPlayerMoveData(PlayerMoveData data)
 {
     for (auto& player : players)
     {
@@ -120,6 +120,19 @@ void PlayerManager::SetPlayerMainData(PlayerMoveData data)
             player->SetReceiveData(data);
         }
     }
+}
+
+void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
+{
+    for (auto& player : players)
+    {
+        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
+        if (player->GetObjectId() == data.player_id)
+        {
+            player->SetReceivePositionData(data);
+        }
+    }
+
 }
 
 void PlayerManager::DeletePlayer(int id)

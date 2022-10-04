@@ -1045,18 +1045,32 @@ void SceneMultiGameClient::DeletePlayer()
 
 void SceneMultiGameClient::SetReceiveData()
 {
-	//-----プレイヤーのデータが入っている場合-----//
-	if (receive_all_data.player_main_data.empty() == false)
+	//-----プレイヤーの動きデータが入っている場合-----//
+	if (receive_all_data.player_move_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_data.player_main_data)
+		for (const auto& p_data : receive_all_data.player_move_data)
 		{
-			player_manager->SetPlayerMainData(p_data);
+			player_manager->SetPlayerMoveData(p_data);
 		}
 
 		//-----データを削除する-----//
-		receive_all_data.player_main_data.clear();
+		receive_all_data.player_move_data.clear();
+	}
+
+	//-----プレイヤーの位置データが入っている場合-----//
+	if (receive_all_data.player_position_data.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		//-----データを設定する-----//
+		for (const auto& p_data : receive_all_data.player_position_data)
+		{
+			player_manager->SetPlayerPositionData(p_data);
+		}
+
+		//-----データを削除する-----//
+		receive_all_data.player_position_data.clear();
 	}
 
 }
