@@ -298,7 +298,7 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 }
 
-void ClientPlayer::SetReceiveData(PlayerMainData data)
+void ClientPlayer::SetReceiveData(PlayerMoveData data)
 {
     //-----“ü—Íƒf[ƒ^İ’è‚·‚é-----//
     SetMoveVecter(data.move_vec);

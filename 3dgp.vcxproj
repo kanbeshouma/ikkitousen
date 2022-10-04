@@ -160,6 +160,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\DirectXTK-master\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories);.\Effekseer153a\lib\vs2019\MD\$(PlatformTarget)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -190,6 +191,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\DirectXTK-master\Bin\Desktop_2019\x64\Release;.\External\FBX\FBX SDK\2020.2\lib\vs2019\x64\release;%(AdditionalLibraryDirectories);.\External\Effekseer153a\lib\vs2019\MD\$(PlatformTarget)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlib-md.lib;libxml2-md.lib;libfbxsdk-md.lib;d3d11.lib;dxgi.lib;DirectXTK.lib;Xinput.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>

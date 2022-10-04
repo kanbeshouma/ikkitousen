@@ -1,5 +1,6 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
+#include <chrono>
 #include "Player.h"
 #include"imgui_include.h"
 #include"user.h"
@@ -148,9 +149,24 @@ void Player::UpdateTitle(float elapsed_time)
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
-
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
+
+            if (ImGui::TreeNode("mili"))
+            {
+                static auto start = std::chrono::system_clock::now();
+
+               auto end = std::chrono::system_clock::now();
+
+               auto dur = end - start;
+
+              milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+
+              ImGui::Text("milliseconds%f", milliseconds);
+
+
+              ImGui::TreePop();
+            }
 
             ImGui::Checkbox("start", &start_title_animation);
             ImGui::Checkbox("end", &end_title_animation);
@@ -722,31 +738,45 @@ void Player::ChangePlayerJustificationLength()
 
 void Player::SendPlayerData()
 {
-    PlayerMainData data;
-    //-----どのタイプかを設定-----//
-    data.cmd[ComLocation::ComList] = CommandList::Update;
 
-    //-----どのタイプのデータかを設定-----//
-    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMainCommand;
+    static auto start = std::chrono::system_clock::now();
 
-    //-----プレイヤーのID設定-----//
-    data.player_id = object_id;
+    auto end = std::chrono::system_clock::now();
 
-    //-----入力情報-----//
-    data.move_vec = GetInputMoveVec();
+    auto dur = end - start;
 
-    //-----ボタンの入力-----//
-    data.new_button_state = game_pad->GetButtonState();
+    milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
 
-    //-----ロックオンしている敵の番号-----//
+    if (milliseconds > 400)
+    {
+        start = std::chrono::system_clock::now();
+        PlayerMoveData data;
+        //-----どのタイプかを設定-----//
+        data.cmd[ComLocation::ComList] = CommandList::Update;
+
+        //-----どのタイプのデータかを設定-----//
+        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMoveCommand;
+
+        //-----プレイヤーのID設定-----//
+        data.player_id = object_id;
+
+        //-----入力情報-----//
+        data.move_vec = GetInputMoveVec();
+
+        //-----ボタンの入力-----//
+        data.new_button_state = game_pad->GetButtonState();
+
+        //-----ロックオンしている敵の番号-----//
 
 
-    //-----ロックオンしてるかどうか-----//
+        //-----ロックオンしてるかどうか-----//
 
 
-    //-----データ送信-----//
-    CorrespondenceManager& instance = CorrespondenceManager::Instance();
-    instance.UdpSend((char*)&data,sizeof(PlayerMainData));
+        //-----データ送信-----//
+        CorrespondenceManager& instance = CorrespondenceManager::Instance();
+        instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
+    }
+
 }
 
 

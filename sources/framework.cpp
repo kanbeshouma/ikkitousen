@@ -92,7 +92,6 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 		graphics->get_dc()->PSSetSamplers(1, 1, graphics->get_sampler_state(1).GetAddressOf());
 		graphics->get_dc()->PSSetSamplers(2, 1, graphics->get_sampler_state(2).GetAddressOf());
 		graphics->get_dc()->PSSetSamplers(3, 1, graphics->get_sampler_state(3).GetAddressOf());
-		// sync_intervalに1をセットすると60FPSの固定フレームレートで動作する
 		// レンダーターゲットビューのクリア
 		FLOAT color[]{ 0.7f, 0.7f, 0.7f, 1.0f };
 		graphics->get_dc()->ClearRenderTargetView(graphics->get_render_target_view().Get(), color);
@@ -165,7 +164,10 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 	}
 #endif
 
+	// sync_intervalに1をセットすると60FPSの固定フレームレートで動作する
 	UINT sync_interval{ 0 };
+
+
 	graphics->get_swap_chain()->Present(sync_interval, 0);
 }
 

@@ -29,7 +29,7 @@ enum CommandList
 enum UpdateCommand
 {
     //-----プレイヤーの動きとターゲットに関するデータ-----//
-    PlayerMainCommand,
+    PlayerMoveCommand,
 };
 
 
@@ -99,7 +99,7 @@ struct MachingEndData
 };
 
 //-----プレイヤーが送る動きとターゲットのデータ-----//
-struct PlayerMainData
+struct PlayerMoveData
 {
     //通信コマンド
     char cmd[4]{};
@@ -121,8 +121,24 @@ struct PlayerMainData
 };
 
 
+//-----プレイヤーのスナップショット-----//
+struct PlayerSnapShot
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //-----プレイヤーの番号-----//
+    int player_id{ -1 };
+
+    //-----位置-----//
+    DirectX::XMFLOAT3 position{};
+};
+
 struct AllDataStruct
 {
     //-----プレイヤーのメインデータ-----//
-    std::vector<PlayerMainData> player_main_data;
+    std::vector<PlayerMoveData> player_main_data;
+
+    //-----プレイヤーのスナップショット-----//
+    std::vector<PlayerSnapShot> player_snap_data;
 };

@@ -110,7 +110,7 @@ bool PlayerManager::GetMyTerminalEndClearMotion()
     return false;
 }
 
-void PlayerManager::SetPlayerMainData(PlayerMainData data)
+void PlayerManager::SetPlayerMainData(PlayerMoveData data)
 {
     for (auto& player : players)
     {

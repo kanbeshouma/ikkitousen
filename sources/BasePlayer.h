@@ -114,7 +114,7 @@ public:
     virtual void TransitionStageMoveEnd() = 0;
 
     //-----受信データを設定する-----//
-    virtual void SetReceiveData(PlayerMainData data) = 0;
+    virtual void SetReceiveData(PlayerMoveData data) = 0;
 public:
     virtual DirectX::XMFLOAT3 GetEnentCameraEye() = 0;
     virtual DirectX::XMFLOAT3 GetEnentCameraJoint() = 0;

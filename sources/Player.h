@@ -108,10 +108,13 @@ public:
     void TutorialConfigRender(GraphicsPipeline& graphics, float elapsed_time, bool condition);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
     void ChangePlayerJustificationLength()override;
-    void SetReceiveData(PlayerMainData data) override {}
+    void SetReceiveData(PlayerMoveData data) override {}
 private:
     //-----データを送信する-----//
     void SendPlayerData();
+
+    //-----ミリ秒-----//
+    float milliseconds{};
 private:
     //エフェクト
     //回り込み回避
