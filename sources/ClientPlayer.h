@@ -120,6 +120,10 @@ public:
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
 private:
+    //-----受信データの位置の許容値-----//
+    float allowable_limit_position{ 10.0f };
+
+private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;
     //プレイヤーの体力の回復量

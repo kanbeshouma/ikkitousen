@@ -130,6 +130,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
             ImGui::Text(obj_id.c_str());
             if (ImGui::TreeNode("transform"))
             {
+                ImGui::DragFloat("allowable_limit_position", &allowable_limit_position, 0.1f);
                 ImGui::DragFloat3("position", &position.x);
                 ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
@@ -309,7 +310,21 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
 
 void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
 {
-    position = data.position;
+    using namespace DirectX;
+
+    //position = data.position;
+
+    XMVECTOR p1{ XMLoadFloat3(&position) };
+    XMVECTOR p2{ XMLoadFloat3(&data.position) };
+
+    XMVECTOR dir{ p2 - p1 };
+
+    XMVECTOR l{ XMVector3Length(dir) };
+    float length{};
+    XMStoreFloat(&length, l);
+
+    if (length > allowable_limit_position) position = data.position;
+
 }
 
 

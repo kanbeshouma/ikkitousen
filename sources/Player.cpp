@@ -508,6 +508,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
+                DirectX::XMFLOAT3 input = GetInputMoveVec();
+                ImGui::DragFloat3("input", &input.x);
                 ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::TreePop();
