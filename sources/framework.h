@@ -70,4 +70,6 @@ private:
 	std::unique_ptr<SceneManager> scene_manager;
 	// DebugFlags
 	std::unique_ptr<DebugFlags> debug_flags;
+
+	float frame_time{};
 };

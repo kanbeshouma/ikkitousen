@@ -230,12 +230,29 @@ int framework::run()
 		}
 		else
 		{
+
 			tictoc.tick();
+
+#if 0
+			frame_time += tictoc.time_interval();
+			if (frame_time > 1.0f / 60.0f)
+			{
+				calculate_frame_stats();
+				update(tictoc.time_interval());
+				// ホイール情報のリセット
+				mouse->reset_wheel();
+				render(tictoc.time_interval());
+				frame_time = 0.0f;
+			}
+#else
+
 			calculate_frame_stats();
 			update(tictoc.time_interval());
 			// ホイール情報のリセット
 			mouse->reset_wheel();
 			render(tictoc.time_interval());
+#endif // 0
+
 		}
 	}
 
