@@ -14,6 +14,10 @@ void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
 
     SetDirections(orientation);
     MovingProcess(movevec.x, movevec.z, move_speed);
+
+    //-----位置保管-----//
+    if(start_lerp)LerpPosition(elapsed_time, position);
+
     if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
@@ -229,6 +233,12 @@ void ClientPlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT
         {
             position.x += mx;
             position.z += mz;
+            //-----補完位置が設定されていたらその位置も速力計算した値を加算する-----//
+            if (start_lerp)
+            {
+                lerp_position.x += mx;
+                lerp_position.z += mz;
+            }
         }
     }
 }
@@ -304,4 +314,34 @@ void ClientPlayerMove::SetDirections(DirectX::XMFLOAT4 o)
     forward = { m4x4._31, m4x4._32, m4x4._33 };
 
     XMStoreFloat3(&player_forward, forward);
+}
+
+void ClientPlayerMove::LerpPosition(float elapsed_time, DirectX::XMFLOAT3& position)
+{
+    using namespace DirectX;
+    XMVECTOR p1{ XMLoadFloat3(&position) };
+    XMVECTOR p2{ XMLoadFloat3(&lerp_position) };
+    XMVECTOR dir{ p2 - p1 };
+
+    XMFLOAT3 l{};
+    XMStoreFloat3(&l, dir);
+
+    float length = Math::Length(l);
+
+    if (length > allowable_limit_position)
+    {
+        position = Math::lerp(position, lerp_position, elapsed_time);
+    }
+    else
+    {
+        start_lerp = false;
+    }
+}
+
+void ClientPlayerMove::SetLerpPosition(DirectX::XMFLOAT3 pos)
+{
+    //-----補完を開始していいかどうか-----//
+    start_lerp = true;
+    //-----補完位置を設定-----//
+    lerp_position = pos;
 }

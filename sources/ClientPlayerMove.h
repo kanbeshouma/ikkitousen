@@ -8,6 +8,9 @@ public:
     ~ClientPlayerMove();
 protected:
     float max_length = 300.0f;
+
+    //-----受信データの位置の許容値-----//
+    float allowable_limit_position{ 2.0f };
 public:
     void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome);
     //プレイヤーの位置矯正
@@ -44,9 +47,17 @@ private:
     DirectX::XMFLOAT3 movevec{};
     //-----データ送信用の変数-----//
     DirectX::XMFLOAT3 input_move{};
-
     //プレイヤーの前方向
     DirectX::XMFLOAT3 player_forward{};
+    //-----プレイヤーの補完位置-----//
+    DirectX::XMFLOAT3 lerp_position{};
+    //-----補完していいかどうか-----//
+    bool start_lerp{ false };
     //方向取得
     void SetDirections(DirectX::XMFLOAT4 o);
+    //-----位置保管-----//
+    void LerpPosition(float elapsed_time , DirectX::XMFLOAT3& position);
+
+public:
+    void SetLerpPosition(DirectX::XMFLOAT3 pos);
 };

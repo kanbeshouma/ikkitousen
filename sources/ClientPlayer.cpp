@@ -326,9 +326,8 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     if (length > allowable_limit_position)
     {
         //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
-        //そこに向かって補完位置を出す
-
-        position = data.position;
+        //そこに向かって補完していく
+        SetLerpPosition(data.position);
     }
 
 }

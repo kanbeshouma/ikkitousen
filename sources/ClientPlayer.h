@@ -119,9 +119,6 @@ public:
     void ChangePlayerJustificationLength()override {};
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
-private:
-    //-----受信データの位置の許容値-----//
-    float allowable_limit_position{ 10.0f };
 
 private:
     //プレイヤーの最大体力
