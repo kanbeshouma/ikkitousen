@@ -35,6 +35,36 @@ void ClientPlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
     UpdateHorizontalMove(elapsed_time, position, sky_dome);
 }
 
+void ClientPlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    //åoâﬂÉtÉåÅ[ÉÄ
+    float elapsed_frame = 60.0f * elapsed_time;
+
+    if (is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+    }
+
+    UpdateVerticalVelocity(elapsed_frame);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
+    UpdateHrizontalVelocity(elapsed_frame);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
+    SetDirections(orientation);
+}
+
+void ClientPlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    if (is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+    }
+
+    SetDirections(orientation);
+}
+
+
 void ClientPlayerMove::PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos)
 {
     using namespace DirectX;

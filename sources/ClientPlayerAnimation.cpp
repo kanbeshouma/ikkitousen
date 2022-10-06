@@ -53,6 +53,7 @@ void ClientPlayer::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
         Awaiking();
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, sky_dome);
 }
 
 void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -102,6 +103,9 @@ void ClientPlayer::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
         Awaiking();
     }
+
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, sky_dome);
+
 }
 
 void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -179,6 +183,8 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             }
         }
     }
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void ClientPlayer::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -208,6 +214,8 @@ void ClientPlayer::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         is_lock_on = true;
     }
+
+    UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void ClientPlayer::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -216,7 +224,7 @@ void ClientPlayer::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionCharge(attack_animation_blends_speeds.x);
     }
-    //ChargeAcceleration(elapsed_time);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -297,6 +305,8 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
 
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
@@ -360,6 +370,8 @@ void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
     }
     else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
 
@@ -449,6 +461,8 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
     }
     else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
 
@@ -552,6 +566,7 @@ void ClientPlayer::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     }
     else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
 
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void ClientPlayer::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
