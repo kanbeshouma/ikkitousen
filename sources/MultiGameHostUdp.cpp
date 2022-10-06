@@ -65,10 +65,26 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
     }
     case UpdateCommand::PlayerActionCommand:
     {
+        //-----プレイヤーのどのアクションかどうかをチェック-----//
+        CheckPlayerActionCommand(data[ComLocation::DataKind],data);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+
+void SceneMultiGameHost::CheckPlayerActionCommand(char com, char* data)
+{
+    switch (com)
+    {
+    case PlayerActionKind::AvoidanceData:
+    {
         //-----データをキャスト-----//
-        PlayerActionData* p_data = (PlayerActionData*)data;
+        PlayerAvoidanceData* p_data = (PlayerAvoidanceData*)data;
         //-----データを保存-----//
-        receive_all_data.player_action_data.emplace_back(*p_data);
+        receive_all_data.player_avoidance_data.emplace_back(*p_data);
 
         DebugConsole::Instance().WriteDebugConsole("入力情報を受信", TextColor::White);
         break;
@@ -76,4 +92,5 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
     default:
         break;
     }
+
 }

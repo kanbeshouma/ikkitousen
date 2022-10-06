@@ -818,21 +818,25 @@ void Player::SendPositionData()
     //-----位置設定-----//
     data.position = position;
 
+
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
     instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
 
 }
 
-void Player::SendActionData(GamePadButton button)
+void Player::SendPlayerAvoidanceData(GamePadButton button, DirectX::XMFLOAT3 vec)
 {
-    PlayerActionData data;
+    PlayerAvoidanceData data;
 
     //-----どのタイプかを設定-----//
     data.cmd[ComLocation::ComList] = CommandList::Update;
 
-    //-----どのタイプのデータかを設定-----//
+    //-----誰のどのデータかを設定-----//
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerActionCommand;
+
+    //-----どのタイプのデータ設定-----//
+    data.cmd[ComLocation::DataKind] = PlayerActionKind::AvoidanceData;
 
     //-----どのボタンを押したかを設定-----//
     data.new_button_state = button;
@@ -840,9 +844,24 @@ void Player::SendActionData(GamePadButton button)
     //-----プレイヤーのID設定-----//
     data.player_id = object_id;
 
+    //-----位置設定-----//
+    data.position = position;
+
+    //-----回転値設定-----//
+    data.orientation = orientation;
+
+    //-----チャージ位置設定-----//
+    data.charge_point = charge_point;
+
+    //-----速力設定-----//
+    data.velocity = velocity;
+
+    //-----入力方向を設定-----//
+    data.move_vec = vec;
+
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
-    instance.UdpSend((char*)&data, sizeof(PlayerActionData));
+    instance.UdpSend((char*)&data, sizeof(PlayerAvoidanceData));
 
 }
 

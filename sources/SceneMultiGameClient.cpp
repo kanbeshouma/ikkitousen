@@ -1074,16 +1074,16 @@ void SceneMultiGameClient::SetReceiveData()
 	}
 
 	//-----プレイヤーのアクションデータが入っている場合-----//
-	if (receive_all_data.player_action_data.empty() == false)
+	if (receive_all_data.player_avoidance_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_data.player_action_data)
+		for (const auto& p_data : receive_all_data.player_avoidance_data)
 		{
-			player_manager->SetPlayerActionData(p_data);
+			player_manager->SetPlayerAvoidanceData(p_data);
 		}
 
 		//-----データを削除する-----//
-		receive_all_data.player_action_data.clear();
+		receive_all_data.player_avoidance_data.clear();
 	}
 }

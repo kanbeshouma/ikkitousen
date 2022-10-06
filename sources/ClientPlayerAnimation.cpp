@@ -1,6 +1,7 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
 #include"ClientPlayer.h"
+#include"DebugConsole.h"
 
 void ClientPlayer::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
@@ -160,13 +161,14 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 avoidance_direction_count--;
                 avoidance_buttun = true;
                 velocity = {};
-                DirectX::XMFLOAT3 movevec = GetMoveVecter();
-                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                if ((receive_avoidance_vec.x * receive_avoidance_vec.x) + (receive_avoidance_vec.z * receive_avoidance_vec.z) > 0)
                 {
-                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                    //ChargeTurn(elapsed_time, receive_avoidance_vec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, receive_avoidance_vec, 200.0f);
                 }
                 else
                 {
+                    //ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
                 //覚醒状態の時の回避アニメーションの設定

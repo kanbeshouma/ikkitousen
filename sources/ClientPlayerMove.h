@@ -15,6 +15,10 @@ public:
     void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome);
     //プレイヤーの位置矯正
     void PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos);
+
+    //急速回転突進の時
+    void ChargeTurn(float elapsed_time, DirectX::XMFLOAT3 move_velocity, float speed, DirectX::XMFLOAT3 position, DirectX::XMFLOAT4& orientation);
+
     //-----入力方向のゲッター-----//
     DirectX::XMFLOAT3 GetInputMoveVec() { return input_move; }
 

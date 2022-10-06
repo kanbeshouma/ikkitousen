@@ -39,6 +39,11 @@ enum UpdateCommand
 
 };
 
+enum PlayerActionKind
+{
+    AvoidanceData,
+};
+
 
 //-----コマンドを入れる配列のデータの種類-----//
 enum ComLocation
@@ -47,7 +52,8 @@ enum ComLocation
     ComList,
     //-----コマンドの1番目-----//
     UpdateCom,
-
+    //-----コマンドの2番目-----//
+    DataKind,
 };
 
 
@@ -136,16 +142,32 @@ struct PlayerPositionData
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
+
 };
 
-//-----プレイヤーのアクションデータ(ボタン入力)-----//
-struct PlayerActionData
+//-----プレイヤーのアクションデータ(ボタン入力と位置、回転など)-----//
+struct PlayerAvoidanceData
 {
     //通信コマンド
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
     int player_id{ -1 };
+
+    //-----位置-----//
+    DirectX::XMFLOAT3 position{};
+
+    //-----回転-----//
+    DirectX::XMFLOAT4 orientation{0,0,0,1.0f};
+
+    //-----チャージポイント-----//
+    DirectX::XMFLOAT3 charge_point{};
+
+    //-----入力値-----//
+    DirectX::XMFLOAT3 move_vec{};
+
+    //-----速力-----//
+    DirectX::XMFLOAT3 velocity{};
 
     //-----ボタンの入力-----//
     GamePadButton new_button_state;
@@ -161,6 +183,6 @@ struct AllDataStruct
     std::vector<PlayerPositionData> player_position_data;
 
     //-----プレイヤーのアクションデータ-----//
-    std::vector<PlayerActionData> player_action_data;
+    std::vector<PlayerAvoidanceData> player_avoidance_data;
 
 };

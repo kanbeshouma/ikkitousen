@@ -135,14 +135,14 @@ void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
 
 }
 
-void PlayerManager::SetPlayerActionData(PlayerActionData data)
+void PlayerManager::SetPlayerAvoidanceData(PlayerAvoidanceData data)
 {
     for (auto& player : players)
     {
         //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
         if (player->GetObjectId() == data.player_id)
         {
-            player->SetPlayerActionData(data);
+            player->SetPlayerAvoidanceData(data);
         }
     }
 
