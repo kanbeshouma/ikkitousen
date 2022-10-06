@@ -110,7 +110,7 @@ public:
     void ChangePlayerJustificationLength()override;
     void SetReceiveData(PlayerMoveData data) override {}
     void SetReceivePositionData(PlayerPositionData data)override {}
-
+    void SetPlayerActionData(PlayerActionData data)override {}
 private:
     //-----データを送信する-----//
     void SendPlayerData(float elapsed_time);
@@ -120,6 +120,9 @@ private:
 
     //-----PositionDataを設定-----//
     void SendPositionData();
+
+    //-----ActionDataを設定-----//
+    void SendActionData(GamePadButton button);
 
     //-----ミリ秒-----//
     float milliseconds{};

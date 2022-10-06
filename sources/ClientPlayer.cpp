@@ -254,7 +254,8 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
 #endif // USE_IMGUI
     debug_figure->create_capsule(just_avoidance_capsule_param.start, just_avoidance_capsule_param.end, just_avoidance_capsule_param.rasius, { 1.0f,1.0f,1.0f,1.0f });
 
-
+    //-----ボタンデータを設定-----//
+    SetSendButton(0);
 }
 
 void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -303,9 +304,6 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
 {
     //-----入力データ設定する-----//
     SetMoveVecter(data.move_vec);
-
-    //-----ボタンの入力情報を入れる-----//
-    SetSendButton(data.new_button_state);
 }
 
 void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
@@ -330,6 +328,12 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
         SetLerpPosition(data.position);
     }
 
+}
+
+void ClientPlayer::SetPlayerActionData(PlayerActionData data)
+{
+    //-----ボタンデータを設定-----//
+    SetSendButton(data.new_button_state);
 }
 
 

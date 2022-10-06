@@ -790,9 +790,6 @@ void Player::SendMoveData()
     //-----入力情報-----//
     data.move_vec = GetInputMoveVec();
 
-    //-----ボタンの入力-----//
-    data.new_button_state = game_pad->GetButtonState();
-
     //-----ロックオンしている敵の番号-----//
 
 
@@ -825,6 +822,29 @@ void Player::SendPositionData()
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
     instance.UdpSend((char*)&data, sizeof(PlayerMoveData));
 
+}
+
+void Player::SendActionData(GamePadButton button)
+{
+    PlayerActionData data;
+
+    //-----どのタイプかを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    //-----どのタイプのデータかを設定-----//
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerActionCommand;
+
+    //-----どのボタンを押したかを設定-----//
+    data.new_button_state = button;
+
+    //-----プレイヤーのID設定-----//
+    data.player_id = object_id;
+
+    //-----データ送信-----//
+    CorrespondenceManager& instance = CorrespondenceManager::Instance();
+    instance.UdpSend((char*)&data, sizeof(PlayerActionData));
+
+    DebugConsole::Instance().WriteDebugConsole("入力情報の送信", TextColor::White);
 }
 
 

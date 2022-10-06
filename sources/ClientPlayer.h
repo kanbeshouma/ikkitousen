@@ -119,7 +119,7 @@ public:
     void ChangePlayerJustificationLength()override {};
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
-
+    void SetPlayerActionData(PlayerActionData data)override;
 private:
     //ƒvƒŒƒCƒ„[‚ÌÅ‘å‘Ì—Í
     static constexpr int MAX_HEALTH = 100;

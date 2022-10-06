@@ -139,6 +139,10 @@ public:
     //第1引数 : データ
     void SetPlayerPositionData(PlayerPositionData data);
 
+    ////-----データを設定する-----//
+    //=====================
+    //第1引数 : データ
+    void SetPlayerActionData(PlayerActionData data);
 
 private:
     ////-----プレイヤーを入れる変数-----//

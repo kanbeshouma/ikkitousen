@@ -948,6 +948,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 						have_tutorial_state = 1; // チュートリアルなし
 						audio_manager->play_se(SE_INDEX::DECISION);
 						player->StartTitleAnimation();
+
 						return;
 			    }
 

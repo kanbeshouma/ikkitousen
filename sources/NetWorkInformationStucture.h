@@ -33,6 +33,10 @@ enum UpdateCommand
 
     //-----プレイヤーの位置データ-----//
     PlayerPositionCommand,
+
+    //-----プレイヤーのアクションデータ-----//
+    PlayerActionCommand,
+
 };
 
 
@@ -113,9 +117,6 @@ struct PlayerMoveData
     //-----入力方向-----//
     DirectX::XMFLOAT3 move_vec{};
 
-    //-----ボタンの入力-----//
-    GamePadButton new_button_state = 0;
-
     //-----ロックオンしている敵の番号-----//
     int lock_on_enemy_id{ -1 };
 
@@ -137,11 +138,29 @@ struct PlayerPositionData
     DirectX::XMFLOAT3 position{};
 };
 
+//-----プレイヤーのアクションデータ(ボタン入力)-----//
+struct PlayerActionData
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //-----プレイヤーの番号-----//
+    int player_id{ -1 };
+
+    //-----ボタンの入力-----//
+    GamePadButton new_button_state;
+};
+
+
 struct AllDataStruct
 {
-    //-----プレイヤーのメインデータ-----//
+    //-----プレイヤーの動きデータ-----//
     std::vector<PlayerMoveData> player_move_data;
 
-    //-----プレイヤーのスナップショット-----//
+    //-----プレイヤーの位置データ-----//
     std::vector<PlayerPositionData> player_position_data;
+
+    //-----プレイヤーのアクションデータ-----//
+    std::vector<PlayerActionData> player_action_data;
+
 };

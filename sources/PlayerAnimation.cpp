@@ -112,7 +112,11 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
                     TransitionBehindAvoidance();
                 }
                 //そうじゃなかったら普通の回避
-                else TransitionAvoidance();
+                else
+                {
+                    TransitionAvoidance();
+
+                }
             }
         }
         //突進開始に遷移
@@ -235,6 +239,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             //回避ボタンを押したら入力方向に方向転換
             if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
             {
+
                 player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 avoidance_direction_count--;
@@ -257,6 +262,9 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 //通常状態の時のアニメーションの設定
                 else model->play_animation(AnimationClips::Avoidance, false, true);
                 avoidance_boost_time = 0.0f;
+
+                //-----データ送信-----//
+                SendActionData(GamePad::BTN_RIGHT_SHOULDER);
             }
         }
     }
@@ -398,7 +406,9 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 }
                //SetAccelerationVelocity();
                 charge_time = 0;
-                //TransitionCharge();
+
+                //-----データ送信-----//
+                SendActionData(GamePad::BTN_ATTACK_B);
             }
         }
     }
@@ -950,9 +960,6 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
-
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
@@ -979,6 +986,10 @@ void Player::TransitionAvoidance()
     animation_speed = AVOIDANCE_ANIMATION_SPEED;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_RIGHT_SHOULDER);
+
     //回避状態の時の更新関数に切り替える
     player_activity = &Player::AvoidanceUpdate;
 }
@@ -997,26 +1008,7 @@ void Player::TransitionBehindAvoidance()
         //ロックオンしている敵をスタンさせる
         target_enemy->fSetStun(true);
     }
-#if 0
-    if (is_just_avoidance_capsul)
-    {
-        //ロックオンしている敵をスタンさせる
-        if (target_enemy != nullptr)
-        {
-            target_enemy->fSetStun(true, true);
-        }
-        is_just_avoidance = true;
-    }
-    else
-    {
-        if (target_enemy != nullptr)
-        {
-            //ロックオンしている敵をスタンさせる
-            target_enemy->fSetStun(true);
-        }
-    }
 
-#endif // 0
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -1040,6 +1032,10 @@ void Player::TransitionBehindAvoidance()
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_RIGHT_SHOULDER);
+
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
 
@@ -1096,6 +1092,10 @@ void Player::TransitionJustBehindAvoidance()
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_RIGHT_SHOULDER);
+
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
 }
@@ -1121,6 +1121,10 @@ void Player::TransitionChargeInit()
     lerp_rate = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_ATTACK_B);
+
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
 }
@@ -1165,6 +1169,10 @@ void Player::TransitionCharge(float blend_seconds)
     lerp_rate = 4.0f;
     //攻撃の加速の設定
     //SetAccelerationVelocity();
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_ATTACK_B);
+
     //突進中の更新関数に切り替える
     player_activity = &Player::ChargeUpdate;
 
@@ -1195,6 +1203,10 @@ void Player::TransitionAttackType1(float blend_seconds)
     is_update_animation = true;
     //加速のレート
     lerp_rate = 4.0f;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_ATTACK_B);
+
     //１撃目の更新関数に切り替える
     player_activity = &Player::AttackType1Update;
 }
@@ -1233,6 +1245,10 @@ void Player::TransitionAttackType2(float blend_seconds)
     is_update_animation = false;
     //突進中かどうかの設定
     is_charge = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_ATTACK_B);
+
     //２撃目の更新関数に切り替える
     player_activity = &Player::AttackType2Update;
 }
@@ -1268,6 +1284,10 @@ void Player::TransitionAttackType3(float blend_seconds)
     is_update_animation = false;
     //突進中かどうかの設定
     is_charge = true;
+
+    //-----データ送信-----//
+    SendActionData(GamePad::BTN_ATTACK_B);
+
     //３撃目の更新関数に切り替える
     player_activity = &Player::AttackType3Update;
 }

@@ -135,6 +135,19 @@ void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
 
 }
 
+void PlayerManager::SetPlayerActionData(PlayerActionData data)
+{
+    for (auto& player : players)
+    {
+        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
+        if (player->GetObjectId() == data.player_id)
+        {
+            player->SetPlayerActionData(data);
+        }
+    }
+
+}
+
 void PlayerManager::DeletePlayer(int id)
 {
     for (auto& player : players)
