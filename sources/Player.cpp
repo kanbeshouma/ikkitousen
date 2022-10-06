@@ -844,7 +844,6 @@ void Player::SendActionData(GamePadButton button)
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
     instance.UdpSend((char*)&data, sizeof(PlayerActionData));
 
-    DebugConsole::Instance().WriteDebugConsole("“ü—Íî•ñ‚Ì‘—M", TextColor::White);
 }
 
 

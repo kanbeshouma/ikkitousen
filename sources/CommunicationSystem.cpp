@@ -696,7 +696,7 @@ int CommunicationSystem::UdpReceive(char* data, int size)
         {
             std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4) + "受信ポート番号" + std::to_string(addr.sin_port) + "   :  保存ポート" + std::to_string(instance.game_udp_server_addr[i].sin_port);
             std::string text =ip + "アドレス" +  std::to_string(i) + "番目のアドレスで受信しました";
-            //DebugConsole::Instance().WriteDebugConsole(text, TextColor::Blue);
+            DebugConsole::Instance().WriteDebugConsole(text, TextColor::Blue);
 
             return i;
         }
@@ -756,7 +756,7 @@ void CommunicationSystem::UdpSend(char* data, int size)
             std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4) + "ポート番号" + std::to_string(instance.game_udp_server_addr[i].sin_port);
             std::string text = ip + "のアドレス :" +std::to_string(i) + "番目に" + std::to_string(send_size) + "バイト送信しました";
 
-            //DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
+            DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
         }
     }
 }

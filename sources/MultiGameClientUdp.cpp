@@ -70,9 +70,6 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
         PlayerActionData* p_data = (PlayerActionData*)data;
         //-----データを保存-----//
         receive_all_data.player_action_data.emplace_back(*p_data);
-
-        DebugConsole::Instance().WriteDebugConsole("入力情報を受信", TextColor::White);
-
         break;
     }
 

@@ -109,6 +109,8 @@ public:
     void SetOperationPrivateId(int id) { operation_private_id = id; }
     void SetOpponentPlayerId(std::vector<int> id) { opponent_player_id = id; }
     void SetOpponentPlayerId(int id) { opponent_player_id.at(id) = id; }
+    void SetMultiPlay(bool multi) { is_multi = multi; }
+
     ////-----引数-----//
     //===========
     //第1引数 : 設定したい場所
@@ -144,4 +146,7 @@ public:
     char udp_port[8];
 private:
     std::mutex mutex;
+
+    //-----マルチプレイかどうか-----//
+    bool is_multi{ false };
 };

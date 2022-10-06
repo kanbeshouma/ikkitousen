@@ -45,6 +45,9 @@ bool CorrespondenceManager::InitializeServer()
 
 int CorrespondenceManager::UdpReceive(char* data, int size)
 {
+    //-----マルチプレイでなかったら処理を止める-----//
+    if (is_multi == false) return -1;
+
     //----------接続して来たプレイヤーのIDを返す----------//
     int id = communication_system->UdpReceive(data, size);
     //-----もしコマンドが-1なら何もしない-----//
@@ -58,11 +61,15 @@ int CorrespondenceManager::UdpReceive(char* data, int size)
 
 void CorrespondenceManager::TcpSend(int id, char* data, int size)
 {
+    if (is_multi == false) return;
+
     communication_system->TcpSend(id, data, size);
 }
 
 void CorrespondenceManager::TcpSend(char* data, int size)
 {
+    if (is_multi == false) return;
+
     communication_system->TcpSend(data, size);
 }
 
@@ -97,6 +104,8 @@ bool CorrespondenceManager::InitializeClient()
 
 void CorrespondenceManager::UdpSend(char* data, int size)
 {
+    if (is_multi == false) return;
+
     communication_system->UdpSend(data, size);
 }
 
@@ -123,6 +132,8 @@ int CorrespondenceManager::TcpClientReceive(char* data, int size)
 
 void CorrespondenceManager::UdpSend(int id, char* data, int size)
 {
+    if (is_multi == false) return;
+
     //server->UdpSend(id,data,size);
     communication_system->UdpSend(id, data, size);
 }

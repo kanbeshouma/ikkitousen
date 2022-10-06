@@ -954,7 +954,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		change_gauge_parm.threshold -=(2.0f * elapsed_time) / 2.0f;
 		if (change_scene_timer > 1.4f)
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::DOT, 2.0f);
+			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 		}
 	}
 	else

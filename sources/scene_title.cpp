@@ -427,10 +427,12 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				case MultiPlayEntry::Host:
 					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::HORIZON, 2.0f);
 					DebugConsole::Instance().WriteDebugConsole("ホストプレイ開始");
+					CorrespondenceManager::Instance().SetMultiPlay(true);
 					break;
 				case MultiPlayEntry::Client:
 					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameClient()), DISSOLVE_TYPE::HORIZON, 2.0f);
 					DebugConsole::Instance().WriteDebugConsole("ゲームに参加");
+					CorrespondenceManager::Instance().SetMultiPlay(true);
 					break;
 				default:
 					break;
@@ -439,11 +441,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			else
 			{
 				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f);
+				CorrespondenceManager::Instance().SetMultiPlay(false);
 			}
 		}
 		else
 		{
 			SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			CorrespondenceManager::Instance().SetMultiPlay(false);
 		}
 
 		point_lights->finalize(graphics);
