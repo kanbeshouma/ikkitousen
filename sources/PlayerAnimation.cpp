@@ -988,7 +988,7 @@ void Player::TransitionAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER);
+    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER,GetInputMoveVec());
 
     //回避状態の時の更新関数に切り替える
     player_activity = &Player::AvoidanceUpdate;
@@ -1034,7 +1034,7 @@ void Player::TransitionBehindAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER);
+    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
 
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
@@ -1094,7 +1094,7 @@ void Player::TransitionJustBehindAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER);
+    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
 
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;

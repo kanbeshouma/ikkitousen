@@ -69,7 +69,6 @@ void ClientPlayer::TransitionAvoidance()
 
 void ClientPlayer::TransitionBehindAvoidance()
 {
-    velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -101,7 +100,6 @@ void ClientPlayer::TransitionJustBehindAvoidance()
     //コンボゲージ増やす
     combo_count += JUST_AVOIDANCE_COMBO;
     is_just_avoidance = true;
-    velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -472,7 +470,6 @@ void ClientPlayer::TransitionStartMothin()
     //model->play_animation(AnimationClips::StartMothin, false, true);
     //更新関数に切り替え
     player_activity = &ClientPlayer::StartMothinUpdate;
-
 }
 
 void ClientPlayer::TransitionStageMove()

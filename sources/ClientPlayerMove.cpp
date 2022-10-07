@@ -258,7 +258,6 @@ void ClientPlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
         }
     }
 
-
     move_vec_x = 0.0f;
     move_vec_z = 0.0f;
 }
