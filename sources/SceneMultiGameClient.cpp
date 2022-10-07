@@ -38,7 +38,7 @@ std::vector<int> SceneMultiGameClient::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMultiGameClient::mutex;
 
-AllDataStruct SceneMultiGameClient::receive_all_data;
+PlayerAllDataStruct SceneMultiGameClient::receive_all_data;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {

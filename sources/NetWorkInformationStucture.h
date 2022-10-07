@@ -174,7 +174,7 @@ struct PlayerAvoidanceData
 };
 
 
-struct AllDataStruct
+struct PlayerAllDataStruct
 {
     //-----プレイヤーの動きデータ-----//
     std::vector<PlayerMoveData> player_move_data;

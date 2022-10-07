@@ -40,7 +40,7 @@ std::vector<int> SceneMultiGameHost::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMultiGameHost::mutex;
 
-AllDataStruct SceneMultiGameHost::receive_all_data;
+PlayerAllDataStruct SceneMultiGameHost::receive_all_data;
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
