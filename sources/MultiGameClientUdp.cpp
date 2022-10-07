@@ -83,7 +83,7 @@ void SceneMultiGameClient::CheckPlayerActionCommand(char com, char* data)
     case PlayerActionKind::AvoidanceData:
     {
         //-----データをキャスト-----//
-        PlayerAvoidanceData* p_data = (PlayerAvoidanceData*)data;
+        PlayerActionData* p_data = (PlayerActionData*)data;
         //-----データを保存-----//
         receive_all_data.player_avoidance_data.emplace_back(*p_data);
 

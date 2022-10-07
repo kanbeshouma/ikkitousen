@@ -129,7 +129,7 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
     if (avoidance_boost_time > 1.0f)
     {
-        model->progress_animation();
+        model->progress_animation(anim_parm);
         if (model->end_of_animation(anim_parm))
         {
             velocity.x *= 0.2f;
@@ -152,9 +152,9 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     else
     {
-        if (model->get_anim_para().animation_tick > 0.2f)
+        if (anim_parm.animation_tick > 0.2f)
         {
-            model->pause_animation();
+            model->pause_animation(anim_parm);
         }
         //連続回避の回数が0より大きいときに
         if (avoidance_direction_count > 0)
@@ -165,14 +165,14 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 avoidance_direction_count--;
                 avoidance_buttun = true;
                 velocity = {};
-                if ((receive_avoidance_vec.x * receive_avoidance_vec.x) + (receive_avoidance_vec.z * receive_avoidance_vec.z) > 0)
+                if ((receive_action_vec.x * receive_action_vec.x) + (receive_action_vec.z * receive_action_vec.z) > 0)
                 {
-                    //ChargeTurn(elapsed_time, receive_avoidance_vec, turn_speed, position, orientation);
-                    charge_point = Math::calc_designated_point(position, receive_avoidance_vec, 200.0f);
+                    ChargeTurn(elapsed_time, receive_action_vec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, receive_action_vec, 200.0f);
                 }
                 else
                 {
-                    //ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
+                    ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
                 //覚醒状態の時の回避アニメーションの設定
@@ -283,13 +283,14 @@ void ClientPlayer::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             {
                 charge_change_direction_count--;
                 velocity = {};
-                DirectX::XMFLOAT3 movevec = GetMoveVecter();
-                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                if ((receive_action_vec.x * receive_action_vec.x) + (receive_action_vec.z * receive_action_vec.z) > 0)
                 {
-                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                    ChargeTurn(elapsed_time, receive_action_vec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, receive_action_vec, 200.0f);
                 }
                 else
                 {
+                    ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
                 //SetAccelerationVelocity();
@@ -313,7 +314,7 @@ void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
     if (is_awakening)
     {
-        if (model->get_anim_para().animation_tick > 0.16f)
+        if (anim_parm.animation_tick > 0.16f)
         {
             //ブロックされたかどうか
             if (is_block)
@@ -325,7 +326,7 @@ void ClientPlayer::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
     }
     else
     {
-        if (model->get_anim_para().animation_tick > 0.11f)
+        if (anim_parm.animation_tick > 0.11f)
         {
             //ブロックされたかどうか
             if (is_block)
@@ -379,7 +380,7 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
     if (is_awakening)
     {
-        if (model->get_anim_para().animation_tick > 0.25f)
+        if (anim_parm.animation_tick > 0.25f)
         {
             //ブロックされたかどうか
             if (is_block)
@@ -391,7 +392,7 @@ void ClientPlayer::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
     }
     else
     {
-        if (model->get_anim_para().animation_tick > 0.26f)
+        if (anim_parm.animation_tick > 0.26f)
         {
             //ブロックされたかどうか
             if (is_block)

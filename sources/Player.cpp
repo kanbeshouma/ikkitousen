@@ -825,9 +825,9 @@ void Player::SendPositionData()
 
 }
 
-void Player::SendPlayerAvoidanceData(GamePadButton button, DirectX::XMFLOAT3 vec)
+void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
 {
-    PlayerAvoidanceData data;
+    PlayerActionData data;
 
     //-----どのタイプかを設定-----//
     data.cmd[ComLocation::ComList] = CommandList::Update;
@@ -861,7 +861,7 @@ void Player::SendPlayerAvoidanceData(GamePadButton button, DirectX::XMFLOAT3 vec
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
-    instance.UdpSend((char*)&data, sizeof(PlayerAvoidanceData));
+    instance.UdpSend((char*)&data, sizeof(PlayerActionData));
 
 }
 

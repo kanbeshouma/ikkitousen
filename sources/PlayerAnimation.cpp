@@ -264,7 +264,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 avoidance_boost_time = 0.0f;
 
                 //-----データ送信-----//
-                SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER, movevec);
+                SendPlayerActionData(GamePad::BTN_RIGHT_SHOULDER, movevec);
             }
         }
     }
@@ -408,7 +408,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 charge_time = 0;
 
                 //-----データ送信-----//
-                //SendActionData(GamePad::BTN_ATTACK_B);
+                SendPlayerActionData(GamePad::BTN_ATTACK_B, movevec);
             }
         }
     }
@@ -988,7 +988,7 @@ void Player::TransitionAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER,GetInputMoveVec());
+    SendPlayerActionData(GamePad::BTN_RIGHT_SHOULDER,GetInputMoveVec());
 
     //回避状態の時の更新関数に切り替える
     player_activity = &Player::AvoidanceUpdate;
@@ -1034,7 +1034,7 @@ void Player::TransitionBehindAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
+    SendPlayerActionData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
 
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
@@ -1094,7 +1094,7 @@ void Player::TransitionJustBehindAvoidance()
     is_update_animation = true;
 
     //-----データ送信-----//
-    SendPlayerAvoidanceData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
+    SendPlayerActionData(GamePad::BTN_RIGHT_SHOULDER, GetInputMoveVec());
 
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
@@ -1127,6 +1127,8 @@ void Player::TransitionChargeInit()
 
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
+    //-----データ送信-----//
+    SendPlayerActionData(GamePad::BTN_ATTACK_B ,GetInputMoveVec());
 }
 
 void Player::TransitionCharge(float blend_seconds)

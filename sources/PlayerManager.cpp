@@ -135,7 +135,7 @@ void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
 
 }
 
-void PlayerManager::SetPlayerAvoidanceData(PlayerAvoidanceData data)
+void PlayerManager::SetPlayerAvoidanceData(PlayerActionData data)
 {
     for (auto& player : players)
     {

@@ -146,7 +146,7 @@ struct PlayerPositionData
 };
 
 //-----プレイヤーのアクションデータ(ボタン入力と位置、回転など)-----//
-struct PlayerAvoidanceData
+struct PlayerActionData
 {
     //通信コマンド
     char cmd[4]{};
@@ -183,6 +183,6 @@ struct PlayerAllDataStruct
     std::vector<PlayerPositionData> player_position_data;
 
     //-----プレイヤーのアクションデータ-----//
-    std::vector<PlayerAvoidanceData> player_avoidance_data;
+    std::vector<PlayerActionData> player_avoidance_data;
 
 };

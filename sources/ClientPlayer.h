@@ -119,7 +119,7 @@ public:
     void ChangePlayerJustificationLength()override {};
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
-    void SetPlayerAvoidanceData(PlayerAvoidanceData data)override;
+    void SetPlayerAvoidanceData(PlayerActionData data)override;
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;
@@ -609,6 +609,6 @@ public:
     //ステージ遷移終了
     void TransitionStageMoveEnd()override;
 private:
-    //-----受信した連続回避の入力方向-----//
-    DirectX::XMFLOAT3 receive_avoidance_vec{};
+    //-----受信した入力方向-----//
+    DirectX::XMFLOAT3 receive_action_vec{};
 };

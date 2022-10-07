@@ -35,6 +35,7 @@ public:
     //-----動く力のセッター-----//
     void SetMoveVecter(DirectX::XMFLOAT3 vec) { movevec = vec; }
 
+
 private:
     //垂直速力更新処理
     void UpdateVerticalVelocity(float elapsedFrame);

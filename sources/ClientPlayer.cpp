@@ -328,26 +328,13 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     }
 }
 
-void ClientPlayer::SetPlayerAvoidanceData(PlayerAvoidanceData data)
+void ClientPlayer::SetPlayerAvoidanceData(PlayerActionData data)
 {
+
     //-----位置データを設定-----//
-    using namespace DirectX;
-
-    XMVECTOR p1{ XMLoadFloat3(&position) };
-    XMVECTOR p2{ XMLoadFloat3(&data.position) };
-
-    XMVECTOR dir{ p2 - p1 };
-
-    XMVECTOR l{ XMVector3Length(dir) };
-    float length{};
-    XMStoreFloat(&length, l);
-
-    if (length > allowable_limit_position)
-    {
-        //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
-        //そこに向かって補完していく
-        SetLerpPosition(data.position);
-    }
+    //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
+    //そこに向かって補完していく
+    SetLerpPosition(data.position);
 
     //-----回転値設定-----//
     orientation = data.orientation;
@@ -359,7 +346,7 @@ void ClientPlayer::SetPlayerAvoidanceData(PlayerAvoidanceData data)
     velocity = data.velocity;
 
     //-----入力方向データを設定-----//
-    receive_avoidance_vec = data.move_vec;
+    receive_action_vec = data.move_vec;
 
     //-----ボタンデータを設定-----//
     SetSendButton(data.new_button_state);

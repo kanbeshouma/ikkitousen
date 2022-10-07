@@ -110,7 +110,7 @@ public:
     void ChangePlayerJustificationLength()override;
     void SetReceiveData(PlayerMoveData data) override {}
     void SetReceivePositionData(PlayerPositionData data)override {}
-    void SetPlayerAvoidanceData(PlayerAvoidanceData data)override {}
+    void SetPlayerAvoidanceData(PlayerActionData data)override {}
 private:
     //-----データを送信する-----//
     void SendPlayerData(float elapsed_time);
@@ -121,8 +121,8 @@ private:
     //-----PositionDataを設定-----//
     void SendPositionData();
 
-    //-----PlayerAvoidanceDataを設定-----//
-    void SendPlayerAvoidanceData(GamePadButton button, DirectX::XMFLOAT3 vec = {});
+    //-----PlayerActionDataを設定-----//
+    void SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec = {});
 
     //-----ミリ秒-----//
     float milliseconds{};
