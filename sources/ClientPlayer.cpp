@@ -44,7 +44,7 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     //-----フォント設定-----//
     object_id_font.s = L"Player : " + std::to_wstring(this->object_id);
     object_id_font.scale = { 0.5f,0.5f };
-    offset_pos = { -5.1f,9.7f,0.0f };
+    offset_pos = { -5.1f,8.6f,0.0f };
 
     //-----フラスタムカリング用の変数-----//
     cube_half_size = scale.x * 2.5f;
@@ -361,6 +361,7 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
 void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
 {
     using namespace DirectX;
+#if 0
     // 変換行列
     XMMATRIX view_mat = XMLoadFloat4x4(&view);
     XMMATRIX projection_mat = XMLoadFloat4x4(&projection);
@@ -393,6 +394,37 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     XMStoreFloat2(&screen_position, screen_position_vec);
 
     object_id_font.position = screen_position;
+
+#endif // 0
+
+    // プレイヤーの頭上のワールド座標
+    DirectX::XMFLOAT3 world_position = position;
+    // 頭上に出す
+    world_position.y +=offset_pos.y;
+
+    //	ワールド空間座標＞スクリーン空間座標に変換
+    // スクリーン座標
+    DirectX::XMFLOAT3 screen_position;
+    float linearDepth = 0.0f;
+    {
+        // 変換行列
+        XMMATRIX view_mat = XMLoadFloat4x4(&view);
+        XMMATRIX projection_mat = XMLoadFloat4x4(&projection);
+
+        DirectX::XMVECTOR pos = DirectX::XMVectorSet(world_position.x, world_position.y, world_position.z, 1);
+        pos = DirectX::XMVector3TransformCoord(pos, view_mat);
+        DirectX::XMStoreFloat3(&screen_position, pos);
+        linearDepth = screen_position.z;
+
+        pos = DirectX::XMVector3TransformCoord(pos, projection_mat);
+        DirectX::XMStoreFloat3(&screen_position, pos);
+        screen_position.x = 1280.0f * (screen_position.x * +0.5f + 0.5f);
+        screen_position.y = 780.0f * (screen_position.y * -0.5f + 0.5f);
+
+        object_id_font.position = { screen_position.x ,screen_position.y};
+
+    }
+
 }
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)
