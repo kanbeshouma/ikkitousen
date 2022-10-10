@@ -44,7 +44,7 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     //-----フォント設定-----//
     object_id_font.s = L"Player : " + std::to_wstring(this->object_id);
     object_id_font.scale = { 0.5f,0.5f };
-    offset_pos = { -2.3f,7.9f,0.0f };
+    offset_pos = { -5.1f,9.7f,0.0f };
 
     //-----フラスタムカリング用の変数-----//
     cube_half_size = scale.x * 2.5f;
@@ -348,7 +348,7 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
         }
         ImGui::End();
 #endif // USE_IMGUI
-        fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+        fonts->yu_gothic->Draw(e.s,e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
     };
 
     fonts->yu_gothic->Begin(graphics.get_dc().Get());
@@ -366,7 +366,8 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     XMMATRIX projection_mat = XMLoadFloat4x4(&projection);
     XMMATRIX world_mat = DirectX::XMMatrixIdentity();
     //ワールド座標(player.pos)
-    XMFLOAT3 pos = { position.x + offset_pos.x,position.y + offset_pos.y ,position.z + offset_pos.z };
+    //XMFLOAT3 pos = { position.x,position.y,position.z};
+    XMFLOAT3 pos = { Math::calc_world_position(position,offset_pos) };
     XMVECTOR pos_vec = XMLoadFloat3(&pos);
     // ビューポート
     D3D11_VIEWPORT viewport;
