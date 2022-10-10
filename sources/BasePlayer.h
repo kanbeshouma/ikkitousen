@@ -47,6 +47,9 @@ protected:
     int object_id{ -1 };
     SkinnedMesh::anim_Parameters anim_parm{};
 
+protected:
+    DirectX::XMFLOAT4X4 view{};
+    DirectX::XMFLOAT4X4 projection{};
 public:
     ////-----オブジェクトIDのゲッター-----//
     int GetObjectId() { return object_id; }
@@ -83,6 +86,10 @@ public:
   virtual void SetRaycast(bool r) = 0;
   virtual int GetPlayerPower() = 0;
   virtual [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() = 0;
+
+  //-----カメラのview行列とプロジェクション行列を設定-----//
+  void SetCameraView(DirectX::XMFLOAT4X4 v) { view = v; };
+  void SetCameraProjection(DirectX::XMFLOAT4X4 p) { projection = p; };
 
     virtual BaseEnemy* GetPlayerTargetEnemy() const = 0;
    //一番近い敵を持って来てその位置をセットする

@@ -357,6 +357,23 @@ void PlayerManager::SetCameraDirection(DirectX::XMFLOAT3 f, DirectX::XMFLOAT3 r)
     }
 }
 
+void PlayerManager::SetCameraView(const DirectX::XMFLOAT4X4 view)
+{
+    for (auto& player : players)
+    {
+        player->SetCameraView(view);
+    }
+
+}
+
+void PlayerManager::SetCameraProjection(const DirectX::XMFLOAT4X4 projection)
+{
+    for (auto& player : players)
+    {
+        player->SetCameraProjection(projection);
+    }
+}
+
 void PlayerManager::LockOnPostEffect(float elapsed_time, PostEffect* post_efc)
 {
     for (auto& player : players)

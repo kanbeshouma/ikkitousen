@@ -304,6 +304,9 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	// camera
 	cameraManager->Update(elapsed_time);
 
+	// カメラのビュー行列計算
+	cameraManager->CalcViewProjection(graphics);
+
 	//-----プレイヤーの位置を設定-----//
 	enemyManager->fSetPlayerPosition(player_manager->GetPosition());
 
@@ -481,8 +484,6 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 #ifdef SHADOW_MAP
 	shadow_map->set_shadowmap(graphics);
 #endif // SHADOW_MAP
-	// カメラのビュー行列計算
-	cameraManager->CalcViewProjection(graphics);
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
@@ -976,6 +977,10 @@ void SceneMultiGameClient::PlayerManagerUpdate(GraphicsPipeline& graphics, float
 
 	//-----カメラの方向を設定する-----//
 	player_manager->SetCameraDirection(c->GetForward(), c->GetRight());
+
+	//-----カメラのview行列とプロジェクション行列を設定する-----//
+	player_manager->SetCameraView(c->get_keep_view());
+	player_manager->SetCameraProjection(c->get_keep_projection());
 
 	//-----更新処理-----//
 	player_manager->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());

@@ -87,6 +87,10 @@ public:
     ////-----カメラの方向を設定する-----//
     void SetCameraDirection(DirectX::XMFLOAT3 f, DirectX::XMFLOAT3 r);
 
+    ////-----カメラのview行列とプロジェクション行列を設定する-----//
+    void SetCameraView(const DirectX::XMFLOAT4X4 view);
+    void SetCameraProjection(const DirectX::XMFLOAT4X4 projection);
+
     ////-----ロックオンした時のポストエフェクトを設定する-----//
     void LockOnPostEffect(float elapsed_time,PostEffect* post_efc);
 

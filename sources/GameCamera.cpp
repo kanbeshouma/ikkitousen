@@ -872,8 +872,6 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 	//	RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
 	//	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 	//}
-
-
 	//DirectX::XMStoreFloat3(&playerToRockOn, PlayerToRockOn);
 	DirectX::XMStoreFloat3(&rockOnEyeVector, RockOnEyeVector);
 }

@@ -884,4 +884,32 @@ public:
     bool GetTutorialEvent() { return awaiking_event; }
     int GetTutorialState() { return static_cast<int>(tutorial_state); }
     void SetTutorialDamageFunc();
+
+private:
+    struct StepFontElement
+    {
+        std::wstring s = L"";
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 length{};
+
+        // step string
+        float timer = 0;
+        int step = 0;
+        int index = 0;
+    };
+
+    //-----自分のオブジェクト番号を表示する-----//
+    StepFontElement object_id_font;
+
+    //-----スクリーン座標に変換する時のオフセット値-----//
+    DirectX::XMFLOAT3 offset_pos{};
+
+    //-----自分のオブジェクト番号を画面に表示する-----//
+    void RenderObjectId(GraphicsPipeline& graphics);
+
+    //-----スクリーン座標に変換-----//
+    void ConversionScreenPosition(GraphicsPipeline& graphics);
 };

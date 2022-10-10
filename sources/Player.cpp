@@ -55,6 +55,9 @@ Player::Player(GraphicsPipeline& graphics, int object_id)
     player_bones[9] = model->get_bone_by_name("camera_focus_joint");
     player_bones[10] = model->get_bone_by_name("foot_L_top_joint");
     player_bones[11] = model->get_bone_by_name("foot_R_top_joint");
+
+    //-----フォント設定-----//
+    object_id_font.s = std::to_wstring(this->object_id);
 }
 
 Player::~Player()
@@ -683,6 +686,74 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
         }
     }
 
+        //-------<2Dパート>--------//
+    if (CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        //graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+        //ConversionScreenPosition(graphics);
+        //RenderObjectId(graphics);
+    }
+}
+
+void Player::RenderObjectId(GraphicsPipeline& graphics)
+{
+    auto r_font_render = [&](std::string name, StepFontElement& e)
+    {
+#ifdef USE_IMGUI
+        ImGui::Begin("Font");
+        if (ImGui::TreeNode(name.c_str()))
+        {
+            ImGui::DragFloat3("offset_pos", &offset_pos.x,0.1f);
+            ImGui::DragFloat2("pos", &e.position.x);
+            ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+            ImGui::ColorEdit4("color", &e.color.x);
+            ImGui::TreePop();
+        }
+        ImGui::End();
+#endif // USE_IMGUI
+        fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+    };
+
+    fonts->yu_gothic->Begin(graphics.get_dc().Get());
+    r_font_render("object_id_font", object_id_font);
+    fonts->yu_gothic->End(graphics.get_dc().Get());
+
+}
+
+void Player::ConversionScreenPosition(GraphicsPipeline& graphics)
+{
+    using namespace DirectX;
+    // 変換行列
+    XMMATRIX view_mat = XMLoadFloat4x4(&view);
+    XMMATRIX projection_mat = XMLoadFloat4x4(&projection);
+    XMMATRIX world_mat = DirectX::XMMatrixIdentity();
+    //ワールド座標(player.pos)
+    XMFLOAT3 pos = { position.x + offset_pos.x,position.y + offset_pos.y ,position.z + offset_pos.z };
+    XMVECTOR pos_vec = XMLoadFloat3(&pos);
+    // ビューポート
+    D3D11_VIEWPORT viewport;
+    UINT num_viewports = 1;
+    graphics.get_dc()->RSGetViewports(&num_viewports, &viewport);
+    // ビューポート左上X座標
+    float viewport_x = viewport.TopLeftX;
+    // ビューポート左上Y座標
+    float viewport_y = viewport.TopLeftY;
+    // ビューポート幅/高さ
+    float viewport_w = viewport.Width;
+    float viewport_h = viewport.Height;
+    // 深度値の範囲を表す最小値(0.0でよい)
+    float viewport_min_z = viewport.MinDepth;
+    // 深度値の範囲を表す最大値(1.0でよい)
+    float viewport_max_z = viewport.MaxDepth;
+    // ワールド座標からスクリーン座標に変換する
+    XMVECTOR screen_position_vec = DirectX::XMVector3Project(
+        pos_vec, viewport_x, viewport_y, viewport_w, viewport_h,
+        viewport_min_z, viewport_max_z, projection_mat, view_mat, world_mat);
+    // スクリーン座標
+    XMFLOAT2 screen_position;
+    XMStoreFloat2(&screen_position, screen_position_vec);
+
+    object_id_font.position = screen_position;
 }
 
 void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
