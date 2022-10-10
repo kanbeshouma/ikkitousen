@@ -244,6 +244,9 @@
     <Filter Include="Sources\option">
       <UniqueIdentifier>{16b96f21-2db9-4793-a69a-3f08dd4d758c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\OutLine">
+      <UniqueIdentifier>{5f8133e9-8148-4eb3-a043-b0925ab916cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -1188,6 +1191,12 @@
     <FxCompile Include="HLSL\color_filter_ps.hlsl">
       <Filter>Shaders\post_effect</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\OutLineVs.hlsl">
+      <Filter>Shaders\OutLine</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\OutLinePs.hlsl">
+      <Filter>Shaders\OutLine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
@@ -1225,6 +1234,9 @@
     </None>
     <None Include="HLSL\debug_2D.hlsli">
       <Filter>Shaders\debug\debug_2D</Filter>
+    </None>
+    <None Include="HLSL\OutLine.hlsli">
+      <Filter>Shaders\OutLine</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

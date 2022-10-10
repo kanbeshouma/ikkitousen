@@ -124,6 +124,7 @@ public:
     int GetHostId() { return host_id; }
     std::vector<int> GetOpponentPlayerId() { return opponent_player_id; }
     std::mutex& GetMutex() { return mutex; }
+    bool GetMultiPlay() { return is_multi; }
 
     //-----ƒf[ƒ^‚ğ‰Šú‰»‚·‚é-----//
     void ResetData();

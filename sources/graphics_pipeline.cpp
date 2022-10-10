@@ -357,6 +357,11 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			// SKYMAP
 			create_vs_from_cso(device.Get(), "./shaders/skymap_vs.cso", vertex_shader.ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::SKYMAP, vertex_shader));
+
+			//-----OUtLine-----//
+			create_vs_from_cso(device.Get(), "./shaders/OutLineVs.cso", vertex_shader.ReleaseAndGetAddressOf(), input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
+			vertex_shaders.insert(std::make_pair(SHADER_TYPES::OutLine, vertex_shader));
+
 		}
 		// PS
 		{
@@ -389,6 +394,9 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			// FIELD
 			create_ps_from_cso(device.Get(), "./shaders/field_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
 			pixel_shaders.insert(std::make_pair(SHADER_TYPES::FIELD, pixel_shader));
+			//-----OutLine-----//
+			create_ps_from_cso(device.Get(), "./shaders/OutLinePs.cso", pixel_shader.ReleaseAndGetAddressOf());
+			pixel_shaders.insert(std::make_pair(SHADER_TYPES::OutLine, pixel_shader));
 		}
 	}
 	//----texture maps----//

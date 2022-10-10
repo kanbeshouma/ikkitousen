@@ -50,6 +50,7 @@ enum class SHADER_TYPES
 	DEFAULT,
 	LaserBeam,
 	FIELD,
+	OutLine
 };
 
 class GraphicsPipeline

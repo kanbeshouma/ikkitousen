@@ -160,7 +160,7 @@ void Player::UpdateTitle(float elapsed_time)
 
                auto dur = end - start;
 
-              milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+              milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 
               ImGui::Text("milliseconds%f", milliseconds);
 
@@ -637,7 +637,6 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     glow_time += 1.0f * elapsed_time;
     if (glow_time >= 3.0f) glow_time = 0;
-    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     SkinnedMesh::mesh_tuple armor_r_mdl = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple armor_l_mdl = std::make_tuple("armor_L_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple wing_r_mdl = std::make_tuple("wing_R_mdl", threshold_mesh);
@@ -659,6 +658,14 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
         transform.erase(transform.begin());
         transform.emplace_back(world);
     }
+
+    if (CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::OutLine);
+        model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+    }
+
+    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
 
@@ -717,7 +724,6 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 {
     glow_time += 1.0f * elapsed_time;
     if (glow_time >= 3.0f) glow_time = 0;
-    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     //ŠoÁó‘Ô‚ÌŽž‚Í
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
     threshold_camera_mesh = Math::clamp(threshold_camera_mesh, 0.0f, 1.0f);
@@ -731,6 +737,8 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
     SkinnedMesh::mesh_tuple backpack_mdl = std::make_tuple("backpack_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple camera_mdl = std::make_tuple("camera_mesh", threshold_camera_mesh);
 
+
+    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 }
 
