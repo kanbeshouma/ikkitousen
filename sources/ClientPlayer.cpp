@@ -45,6 +45,10 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     object_id_font.s = L"Player : " + std::to_wstring(this->object_id);
     object_id_font.scale = { 0.5f,0.5f };
     offset_pos = { -2.3f,7.9f,0.0f };
+
+    //-----フラスタムカリング用の変数-----//
+    cube_half_size = scale.x * 2.5f;
+
 }
 
 ClientPlayer::~ClientPlayer()
@@ -306,9 +310,23 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     //-------<2Dパート>--------//
     if (CorrespondenceManager::Instance().GetMultiPlay())
     {
-        //graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-        //ConversionScreenPosition(graphics);
-        //RenderObjectId(graphics);
+        const DirectX::XMFLOAT3 minPoint{
+              position.x - cube_half_size,
+              position.y - cube_half_size,
+              position.z - cube_half_size
+        };
+        const DirectX::XMFLOAT3 maxPoint{
+            position.x + cube_half_size,
+            position.y + cube_half_size,
+            position.z + cube_half_size
+        };
+
+        if (Collision::frustum_vs_cuboid(minPoint, maxPoint))
+        {
+            graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+            ConversionScreenPosition(graphics);
+            RenderObjectId(graphics);
+        }
     }
 
 

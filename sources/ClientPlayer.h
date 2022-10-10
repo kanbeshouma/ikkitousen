@@ -635,6 +635,9 @@ private:
     //-----スクリーン座標に変換する時のオフセット値-----//
     DirectX::XMFLOAT3 offset_pos{};
 
+    //-----フラスタムカリング用の変数-----//
+    float cube_half_size{};
+
     //-----自分のオブジェクト番号を画面に表示する-----//
     void RenderObjectId(GraphicsPipeline& graphics);
 
