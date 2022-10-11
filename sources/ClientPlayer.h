@@ -644,4 +644,7 @@ private:
     //-----スクリーン座標に変換-----//
     void ConversionScreenPosition(GraphicsPipeline& graphics);
 
+    //-----フラスタムカリング当たり判定-----//
+    bool FrustumVsCuboid();
+
 };

@@ -281,6 +281,8 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     SkinnedMesh::mesh_tuple backpack_mdl = std::make_tuple("backpack_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple camera_mdl = std::make_tuple("camera_mesh", threshold_camera_mesh);
 
+
+
     //-----ワールド行列を計算-----//
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(scale, orientation, position);
 
@@ -292,8 +294,11 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
         transform.erase(transform.begin());
         transform.emplace_back(world);
     }
-    model->render(graphics.get_dc().Get(), anim_parm,transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
+    //-----フラスタムカリングの当たり判定をとって当たっていなかったら描画しない
+    if (FrustumVsCuboid()== false) return;
+
+    model->render(graphics.get_dc().Get(), anim_parm,transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
@@ -310,23 +315,9 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     //-------<2Dパート>--------//
     if (CorrespondenceManager::Instance().GetMultiPlay())
     {
-        const DirectX::XMFLOAT3 minPoint{
-              position.x - cube_half_size,
-              position.y - cube_half_size,
-              position.z - cube_half_size
-        };
-        const DirectX::XMFLOAT3 maxPoint{
-            position.x + cube_half_size,
-            position.y + cube_half_size,
-            position.z + cube_half_size
-        };
-
-        if (Collision::frustum_vs_cuboid(minPoint, maxPoint))
-        {
             graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
             ConversionScreenPosition(graphics);
             RenderObjectId(graphics);
-        }
     }
 
 
@@ -430,6 +421,21 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     }
 
 #endif // 0
+}
+
+bool ClientPlayer::FrustumVsCuboid()
+{
+    const DirectX::XMFLOAT3 minPoint{
+      position.x - cube_half_size,
+      position.y - cube_half_size,
+      position.z - cube_half_size
+    };
+    const DirectX::XMFLOAT3 maxPoint{
+        position.x + cube_half_size,
+        position.y + cube_half_size,
+        position.z + cube_half_size
+    };
+    return Collision::frustum_vs_cuboid(minPoint, maxPoint);
 }
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)
