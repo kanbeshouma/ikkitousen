@@ -44,7 +44,7 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     //-----フォント設定-----//
     object_id_font.s = L"Player : " + std::to_wstring(this->object_id);
     object_id_font.scale = { 0.5f,0.5f };
-    offset_pos = { -5.1f,8.6f,0.0f };
+    offset_pos = { -3.6f,8.6f,0.0f };
 
     //-----フラスタムカリング用の変数-----//
     cube_half_size = scale.x * 2.5f;
@@ -336,6 +336,7 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
 {
     auto r_font_render = [&](std::string name, StepFontElement& e)
     {
+        static int align = 0;
 #ifdef USE_IMGUI
         ImGui::Begin("Font");
         if (ImGui::TreeNode(name.c_str()))
@@ -344,11 +345,12 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
             ImGui::DragFloat2("pos", &e.position.x);
             ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
             ImGui::ColorEdit4("color", &e.color.x);
+            ImGui::SliderInt("TEXT_ALIGN", &align, 0, 8);
             ImGui::TreePop();
         }
         ImGui::End();
 #endif // USE_IMGUI
-        fonts->yu_gothic->Draw(e.s,e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+        fonts->yu_gothic->Draw(e.s,e.position, e.scale, e.color, e.angle,static_cast<TEXT_ALIGN>(align), e.length);
     };
 
     fonts->yu_gothic->Begin(graphics.get_dc().Get());
@@ -368,6 +370,7 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     XMMATRIX world_mat = DirectX::XMMatrixIdentity();
     //ワールド座標(player.pos)
     //XMFLOAT3 pos = { position.x,position.y,position.z};
+    //XMFLOAT3 pos = { position.x + offset_pos.x,position.y + offset_pos.y ,position.z + offset_pos.z };
     XMFLOAT3 pos = { Math::calc_world_position(position,offset_pos) };
     XMVECTOR pos_vec = XMLoadFloat3(&pos);
     // ビューポート
@@ -394,13 +397,14 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     XMStoreFloat2(&screen_position, screen_position_vec);
 
     object_id_font.position = screen_position;
-
-#endif // 0
-
+#else
     // プレイヤーの頭上のワールド座標
-    DirectX::XMFLOAT3 world_position = position;
+    DirectX::XMFLOAT3 world_position{ Math::calc_world_position(position,offset_pos) };
+    ;
     // 頭上に出す
-    world_position.y +=offset_pos.y;
+    //world_position.x +=offset_pos.x;
+    //world_position.y +=offset_pos.y;
+    //world_position.z +=offset_pos.z;
 
     //	ワールド空間座標＞スクリーン空間座標に変換
     // スクリーン座標
@@ -419,12 +423,13 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
         pos = DirectX::XMVector3TransformCoord(pos, projection_mat);
         DirectX::XMStoreFloat3(&screen_position, pos);
         screen_position.x = 1280.0f * (screen_position.x * +0.5f + 0.5f);
-        screen_position.y = 780.0f * (screen_position.y * -0.5f + 0.5f);
+        screen_position.y = 720.0f * (screen_position.y * -0.5f + 0.5f);
 
         object_id_font.position = { screen_position.x ,screen_position.y};
 
     }
 
+#endif // 0
 }
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)

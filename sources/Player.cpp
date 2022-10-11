@@ -711,7 +711,7 @@ void Player::RenderObjectId(GraphicsPipeline& graphics)
         }
         ImGui::End();
 #endif // USE_IMGUI
-        fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+        fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
     };
 
     fonts->yu_gothic->Begin(graphics.get_dc().Get());
