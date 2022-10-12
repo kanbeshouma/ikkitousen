@@ -68,6 +68,10 @@ struct LoginData
     int opponent_player_id[MAX_CLIENT];
     //今接続している(自分も含める)クライアントのアドレスを取得
     sockaddr_in game_udp_server_addr[MAX_CLIENT];
+
+    //名前
+    std::string name[MAX_CLIENT];
+
     //ホストの番号
     int host_id{ -1 };
 };
@@ -80,6 +84,8 @@ struct SendHostLoginData
     char cmd[4]{};
     ////クライアントの受信用のポート番号
     char port[8] = { "7000" };
+    //-----名前-----//
+    std::string name;
 };
 
 

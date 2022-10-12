@@ -646,5 +646,9 @@ private:
 
     //-----フラスタムカリング当たり判定-----//
     bool FrustumVsCuboid();
+private:
+        std::string name;
+public:
+    void SetName(std::string n) { name = n; }
 
 };

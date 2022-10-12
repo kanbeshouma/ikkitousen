@@ -432,6 +432,7 @@ void CommunicationSystem::TcpAccept(char* port)
             if ((instance.game_udp_server_addr[i].sin_addr.S_un.S_addr == 0 &&
                 instance.login_client_sock[i] == INVALID_SOCKET) ||
                 i == CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+
             //------保存してあるアドレスと受信したアドレスが同じなら何番目かを返す------//
             if (addr.sin_addr.S_un.S_addr == instance.game_udp_server_addr[i].sin_addr.S_un.S_addr)
             {

@@ -912,4 +912,8 @@ private:
 
     //-----スクリーン座標に変換-----//
     void ConversionScreenPosition(GraphicsPipeline& graphics);
+private:
+    std::string name;
+public:
+    void SetName(char* n) { name = n; }
 };

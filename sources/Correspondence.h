@@ -145,6 +145,12 @@ private:
 public:
     //UDP用のポート番号
     char udp_port[8];
+
+    //-----名前-----//
+    char my_name[12];
+
+    //-----自分以外の名前-----//
+    std::string names[MAX_CLIENT];
 private:
     std::mutex mutex;
 

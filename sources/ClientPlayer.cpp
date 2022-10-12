@@ -127,7 +127,7 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
 
 
 #ifdef USE_IMGUI
-    std::string obj_id{ "ClientPlayer : object_id :" + std::to_string(object_id) };
+    std::string obj_id{ name + " :"+ std::to_string(object_id) };
     imgui_menu_bar("Player", obj_id.c_str(), display_scape_imgui);
     if (display_scape_imgui)
     {

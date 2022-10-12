@@ -307,6 +307,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Begin("host_ip_adress");
 	ImGui::InputText("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::InputText("name", CorrespondenceManager::Instance().my_name,sizeof(CorrespondenceManager::Instance().my_name));
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::Text("state%d", state);
 	ImGui::Text("multi_play_entry_state%d", multi_play_entry_state);

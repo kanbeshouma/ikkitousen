@@ -16,10 +16,12 @@ CorrespondenceManager::CorrespondenceManager()
     for (int i = 0; i < opponent_player_id.size(); i++)
     {
         opponent_player_id.at(i) = -1;
+        names[i] = "";
     }
     //‚»‚ê‚¼‚ê‚Ìƒ|[ƒg”Ô†‚ðÝ’è
     snprintf(udp_port, 8, "50008");
     snprintf(tcp_port, 8, "50110");
+    snprintf(my_name, 12, "Player");
 
 }
 
@@ -90,6 +92,7 @@ void CorrespondenceManager::Login()
     SendHostLoginData login;
     login.cmd[ComLocation::ComList] = CommandList::Login;
     snprintf(login.port, 8, CorrespondenceManager::Instance().udp_port);
+    login.name = CorrespondenceManager::Instance().my_name;
     int size = sizeof(SendHostLoginData);
     communication_system->LoginSend((char*)&login, size);
 }
@@ -171,6 +174,11 @@ bool CorrespondenceManager::LoginReceive()
             SocketCommunicationManager::Instance().game_udp_server_addr[i] = login->game_udp_server_addr[i];
             std::string ip = std::to_string(opponent_player_id.at(i)) + "”Ô–Ú :" +  std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
             DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
+
+            //-----–¼‘O‚Ì“o˜^‚ÍID‚ª‚¿‚á‚ñ‚Æ‚µ‚½”Žš‚Ì‚à‚Ì‚¾‚¯-----//
+            if (login->opponent_player_id[i] < 0) continue;
+            DebugConsole::Instance().WriteDebugConsole(login->name[i], TextColor::Green);
+            names[i] = login->name[i];
         }
 
         return true;

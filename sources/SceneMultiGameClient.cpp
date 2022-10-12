@@ -76,6 +76,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	player_manager = std::make_unique<PlayerManager>();
 	//-----ƒvƒŒƒCƒ„[‚ð“o˜^-----//
 	Player* player = new Player(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
+	player->SetName(CorrespondenceManager::Instance().my_name);
 	player_manager->RegisterPlayer(player);
 	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
 
@@ -84,6 +85,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
 		if (id < 0 || i == player_manager->GetPrivatePlayerId()) continue;
 		ClientPlayer* p = new ClientPlayer(graphics, id);
+		p->SetName(CorrespondenceManager::Instance().names[i]);
 		player_manager->RegisterPlayer(p);
 	}
 

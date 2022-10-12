@@ -500,10 +500,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
-    imgui_menu_bar("Player", "Player", display_scape_imgui);
+    imgui_menu_bar("Player", name, display_scape_imgui);
     if (display_scape_imgui)
     {
-        if (ImGui::Begin("Player"))
+        if (ImGui::Begin(name.c_str()))
         {
             ImGui::Separator();
             std::string obj_id{ "object_id :" + std::to_string(object_id) };

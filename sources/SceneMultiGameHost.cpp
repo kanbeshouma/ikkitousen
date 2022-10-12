@@ -79,6 +79,7 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
 	Player* player = new Player(graphics, PlayerPrivateObjectId);
+	player->SetName(CorrespondenceManager::Instance().my_name);
     player_manager->RegisterPlayer(player);
     player_manager->SetPrivateObjectId(PlayerPrivateObjectId);
 
@@ -1046,6 +1047,7 @@ void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 	if (register_player && register_player_id >= 0)
 	{
 		ClientPlayer* player = new ClientPlayer(graphics, register_player_id);
+		player->SetName(CorrespondenceManager::Instance().names[register_player_id]);
 		player_manager->RegisterPlayer(player);
 
 		//プレイヤーを追加
