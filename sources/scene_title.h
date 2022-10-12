@@ -301,4 +301,6 @@ private:
 private:
     //------------マッチング--------------//
     static void StandbyMatching();
+private:
+    bool re_name{ false };
 };
