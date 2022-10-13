@@ -2,6 +2,7 @@
 
 #include "ClientPlayer.h"
 #include"Correspondence.h"
+#include"user.h"
 
 ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
@@ -42,9 +43,9 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     player_bones[11] = model->get_bone_by_name("foot_R_top_joint");
 
     //-----フォント設定-----//
-    object_id_font.s = L"Player : " + std::to_wstring(this->object_id);
+    object_id_font.s = StringToWstring(name);
     object_id_font.scale = { 0.5f,0.5f };
-    offset_pos = { -3.6f,8.6f,0.0f };
+    offset_pos = { -40.6f,-140.0f};
 
     //-----フラスタムカリング用の変数-----//
     cube_half_size = scale.x * 2.5f;
@@ -313,7 +314,7 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 
     //-------<2Dパート>--------//
-    if (CorrespondenceManager::Instance().GetMultiPlay())
+    if (CorrespondenceManager::Instance().GetMultiPlay() && player_length < max_length)
     {
             graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
             ConversionScreenPosition(graphics);
@@ -325,6 +326,7 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
 {
+
     auto r_font_render = [&](std::string name, StepFontElement& e)
     {
         static int align = 0;
@@ -332,18 +334,25 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
         ImGui::Begin("Font");
         if (ImGui::TreeNode(name.c_str()))
         {
-            ImGui::DragFloat3("offset_pos", &offset_pos.x, 0.1f);
-            ImGui::DragFloat2("pos", &e.position.x);
-            ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+            ImGui::Text("player_length%f", player_length);
+            ImGui::DragFloat("min_length",&min_length);
+            ImGui::DragFloat2Above("offset_pos", &offset_pos.x, 0.1f);
+            ImGui::DragFloat2Above("pos", &e.position.x);
+            ImGui::DragFloat2Above("scale", &e.scale.x, 0.1f);
             ImGui::ColorEdit4("color", &e.color.x);
             ImGui::SliderInt("TEXT_ALIGN", &align, 0, 8);
             ImGui::TreePop();
         }
         ImGui::End();
 #endif // USE_IMGUI
-        fonts->yu_gothic->Draw(e.s,e.position, e.scale, e.color, e.angle,static_cast<TEXT_ALIGN>(align), e.length);
+        fonts->yu_gothic->Draw(e.s, { e.position.x + offset_pos.x,e.position.y + offset_pos.y }, e.scale, e.color, e.angle, static_cast<TEXT_ALIGN>(align), e.length);
     };
 
+    if (player_length < min_length)
+    {
+        float ans = player_length - min_length;
+        offset_pos.y = -140.0f + (ans * 2.0f);
+    }
     fonts->yu_gothic->Begin(graphics.get_dc().Get());
     r_font_render("object_id_font", object_id_font);
 
@@ -390,7 +399,7 @@ void ClientPlayer::ConversionScreenPosition(GraphicsPipeline& graphics)
     object_id_font.position = screen_position;
 #else
     // プレイヤーの頭上のワールド座標
-    DirectX::XMFLOAT3 world_position{ Math::calc_world_position(position,offset_pos) };
+    DirectX::XMFLOAT3 world_position{ position };
     ;
     // 頭上に出す
     //world_position.x +=offset_pos.x;
@@ -436,6 +445,13 @@ bool ClientPlayer::FrustumVsCuboid()
         position.z + cube_half_size
     };
     return Collision::frustum_vs_cuboid(minPoint, maxPoint);
+}
+
+void ClientPlayer::SetName(std::string n)
+{
+    name = n;
+    //-----フォント設定-----//
+    object_id_font.s = StringToWstring(name);
 }
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)

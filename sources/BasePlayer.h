@@ -91,6 +91,9 @@ public:
   void SetCameraView(DirectX::XMFLOAT4X4 v) { view = v; };
   void SetCameraProjection(DirectX::XMFLOAT4X4 p) { projection = p; };
 
+  //-----ClientPlayerとPlayerの距離を設定する-----//
+  virtual void SetPlayerToClientLength(float l) {}
+
     virtual BaseEnemy* GetPlayerTargetEnemy() const = 0;
    //一番近い敵を持って来てその位置をセットする
     virtual void SetTarget(BaseEnemy* target_enemy) = 0;

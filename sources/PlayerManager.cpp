@@ -39,6 +39,22 @@ void PlayerManager::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
 
 void PlayerManager::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
+    //-----プレイヤーとの距離を計算-----//
+    for (auto& player : players)
+    {
+        if (player->GetObjectId() == private_object_id)
+        {
+            for (auto& client : players)
+            {
+                if (client->GetObjectId() == private_object_id) continue;
+                //-----距離を計算して保存-----//
+                client->SetPlayerToClientLength(Math::calc_vector_AtoB_length(player->GetPosition(), client->GetPosition()));
+            }
+            break;
+        }
+    }
+
+
     for (auto& player : players)
     {
         player->Render(graphics, elapsed_time);

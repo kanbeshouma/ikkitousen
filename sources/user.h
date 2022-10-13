@@ -16,6 +16,12 @@
 #include <assert.h>
 #include <DirectXMath.h>
 #include<vector>
+#include <stdio.h>
+#include <tchar.h>
+#include <locale.h>
+#include <iostream>
+#include <string>
+#include <windows.h>
 #include "imgui_include.h"
 //------< inline function >-----------------------------------------------------
 namespace Math
@@ -637,6 +643,31 @@ namespace Math
 
         return Math::lerp(p0, p1, Threshold);
     }
+}
+
+
+//-----stringからwstringに変換する-----//
+inline std::wstring StringToWstring(std::string string)
+{
+    // SJIS → wstring
+    int buffer_size = MultiByteToWideChar(CP_ACP, 0, string.c_str()
+        , -1, (wchar_t*)NULL, 0);
+
+    // バッファの取得
+    wchar_t* cp_ucs2 = new wchar_t[buffer_size];
+
+    // SJIS → wstring
+    MultiByteToWideChar(CP_ACP, 0, string.c_str(), -1, cp_ucs2
+        , buffer_size);
+
+    // stringの生成
+    std::wstring o_ret(cp_ucs2, cp_ucs2 + buffer_size - 1);
+
+    // バッファの破棄
+    delete[] cp_ucs2;
+
+    // 変換結果を返す
+    return(o_ret);
 }
 
 //--------------------------------------------------------------

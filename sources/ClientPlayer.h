@@ -120,6 +120,7 @@ public:
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
     void SetPlayerAvoidanceData(PlayerActionData data)override;
+
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;
@@ -633,7 +634,7 @@ private:
     StepFontElement object_id_font;
 
     //-----スクリーン座標に変換する時のオフセット値-----//
-    DirectX::XMFLOAT3 offset_pos{};
+    DirectX::XMFLOAT2 offset_pos{};
 
     //-----フラスタムカリング用の変数-----//
     float cube_half_size{};
@@ -647,8 +648,17 @@ private:
     //-----フラスタムカリング当たり判定-----//
     bool FrustumVsCuboid();
 private:
-        std::string name;
-public:
-    void SetName(std::string n) { name = n; }
+    //-----自分の名前-----//
+    std::string name;
 
+    //-----プレイヤーとの距離が入る-----//
+    float  player_length{};
+
+    float max_length{ 75.0f };
+    float min_length{ 30.0f };
+
+public:
+    void SetName(std::string n);
+
+    void SetPlayerToClientLength(float l)override { player_length = l; }
 };

@@ -305,16 +305,18 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 #ifdef Telecommunications
 	ImGui::Begin("host_ip_adress");
-	ImGui::InputText("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
-	ImGui::InputText("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
-	ImGui::Checkbox("re_name", &re_name);
+	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 1.0f);
+	ImGui::InputTextAbove("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::InputTextAbove("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::CheckboxAbove("re_name", &re_name);
 	if (re_name)
 	{
-		ImGui::InputText("name", CorrespondenceManager::Instance().my_name, sizeof(CorrespondenceManager::Instance().my_name));
+		ImGui::InputTextAbove("name", CorrespondenceManager::Instance().my_name, sizeof(CorrespondenceManager::Instance().my_name));
 	}
-	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
-	ImGui::Text("state%d", state);
-	ImGui::Text("multi_play_entry_state%d", multi_play_entry_state);
+	ImGui::TextWrapped("standby_matching_timer%f", standby_matching_timer);
+	ImGui::TextWrapped("state%d", state);
+	ImGui::TextWrapped("multi_play_entry_state%d", multi_play_entry_state);
+	ImGui::PopItemWidth();
 	ImGui::End();
 #endif // Telecommunications
 
