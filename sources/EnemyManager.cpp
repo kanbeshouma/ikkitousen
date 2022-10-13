@@ -964,7 +964,9 @@ void EnemyManager::fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics
             DirectX::XMFLOAT3 pos{ randNumber1 * 10.0f,0.0f,randNumber2 * 10.0f };
 
             mTutorialTimer = 0.0f;
-            mEnemyVec.emplace_back(new TutorialEnemy(Graphics_, pos, mEditor.fGetParam(EnemyType::Tutorial_NoMove)));
+
+            BaseEnemy* enemy = new TutorialEnemy(Graphics_, pos, mEditor.fGetParam(EnemyType::Tutorial_NoMove));
+            mEnemyVec.emplace_back(enemy);
         }
     }
 }

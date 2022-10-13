@@ -339,11 +339,12 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
 	// camera
-	//camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
+
 	player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+
 	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
 		[=]() { post_effect->clear_post_effect(); });
 	player->SetCameraPosition(c->get_eye());
@@ -382,7 +383,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 
 
-	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
 
@@ -713,6 +713,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 		}
 
+		// “G‚ª‚í‚¢‚Ä‚­‚é
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		button_priset = BottunPriset::BehindAvoidanceTutorialPriset;

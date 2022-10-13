@@ -247,6 +247,15 @@
     <Filter Include="Shaders\OutLine">
       <UniqueIdentifier>{5f8133e9-8148-4eb3-a043-b0925ab916cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Character\enemy\BaseEnemy">
+      <UniqueIdentifier>{7dbb17c5-a04b-4684-b023-dfc17285375a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Character\enemy\EnemyMove">
+      <UniqueIdentifier>{7408bf0d-d3ff-4fa2-b9b5-a45fd7da92fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Character\enemy\EnemyManager">
+      <UniqueIdentifier>{1fd081d3-8963-4a2c-88e9-3ba60604c626}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -339,12 +348,6 @@
     <ClCompile Include="sources\debug_figures.cpp">
       <Filter>Sources\Debug\debug_figures</Filter>
     </ClCompile>
-    <ClCompile Include="sources\EnemyManager.cpp">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\BaseEnemy.cpp">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClCompile>
     <ClCompile Include="sources\TestEnemy.cpp">
       <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
@@ -383,9 +386,6 @@
     </ClCompile>
     <ClCompile Include="sources\number.cpp">
       <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="sources\EnemyMove.cpp">
-      <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
     <ClCompile Include="sources\SwordTrail.cpp">
       <Filter>Sources\Shader</Filter>
@@ -633,6 +633,15 @@
     <ClCompile Include="sources\MultiGameClientUdp.cpp">
       <Filter>Sources\Scene\SceneMulchGameClient</Filter>
     </ClCompile>
+    <ClCompile Include="sources\BaseEnemy.cpp">
+      <Filter>Sources\Character\enemy\BaseEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\EnemyMove.cpp">
+      <Filter>Sources\Character\enemy\EnemyMove</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\EnemyManager.cpp">
+      <Filter>Sources\Character\enemy\EnemyManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">
@@ -734,12 +743,6 @@
     <ClInclude Include="sources\debug_figures.h">
       <Filter>Sources\Debug\debug_figures</Filter>
     </ClInclude>
-    <ClInclude Include="sources\EnemyManager.h">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\BaseEnemy.h">
-      <Filter>Sources\Character\enemy</Filter>
-    </ClInclude>
     <ClInclude Include="sources\TestEnemy.h">
       <Filter>Sources\Character\enemy</Filter>
     </ClInclude>
@@ -787,9 +790,6 @@
     </ClInclude>
     <ClInclude Include="sources\number.h">
       <Filter>Sources\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="sources\EnemyMove.h">
-      <Filter>Sources\Character\enemy</Filter>
     </ClInclude>
     <ClInclude Include="sources\SwordTrail.h">
       <Filter>Sources\Shader</Filter>
@@ -1006,6 +1006,15 @@
     </ClInclude>
     <ClInclude Include="sources\SceneTutorial.h">
       <Filter>Sources\Scene\SceneTutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BaseEnemy.h">
+      <Filter>Sources\Character\enemy\BaseEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemyMove.h">
+      <Filter>Sources\Character\enemy\EnemyMove</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemyManager.h">
+      <Filter>Sources\Character\enemy\EnemyManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
