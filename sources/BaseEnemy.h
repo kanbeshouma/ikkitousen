@@ -8,8 +8,13 @@
 #include<memory>
 #include<functional>
 
+//-----初期化関数を入れるfunction-----//
 typedef std::function<void()> InitFunc;
+
+//-----更新処理を入れるfunction-----//
 typedef std::function<void(float, GraphicsPipeline&)> UpdateFunc;
+
+//-----初期化と更新処理を一つの変数にまとめるためのtuple-----//
 typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
 
 class BaseEnemy :public PracticalEntities
@@ -61,6 +66,7 @@ public:
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
+    [[nodiscard]] float fGetCurrentHitPoint()const;
     //-----敵が出現しているかどうか----//
     [[nodiscard]] bool fGetAppears()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;

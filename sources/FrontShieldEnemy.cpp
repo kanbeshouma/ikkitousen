@@ -16,7 +16,7 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
     // ボーンを初期化
     mScale = { 0.05f,0.05f,0.05f };
     is_shield = false;
-    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
 }
 
 ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)
@@ -169,6 +169,9 @@ void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mWaitTimer >= mSpawnDelaySec)
     {
+        //-----バーニアエフェクトを再生-----//
+        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
         //-----出現フラグをtrueにする-----//
         is_appears = true;
         fChangeState(DivedState::Move);

@@ -8,7 +8,6 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_,
 {
     SpearEnemy::fRegisterFunctions();
     mScale = { 0.05f,0.05f,0.05f };
-    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_)
@@ -132,6 +131,9 @@ void SpearEnemy::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mDissolve -= elapsedTime_;
     if (mDissolve <= 0.0f)
     {
+        //-----バーニアエフェクトを再生-----//
+        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
         //-----出現フラグをtrueにする-----//
         is_appears = true;
         fChangeState(DivedState::Idle);

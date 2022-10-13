@@ -8,11 +8,14 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
                   ParamPack_,
                   EmitterPoint_)
 {
-    SwordEnemy::fRegisterFunctions();
+    fRegisterFunctions();
     // ボーンを初期化
     mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
     mScale = { 0.05f,0.05f,0.05f };
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+    //-----バーニアエフェクトの位置と回転の設定-----//
+    fUpdateVernierEffectPos();
+
 }
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
     :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_sword.fbx")

@@ -27,7 +27,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     fRegisterFunctions();
 
     mfAddFunc = BulletManager::Instance().fGetAddFunction();
-    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
 }
 
 
@@ -208,6 +208,9 @@ void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mStayTimer >= SPAWN_STAY_TIME)
     {
+        //-----バーニアエフェクトを再生-----//
+        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
         //-----出現フラグをtrueにする-----//
         is_appears = true;
         fChangeState(DivedState::Idle);

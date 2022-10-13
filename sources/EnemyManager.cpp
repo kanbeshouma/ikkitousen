@@ -77,6 +77,14 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     //--------------<ƒvƒŒƒCƒ„[‚ªƒ`ƒFƒCƒ“’†‚ÍƒGƒlƒ~[‚Ìs“®‚ğ‚·‚×‚Ä’â~‚³‚¹‚é>-------------//
     if(mIsPlayerChainTime)
     {
+        for (const auto enemy : mEnemyVec)
+        {
+            //-----‘Ì—Í‚ª0‚Ì‚É€–Sˆ—‚¾‚¯’Ê‚·-----//
+            if (enemy->fGetCurrentHitPoint() <= 0)
+            {
+                enemy->fDie(graphics_);
+            }
+        }
         return;
     }
 
@@ -296,25 +304,27 @@ BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
     {
         return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
     };
+
     fSort(func);
+
     for(const auto enemy :mEnemyVec)
     {
-        if (enemy->fGetStun() || enemy->fGetAppears() == false) continue;
+        if (enemy->fGetStun() || enemy->fGetAppears() == false || enemy->fGetIsAlive() == false) continue;
 
 
         if (enemy->fComputeAndGetIntoCamera())
         {
-            // ‚±‚Ì“G‚©‚ç‚Ì‹——£‚ğŒvZ‚·‚é
-            for(const auto enemy2:mEnemyVec)
-            {
-                if (enemy2->fComputeAndGetIntoCamera())
-                {
-                    if (enemy != enemy2)
-                    {
-                        //enemy2->fCalcNearestEnemy(enemy->fGetPosition());
-                    }
-                }
-            }
+            //// ‚±‚Ì“G‚©‚ç‚Ì‹——£‚ğŒvZ‚·‚é
+            //for(const auto enemy2:mEnemyVec)
+            //{
+            //    if (enemy2->fComputeAndGetIntoCamera())
+            //    {
+            //        if (enemy != enemy2)
+            //        {
+            //            //enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+            //        }
+            //    }
+            //}
             return enemy;
         }
     }
@@ -544,17 +554,14 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
             }
         }
 
-        if (enemy->fGetIsAlive())
-        {
             enemy->fSetPlayerPosition(near_pos);
             enemy->fUpdate(Graphics_,elapsedTime_);
-        }
-        else
-        {
-            mRemoveVec.emplace_back(enemy);
-            // €‚ñ‚Å‚¢‚é“G‚ª‚¢‚½‚çU‚éŠÔ‚ğ‰ÁZ
-            mCameraShakeTime += mkOneShakeSec;
-        }
+            if (enemy->fGetIsAlive() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+                // €‚ñ‚Å‚¢‚é“G‚ª‚¢‚½‚çU‚éŠÔ‚ğ‰ÁZ
+                mCameraShakeTime += mkOneShakeSec;
+            }
     }
 
 
@@ -626,12 +633,13 @@ void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy
 void EnemyManager::fAllClear()
 {
     //--------------------<—v‘f‚ğ‘Síœ>--------------------//
-    for (const auto enemy : mEnemyVec)
+    for (auto enemy : mEnemyVec)
     {
         // ‘¶İ‚µ‚Ä‚¢‚ê‚Îíœ
         if (enemy)
         {
             delete enemy;
+            enemy = nullptr;
         }
     }
     mEnemyVec.clear();
@@ -893,12 +901,13 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
 void EnemyManager::fDeleteCash()
 {
 
-    for (const auto enemy : mCashEnemyVec)
+    for (auto enemy : mCashEnemyVec)
     {
         // ‘¶İ‚µ‚Ä‚¢‚ê‚Îíœ
         if (enemy)
         {
             delete enemy;
+            enemy = nullptr;
         }
     }
     mCashEnemyVec.clear();

@@ -333,6 +333,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
 	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
+
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
@@ -341,23 +342,44 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// camera
 	cameraManager->Update(elapsed_time);
 
+	//-----カメラの方向を設定-----//
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 
+	//-----プレイヤーの更新処理-----//
 	player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 
+	//-----ロックオンのポストエフェクトをかける-----//
 	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
 		[=]() { post_effect->clear_post_effect(); });
+
+	//-----カメラの位置を設定-----//
 	player->SetCameraPosition(c->get_eye());
+
+	//-----ターゲットを設定-----//
 	player->SetTarget(enemy);
+
+	//-----カメラのターゲットを設定-----//
 	player->SetCameraTarget(c->get_target());
+
+	//-----ダッシュエフェクトをかける(ポストエフェクト)-----//
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
 
+	//-----敵のHPゲージの更新処理-----//
 	enemy_hp_gauge->update(graphics, elapsed_time);
+
+	//-----ロックオンしている敵を取得-----//
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 
+	//-----ロックオンレティクル更新処理-----//
 	reticle->update(graphics, elapsed_time);
+
+	//-----回り込み回避が可能かどうかを設定-----//
 	reticle->SetAvoidanceCharge(player->GetBehaindCharge());
+
+	//-----ロックオンしている敵を取得-----//
 	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
+
+
 	{
 		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };
 		static DirectX::XMFLOAT2 offset{ 50.0f, 0 };

@@ -1,13 +1,11 @@
 #include"TutorialEnemy.h"
 #include"Operators.h"
 TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics,
-                                               const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param ): BaseEnemy(graphics,
-                                                                                                                                 "./resources/Models/Enemy/enemy_tutorial.fbx", param, entry_position)
+   const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param ): BaseEnemy(graphics,
+   "./resources/Models/Enemy/enemy_tutorial.fbx", param, entry_position)
 {
-    mPosition = entry_position;
     mScale = { 0.06f,0.06f,0.06f };
     fRegisterFunctions();
-    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics)
@@ -88,6 +86,10 @@ void TutorialEnemy_NoAttack::fStartUpdate(float elapsedTime_, GraphicsPipeline& 
     mDissolve -= elapsedTime_;
     if(mDissolve<0.0f)
     {
+
+        //-----バーニアエフェクトを再生-----//
+        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
         //-----出現フラグをtrueにする-----//
         is_appears = true;
         fChangeState(DivideState::Idle);

@@ -21,8 +21,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
 
-    mVernierEffect = std::make_unique<Effect>(Graphics_,
-      effect_manager->get_effekseer_manager(), mkVernierPath);
+    mVernierEffect = std::make_unique<Effect>(Graphics_,effect_manager->get_effekseer_manager(), mkVernierPath);
     mCubeHalfSize = mScale.x * 2.5f;
     mDissolve = 1.0f;
     mIsStun = false;
@@ -41,22 +40,35 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
 
 BaseEnemy::~BaseEnemy()
 {
+    int a = 0;
   //  mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    //-----チェイン攻撃でロックオンされていたら速度を遅くする-----//
     if (mIsPlayerSearch)
     {
         elapsedTime_ *= 0.8f;
     }
+
+    //-----無敵時間の設定-----//
     mInvincibleTime -= elapsedTime_;
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
+
+    //-----バーニアエフェクトの位置と回転の設定-----//
     fUpdateVernierEffectPos();
+
+    //-----タプルに保存された更新処理を呼び出す-----//
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
+
+    //-----アニメーションの更新処理-----//
     mpModel->update_animation(mAnimPara, elapsedTime_ );
+
+    //-----フラスタムカリングの判定-----//
     fComputeInCamera();
 
+    //-----体力が無いときに死亡処理に移動-----//
     if (mCurrentHitPoint <= 0.0f)
     {
         fDie(Graphics_);
@@ -100,19 +112,19 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
         mInvincibleTime = InvincibleTime_;
         ret = true;
     }
-    //HP���Ȃ��Ȃ��������S������
-    if (mCurrentHitPoint <= 0)
-    {
-        audio_manager->play_se(SE_INDEX::ENEMY_EXPLOSION);
-
-        fDie(Graphics_);
-    }
+    ////HP���Ȃ��Ȃ��������S������
+    //if (mCurrentHitPoint <= 0)
+    //{
+    //    fDie(Graphics_);
+    //}
     return ret;
 }
 
 void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
 {
+    if (mIsAlive == false) return;
     mIsAlive = false;
+
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
 
     mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 2.0f);
@@ -133,9 +145,7 @@ void BaseEnemy::fUpdateVernierEffectPos()
 
 
     // �{�[���̖��O����ʒu�Ə�x�N�g�����擾
-    mpModel->fech_by_bone(mAnimPara,
-        Math::calc_world_matrix(mScale, mOrientation, mPosition),
-        mVenierBone, position, up, q);
+    mpModel->fech_by_bone(mAnimPara,Math::calc_world_matrix(mScale, mOrientation, mPosition),mVenierBone, position, up, q);
 
     mVernierEffect->set_position(effect_manager->get_effekseer_manager(), position);
    //クォータニオン回転
@@ -381,6 +391,11 @@ bool BaseEnemy::fGetStun() const
     return mIsStun;
 }
 
+float BaseEnemy::fGetCurrentHitPoint() const
+{
+    return mCurrentHitPoint;
+}
+
 bool BaseEnemy::fGetAppears() const
 {
     return is_appears;
@@ -418,6 +433,7 @@ bool BaseEnemy::fGetInnerCamera()
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {
+    //-----Tag_と同じ名前をmap内から探す-----//
     // 見つからなかったらストップ
     if (mFunctionMap.find(Tag_) != mFunctionMap.end())
     {
@@ -426,6 +442,9 @@ void BaseEnemy::fChangeState(const char* Tag_)
         OutputDebugStringA(str.c_str());
     }
 
+    //-----見つかったらそのmaoに保存されている初期化関数と更新関数が入っているtupleを代入-----//
     mCurrentTuple = mFunctionMap.at(Tag_);
+
+    //-----初期化関数を呼び出す-----//
     std::get<0>(mCurrentTuple)();
 }
