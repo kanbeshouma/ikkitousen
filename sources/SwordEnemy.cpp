@@ -12,9 +12,6 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     // ボーンを初期化
     mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
     mScale = { 0.05f,0.05f,0.05f };
-    mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
-    //-----バーニアエフェクトの位置と回転の設定-----//
-    fUpdateVernierEffectPos();
 
 }
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
@@ -159,6 +156,9 @@ void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if(mWaitTimer>=mSpawnDelaySec)
     {
+        //-----初回の出現の時のみエフェクト再生-----//
+        if(is_appears == false)mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
         //-----出現フラグをtrueにする-----//
         is_appears = true;
         fChangeState(DivedState::Move);

@@ -169,8 +169,8 @@ void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mWaitTimer >= mSpawnDelaySec)
     {
-        //-----バーニアエフェクトを再生-----//
-        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+        //-----初回の出現の時のみエフェクト再生-----//
+        if (is_appears == false)mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 
         //-----出現フラグをtrueにする-----//
         is_appears = true;

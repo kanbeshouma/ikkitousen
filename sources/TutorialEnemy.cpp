@@ -86,9 +86,8 @@ void TutorialEnemy_NoAttack::fStartUpdate(float elapsedTime_, GraphicsPipeline& 
     mDissolve -= elapsedTime_;
     if(mDissolve<0.0f)
     {
-
-        //-----バーニアエフェクトを再生-----//
-        mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+        //-----初回の出現の時のみエフェクト再生-----//
+        if (is_appears == false)mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 
         //-----出現フラグをtrueにする-----//
         is_appears = true;

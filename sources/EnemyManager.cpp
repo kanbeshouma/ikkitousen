@@ -80,9 +80,14 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
         for (const auto enemy : mEnemyVec)
         {
             //-----‘Ì—Í‚ª0‚ÌŽž‚ÉŽ€–Sˆ—‚¾‚¯’Ê‚·-----//
-            if (enemy->fGetCurrentHitPoint() <= 0)
+            if (enemy->fGetCurrentHitPoint() > 0) continue;
+
+            enemy->fDie(graphics_);
+
+
+            if (enemy->fGetIsAlive() == false)
             {
-                enemy->fDie(graphics_);
+                mRemoveVec.emplace_back(enemy);
             }
         }
         return;

@@ -212,8 +212,10 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	TutorialUpdate(graphics, elapsed_time);
 	//イベント中は動かない
 	if (player->GetTutorialEvent()) return;
+
 	//画像のチュートリアル中は進まない
 	if (sprite_tutorial) return;
+
 	// option
 	if (option->get_validity())
 	{
@@ -229,6 +231,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 			return;
 		}
 	}
+
 	BulletManager& mBulletManager = BulletManager::Instance();
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
