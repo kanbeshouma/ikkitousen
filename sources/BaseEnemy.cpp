@@ -12,7 +12,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
 ,mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
-    //�~�j�}�b�v�p�A�C�R��
+    //アイコンの名前
     if (IconFileName)
     {
         mpIcon = std::make_unique<SpriteBatch>(Graphics_.get_device().Get(), IconFileName, 1);
