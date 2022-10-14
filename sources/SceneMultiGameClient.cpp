@@ -38,7 +38,13 @@ std::vector<int> SceneMultiGameClient::logout_id = {};
 //-----ブロッキング-----//
 std::mutex SceneMultiGameClient::mutex;
 
-PlayerAllDataStruct SceneMultiGameClient::receive_all_data;
+//-----プレイヤーのデータを入れる-----//
+PlayerAllDataStruct SceneMultiGameClient::receive_all_player_data;
+
+//-----敵のデータを入れる-----//
+EnemyAllDataStruct SceneMultiGameClient::receive_all_enemy_data;
+
+
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -249,9 +255,16 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();
 
-	//-----ステージ中のウェーブの更新処理-----//
-	//mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	{
+		//-----ロックする-----//
+		std::lock_guard<std::mutex> lock(mutex);
 
+		//-----ステージ中のウェーブの更新処理-----//
+		mWaveManager.fClientUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
+
+		//-----敵のデータを削除-----//
+		ClearEnemyReceiveData();
+	}
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
 	{
@@ -1053,44 +1066,51 @@ void SceneMultiGameClient::DeletePlayer()
 void SceneMultiGameClient::SetReceiveData()
 {
 	//-----プレイヤーの動きデータが入っている場合-----//
-	if (receive_all_data.player_move_data.empty() == false)
+	if (receive_all_player_data.player_move_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_data.player_move_data)
+		for (const auto& p_data : receive_all_player_data.player_move_data)
 		{
 			player_manager->SetPlayerMoveData(p_data);
 		}
 
 		//-----データを削除する-----//
-		receive_all_data.player_move_data.clear();
+		receive_all_player_data.player_move_data.clear();
 	}
 
 	//-----プレイヤーの位置データが入っている場合-----//
-	if (receive_all_data.player_position_data.empty() == false)
+	if (receive_all_player_data.player_position_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_data.player_position_data)
+		for (const auto& p_data : receive_all_player_data.player_position_data)
 		{
 			player_manager->SetPlayerPositionData(p_data);
 		}
 
 		//-----データを削除する-----//
-		receive_all_data.player_position_data.clear();
+		receive_all_player_data.player_position_data.clear();
 	}
 
 	//-----プレイヤーのアクションデータが入っている場合-----//
-	if (receive_all_data.player_avoidance_data.empty() == false)
+	if (receive_all_player_data.player_avoidance_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_data.player_avoidance_data)
+		for (const auto& p_data : receive_all_player_data.player_avoidance_data)
 		{
 			player_manager->SetPlayerAvoidanceData(p_data);
 		}
 
 		//-----データを削除する-----//
-		receive_all_data.player_avoidance_data.clear();
+		receive_all_player_data.player_avoidance_data.clear();
 	}
+}
+
+void SceneMultiGameClient::ClearEnemyReceiveData()
+{
+	//-----敵の出現データを削除する-----//
+	receive_all_enemy_data.enemy_spawn_data.clear();
+
 }

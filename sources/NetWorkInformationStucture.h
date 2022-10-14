@@ -215,3 +215,13 @@ struct EnemySpawnData
     //敵の種類
     EnemyType type{};
 };
+
+
+//-----敵のデータ構造体が全て入っている-----//
+struct EnemyAllDataStruct
+{
+    //-----敵の出現データ-----//
+    std::vector<EnemySpawnData> enemy_spawn_data;
+
+
+};

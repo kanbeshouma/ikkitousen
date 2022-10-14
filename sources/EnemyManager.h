@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "LastBoss.h"
+#include"NetWorkInformationStucture.h"
 
 //****************************************************************
 //
@@ -27,8 +28,14 @@ public:
     ~EnemyManager() override;
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
+
+    //-----マルチプレイ時にクライアント側が呼ぶ更新処理-----//
+    void fClientUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
+
     void fRender(GraphicsPipeline& graphics_);
+
     void fFinalize();
 
     bool fGetSlow()const;
@@ -121,8 +128,13 @@ public:
     void fLimitEnemies();
 private:
     //--------------------<敵と関連する処理>--------------------//
+
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
     void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
+
+    //-----マルチプレイ時のクライアント側の敵の出現-----//
+    void fSpawn(EnemySpawnData data, GraphicsPipeline& graphics_);
+
     void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
 

@@ -1,4 +1,6 @@
 #pragma once
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "EnemyManager.h"
 class MiniMap
 {

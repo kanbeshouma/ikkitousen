@@ -46,28 +46,40 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
 
     switch (com)
     {
-        //-----プレイヤーのメインデータ-----//
+    //-----プレイヤーの動きデータ-----//
     case UpdateCommand::PlayerMoveCommand:
     {
         //-----データをキャスト-----//
         PlayerMoveData* p_data = (PlayerMoveData*)data;
 
         //-----データを保存-----//
-        receive_all_data.player_move_data.emplace_back(*p_data);
+        receive_all_player_data.player_move_data.emplace_back(*p_data);
         break;
     }
+    //-----プレイヤーの位置データ-----//
     case UpdateCommand::PlayerPositionCommand:
     {
         //-----データをキャスト-----//
         PlayerPositionData* p_data = (PlayerPositionData*)data;
         //-----データを保存-----//
-        receive_all_data.player_position_data.emplace_back(*p_data);
+        receive_all_player_data.player_position_data.emplace_back(*p_data);
         break;
     }
+    //-----プレイヤーのアクションデータ-----//
     case UpdateCommand::PlayerActionCommand:
     {
         //-----プレイヤーのどのアクションかどうかをチェック-----//
         CheckPlayerActionCommand(data[ComLocation::DataKind], data);
+        break;
+    }
+    //-----敵の出現データ-----//
+    case UpdateCommand::EnemySpawnCommand:
+    {
+        //-----データをキャスト-----//
+        EnemySpawnData* s = (EnemySpawnData*)data;
+        //-----データを保存-----//
+        receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
+
         break;
     }
     default:
@@ -85,7 +97,7 @@ void SceneMultiGameClient::CheckPlayerActionCommand(char com, char* data)
         //-----データをキャスト-----//
         PlayerActionData* p_data = (PlayerActionData*)data;
         //-----データを保存-----//
-        receive_all_data.player_avoidance_data.emplace_back(*p_data);
+        receive_all_player_data.player_avoidance_data.emplace_back(*p_data);
 
         DebugConsole::Instance().WriteDebugConsole("入力情報を受信", TextColor::White);
         break;

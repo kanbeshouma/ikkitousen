@@ -1,4 +1,5 @@
 #pragma once
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
 #include <cereal/cereal.hpp>
 
@@ -40,8 +41,12 @@ public:
 
     // 初期化
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
-    // 更新
+    //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_, AddBulletFunc Func_);
+
+    //-----マルチプレイ時にクライアント側が呼ぶ更新処理-----//
+    void fClientUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
+
     //----------------------------------
     // TODO:藤岡が書いたところ
     //----------------------------------

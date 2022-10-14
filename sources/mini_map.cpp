@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "mini_map.h"
 #include "Operators.h"
 #include "user.h"

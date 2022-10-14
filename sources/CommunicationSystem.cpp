@@ -53,6 +53,7 @@ bool CommunicationSystem::InitializeHost(char* tco_port, char* udp_port, int pri
     if (InitializeHostUdpSocket(udp_port, private_id) == false)
     {
         DebugConsole::Instance().WriteDebugConsole("ホスト : UDPのソケットの作成に失敗しました", TextColor::Red);
+        WSACleanup();
         return false;
     }
 
@@ -60,6 +61,7 @@ bool CommunicationSystem::InitializeHost(char* tco_port, char* udp_port, int pri
     if (InitializeHostTcp(tco_port,private_id) == false)
     {
         DebugConsole::Instance().WriteDebugConsole("ホスト : TCPのソケットの作成に失敗しました", TextColor::Red);
+        WSACleanup();
         return false;
     }
     return true;
@@ -203,12 +205,14 @@ bool CommunicationSystem::InitializeClient(char* tcp_port, char* udp_port)
     if (InitializeClientUdpSocket(udp_port) == false)
     {
         DebugConsole::Instance().WriteDebugConsole("クライアント : UDP受信用ソケットの作成に失敗しました", TextColor::Red);
+        WSACleanup();
         return false;
     }
     //----------TCP通信用の初期化----------//
     if (InitializeClientTcp(tcp_port) == false)
     {
         DebugConsole::Instance().WriteDebugConsole("クライアント : TCPのソケットの作成に失敗しました", TextColor::Red);
+        WSACleanup();
         return false;
     }
     return true;

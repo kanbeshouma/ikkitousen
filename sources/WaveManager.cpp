@@ -243,6 +243,123 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     fGuiMenu();
 }
 
+void WaveManager::fClientUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
+{
+    // 待ってクリア演出へ
+    if (clear_flg)
+    {
+        clear_wait_timer -= elapsedTime_;
+        // クリアのアニメーション
+        if (current_stage != STAGE_IDENTIFIER::BOSS)
+        {
+            if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
+            {
+                if (!clear_parameters.se_play)
+                {
+                    audio_manager->play_se(SE_INDEX::DRAW_PEN);
+                    clear_parameters.se_play = true;
+                }
+
+                if (clear_wait_timer >= CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
+                {
+                    clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, 1.0f, 4.0f * elapsedTime_);
+                }
+
+                //--parameters--//
+                const int FRAMW_COUNT_X = 4;
+                const int FRAMW_COUNT_Y = 2;
+                static float logo_animation_speed = 0.05f;
+
+                int frame_x;
+                frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+#ifdef USE_IMGUI
+                ImGui::Begin("ClearProto");
+                ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+                ImGui::Text("timer:%f", clear_parameters.timer);
+                ImGui::Text("frame_x:%d", frame_x);
+                ImGui::Text("frame_y:%d", clear_parameters.frame_y);
+                ImGui::End();
+#endif // USE_IMGUI
+                if (frame_x >= FRAMW_COUNT_X)
+                {
+                    // 1行下のアニメーションへ
+                    if (clear_parameters.frame_y < FRAMW_COUNT_Y - 1)
+                    {
+                        clear_parameters.timer = 0;
+                        ++clear_parameters.frame_y;
+                    }
+                }
+                else
+                {
+                    // アニメーション
+                    clear_parameters.clear.texpos.x = frame_x * clear_parameters.clear.texsize.x;
+                    clear_parameters.clear.texpos.y = clear_parameters.frame_y * clear_parameters.clear.texsize.y;
+                    clear_parameters.timer += elapsedTime_;
+                }
+            }
+            if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
+            {
+                clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
+#ifdef USE_IMGUI
+                ImGui::Begin("ClearProto");
+                ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
+                ImGui::End();
+#endif // USE_IMGUI
+            }
+        }
+        else // ゲームクリア
+        {
+            audio_manager->stop_all_bgm();
+            game_clear = true;
+
+            return;
+        }
+        // クリア演出orゲームクリア
+        if (clear_wait_timer < 0)
+        {
+            if (current_stage != STAGE_IDENTIFIER::BOSS) // クリア演出へ
+            {
+                mWaveState = WaveState::Clear;
+                //----------------------------------
+                // TODO:藤岡が書いたところ6
+                //----------------------------------
+                transition_reduction();
+
+                PostEffect::clear_post_effect();
+
+                effect_manager->finalize();
+                effect_manager->initialize(Graphics_);
+
+                //---ここまで--//
+            }
+        }
+    }
+
+    switch (mWaveState)
+    {
+    case WaveState::Start:
+        // 一番最初はクリア演出なしでステージ開始するからここでウェーブ開始(ゲーム中最初の一回しか入らない)
+        if (mStartGame)
+        {
+            fStartWave();
+            mStartGame = false;
+        }
+        break;
+    case WaveState::Game:
+        mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
+
+        // クリア状態に遷移
+        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
+
+        break;
+    case WaveState::Clear:
+        fClearUpdate(elapsedTime_);
+        break;
+    default: ;
+    }
+    fGuiMenu();
+}
+
 void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
 {
     //----------------------------------

@@ -137,6 +137,96 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     }
 }
 
+void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
+{
+    //--------------------<管理クラス自体の更新処理>--------------------//
+
+    mSloeTime -= elapsedTime_;
+
+    // ウェーブ開始からの時間を更新
+    mDelay-=elapsedTime_;
+    if (!mDebugMode && !mIsTutorial && mDelay <= 0.0f)
+    {
+        //--------------------<敵がたまりすぎたら>--------------------//
+        if (mEnemyVec.size() < 30)
+        {
+            mWaveTimer += elapsedTime_;
+        }
+    }
+
+    // カメラシェイク
+    if(mCameraShakeTime>0.0f)
+    {
+        if (GameFile::get_instance().get_shake()) camera_shake->shake(graphics_, elapsedTime_);
+    }
+    mCameraShakeTime -= elapsedTime_;
+    mCameraShakeTime = (std::max)(0.0f, mCameraShakeTime);
+
+    //--------------<プレイヤーがチェイン中はエネミーの行動をすべて停止させる>-------------//
+    if(mIsPlayerChainTime)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            //-----体力が0の時に死亡処理だけ通す-----//
+            if (enemy->fGetCurrentHitPoint() > 0) continue;
+
+            enemy->fDie(graphics_);
+
+
+            if (enemy->fGetIsAlive() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+            }
+        }
+        return;
+    }
+
+    //--------------------<敵の更新処理>--------------------//
+    fEnemiesUpdate(graphics_,elapsedTime_);
+    //--------------------<敵同士の当たり判定>--------------------//
+    fCollisionEnemyVsEnemy();
+
+    //--------------------<敵のスポナー>--------------------//
+
+    for (auto data : receive_data.enemy_spawn_data)
+    {
+        fSpawn(data,graphics_);
+    }
+    // ImGuiのメニュー
+    fGuiMenu(graphics_,Func_);
+
+    //--------------------<ボスが敵を召喚する>--------------------//
+    fCreateBossUnit(graphics_);
+
+    bool isCreate{};
+    for (const auto& source : mReserveVec)
+    {
+        isCreate = true;
+        for (auto data : receive_data.enemy_spawn_data)
+        {
+            fSpawn(data, graphics_);
+        }
+    }
+    if(isCreate)
+    {
+        mReserveVec.clear();
+    }
+
+    // ザコ的だけを全消しする
+    if(mIsReserveDelete)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            if (enemy->fGetIsBoss() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+            }
+        }
+        fDeleteEnemies();
+        mIsReserveDelete = false;
+    }
+}
+
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
 {
     //--------------------<敵の描画処理>--------------------//
@@ -550,6 +640,108 @@ case EnemyType::Boss_Unit:
     }
 
     object_count++;
+}
+
+void EnemyManager::fSpawn(EnemySpawnData data, GraphicsPipeline& graphics_)
+{
+    // 送られてきたデータをもとに敵を出現させる
+    const auto param = mEditor.fGetParam(data.type);
+
+
+    switch (data.type)
+    {
+    case EnemyType::Archer:
+    {
+        BaseEnemy* enemy = new ArcherEnemy(graphics_,
+            data.emitter_point, param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Shield:
+    {
+        BaseEnemy* enemy = new ShieldEnemy(graphics_,
+            data.emitter_point, param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Sword:
+    {
+        BaseEnemy* enemy = new SwordEnemy(graphics_,
+            data.emitter_point, param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Spear:
+    {
+        BaseEnemy* enemy = new SpearEnemy(graphics_,
+            data.emitter_point,
+            param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Archer_Ace:
+    {
+        BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
+            data.emitter_point,
+            param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+        break;
+    case EnemyType::Shield_Ace:
+    {
+        BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
+            data.emitter_point, param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+        break;
+    case EnemyType::Sword_Ace:
+    {
+        BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
+            data.emitter_point,
+            param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Spear_Ace:
+    {
+        BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
+            data.emitter_point,
+            param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+        break;
+    case EnemyType::Boss:
+        {
+        BaseEnemy* enemy = new LastBoss(graphics_,
+            data.emitter_point,
+            param,this);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+        }
+        break;
+    case EnemyType::Count: break;
+    case EnemyType::Tutorial_NoMove:
+    {
+        BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
+            data.emitter_point,
+            param);
+        enemy->fSetObjectId(data.enemy_id);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+case EnemyType::Boss_Unit:
+    break;
+    default:;
+    }
+
 }
 
 

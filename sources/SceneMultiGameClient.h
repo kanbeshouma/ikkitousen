@@ -253,7 +253,14 @@ private:
 
     ////-----受信データを設定する-----//
     void SetReceiveData();
+
+    ////-----敵の受信データを削除する-----//
+    void ClearEnemyReceiveData();
 private:
-    //-----受信データを入れる-----//
-    static PlayerAllDataStruct receive_all_data;
+    //-----プレイヤーの受信データを入れる-----//
+    static PlayerAllDataStruct receive_all_player_data;
+
+    //-----敵の受信データを入れる-----//
+    static EnemyAllDataStruct receive_all_enemy_data;
+
 };
