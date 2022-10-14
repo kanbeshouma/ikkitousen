@@ -58,7 +58,7 @@ public:
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
         DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
         float PlayerCapsuleRadius_);             // プレイヤーのカプセルの情報)
-    
+
     // プレイヤーの回り込み攻撃と敵の当たり判定
     void fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_);
 
@@ -88,7 +88,7 @@ public:
 
     //--------------------<敵の実体を削除する関数>--------------------//
     void fDeleteEnemies();
-    
+
     [[nodiscard]] std::vector<BaseEnemy*> fGetEnemies() const;
     size_t fGetEnemyCounts()const;
 
@@ -127,6 +127,10 @@ private:
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
 
     void fCreateBossUnit(GraphicsPipeline& Graphics_);
+
+    //-----敵の出現データを送信-----//
+    void fSendSpawnData(EnemySource Source_);
+
 
     //--------------------<敵をソートする>--------------------//
     void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);
@@ -192,6 +196,9 @@ private:
 
     float mSloeTime{};
 
+    //-----スポーン番号-----//
+    int object_count{};
+
     //****************************************************************
     //
     // 定数
@@ -200,7 +207,7 @@ private:
 
     // 敵同士の間隔を調整する
     const float mAdjustmentEnemies{ 1.0f };
-    
+
     const char* mWaveFileNameArray[7]
     {
         "./resources/Data/Wave1_1.json",

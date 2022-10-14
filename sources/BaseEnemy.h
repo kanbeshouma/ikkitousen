@@ -132,7 +132,10 @@ protected:
     Capsule mBodyCapsule{};
 private:
     skeleton::bone mVenierBone{};
-
+protected:
+    int object_id{};
+public:
+    void fSetObjectId(int id) { object_id = id; }
 protected:
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };

@@ -14,11 +14,13 @@ void CommunicationSystem::AcquisitionMyIpAddress()
     //---自分の名前を検索---//
     char host_name[50];
     gethostname(host_name, 50);
+
     //------ソケット情報変数-------//
     addrinfo hints;
     addrinfo* addr_info{ NULL };
     ZeroMemory(&hints, sizeof(addrinfo));
     sockaddr_in addr{};
+
     //----------情報を設定---------//
     //------追加のオプションを設定-----//
     hints.ai_flags = 0;
@@ -29,7 +31,9 @@ void CommunicationSystem::AcquisitionMyIpAddress()
     //--ソケットアドレスのプロトコル設定--//
     hints.ai_protocol = 0;
     getaddrinfo(host_name, NULL, &hints, &addr_info);
+
     servent* port = getservbyname(host_name,NULL);
+
     addr = *((sockaddr_in*)addr_info->ai_addr);
     //自分のアドレスを保存
     std::string ip = std::to_string(addr.sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(addr.sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(addr.sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(addr.sin_addr.S_un.S_un_b.s_b4);

@@ -22,6 +22,16 @@ void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     elapsedTime_=fBaseUpdate(elapsedTime_,Graphics_);
     fUpdateAttackCapsule(); // 攻撃用のカプセル位置を更新
+#ifdef USE_IMGUI
+    static bool display_scape_imgui;
+    std::string name = "SwordEnemy" + std::to_string(object_id);
+    imgui_menu_bar("Enemy", name, display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        ImGui::Begin(name.c_str());
+        ImGui::End();
+    }
+#endif
 }
 
 void SwordEnemy::fRegisterFunctions()
@@ -38,6 +48,18 @@ void SwordEnemy::fRegisterFunctions()
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::Start, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fIdleInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fIdleUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Idle, tuple));
     }
     {
         InitFunc ini = [=]()->void
@@ -165,6 +187,23 @@ void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     }
 }
 
+void SwordEnemy::fIdleInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::idle, true);
+    // 汎用タイマーを初期化
+    mWaitTimer = 0.0f;
+}
+
+void SwordEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    // 一定時間経過で移動に遷移
+    if (mWaitTimer >= mSpawnDelaySec)
+    {
+        fChangeState(DivedState::Move);
+    }
+}
+
 void SwordEnemy::fWalkInit()
 {
     // アニメーションを再生
@@ -275,7 +314,7 @@ void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // プレイヤーと距離を取るまたは制限時間になったら
     if (Math::Length(vec) >= 60.0f || mMoveTimer > mMoveTimeLimit)
     {
-        fChangeState(DivedState::Start);
+        fChangeState(DivedState::Idle);
     }
 }
 
@@ -299,7 +338,7 @@ void SwordEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         mStunEffect->stop(effect_manager->get_effekseer_manager());
         mIsStun = false;
-        fChangeState(DivedState::Start);
+        fChangeState(DivedState::Idle);
     }
 
 }

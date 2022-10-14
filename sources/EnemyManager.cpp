@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"EnemyManager.h"
 #include "EnemyFileSystem.h"
 
@@ -23,6 +25,8 @@
 #include"collision.h"
 #include"Operators.h"
 
+#include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
 
 #include <fstream>
 
@@ -100,6 +104,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 
     //--------------------<敵のスポナー>--------------------//
     fSpawn(graphics_);
+
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 
@@ -446,12 +451,17 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
 {
     // 送られてきたデータをもとに敵を出現させる
     const auto param = mEditor.fGetParam(Source_.mType);
+
+    //-----マルチプレイの時にデータを送信-----//
+    fSendSpawnData(Source_);
+
     switch (Source_.mType)
     {
     case EnemyType::Archer:
     {
         BaseEnemy* enemy = new ArcherEnemy(graphics_,
             Source_.mEmitterPoint, param);
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -459,6 +469,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     {
         BaseEnemy* enemy = new ShieldEnemy(graphics_,
             Source_.mEmitterPoint, param);
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -466,6 +477,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     {
         BaseEnemy* enemy = new SwordEnemy(graphics_,
             Source_.mEmitterPoint, param);
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -474,6 +486,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new SpearEnemy(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -482,6 +495,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -489,6 +503,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     {
         BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
             Source_.mEmitterPoint, param);
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -497,6 +512,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -505,6 +521,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -513,6 +530,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new LastBoss(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType),this);
+        enemy->fSetObjectId(object_count);
         mEnemyVec.emplace_back(enemy);
         }
         break;
@@ -522,6 +540,7 @@ case EnemyType::Tutorial_NoMove:
     BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
         Source_.mEmitterPoint,
         mEditor.fGetParam(Source_.mType));
+    enemy->fSetObjectId(object_count);
     mEnemyVec.emplace_back(enemy);
 }
     break;
@@ -530,7 +549,32 @@ case EnemyType::Boss_Unit:
     default:;
     }
 
+    object_count++;
+}
 
+
+void EnemyManager::fSendSpawnData(EnemySource Source_)
+{
+    EnemySpawnData data;
+
+    //-----コマンドを設定-----//
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemySpawnCommand;
+
+    //-----出現する敵の番号設定-----//
+    data.enemy_id = object_count;
+
+    //-----出現タイミング-----//
+    data.spawn_timer = Source_.mSpawnTimer;
+
+    //-----出現位置-----//
+    data.emitter_point = Source_.mEmitterPoint;
+
+    //-----敵の種類-----//
+    data.type = Source_.mType;
+
+    CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(EnemySpawnData));
 }
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
@@ -827,6 +871,10 @@ void EnemyManager::fStartWave(int WaveIndex_)
 {
     //--------------------<ウェーブを開始させる関数>--------------------//
     fAllClear();
+
+    //-----敵のカウントを初期化する-----//
+    object_count = 0;
+
     mWaveTimer = 0.0f;
     fLoad(mWaveFileNameArray[WaveIndex_]);
 
@@ -901,6 +949,7 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
 
     enemy = new SwordEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
 }
 
 void EnemyManager::fDeleteCash()

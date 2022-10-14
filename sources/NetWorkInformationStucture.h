@@ -4,6 +4,7 @@
 #include<DirectXMath.h>
 #include"game_pad.h"
 #include"SocketCommunication.h"
+#include"EnemyStructuer.h"
 //---------------------------------------------------------------
 //
 //通信で必要なコマンド，構造体を宣言する
@@ -36,6 +37,9 @@ enum UpdateCommand
 
     //-----プレイヤーのアクションデータ-----//
     PlayerActionCommand,
+
+    //-----敵の出現データ-----//
+    EnemySpawnCommand,
 
 };
 
@@ -179,7 +183,7 @@ struct PlayerActionData
     GamePadButton new_button_state;
 };
 
-
+//-----プレイヤーのデータ構造体が全て入っている-----//
 struct PlayerAllDataStruct
 {
     //-----プレイヤーの動きデータ-----//
@@ -191,4 +195,23 @@ struct PlayerAllDataStruct
     //-----プレイヤーのアクションデータ-----//
     std::vector<PlayerActionData> player_avoidance_data;
 
+};
+
+//-----敵のスポーンデータ-----//
+struct EnemySpawnData
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //-----敵の番号-----//
+    int enemy_id{ -1 };
+
+    //出現タイミングを記録
+    float spawn_timer{};
+
+    //出現位置の番号
+    DirectX::XMFLOAT3 emitter_point{};
+
+    //敵の種類
+    EnemyType type{};
 };

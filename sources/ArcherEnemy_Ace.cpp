@@ -40,7 +40,16 @@ void ArcherEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
-
+#ifdef USE_IMGUI
+    static bool display_scape_imgui;
+    std::string name = "ArcherEnemy_Ace" + std::to_string(object_id);
+    imgui_menu_bar("Enemy", name, display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        ImGui::Begin(name.c_str());
+        ImGui::End();
+    }
+#endif
 }
 
 void ArcherEnemy_Ace::fUpdateAttackCapsule()

@@ -83,6 +83,10 @@ private:
     void fSpawnInit();
     void fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    //‘Ò‹@
+    void fIdleInit();
+    void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     // •à‚«
     void fWalkInit();
     void fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);

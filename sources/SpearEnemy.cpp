@@ -17,7 +17,16 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_)
 void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
-
+#ifdef USE_IMGUI
+    static bool display_scape_imgui;
+    std::string name = "SpearEnemy" + std::to_string(object_id);
+    imgui_menu_bar("Enemy", name, display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        ImGui::Begin(name.c_str());
+        ImGui::End();
+    }
+#endif
 }
 
 void SpearEnemy::fUpdateAttackCapsule()

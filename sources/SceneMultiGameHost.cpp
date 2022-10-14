@@ -258,7 +258,7 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//-----ステージ中のウェーブの更新処理-----//
-	//mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
