@@ -27,7 +27,7 @@ protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };
-    DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+    DirectX::XMFLOAT4 color{ 1.0f,0.325f,0.325f,1.0f };
     std::vector<DirectX::XMFLOAT4X4> transform{};
 
     float threshold;
@@ -42,6 +42,23 @@ protected:
         DirectX::XMFLOAT3 end{};
         float rasius{ 1.2f };
     };
+public:
+    enum class PlayerColor
+    {
+        Red,
+        Yellow,
+        Blue,
+        SkyBlue,
+        Green,
+        Purple,
+        Pink,
+        White,
+        Black,
+    };
+    //-----色の設定-----//
+    //==============
+    //第1引数 : 色の種類のenum class
+    void SetColor(PlayerColor kind);
 protected:
     //-----キャラクターそれぞれの番号-----//
     int object_id{ -1 };

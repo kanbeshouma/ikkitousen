@@ -83,6 +83,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 
 		//-----名前設定-----//
 		login.name[i] = CorrespondenceManager::Instance().names[i];
+		login.p_color[i] = CorrespondenceManager::Instance().player_colors[i];
 
 		//Ipアドレスも保存
 		login.game_udp_server_addr[i] = instance.game_udp_server_addr[i];
@@ -102,6 +103,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	instance.game_udp_server_addr[client_id] = create;
 	//-----名前を保存-----//
 	CorrespondenceManager::Instance().names[client_id] = receive_data->name;
+	CorrespondenceManager::Instance().player_colors[client_id] = receive_data->player_color;
 
 	//-----------ホストの管理するIDの中に今接続して来たプレイヤーの番号を保存-------------//
 	CorrespondenceManager::Instance().SetOpponentPlayerId(client_id);
@@ -111,6 +113,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	//基本的に自分の操作しているプレイヤー番号番目に値が入る
 	login.opponent_player_id[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().GetOperationPrivateId();
 	login.name[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().my_name;
+	login.p_color[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().my_player_color;
 
 	//--------新しくログインして来た相手にデータを送信---------//
 	CorrespondenceManager::Instance().TcpSend(client_id, (char*)&login, sizeof(LoginData));
@@ -139,7 +142,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	//-----プレイヤーの追加フラグとIDを設定-----//
 	register_player = true;
 	register_player_id = client_id;
-
+	register_player_color = receive_data->player_color;
 
 	DebugConsole::Instance().WriteDebugConsole("プレイヤーがログインしてきました", TextColor::Green);
 

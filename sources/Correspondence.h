@@ -149,8 +149,15 @@ public:
     //-----名前-----//
     char my_name[12];
 
+    //-----プレイヤーの色-----//
+    int my_player_color{ 0 };
+
     //-----自分以外の名前-----//
     std::string names[MAX_CLIENT];
+
+    //-----自分以外の色-----//
+    int player_colors[MAX_CLIENT];
+
 private:
     std::mutex mutex;
 

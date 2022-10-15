@@ -75,6 +75,8 @@ struct LoginData
 
     //名前
     std::string name[MAX_CLIENT];
+    //-----色-----//
+    int p_color[MAX_CLIENT];
 
     //ホストの番号
     int host_id{ -1 };
@@ -90,6 +92,8 @@ struct SendHostLoginData
     char port[8] = { "7000" };
     //-----名前-----//
     std::string name;
+    //-----プレイヤーの色-----//
+    int player_color{};
 };
 
 

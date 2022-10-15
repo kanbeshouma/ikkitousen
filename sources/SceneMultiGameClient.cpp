@@ -32,6 +32,9 @@ bool SceneMultiGameClient::register_player = false;
 //-----追加されたプレイヤーの番号-----//
 int SceneMultiGameClient::register_player_id = -1;
 
+//-----追加されたプレイヤーの色-----//
+int SceneMultiGameClient::register_player_color = 0;
+
 //-----ログアウトするプレイヤーの番号-----//
 std::vector<int> SceneMultiGameClient::logout_id = {};
 
@@ -83,6 +86,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	//-----プレイヤーを登録-----//
 	Player* player = new Player(graphics, CorrespondenceManager::Instance().GetOperationPrivateId());
 	player->SetName(CorrespondenceManager::Instance().my_name);
+	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
 	player_manager->RegisterPlayer(player);
 	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
 
@@ -92,6 +96,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		if (id < 0 || i == player_manager->GetPrivatePlayerId()) continue;
 		ClientPlayer* p = new ClientPlayer(graphics, id);
 		p->SetName(CorrespondenceManager::Instance().names[i]);
+		p->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().player_colors[i]));
 		player_manager->RegisterPlayer(p);
 	}
 
@@ -1022,6 +1027,9 @@ void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 	if (register_player && register_player_id >= 0)
 	{
 		ClientPlayer* player = new ClientPlayer(graphics, register_player_id);
+		player->SetName(CorrespondenceManager::Instance().names[register_player_id]);
+		player->SetColor(static_cast<BasePlayer::PlayerColor>(register_player_color));
+
 		player_manager->RegisterPlayer(player);
 
 		//プレイヤーを追加
@@ -1030,6 +1038,7 @@ void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 		//追加する時に必要なパラメータとフラグの初期化
 		register_player_id = -1;
 		register_player = false;
+		register_player_color = 0;
 	}
 
 }

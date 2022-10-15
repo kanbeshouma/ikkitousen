@@ -299,7 +299,7 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     //-----フラスタムカリングの当たり判定をとって当たっていなかったら描画しない
     if (FrustumVsCuboid()== false) return;
 
-    model->render(graphics.get_dc().Get(), anim_parm,transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+    model->render(graphics.get_dc().Get(), anim_parm,transform.at(0), color, threshold, glow_time, { color.x,color.y,color.z,emissive_color.w }, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)

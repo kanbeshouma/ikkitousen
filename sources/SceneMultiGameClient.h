@@ -220,6 +220,9 @@ private:
     //-----追加するプレイヤーの番号-----//
     static int register_player_id;
 
+    //-----追加したプレイヤーの色-----//
+    static int register_player_color;
+
     //-----ログアウトするプレイヤーのID-----//
     static std::vector<int> logout_id;
 

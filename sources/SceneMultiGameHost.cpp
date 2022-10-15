@@ -34,6 +34,9 @@ bool SceneMultiGameHost::register_player = false;
 //-----追加されたプレイヤーの番号-----//
 int SceneMultiGameHost::register_player_id = -1;
 
+//-----追加されたプレイヤーの色-----//
+int SceneMultiGameHost::register_player_color = 0;
+
 //-----ログアウトするプレイヤーの番号-----//
 std::vector<int> SceneMultiGameHost::logout_id = {};
 
@@ -80,6 +83,7 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	//-----プレイヤーを登録-----//
 	Player* player = new Player(graphics, PlayerPrivateObjectId);
 	player->SetName(CorrespondenceManager::Instance().my_name);
+	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
     player_manager->RegisterPlayer(player);
     player_manager->SetPrivateObjectId(PlayerPrivateObjectId);
 
@@ -1102,6 +1106,7 @@ void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 	{
 		ClientPlayer* player = new ClientPlayer(graphics, register_player_id);
 		player->SetName(CorrespondenceManager::Instance().names[register_player_id]);
+		player->SetColor(static_cast<BasePlayer::PlayerColor>(register_player_color));
 		player_manager->RegisterPlayer(player);
 
 		//プレイヤーを追加
@@ -1110,6 +1115,7 @@ void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 		//追加する時に必要なパラメータとフラグの初期化
 		register_player_id = -1;
 		register_player = false;
+		register_player_color = 0;
 	}
 }
 

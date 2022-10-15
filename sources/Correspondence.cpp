@@ -17,6 +17,7 @@ CorrespondenceManager::CorrespondenceManager()
     {
         opponent_player_id.at(i) = -1;
         names[i] = "";
+        player_colors[i] = 0;
     }
     //それぞれのポート番号を設定
     snprintf(udp_port, 8, "50008");
@@ -93,6 +94,7 @@ void CorrespondenceManager::Login()
     login.cmd[ComLocation::ComList] = CommandList::Login;
     snprintf(login.port, 8, CorrespondenceManager::Instance().udp_port);
     login.name = CorrespondenceManager::Instance().my_name;
+    login.player_color = CorrespondenceManager::Instance().my_player_color;
     int size = sizeof(SendHostLoginData);
     communication_system->LoginSend((char*)&login, size);
 }
@@ -144,7 +146,7 @@ void CorrespondenceManager::UdpSend(int id, char* data, int size)
 bool CorrespondenceManager::LoginReceive()
 {
     //-----受信データ-----//
-    char data[256];
+    char data[512];
     ZeroMemory(data, sizeof(data));
     //----データを受信----//
     //int size = client->Receive(SignalType::UDP, data, sizeof(data));
@@ -175,10 +177,14 @@ bool CorrespondenceManager::LoginReceive()
             std::string ip = std::to_string(opponent_player_id.at(i)) + "番目 :" +  std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
             DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
 
+            //-----色の設定-----//
+            player_colors[i] = login->p_color[i];
+
             //-----名前の登録はIDがちゃんとした数字のものだけ-----//
             if (login->opponent_player_id[i] < 0) continue;
             DebugConsole::Instance().WriteDebugConsole(login->name[i], TextColor::Green);
             names[i] = login->name[i];
+
         }
 
         return true;

@@ -308,6 +308,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 1.0f);
 	ImGui::InputTextAbove("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::InputTextAbove("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::SliderInt("kind", &CorrespondenceManager::Instance().my_player_color, 0, 8);
+	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
 	ImGui::CheckboxAbove("re_name", &re_name);
 	if (re_name)
 	{
