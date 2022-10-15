@@ -222,7 +222,7 @@ private:
     //-----スプライトのパラメータ-----//
     GameStartGauge game_start_gauge_parm;
 
-    std::wstring tutorial_skip_text = L"バックボタン長押しでゲームを開始";
+    std::wstring game_start_text = L"バックボタン長押しでゲームを開始";
     struct GameStartTxt
     {
         DirectX::XMFLOAT2 position{ 19.0f,445.1f };
@@ -231,8 +231,14 @@ private:
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,0.0f,1.0f };
     };
     //-----フォントのパラメータ-----//
-    GameStartTxt game_start_txt;
+    GameStartTxt game_start_txt_parm;
 
+
+    std::unique_ptr<SpriteBatch> controller_on__back_keys{ nullptr };
+    Element controller_back_pram;
+
+private:
+    void StartGameUi(float elapsed_time);
 
 private:
     //-----TCP通信を管理するスレッド-----//

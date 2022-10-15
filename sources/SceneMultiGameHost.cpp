@@ -189,7 +189,15 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	game_start_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 
+	controller_on__back_keys = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back_2_on.png", 1);
 
+	controller_back_pram.texsize = { static_cast<float>(controller_on__back_keys->get_texture2d_desc().Width),
+								static_cast<float>(controller_on__back_keys->get_texture2d_desc().Height) };
+	controller_back_pram.scale = { 0.8f,0.8f };
+	controller_back_pram.position = { -52.6f,194.0f };
+
+	game_start_gauge_parm.pos = { 62.3f,439.6f };
+	game_start_txt_parm.position = { 88.0f,445.1f };
 
 
 	//-----マルチスレッドで使用する変数を初期化する-----//
@@ -262,11 +270,14 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 
+	//-----ゲームスタートするかどうかの判定-----//
+	if(is_start_game == false)StartGameUi(elapsed_time);
+
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//-----ステージ中のウェーブの更新処理-----//
-	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	if(is_start_game)mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
@@ -636,6 +647,21 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 	}
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
+
+	//-----ゲームスタートしていないときにしか描画しない-----//
+	if (is_start_game == false)
+	{
+		game_start_gauge->begin(graphics.get_dc().Get());
+		game_start_gauge->render(graphics.get_dc().Get(), game_start_gauge_parm.pos, game_start_gauge_parm.scale, game_start_gauge_parm.threshold);
+		game_start_gauge->end(graphics.get_dc().Get());
+
+		sprite_render("controller_back_button_pram", controller_on__back_keys.get(), controller_back_pram, 0, 0);
+
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		fonts->yu_gothic->Draw(game_start_text, game_start_txt_parm.position, game_start_txt_parm.scale, game_start_txt_parm.color, game_start_txt_parm.angle, TEXT_ALIGN::UPPER_LEFT);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+
+	}
 
 	//-----ゲームクリアした時の描画-----//
 	if (is_game_clear)
@@ -1044,6 +1070,26 @@ void SceneMultiGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, floa
 
 	//-----弾とプレイヤーの当たり判定-----//
 	player_manager->BulletVsPlayer(mBulletManager);
+}
+
+void SceneMultiGameHost::StartGameUi(float elapsed_time)
+{
+	//バックボタンを長押しして3秒たったらゲームスタート
+	if (game_pad->get_button() & GamePad::BTN_BACK)
+	{
+		game_start_timer += 1.0f * elapsed_time;
+		game_start_gauge_parm.threshold -= (2.0f * elapsed_time) / 2.0f;
+		if (game_start_timer > 1.4f)
+		{
+			is_start_game = true;
+		}
+	}
+	else
+	{
+		game_start_gauge_parm.threshold = 1.0f;
+		game_start_timer = 0;
+	}
+
 }
 
 void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
