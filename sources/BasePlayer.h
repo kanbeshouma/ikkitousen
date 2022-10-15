@@ -27,7 +27,7 @@ protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };
-
+    DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
     std::vector<DirectX::XMFLOAT4X4> transform{};
 
     float threshold;

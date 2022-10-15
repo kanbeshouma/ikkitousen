@@ -94,6 +94,7 @@ void Player::UpdateTitle(float elapsed_time)
                 ImGui::DragFloat3("position", &position.x);
                 ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
+                ImGui::ColorEdit4Above("color", &color.x);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("PlayerDirection"))
@@ -515,6 +516,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat3("input", &input.x);
                 ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
+                ImGui::ColorEdit4Above("color", &color.x);
+
                 ImGui::TreePop();
             }
             ImGui::Separator();
@@ -665,11 +668,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     if (CorrespondenceManager::Instance().GetMultiPlay())
     {
         graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::OutLine);
-        model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+        model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, { color.x,color.y,color.z,emissive_color.w }, 1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
     }
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    model->render(graphics.get_dc().Get(), transform.at(0), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+    model->render(graphics.get_dc().Get(), transform.at(0), color, threshold, glow_time, { color.x,color.y,color.z,emissive_color.w }, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
@@ -810,7 +813,7 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), color, threshold, glow_time, { color.x,color.y,color.z,emissive_color.w },1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 }
 
 void Player::ChangePlayerJustificationLength()

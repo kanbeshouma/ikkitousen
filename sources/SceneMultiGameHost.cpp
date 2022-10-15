@@ -184,6 +184,14 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
 
+
+	//-----ゲームスタートのUIに使う変数の初期化-----//
+	game_start_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
+		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
+
+
+
+
 	//-----マルチスレッドで使用する変数を初期化する-----//
 
 	//-----プレイヤー追加変数の初期化-----//

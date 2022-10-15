@@ -160,8 +160,13 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 sub_color_purple = sub_color_map_purple.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
     float4 sub_color_red    = sub_color_map_red.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
 
+    if (color_map.r > 0.7f && color_map.g > 0.7f && color_map.b > 0.7f)
+    {
+        color_map.rgb= pin.color.rgb;
+    }
+
     // sub color による線形補完
-    float3 lerp_color_map = color_map;
+        float3 lerp_color_map = color_map;
 
     if (sub_color_purple.r > 0.9f && sub_color_purple.g > 0.9f && sub_color_purple.b > 0.9f
      && sub_color_red.r > 0.9f    && sub_color_red.g > 0.9f    && sub_color_red.b > 0.9f)
@@ -256,7 +261,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     finalColor.xyz = min(finalColor.xyz, 6.0);
 
     // dissolve
-    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w * pin.color.rgb, finalColor.a * pin.color.a * color_map.a);
+    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w, finalColor.a * pin.color.a * color_map.a);
 
     float4 dst_color  = float4(0, 0, 0, 0);
     float4 mask       = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
@@ -270,6 +275,5 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     // マテリアルのアルファ値が0.1未満ならそのピクセルを破棄する
     clip(outcolor.a < 0.1f ? -1 : 1);
-
     return outcolor;
 }

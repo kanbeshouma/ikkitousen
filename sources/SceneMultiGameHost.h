@@ -182,6 +182,7 @@ private:
     bool is_game_clear{ false };
     // ゲームクリア
     StepFontElement game_clear_text;
+
 private:
     bool slow{ false };
     float slow_timer{ 0.0f };
@@ -203,6 +204,35 @@ private:
 
     //---------プレイヤー関係の当たり判定----------//
     void PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time);
+
+private:
+    //-----ゲームを開始するかどうか(敵を出現させてもいいか)-----//
+    bool is_start_game{ false };
+
+    //ゲームを開始するときの変数
+    float game_start_timer{ 0 };
+
+    std::unique_ptr<SpriteDissolve> game_start_gauge{ nullptr };
+    struct GameStartGauge
+    {
+        DirectX::XMFLOAT2 pos{ -13.9f,439.6f };
+        DirectX::XMFLOAT2 scale{ 3.8f,2.9f };
+        float threshold{ 1.0f };
+    };
+    //-----スプライトのパラメータ-----//
+    GameStartGauge game_start_gauge_parm;
+
+    std::wstring tutorial_skip_text = L"バックボタン長押しでゲームを開始";
+    struct GameStartTxt
+    {
+        DirectX::XMFLOAT2 position{ 19.0f,445.1f };
+        DirectX::XMFLOAT2 scale{ 0.5f,0.5f };
+        float angle;
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,0.0f,1.0f };
+    };
+    //-----フォントのパラメータ-----//
+    GameStartTxt game_start_txt;
+
 
 private:
     //-----TCP通信を管理するスレッド-----//
@@ -228,6 +258,7 @@ private:
 
     //-----ログアウトするプレイヤーのID-----//
     static std::vector<int> logout_id;
+
 
 private:
     //----------通信関係(マルチスレッド)----------//
