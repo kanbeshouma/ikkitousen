@@ -831,7 +831,7 @@ void Player::SendPlayerData(float elapsed_time)
     auto dur = end - start;
 
     //-----ミリ秒に変換する----//
-    milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+    milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 
     //-----位置データの送信用タイマー-----//
     send_position_timer += 1.0f * elapsed_time;
@@ -873,10 +873,11 @@ void Player::SendMoveData()
     data.move_vec = GetInputMoveVec();
 
     //-----ロックオンしている敵の番号-----//
-
+    if (is_lock_on)data.lock_on_enemy_id = lock_on_enemy_id;
+    else data.lock_on_enemy_id = -1;
 
     //-----ロックオンしてるかどうか-----//
-
+    data.lock_on = is_lock_on;
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
@@ -1290,12 +1291,16 @@ void Player::SetTarget( BaseEnemy* target_enemies)
             target_lerp_rate = 0;
             //一番近い敵を保存する
             target_enemy = target_enemies;
+
+            if(target_enemies != nullptr)lock_on_enemy_id = target_enemies->fGetObjectId();
         }
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
+
+        lock_on_enemy_id = target_enemy->fGetObjectId();
     }
 
 }

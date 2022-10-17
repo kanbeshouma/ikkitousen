@@ -458,6 +458,13 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
 {
     //-----入力データ設定する-----//
     SetMoveVecter(data.move_vec);
+
+    //-----ロックオンしてるかどうか-----//
+    is_lock_on = data.lock_on;
+
+    //-----ロックオンしている敵の番号-----//
+    lock_on_enemy_id = data.lock_on_enemy_id;
+
 }
 
 void ClientPlayer::SetReceivePositionData(PlayerPositionData data)

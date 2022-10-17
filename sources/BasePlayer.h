@@ -63,7 +63,8 @@ protected:
     //-----キャラクターそれぞれの番号-----//
     int object_id{ -1 };
     SkinnedMesh::anim_Parameters anim_parm{};
-
+    //-----ロックオンしている敵の番号-----//
+    int lock_on_enemy_id{ -1 };
 protected:
     DirectX::XMFLOAT4X4 view{};
     DirectX::XMFLOAT4X4 projection{};
