@@ -97,6 +97,52 @@ private:
 
     };
 
+    enum AiState
+    {
+        ShipStart,
+        ShipIdle,
+        ShipAttack,
+        ShipBeamStart,
+        ShipBeamCharge,
+        ShipBeamShoot,
+        ShipBeamEnd,
+        ShipToHuman,
+        HumanIdle,
+        HumanMove,
+        HumanAllShot,
+        HumanRotAttack,
+        HumanWithdrawal_Begin,
+        HumanWithdrawal_Middle,
+        HumanWithdrawal_End,
+        HumanBlowAttack,
+        HumanSpAway,
+        HumanSpWait,
+        HumanSpOver,
+        HumanSpCharge,
+        HumanSpShoot,
+        HumanSpDamage,
+        HumanRush,
+        HumanDieStart,
+        HumanDieMiddle,
+        HumanToDragon,
+        DragonIdle,
+        DragonDieStart,
+        DragonDieEnd,
+        DragonHideStart,
+        DragonAppear,
+        DragonBreathCharge,
+        DragonBreathShot,
+        DragonRushHide,
+        DragonRushWait,
+        DragonRushAppear,
+        DragonMoveStart,
+        DragonBeamStart,
+        DragonBeamCharge,
+        DragonBeamShoot,
+        DragonBeamEnd,
+        Stun,
+    };
+
     enum  AnimationName {
         ship_idle,
         ship_beam_charge_start,
@@ -147,7 +193,7 @@ private:
         HumanAllShot,       // óêéÀ
         HumanSpecialAttack  // ïKéEãZ
     };
-    
+
     //--------------------<ñCêgÇÃÉNÉâÉX>--------------------//
     class Turret final : public PracticalEntities
     {

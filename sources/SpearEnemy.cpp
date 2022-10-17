@@ -154,6 +154,7 @@ void SpearEnemy::fIdleInit()
 {
     // アニメーションを再生
     mpModel->play_animation(mAnimPara,AnimationName::idle, true);
+    ai_state = AiState::Start;
 
 }
 void SpearEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -170,6 +171,7 @@ void SpearEnemy::fMoveInit()
     mpModel->play_animation(mAnimPara,AnimationName::walk, true);
     // 突進先の座標を初期化
     mThrustTarget = mPlayerPosition;
+    ai_state = AiState::Move;
 
 }
 void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -205,6 +207,7 @@ void SpearEnemy::fThrustBeginInit()
     mpModel->play_animation(mAnimPara, AnimationName::attack_idle);
     mWaitTimer = 0.0f;
     mIsAttack = true;
+    ai_state = AiState::ThrustBegin;
     //-----攻撃動作に入ったことを知らせる-----//
     fSetAttackOperation(true);
 }
@@ -225,6 +228,7 @@ void SpearEnemy::fThrustMiddleInit()
     // 突き中のアニメーションを再生
     mpModel->play_animation(mAnimPara, AnimationName::attack_up);
     mWaitTimer = 0.0f;
+    ai_state = AiState::ThrustMiddle;
 }
 
 void SpearEnemy::fThrustMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -241,6 +245,7 @@ void SpearEnemy::fThrustEndInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_down, true);
     mWaitTimer = 0.0f;
+    ai_state = AiState::ThrustEnd;
 }
 
 void SpearEnemy::fThrustEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -268,6 +273,7 @@ void SpearEnemy::fThrustEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void SpearEnemy::fDamageInit()
 {
     throw std::logic_error("Not implemented");
+    ai_state = AiState::Damaged;
 }
 
 void SpearEnemy::fDamageUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -283,6 +289,7 @@ void SpearEnemy::fStunInit()
     audio_manager->play_se(SE_INDEX::STAN);
 
     mWaitTimer = mStunTime;
+    ai_state = AiState::Stun;
 }
 
 void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -299,6 +306,7 @@ void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void SpearEnemy::fDieInit()
 {
     throw std::logic_error("Not implemented");
+    ai_state = AiState::Die;
 }
 
 void SpearEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

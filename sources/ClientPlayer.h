@@ -23,7 +23,7 @@
 class ClientPlayer : public BasePlayer, private ClientPlayerMove
 {
 public:
-    ClientPlayer(GraphicsPipeline& graphics, char object_id = 0);
+    ClientPlayer(GraphicsPipeline& graphics, int object_id = 0);
     ~ClientPlayer();
 private:
     enum AnimationClips

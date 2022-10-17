@@ -83,9 +83,23 @@ protected:
     std::vector<DirectX::XMFLOAT4X4> transform{};
 
     DirectX::XMFLOAT3 mPlayerPosition{};
+public:
+    DirectX::XMFLOAT3 GetTargetPosition() { return mPlayerPosition; }
 
+protected:
     SkinnedMesh::anim_Parameters mAnimPara{};
     float mDissolve{};
+
+    //-----敵の種類を設定-----//
+    SendEnemyType type;
+public:
+    void SetEnemyType(SendEnemyType t) { type = t; }
+    SendEnemyType GetEnemyType() { return type; }
+protected:
+    int ai_state{};
+public:
+    int fGetEnemyState() { return ai_state; }
+
 public:
     std::unique_ptr<SpriteBatch> mpIcon{ nullptr };//ミニマップで使う用のアイコン
     bool mIsSuccesGuard = false;

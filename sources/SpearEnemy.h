@@ -5,11 +5,11 @@
 class SpearEnemy final  : public BaseEnemy
 {
     //****************************************************************
-    // 
+    //
     //  構造体
-    // 
+    //
     //****************************************************************
-    struct DivedState 
+    struct DivedState
     {
         inline static const char* Start = "Start";
         inline static const char* Idle = "Idle";
@@ -21,6 +21,19 @@ class SpearEnemy final  : public BaseEnemy
         inline static const char* Die = "Die";
         inline static const char* Stun = "Stun";
     };
+    enum AiState
+    {
+        Start,
+        Idle,
+        Move,
+        Damaged,
+        ThrustBegin,
+        ThrustMiddle,
+        ThrustEnd,
+        Die,
+        Stun,
+    };
+
     enum AnimationName {
         idle,
         walk,
@@ -32,9 +45,9 @@ class SpearEnemy final  : public BaseEnemy
 
 public:
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
     SpearEnemy(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
@@ -49,17 +62,17 @@ private:
     void fUpdateAttackCapsule() override;;
 private:
     //****************************************************************
-    // 
+    //
     //  変数
-    // 
+    //
     //****************************************************************
     float mWaitTimer{}; // 待機時間
     DirectX::XMFLOAT3 mThrustTarget{}; // 突進中のターゲット
 private:
     //****************************************************************
-    // 
+    //
     // 定数
-    // 
+    //
     //****************************************************************
     const float mIdleSec{ 4.0f };        // 待機時間
     const float mStartSec{ 1.0f };        // 待機時間
@@ -74,9 +87,9 @@ private:
 
 private:
     //****************************************************************
-    // 
+    //
     // ステートマシン
-    // 
+    //
     //****************************************************************
     //--------------------<開始時>--------------------//
     void fStartInit();
@@ -107,6 +120,6 @@ private:
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fSetStun(bool Arg_, bool IsJust_) override;
-    
+
 };
 

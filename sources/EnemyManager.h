@@ -39,6 +39,16 @@ public:
     void fFinalize();
 
     bool fGetSlow()const;
+private:
+
+    SendEnemyType send_enemy_type;
+
+    //-----敵のデータを送信する-----//
+    void fCheckSendEnemyData(float elapsedTime_);
+
+    //-----敵のデータを送信-----//
+    void fSendEnemyData(float elapsedTime_, SendEnemyType type);
+
 public:
     //--------------------<当たり判定>--------------------//
 
@@ -133,7 +143,7 @@ private:
     void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
 
     //-----マルチプレイ時のクライアント側の敵の出現-----//
-    void fSpawn(EnemySpawnData data, GraphicsPipeline& graphics_);
+    void fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& graphics_);
 
     void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理

@@ -16,13 +16,13 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
         ParamPack_, EmitterPoint_,L"./resources/Sprites/ui/minimap/minimap_lastboss.png"), mpEnemyManager(pEnemyManager_)
 {
     mIsBoss = true;
-    
+
     // ボーンを初期化
     mShipFace = mpModel->get_bone_by_name("shipface_top_joint");
 
     // タレットのモデルを初期化
     fRegisterFunctions();
-   
+
 
     // laserを初期化
     mShipPointer.fInitialize(Graphics_.get_device().Get(),  L"");
@@ -67,7 +67,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     //エフェクトを初期化
     mpAllAttackEffect = std::make_unique<Effect>(Graphics_,
         effect_manager->get_effekseer_manager(),
-        "./resources/Effect/boss_wave.efk"); 
+        "./resources/Effect/boss_wave.efk");
 
     mpBeamEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
 
@@ -306,7 +306,7 @@ void LastBoss::fRegisterFunctions()
             fHumanAllShotUpdate(elapsedTime_, Graphics_);
         };
         auto tuple = std::make_tuple(ini, up);
-        mFunctionMap.insert(std::make_pair(DivideState::HumanAllShot, 
+        mFunctionMap.insert(std::make_pair(DivideState::HumanAllShot,
             tuple));
     }
 
@@ -799,7 +799,7 @@ void LastBoss::fGuiMenu()
         mpBeamEffect->play(effect_manager->get_effekseer_manager(), pos);
         mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
     }
-    
+
     ImGui::RadioButton("IsAttack", mIsAttack);
     ImGui::Checkbox("Stun", &mIsStun);
     ImGui::DragFloat("Timer", &mTimer);

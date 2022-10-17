@@ -205,6 +205,8 @@ void ArcherEnemy_Ace::fSpawnInit()
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     // 汎用タイマーを初期化
     mStayTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Start;
 }
 
 void ArcherEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -225,6 +227,8 @@ void ArcherEnemy_Ace::fIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     mStayTimer = 0;
+    //-----ステート設定-----//
+    ai_state = AiState::Idle;
 }
 
 void ArcherEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -241,6 +245,8 @@ void ArcherEnemy_Ace::fMoveInit()
 
     mpModel->play_animation(mAnimPara, AnimationName::walk, true);
     mAttackingTime = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Move;
 }
 
 void ArcherEnemy_Ace::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -269,6 +275,8 @@ void ArcherEnemy_Ace::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void ArcherEnemy_Ace::fMoveApproachInit()
 {
     mStayTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Approach;
 }
 
 void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -301,6 +309,8 @@ void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& 
 void ArcherEnemy_Ace::fMoveLeaveInit()
 {
     mStayTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Leave;
 }
 
 
@@ -364,6 +374,8 @@ void ArcherEnemy_Ace::fAttackBeginInit()
     audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
 
     mStayTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::AttackReady;
 }
 
 void ArcherEnemy_Ace::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -379,7 +391,8 @@ void ArcherEnemy_Ace::fAttackPreActionInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_idle);
     mStayTimer = 0.0f;
-
+    //-----ステート設定-----//
+    ai_state = AiState::AttackIdle;
 }
 
 void ArcherEnemy_Ace::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -395,6 +408,8 @@ void ArcherEnemy_Ace::fAttackEndInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_shot);
     mAttackingTime = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::AttackShot;
 }
 
 void ArcherEnemy_Ace::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -416,6 +431,8 @@ void ArcherEnemy_Ace::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Gra
 
 void ArcherEnemy_Ace::fDamagedInit()
 {
+    //-----ステート設定-----//
+    ai_state = AiState::Damaged;
 }
 
 
@@ -441,7 +458,8 @@ void ArcherEnemy_Ace::fStunInit()
     audio_manager->play_se(SE_INDEX::STAN);
 
     mStayTimer = 0;
-
+    //-----ステート設定-----//
+    ai_state = AiState::Stun;
 }
 
 void ArcherEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

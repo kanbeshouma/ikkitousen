@@ -51,11 +51,11 @@ enum class EnemyType
     // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
     Archer, //遠距離攻撃
     Shield, //盾持ち
-    Sword,  // 刀の敵 
+    Sword,  // 刀の敵
     Spear,
     Archer_Ace, //遠距離攻撃
     Shield_Ace, //盾持ち
-    Sword_Ace,  // 刀の敵 
+    Sword_Ace,  // 刀の敵
     Spear_Ace,
     Boss,
     Tutorial_NoMove,
@@ -63,6 +63,18 @@ enum class EnemyType
     // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
     Count, // 種類の総量
 };
+
+
+//-----どのタイプの敵のデータを送信するか-----//
+enum SendEnemyType
+{
+    Sword,
+    Archer,
+    Spear,
+    Shield,
+    Boss,
+};
+
 
 
 struct EnemySource

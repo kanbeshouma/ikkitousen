@@ -41,6 +41,8 @@ enum UpdateCommand
     //-----敵の出現データ-----//
     EnemySpawnCommand,
 
+    //-----敵の基本データ-----//
+    EnemiesMoveCommand,
 };
 
 enum PlayerActionKind
@@ -56,8 +58,10 @@ enum ComLocation
     ComList,
     //-----コマンドの1番目-----//
     UpdateCom,
-    //-----コマンドの2番目-----//
+    //-----コマンドの2番目(ここはプレイヤーや敵によって入るデータは変わってくる)-----//
     DataKind,
+    //-----コマンドの3番目(ここは2番目以外でも設定したい場合に使う)-----//
+    Other
 };
 
 
@@ -132,7 +136,7 @@ struct PlayerMoveData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    char player_id{ -1 };
+    int player_id{ -1 };
 
     //-----入力方向-----//
     DirectX::XMFLOAT3 move_vec{};
@@ -144,7 +148,6 @@ struct PlayerMoveData
     bool lock_on{ false };
 };
 
-
 //-----プレイヤーの位置データ-----//
 struct PlayerPositionData
 {
@@ -152,7 +155,7 @@ struct PlayerPositionData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    char player_id{ -1 };
+    int player_id{ -1 };
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
@@ -166,7 +169,7 @@ struct PlayerActionData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    char player_id{ -1 };
+    int player_id{ -1 };
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
@@ -201,31 +204,72 @@ struct PlayerAllDataStruct
 
 };
 
-//-----敵のスポーンデータ-----//
-struct EnemySpawnData
+
+namespace EnemySendData
 {
-    //通信コマンド
-    char cmd[4]{};
-
-    //-----敵の番号-----//
-    char enemy_id{ -1 };
-
-    //出現タイミングを記録
-    float spawn_timer{};
-
-    //出現位置の番号
-    DirectX::XMFLOAT3 emitter_point{};
-
-    //敵の種類
-    EnemyType type{};
-};
+    //-----EnemyDataで使用する配列の種類-----//
+    enum EnemyDataArray
+    {
+        ObjectId,
+        AiState
+    };
 
 
+    //-----敵のスポーンデータ-----//
+    struct EnemySpawnData
+    {
+        //通信コマンド
+        char cmd[4]{};
+
+        //-----敵の番号-----//
+        int enemy_id{ -1 };
+
+        //出現タイミングを記録
+        float spawn_timer{};
+
+        //出現位置の番号
+        DirectX::XMFLOAT3 emitter_point{};
+
+        //敵の種類
+        EnemyType type{};
+    };
+
+
+    //-----敵の基本データ-----//
+    struct EnemyData
+    {
+        //-----敵の番号-----//
+        //==============
+        //[0] : object_id
+        //[1] : state(AI)
+        char enemy_data[4];
+
+        //-----自分の位置-----//
+        DirectX::XMFLOAT3 pos;
+
+        //-----ターゲットの位置-----//
+        DirectX::XMFLOAT3 target_pos;
+    };
+
+    //-----敵の基本データが入っている構造体-----//
+    struct EnemiesMoveData
+    {
+        //-----通信コマンド-----//
+        //=================
+        //[0] : CommandList
+        //[1] : UpdateCommand
+        //[2] : DataKind(送る敵の種類)
+        //[3] : vector型のサイズ
+        char cmd[4]{};
+
+        //-----敵のデータ-----//
+        std::vector<EnemyData> enemy_data;
+    };
+}
 //-----敵のデータ構造体が全て入っている-----//
 struct EnemyAllDataStruct
 {
     //-----敵の出現データ-----//
-    std::vector<EnemySpawnData> enemy_spawn_data;
-
+    std::vector<EnemySendData::EnemySpawnData> enemy_spawn_data;
 
 };

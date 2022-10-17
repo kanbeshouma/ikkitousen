@@ -169,6 +169,8 @@ void SwordEnemy::fSpawnInit()
     mpModel->play_animation(mAnimPara,AnimationName::idle, true);
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Start;
 }
 
 void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -192,6 +194,9 @@ void SwordEnemy::fIdleInit()
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Idle;
+
 }
 
 void SwordEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -209,6 +214,8 @@ void SwordEnemy::fWalkInit()
     // アニメーションを再生
     mpModel->play_animation(mAnimPara,AnimationName::walk,true);
     mWaitTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::Move;
 }
 
 void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -231,6 +238,9 @@ void SwordEnemy::fAttackBeginInit()
 {
     mpModel->play_animation(mAnimPara,AnimationName::attack_idle);
     mWaitTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::AttackBegin;
+
 }
 void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -250,6 +260,8 @@ void SwordEnemy::fAttackRunInit()
     fSetAttackOperation(true);
     mMoveTimer = 0;
     audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+    //-----ステート設定-----//
+    ai_state = AiState::AttackRun;
 
 }
 
@@ -271,6 +283,9 @@ void SwordEnemy::fAttackPreActionInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_up, false, false);
     mWaitTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::AttackMiddle;
+
 }
 void SwordEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -287,6 +302,9 @@ void SwordEnemy::fAttackEndInit()
     mWaitTimer = 0.0f;
     fSetAttack(true);
     fSetAttackOperation(false);
+    //-----ステート設定-----//
+    ai_state = AiState::AttackEnd;
+
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -302,6 +320,8 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void SwordEnemy::fEscapeInit()
 {
     mMoveTimer = 0;
+    //-----ステート設定-----//
+    ai_state = AiState::Escape;
 }
 
 void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -327,6 +347,8 @@ void SwordEnemy::fStunInit()
 
     mWaitTimer = mStunTime ;
     mIsAttack = false;
+    //-----ステート設定-----//
+    ai_state = AiState::Stun;
     //-----攻撃動作に入ったことを知らせる-----//
     fSetAttackOperation(false);
 }

@@ -132,6 +132,7 @@ void SwordEnemy_Ace::fRegisterFunctions()
 void SwordEnemy_Ace::fStartInit()
 {
     mpModel->play_animation(mAnimPara, 0, false, false);
+    ai_state = AiState::Start;
 }
 
 void SwordEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -149,6 +150,7 @@ void SwordEnemy_Ace::fIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     mWaitTimer = 0.0f;
+    ai_state = AiState::Idle;
 }
 
 void SwordEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -164,6 +166,8 @@ void SwordEnemy_Ace::fCounterStartInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_ready);
     mWaitTimer = 0.0f;
+    ai_state = AiState::CounterStart;
+
 }
 
 void SwordEnemy_Ace::fCounterStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -180,6 +184,7 @@ void SwordEnemy_Ace::fCounterMiddleInit()
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_idle, true);
     mWaitTimer = 0.0f;
     mIsWaitCounter = true;
+    ai_state = AiState::CounterMiddle;
 }
 
 void SwordEnemy_Ace::fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -232,6 +237,7 @@ void SwordEnemy_Ace::fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& 
 void SwordEnemy_Ace::fCounterEndInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_end);
+    ai_state = AiState::CounterEnd;
 }
 
 void SwordEnemy_Ace::fCounterEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -245,6 +251,7 @@ void SwordEnemy_Ace::fCounterEndUpdate(float elapsedTime_, GraphicsPipeline& Gra
 void SwordEnemy_Ace::fMoveInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::walk);
+    ai_state = AiState::Move;
 }
 
 void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -266,6 +273,7 @@ void SwordEnemy_Ace::fStunInit()
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     audio_manager->play_se(SE_INDEX::STAN);
+    ai_state = AiState::Stun;
 
     mWaitTimer = mStunTime;
     mIsAttack = false;

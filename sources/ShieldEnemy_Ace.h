@@ -23,6 +23,18 @@ public:
         inline static const char* Die = "Die";
         inline static const char* Stun = "Stun";
     };
+    enum AiState
+    {
+        Start,
+        Move,
+        ShieldReady,
+        ShieldAttack,
+        Shield,
+        Damaged,
+        Die,
+        Stun,
+    };
+
     enum  AnimationName {
         idle,
         move,

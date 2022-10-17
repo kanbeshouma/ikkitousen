@@ -76,7 +76,7 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
     case UpdateCommand::EnemySpawnCommand:
     {
         //-----データをキャスト-----//
-        EnemySpawnData* s = (EnemySpawnData*)data;
+        EnemySendData::EnemySpawnData* s = (EnemySendData::EnemySpawnData*)data;
         //-----データを保存-----//
         receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
 

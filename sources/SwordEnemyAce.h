@@ -18,6 +18,17 @@ class SwordEnemy_Ace final :public BaseEnemy
        inline static const char* Move = "Move";
        inline static const char* Stun = "Stun";
     };
+    enum AiState
+    {
+        Start,
+        Idle,
+        CounterStart,
+        CounterMiddle,
+        CounterEnd,
+        Move,
+        Stun,
+    };
+
     enum AnimationName {
         idle,
         walk,

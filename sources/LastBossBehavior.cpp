@@ -66,6 +66,9 @@ void LastBoss::fShipStartInit()
     mTimer = 0.0f;
     mShipRoar = false;
     mSkipTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::ShipStart;
+
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -109,6 +112,8 @@ void LastBoss::fShipIdleInit()
     mTimer = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::ship_idle, true);
     mIsSpawnEnemy = false;
+    //-----ステート設定-----//
+    ai_state = AiState::ShipIdle;
 }
 
 void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -152,6 +157,8 @@ void LastBoss::fShipBeamStartInit()
     mMoveThreshold = 0.0f;
     mOrientation = { 0.0f,1.0f,0.0f,0.0f };
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_shot_start);
+    //-----ステート設定-----//
+    ai_state = AiState::ShipBeamStart;
 }
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -190,6 +197,9 @@ void LastBoss::fShipBeamChargeInit()
 
     // SEを再生
     audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
+    //-----ステート設定-----//
+    ai_state = AiState::ShipBeamCharge;
+
 }
 
 void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -245,6 +255,10 @@ void LastBoss::fShipBeamShootInit()
 
     // ＳＥ再生
     audio_manager->play_se(SE_INDEX::BOSS_BEAM);
+
+    //-----ステート設定-----//
+    ai_state = AiState::ShipBeamShoot;
+
 }
 
 void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -293,6 +307,8 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fShipBeamEndInit()
 {
+    //-----ステート設定-----//
+    ai_state = AiState::ShipBeamEnd;
 
 }
 
@@ -326,6 +342,10 @@ void LastBoss::fChangeShipToHumanInit()
     {
         mDrawSkip = true;
     }
+
+    //-----ステート設定-----//
+    ai_state = AiState::ShipToHuman;
+
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
@@ -391,6 +411,9 @@ void LastBoss::fHumanIdleInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_idle, true, true, 0.3f, 1.5f);
     mAnimationSpeed = 1.5f;
     mTimer = 2.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanIdle;
+
 }
 
 void LastBoss::fHumanIdleUpdate(float elapsedTime_,
@@ -503,6 +526,8 @@ void LastBoss::fHumanAllShotInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_bullet);
     mTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanAllShot;
 }
 
 void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
@@ -585,6 +610,8 @@ void LastBoss::fHumanBlowAttackInit()
     mIsAttack = true;
     mAttackCapsule.mRadius = 0.0f;
     mTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanBlowAttack;
 }
 
 void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
@@ -627,6 +654,9 @@ void LastBoss::fMoveAwayInit()
     const auto normalV = Math::Normalize(mPosition - mPlayerPosition);
     mMoveEnd = mPosition + normalV * 100.0f;
     mMoveThreshold = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanMove;
+
 }
 
 void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -648,6 +678,9 @@ void LastBoss::fHumanRushInit()
     mMoveThreshold = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::human_rush_idle);
     audio_manager->play_se(SE_INDEX::BOSS_RUSH);
+    //-----ステート設定-----//
+    ai_state = AiState::HumanRush;
+
 }
 
 void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -707,6 +740,10 @@ void LastBoss::fHumanSpAttackAwayInit()
     mBeginOrientation = mOrientation;
 
     mpModel->play_animation(mAnimPara, AnimationName::human_to_ship_quick);
+
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpAway;
+
 }
 
 void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -743,6 +780,8 @@ void LastBoss::fHumanSpAttackSummonUpdate(float elapsedTime_, GraphicsPipeline& 
 void LastBoss::fHumanSpAttackWaitInit()
 {
     mTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpWait;
 }
 
 void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_,
@@ -774,6 +813,8 @@ void LastBoss::fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& 
 void LastBoss::fHumanSpAttackTimeOverInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human_quick);
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpOver;
 }
 
 void LastBoss::fHumanSpAttackTimeOverUpdate(float elapsedTime_,
@@ -807,6 +848,10 @@ void LastBoss::fHumanSpAttackChargeInit()
     mHumanBeamTarget = mPosition;
 
     audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
+
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpCharge;
+
 }
 
 void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_,
@@ -852,6 +897,10 @@ void LastBoss::fHumanSpBeamShootInit()
     mIsAttack = true;
 
     audio_manager->play_se(SE_INDEX::BOSS_BEAM);
+
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpShoot;
+
 }
 
 void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
@@ -942,6 +991,9 @@ void LastBoss::fHumanSpDamageInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_damage);
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanSpDamage;
+
 }
 
 void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
@@ -974,6 +1026,8 @@ void LastBoss::fHumanDieStartInit()
     {
         mDrawSkip = true;
     }
+    //-----ステート設定-----//
+    ai_state = AiState::HumanDieStart;
 }
 
 void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1004,6 +1058,8 @@ void LastBoss::fHumanDieMiddleInit()
     mRgbColorPower = 0.0f;
     mHeartTimer = 0.0f;
     mPerformThresold = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanDieMiddle;
 }
 
 void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1070,6 +1126,8 @@ void LastBoss::fHumanToDragonInit()
     mIsStun = false;
     mStunEffect->stop(effect_manager->get_effekseer_manager());
     mSkipTimer = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::HumanToDragon;
 }
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1183,6 +1241,9 @@ void LastBoss::fDragonIdleInit()
     mCurrentMode = Mode::Dragon;
     mDragonBreathCount = 0;
     mAnimationSpeed = 5.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonIdle;
+
 }
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1224,6 +1285,8 @@ void LastBoss::fDragonFastBreathStartInit()
     mpSecondGunLeft->fSetDissolve (mDissolve);
     mpTurretLeft->fSetDissolve(mDissolve);
     mpTurretRight->fSetDissolve(mDissolve);
+    //-----ステート設定-----//
+    ai_state = AiState::DragonHideStart;
 }
 
 void LastBoss::fDragonFastBreathStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1305,7 +1368,9 @@ void LastBoss::fDragonBreathAppearInit()
 
     mDissolve = 1.0f;
 
-    }
+    //-----ステート設定-----//
+    ai_state = AiState::DragonAppear;
+}
 
 void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -1320,6 +1385,9 @@ void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& G
 void LastBoss::fDragonBreathChargeInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_ready, false, true, 0.3f, 0.5f);
+    //-----ステート設定-----//
+    ai_state = AiState::DragonBreathCharge;
+
 }
 
 void LastBoss::fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1338,6 +1406,9 @@ void LastBoss::fDragonBreathShotInit()
     mDragonBreathCount++;
     mTimer = 0.0f;
     mIsShotBreath = false;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonBreathShot;
+
 }
 
 void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1371,6 +1442,9 @@ void LastBoss::fDragonRushHideInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_hide);
     mDissolve = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonRushHide;
+
 }
 
 void LastBoss::fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1393,6 +1467,9 @@ void LastBoss::fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graph
 void LastBoss::fDragonRushWaitInit()
 {
     mTimer = mkDragonRushWaitTime;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonRushWait;
+
 }
 
 void LastBoss::fDragonRushWaitUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1440,6 +1517,10 @@ void LastBoss::fDragonRushAppearInit()
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
     mDissolve = 1.0f;
+
+    //-----ステート設定-----//
+    ai_state = AiState::DragonRushAppear;
+
 }
 
 void LastBoss::fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1461,6 +1542,9 @@ void LastBoss::fDragonBeamMoveInit()
     mDragonMoveThreshold = 0.0f;
     mMoveBegin = mPosition;
     mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
+
+    //-----ステート設定-----//
+    ai_state = AiState::DragonMoveStart;
 }
 
 void LastBoss::fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1479,6 +1563,9 @@ void LastBoss::fDragonBeamStartInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_ready);
 
+    //-----ステート設定-----//
+    ai_state = AiState::DragonBeamStart;
+
 }
 
 void LastBoss::fDragonBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1495,6 +1582,9 @@ void LastBoss::fDragonBeamChargeInit()
     mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_charge);
     mTimer = mkDragonBeamChargeTime;
     audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
+    //-----ステート設定-----//
+    ai_state = AiState::DragonBeamCharge;
+
 }
 
 void LastBoss::fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1522,6 +1612,9 @@ void LastBoss::fDragonBeamShotInit()
     mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 10.0f,10.0f,10.0f });
     audio_manager->play_se(SE_INDEX::BOSS_BEAM);
     mAttackPower = 10;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonBeamShoot;
+
 }
 
 void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
@@ -1577,6 +1670,9 @@ void LastBoss::fDragonDieStartInit()
     mCurrentMode = Mode::DragonDie;
     mAnimationSpeed = 1.0f;
     mDissolve = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonDieStart;
+
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1590,6 +1686,9 @@ void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graph
 void LastBoss::fDragonDieMiddleInit()
 {
     mDissolve = 0.0f;
+    //-----ステート設定-----//
+    ai_state = AiState::DragonDieEnd;
+
 }
 
 void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1615,6 +1714,10 @@ void LastBoss::fStunInit()
     mStunEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
     mTimer = 3.0f;
     mpModel->pause_animation(mAnimPara);
+
+    //-----ステート設定-----//
+    ai_state = AiState::Stun;
+
 }
 
 void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

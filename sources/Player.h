@@ -49,7 +49,7 @@ inline bool operator&(SePriset lhs, SePriset rhs)
 class Player :public BasePlayer, private PlayerMove
 {
 public:
-    Player(GraphicsPipeline& graphics,char object_id = 0);
+    Player(GraphicsPipeline& graphics,int object_id = 0);
     ~Player();
 private:
     enum AnimationClips

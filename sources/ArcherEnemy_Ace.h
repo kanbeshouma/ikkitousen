@@ -4,17 +4,17 @@
 #include "Common.h"
 #include "EnemiesEditor.h"
 //****************************************************************
-// 
-// ‹|UŒ‚‚Ì‹­“G‚Ì”h¶ƒNƒ‰ƒX 
-// 
+//
+// ‹|UŒ‚‚Ì‹­“G‚Ì”h¶ƒNƒ‰ƒX
+//
 //****************************************************************
 class ArcherEnemy_Ace final :public BaseEnemy
 {
 public:
     //****************************************************************
-    // 
+    //
     // \‘¢‘Ì
-    // 
+    //
     //****************************************************************
     struct DivedeState
     {
@@ -30,6 +30,21 @@ public:
         inline static const char* Die = "Die";
         inline static const char* Stun = "Stun";
     };
+    enum AiState
+    {
+        Start,
+        Idle,
+        Move,
+        Damaged,
+        AttackReady,
+        AttackIdle,
+        AttackShot,
+        Approach,
+        Leave,
+        Die,
+        Stun,
+    };
+
     enum  AnimationName {
         idle,
         walk,
@@ -39,9 +54,9 @@ public:
         damage,
     };
     //****************************************************************
-    // 
+    //
     // ŠÖ”
-    // 
+    //
     //****************************************************************
 public:
 
@@ -106,9 +121,9 @@ public:public:
     void fSetStun(bool Arg_, bool IsJust_) override;
 private:
     //****************************************************************
-   // @
-   // •Ï” 
-   // 
+   //
+   // •Ï”
+   //
    //****************************************************************
     DivedeState mNowState;
     float mStayTimer;
@@ -119,9 +134,9 @@ private:
 
 
     //****************************************************************
-   // @
-   // ’è” 
-   // 
+   //
+   // ’è”
+   //
    //****************************************************************
     //“oêŒã‚Ì‘Ò‹@ŠÔ
     const float SPAWN_STAY_TIME = 2.0f;

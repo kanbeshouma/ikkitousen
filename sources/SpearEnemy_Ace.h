@@ -1,9 +1,9 @@
 #pragma once
 #include"BaseEnemy.h"
 //****************************************************************
-// 
+//
 // 槍の敵のエース
-// 
+//
 //****************************************************************
 class SpearEnemy_Ace final : public BaseEnemy
 {
@@ -20,6 +20,18 @@ class SpearEnemy_Ace final : public BaseEnemy
         inline static const char* ThrustEnd   = "ThrustEnd";   // 突き終わり
         inline static const char* Stun        = "Stun";        // スタン
 
+    };
+    enum AiState
+    {
+        Start,
+        Idle,
+        Move,
+        WipeBegin,
+        WipeAttack,
+        WipeEnd,
+        ThrustBegin,
+        Thrust,
+        Stun,
     };
 
     enum AnimationName {
@@ -45,7 +57,7 @@ public:
     ~SpearEnemy_Ace() override = default;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-  
+
 protected:
     void fRegisterFunctions() override;
 

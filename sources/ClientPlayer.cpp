@@ -4,7 +4,7 @@
 #include"Correspondence.h"
 #include"user.h"
 
-ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, char object_id)
+ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx", false, 60.0f);

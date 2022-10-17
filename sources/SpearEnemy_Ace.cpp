@@ -130,7 +130,7 @@ void SpearEnemy_Ace::fRegisterFunctions()
 
 void SpearEnemy_Ace::fStartInit()
 {
-
+    ai_state = AiState::Start;
 }
 void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -146,6 +146,7 @@ void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void SpearEnemy_Ace::fIdleInit()
 {
     mpModel->play_animation(mAnimPara,AnimationName::ace_attack_ready);
+    ai_state = AiState::Idle;
 }
 
 void SpearEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -160,6 +161,7 @@ void SpearEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void SpearEnemy_Ace::fMoveInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_idle,true);
+    ai_state = AiState::Move;
 }
 
 void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -180,6 +182,7 @@ void SpearEnemy_Ace::fWipeBeginInit()
     //-----UŒ‚“®ì‚É“ü‚Á‚½‚±‚Æ‚ð’m‚ç‚¹‚é-----//
     fSetAttackOperation(true);
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_start);
+    ai_state = AiState::WipeBegin;
 }
 
 void SpearEnemy_Ace::fWipeBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -195,6 +198,7 @@ void SpearEnemy_Ace::fWipeAttackInit()
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack);
     mIsAttack = true;
     mAnimationSpeed = 1.5f;
+    ai_state = AiState::WipeAttack;
 }
 
 void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Graphics_)
@@ -217,6 +221,7 @@ void SpearEnemy_Ace::fStunInit()
 
     mWaitTimer = mStunTime;
     mIsAttack = false;
+    ai_state = AiState::Stun;
     fSetAttackOperation(false);
 }
 void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)

@@ -24,6 +24,21 @@ public:
          inline static const char* Escape = "Escape";
          inline static const char* Stun = "Stun";
      };
+     enum AiState
+     {
+         Start,
+         Idle,
+         Move,
+         Damaged,
+         AttackBegin,
+         AttackRun,
+         AttackMiddle,
+         AttackEnd,
+         Die,
+         Escape,
+         Stun,
+     };
+
      enum  AnimationName {
          idle,
          walk,

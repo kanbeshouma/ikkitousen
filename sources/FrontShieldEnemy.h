@@ -8,9 +8,9 @@ class ShieldEnemy final :public BaseEnemy
 {
 public:
     //****************************************************************
-    // 
+    //
     // 構造体
-    // 
+    //
     //****************************************************************
     struct DivedState
     {
@@ -23,6 +23,18 @@ public:
         inline static const char* Die = "Die";
         inline static const char* Stun = "Stun";
     };
+    enum AiState
+    {
+        Start,
+        Move,
+        ShieldReady,
+        ShieldAttack,
+        Shield,
+        Damaged,
+        Die,
+        Stun,
+    };
+
     enum  AnimationName {
         idle,
         move,
@@ -35,9 +47,9 @@ public:
     };
 public:
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
     ShieldEnemy(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
@@ -49,16 +61,16 @@ public:
     void fRegisterFunctions() override; // ステートを登録
     void fUpdateAttackCapsule() override;
 
-    bool fDamaged(int Damage_, float InvincibleTime_, 
+    bool fDamaged(int Damage_, float InvincibleTime_,
         GraphicsPipeline& Graphics_, float elapsedTime_) ;
 
 private:
     bool fJudge_in_view() const;
 
     //****************************************************************
-    // 
+    //
     // 変数
-    // 
+    //
     //****************************************************************
 private:
     float mWaitTimer{}; // 待ち時間
@@ -67,9 +79,9 @@ private:
     std::unique_ptr<Effect> mShieldEffect{ nullptr };
     inline static const char* mkShieldPath = "./resources/Effect/shield.efk";
     //****************************************************************
-    // 
-    // 定数 
-    // 
+    //
+    // 定数
+    //
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // 移動速度
     const float mDifenceRange{ 40.0f };    // 攻撃範囲
@@ -81,9 +93,9 @@ private:
     const float mShieldReadySec{ 3.0f };          // 盾を構える
 private:
     //****************************************************************
-    // 
+    //
     // ステートマシン
-    // 
+    //
     //****************************************************************
     //--------------------<剣の敵の共通の動き>--------------------//
     // スポーン

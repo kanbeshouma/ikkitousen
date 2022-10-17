@@ -12,7 +12,7 @@
 
 //プレイヤーの原点は腰
 
-Player::Player(GraphicsPipeline& graphics, char object_id)
+Player::Player(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx",false,60.0f);
@@ -509,6 +509,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::Separator();
             std::string obj_id{ "object_id :" + std::to_string(object_id) };
             ImGui::Text(obj_id.c_str());
+
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
