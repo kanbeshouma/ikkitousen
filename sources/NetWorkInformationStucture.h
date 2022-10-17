@@ -272,4 +272,7 @@ struct EnemyAllDataStruct
     //-----敵の出現データ-----//
     std::vector<EnemySendData::EnemySpawnData> enemy_spawn_data;
 
+    //-----敵の基本データ-----//
+    std::vector<EnemySendData::EnemiesMoveData> enemy_move_data;
+
 };

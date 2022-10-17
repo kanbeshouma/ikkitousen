@@ -16,7 +16,7 @@ void SceneMultiGameHost::ReceiveUdpData()
             DebugConsole::Instance().WriteDebugConsole("UDPスレッドを終了");
             break;
         }
-        char data[256]{};
+        char data[512]{};
         int size = sizeof(data);
 
         //-----データを受信-----//

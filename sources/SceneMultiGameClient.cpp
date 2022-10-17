@@ -1122,4 +1122,7 @@ void SceneMultiGameClient::ClearEnemyReceiveData()
 	//-----敵の出現データを削除する-----//
 	receive_all_enemy_data.enemy_spawn_data.clear();
 
+	//-----敵の動きデータを削除する-----//
+	receive_all_enemy_data.enemy_move_data.clear();
+
 }

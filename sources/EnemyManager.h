@@ -49,6 +49,9 @@ private:
     //-----敵のデータを送信-----//
     void fSendEnemyData(float elapsedTime_, SendEnemyType type);
 
+    //-----受信した敵のデータを設定-----//
+    void fSetReceiveEnemyData(float elapsedTime_,char type,EnemySendData::EnemyData data);
+
 public:
     //--------------------<当たり判定>--------------------//
 

@@ -15,7 +15,7 @@ void SceneMultiGameClient::ReceiveUdpData()
             DebugConsole::Instance().WriteDebugConsole("UDPスレッドを終了");
             break;
         }
-        char data[256]{};
+        char data[512]{};
         int size = sizeof(data);
 
         //-----データを受信-----//
@@ -82,6 +82,38 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
 
         break;
     }
+    //-----敵の基本データ-----//
+    case UpdateCommand::EnemiesMoveCommand:
+    {
+        EnemySendData::EnemiesMoveData* e_data = new EnemySendData::EnemiesMoveData;
+
+        //-----どの敵の種類のデータか取得-----//
+        e_data->cmd[ComLocation::DataKind] = data[ComLocation::DataKind];
+
+        //-----vector型のサイズを取得
+        int size = data[ComLocation::Other];
+        e_data->cmd[ComLocation::Other] = size;
+
+        //----データをコマンド分ずらす-----//
+        data += 4;
+
+        e_data->enemy_data.resize(size);
+
+        for (int i = 0; i < size; i++)
+        {
+            //-----データをキャストする-----//
+            e_data->enemy_data.at(i) = *(EnemySendData::EnemyData*)data;
+
+            //-----キャストした構造体分メモリをずらす-----//
+            data += sizeof(EnemySendData::EnemyData);
+        }
+
+        //-----データを設定-----//
+        receive_all_enemy_data.enemy_move_data.emplace_back(*e_data);
+
+        break;
+    }
+
     default:
         break;
     }

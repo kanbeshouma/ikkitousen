@@ -147,16 +147,25 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
     switch (send_enemy_type)
     {
     case SendEnemyType::Sword:
+        //-----データを送る-----//
         fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
+        //-----次に送るデータのステートに設定-----//
+        send_enemy_type = SendEnemyType::Archer;
         break;
     case SendEnemyType::Archer:
         fSendEnemyData(elapsedTime_, SendEnemyType::Archer);
+        //-----次に送るデータのステートに設定-----//
+        send_enemy_type = SendEnemyType::Spear;
         break;
     case SendEnemyType::Spear:
         fSendEnemyData(elapsedTime_, SendEnemyType::Spear);
+        //-----次に送るデータのステートに設定-----//
+        send_enemy_type = SendEnemyType::Shield;
         break;
     case SendEnemyType::Shield:
         fSendEnemyData(elapsedTime_, SendEnemyType::Shield);
+        //-----次に送るデータのステートに設定-----//
+        send_enemy_type = SendEnemyType::Sword;
         break;
     case SendEnemyType::Boss:
         fSendEnemyData(elapsedTime_, SendEnemyType::Boss);
@@ -206,6 +215,28 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
 
 }
 
+void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySendData::EnemyData data)
+{
+    using namespace EnemySendData;
+    for (const auto& enemy : mEnemyVec)
+    {
+        //-----受信した敵の種類と違うならとばす-----//
+        if (enemy->GetEnemyType() != static_cast<SendEnemyType>(type)) continue;
+
+        //-----自分のオブジェクト番号とデータの番号が違うならとばす-----//
+        if (enemy->fGetObjectId() != data.enemy_data[EnemyDataArray::ObjectId]) continue;
+
+        //-----自分の位置を設定-----//
+        enemy->fSetPosition(data.pos);
+
+        //-----AIステート設定-----//
+        enemy->fSetEnemyState(data.enemy_data[EnemyDataArray::AiState]);
+
+        //-----ターゲットの位置を設定-----//
+        enemy->fSetPlayerPosition(data.target_pos);
+    }
+}
+
 void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
@@ -250,6 +281,14 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         return;
     }
 
+    //-----受信した敵のデータを設定する-----//
+    for (const auto& all_data : receive_data.enemy_move_data)
+    {
+        for (const auto& e_data : all_data.enemy_data)
+        {
+            fSetReceiveEnemyData(elapsedTime_,all_data.cmd[ComLocation::DataKind] ,e_data);
+        }
+    }
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
 

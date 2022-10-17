@@ -84,6 +84,8 @@ protected:
 
     DirectX::XMFLOAT3 mPlayerPosition{};
 public:
+    void fSetPosition(DirectX::XMFLOAT3 pos) { mPosition = pos; }
+
     DirectX::XMFLOAT3 GetTargetPosition() { return mPlayerPosition; }
 
 protected:
@@ -99,7 +101,7 @@ protected:
     int ai_state{};
 public:
     int fGetEnemyState() { return ai_state; }
-
+    void fSetEnemyState(int state) { ai_state = state; }
 public:
     std::unique_ptr<SpriteBatch> mpIcon{ nullptr };//ミニマップで使う用のアイコン
     bool mIsSuccesGuard = false;
