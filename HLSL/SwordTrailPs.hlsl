@@ -9,11 +9,12 @@ cbuffer Data :register(b0)
 {
 	float yugamiThreshold;
 	float3 Pad0;
+    float4 color;
 }
 
 float4 main(PsInput PsInput_) : SV_TARGET
 {
-	float4 outPutColor = { 1.0f, 0.2f, 0.2f, 1.0f };
+    float4 outPutColor = color;
 	float c = 1.0f - PsInput_.Texcoord.y;
 	c = lerp(0.8f,c, step(0.8f, c));
 	if(c>0.85f)
@@ -29,7 +30,7 @@ float4 main(PsInput PsInput_) : SV_TARGET
 	}
 	outPutColor.xyz *= 3.0f;
 	// ÉuÉãÅ[ÉÄÇ≈ñ\ëñÇµÇ»Ç¢ÇÊÇ§Ç…ã≠êß
-    outPutColor.xyz = min(outPutColor.xyz, 6.0);
+    //outPutColor.xyz = min(outPutColor.xyz, 6.0);
 
 	return outPutColor;
 }

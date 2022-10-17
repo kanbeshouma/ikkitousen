@@ -304,12 +304,12 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
     {
-        mSwordTrail[0].fRender(graphics.get_dc().Get());
-        mSwordTrail[1].fRender(graphics.get_dc().Get());
+        mSwordTrail[0].fRender(graphics.get_dc().Get(), color);
+        mSwordTrail[1].fRender(graphics.get_dc().Get(), color);
     }
     else
     {
-        mSwordTrail[0].fRender(graphics.get_dc().Get());
+        mSwordTrail[0].fRender(graphics.get_dc().Get(), color);
     }
 
 

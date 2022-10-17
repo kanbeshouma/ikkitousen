@@ -680,12 +680,12 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         if (is_awakening)
         {
-            mSwordTrail[0].fRender(graphics.get_dc().Get());
-            mSwordTrail[1].fRender(graphics.get_dc().Get());
+            mSwordTrail[0].fRender(graphics.get_dc().Get(),color);
+            mSwordTrail[1].fRender(graphics.get_dc().Get(), color);
         }
         else
         {
-            mSwordTrail[0].fRender(graphics.get_dc().Get());
+            mSwordTrail[0].fRender(graphics.get_dc().Get(), color);
         }
     }
 

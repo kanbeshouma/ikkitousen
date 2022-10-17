@@ -239,7 +239,7 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
 #endif
 }
 
-void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
+void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_,DirectX::XMFLOAT4 color)
 {
     if (mTrailVertexVec.size() < 6)
     {
@@ -253,6 +253,8 @@ void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
     pDeviceContext_->PSSetShaderResources(0, 1, mShaderResourceView.GetAddressOf());
     pDeviceContext_->PSSetShaderResources(1, 1, mTrailColorSrv.GetAddressOf());
 
+    //-----Fî•ñ‚ðÝ’è-----//
+    mConstantBuffer->data.color = color;
     mConstantBuffer->bind(pDeviceContext_, 0);
 
     HRESULT hr{ S_OK };

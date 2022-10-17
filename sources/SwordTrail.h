@@ -52,6 +52,7 @@ class SwordTrail final
     {
         float mThreshold{};
         DirectX::XMFLOAT3 mPad0;
+        DirectX::XMFLOAT4 color;
     };
 
     //****************************************************************
@@ -65,7 +66,7 @@ public:
 
     void fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, const wchar_t* ColorMapName_);
     void fUpdate(float elapsedTime_, size_t steps);
-    void fRender(ID3D11DeviceContext* pDeviceContext_);
+    void fRender(ID3D11DeviceContext* pDeviceContext_, DirectX::XMFLOAT4 color = { 1.0f, 0.2f, 0.2f, 1.0f });
 
     void fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom_);
     void fEraseTrailPoint(float elapsedTime_);
