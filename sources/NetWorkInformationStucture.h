@@ -132,7 +132,7 @@ struct PlayerMoveData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    int player_id{ -1 };
+    char player_id{ -1 };
 
     //-----入力方向-----//
     DirectX::XMFLOAT3 move_vec{};
@@ -152,7 +152,7 @@ struct PlayerPositionData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    int player_id{ -1 };
+    char player_id{ -1 };
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
@@ -166,7 +166,7 @@ struct PlayerActionData
     char cmd[4]{};
 
     //-----プレイヤーの番号-----//
-    int player_id{ -1 };
+    char player_id{ -1 };
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
@@ -208,7 +208,7 @@ struct EnemySpawnData
     char cmd[4]{};
 
     //-----敵の番号-----//
-    int enemy_id{ -1 };
+    char enemy_id{ -1 };
 
     //出現タイミングを記録
     float spawn_timer{};

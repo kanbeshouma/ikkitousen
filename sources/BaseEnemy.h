@@ -133,10 +133,10 @@ protected:
 private:
     skeleton::bone mVenierBone{};
 protected:
-    int object_id{};
+    char object_id{};
 public:
-    void fSetObjectId(int id) { object_id = id; }
-    int fGetObjectId() { return object_id; }
+    void fSetObjectId(char id) { object_id = id; }
+    char fGetObjectId() { return object_id; }
 protected:
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };

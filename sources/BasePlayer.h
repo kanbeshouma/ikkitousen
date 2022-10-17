@@ -61,7 +61,7 @@ public:
     void SetColor(PlayerColor kind);
 protected:
     //-----キャラクターそれぞれの番号-----//
-    int object_id{ -1 };
+    char object_id{ -1 };
     SkinnedMesh::anim_Parameters anim_parm{};
     //-----ロックオンしている敵の番号-----//
     int lock_on_enemy_id{ -1 };
@@ -70,7 +70,7 @@ protected:
     DirectX::XMFLOAT4X4 projection{};
 public:
     ////-----オブジェクトIDのゲッター-----//
-    int GetObjectId() { return object_id; }
+    char GetObjectId() { return object_id; }
 
     virtual  void SetEndDashEffect(bool a) = 0;
   virtual  void SetCameraTarget(DirectX::XMFLOAT3 p) = 0;

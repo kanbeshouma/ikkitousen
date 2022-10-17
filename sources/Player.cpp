@@ -12,7 +12,7 @@
 
 //プレイヤーの原点は腰
 
-Player::Player(GraphicsPipeline& graphics, int object_id)
+Player::Player(GraphicsPipeline& graphics, char object_id)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx",false,60.0f);
