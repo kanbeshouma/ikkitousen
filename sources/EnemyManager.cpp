@@ -180,6 +180,42 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
 {
     using namespace EnemySendData;
 
+    char data[512]{};
+    //-----コマンドを設定する-----//
+    data[ComLocation::ComList] = CommandList::Update;
+    data[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
+    data[ComLocation::DataKind] = type;
+
+    int data_set_count = 0;
+
+    EnemySendData::EnemyData enemy_d;
+
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->GetEnemyType() != type) continue;
+        //-----オブジェクト番号設定-----//
+        enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
+
+        //-----AIのステート設定-----//
+        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
+
+        //-----自分の位置を設定-----//
+        enemy_d.pos = enemy->fGetPosition();
+
+        //-----ターゲットの位置設定-----//
+        enemy_d.target_pos = enemy->GetTargetPosition();
+
+
+        std::memcpy(data + 4 + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
+
+        data_set_count++;
+    }
+    //-----データサイズを設定-----//
+    data[ComLocation::Other] = data_set_count;
+
+    CorrespondenceManager::Instance().UdpSend(data, sizeof(data));
+
+#if 0
     EnemiesMoveData send_data;
 
     //-----コマンドを設定する-----//
@@ -187,31 +223,34 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
     send_data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
     send_data.cmd[ComLocation::DataKind] = type;
 
-    EnemySendData::EnemyData data;
+    EnemySendData::EnemyData enemy_d;
 
     for (const auto enemy : mEnemyVec)
     {
         if (enemy->GetEnemyType() != type) continue;
         //-----オブジェクト番号設定-----//
-        data.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
+        enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
         //-----AIのステート設定-----//
-        data.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
+        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
 
         //-----自分の位置を設定-----//
-        data.pos = enemy->fGetPosition();
+        enemy_d.pos = enemy->fGetPosition();
 
         //-----ターゲットの位置設定-----//
-        data.target_pos = enemy->GetTargetPosition();
+        enemy_d.target_pos = enemy->GetTargetPosition();
 
-        send_data.enemy_data.emplace_back(data);
+        send_data.enemy_data.emplace_back(enemy_d);
     }
 
     //-----データサイズを設定-----//
     send_data.cmd[ComLocation::Other] = send_data.enemy_data.size();
 
+    int size = sizeof(send_data) + (send_data.enemy_data.size() * sizeof(EnemyData));
 
-    CorrespondenceManager::Instance().UdpSend((char*)&send_data, sizeof(send_data));
+    CorrespondenceManager::Instance().UdpSend((char*)&send_data, size);
+
+#endif // 0
 
 }
 
@@ -661,6 +700,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new ArcherEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Archer);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -669,6 +709,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new ShieldEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Shield);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -677,6 +718,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new SwordEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Sword);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -686,6 +728,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Spear);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -695,6 +738,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Archer);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -703,6 +747,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Shield);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -712,6 +757,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Sword);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -721,6 +767,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Spear);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -730,6 +777,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType),this);
         enemy->fSetObjectId(object_count);
+        enemy->SetEnemyType(SendEnemyType::Boss);
         mEnemyVec.emplace_back(enemy);
         }
         break;
