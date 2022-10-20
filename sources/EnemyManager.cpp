@@ -29,6 +29,7 @@
 #include"NetWorkInformationStucture.h"
 
 #include <fstream>
+#include <chrono>
 
 //****************************************************************
 //
@@ -144,36 +145,53 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
 {
 
-    switch (send_enemy_type)
-    {
-    case SendEnemyType::Sword:
-        //-----データを送る-----//
-        fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
-        //-----次に送るデータのステートに設定-----//
-        send_enemy_type = SendEnemyType::Archer;
-        break;
-    case SendEnemyType::Archer:
-        fSendEnemyData(elapsedTime_, SendEnemyType::Archer);
-        //-----次に送るデータのステートに設定-----//
-        send_enemy_type = SendEnemyType::Spear;
-        break;
-    case SendEnemyType::Spear:
-        fSendEnemyData(elapsedTime_, SendEnemyType::Spear);
-        //-----次に送るデータのステートに設定-----//
-        send_enemy_type = SendEnemyType::Shield;
-        break;
-    case SendEnemyType::Shield:
-        fSendEnemyData(elapsedTime_, SendEnemyType::Shield);
-        //-----次に送るデータのステートに設定-----//
-        send_enemy_type = SendEnemyType::Sword;
-        break;
-    case SendEnemyType::Boss:
-        fSendEnemyData(elapsedTime_, SendEnemyType::Boss);
-        break;
-    default:
-        break;
-    }
+    //-----時間を取得-----//
+    static auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
 
+    //-----スタートとエンドの差分を出す-----//
+    auto dur = end - start;
+
+    //-----ミリ秒に変換する----//
+    milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
+
+
+    if (milliseconds > EnemyDataFrequency)
+    {
+        //-----データ送信-----//
+        switch (send_enemy_type)
+        {
+        case SendEnemyType::Sword:
+            //-----データを送る-----//
+            fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
+            //-----次に送るデータのステートに設定-----//
+            send_enemy_type = SendEnemyType::Archer;
+            break;
+        case SendEnemyType::Archer:
+            fSendEnemyData(elapsedTime_, SendEnemyType::Archer);
+            //-----次に送るデータのステートに設定-----//
+            send_enemy_type = SendEnemyType::Spear;
+            break;
+        case SendEnemyType::Spear:
+            fSendEnemyData(elapsedTime_, SendEnemyType::Spear);
+            //-----次に送るデータのステートに設定-----//
+            send_enemy_type = SendEnemyType::Shield;
+            break;
+        case SendEnemyType::Shield:
+            fSendEnemyData(elapsedTime_, SendEnemyType::Shield);
+            //-----次に送るデータのステートに設定-----//
+            send_enemy_type = SendEnemyType::Sword;
+            break;
+        case SendEnemyType::Boss:
+            fSendEnemyData(elapsedTime_, SendEnemyType::Boss);
+            break;
+        default:
+            break;
+        }
+
+        //-----タイマーを初期化-----//
+        start = std::chrono::system_clock::now();
+    }
 }
 
 void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)

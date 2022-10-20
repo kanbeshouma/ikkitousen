@@ -130,6 +130,12 @@ private:
     //-----秒-----//
     float send_position_timer{};
 
+    //-----データ送信頻度(ミリ秒)-----//
+    const float PlayerMoveDataFrequency = 300.0f;
+
+    //-----データ送信頻度(秒)-----//
+    const float PlayerPositionDataFrequency = 2.0f;
+
 private:
     //エフェクト
     //回り込み回避
@@ -214,7 +220,6 @@ private:
     //3撃目の攻撃力
     static constexpr int ATTACK_TYPE3_NORMAL_ATTACK_POWER = 4;
     static constexpr int ATTACK_TYPE3_AWAIKING_ATTACK_POWER = 9;
-
 
 
 private:

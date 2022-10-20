@@ -224,6 +224,10 @@ private:
     //-----スポーン番号-----//
     int object_count{};
 
+    //-----ミリ秒-----//
+    float milliseconds{};
+
+
     //****************************************************************
     //
     // 定数
@@ -250,4 +254,6 @@ private:
     //-----敵の位置データを送信する時のコマンドのサイズ-----//
     const int SendEnemyDataComSize = 4;
 
+    //-----データの送信頻度(ミリ秒)-----//
+    const float EnemyDataFrequency = 300.0f;
 };

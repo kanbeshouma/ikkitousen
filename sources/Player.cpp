@@ -837,9 +837,9 @@ void Player::SendPlayerData(float elapsed_time)
     //-----位置データの送信用タイマー-----//
     send_position_timer += 1.0f * elapsed_time;
 
-    if (send_position_timer < 2.0f)
+    if (send_position_timer < PlayerPositionDataFrequency)
     {
-        if (milliseconds > 300)
+        if (milliseconds > PlayerMoveDataFrequency)
         {
             //-----タイマーを初期化-----//
             start = std::chrono::system_clock::now();
