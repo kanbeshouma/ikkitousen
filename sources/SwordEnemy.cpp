@@ -163,6 +163,30 @@ void SwordEnemy::fUpdateAttackCapsule()
     mAttackCapsule.mBottom = position + up * 1.0f;
 }
 
+void SwordEnemy::fSetEnemyState(int state)
+{
+    //-----ç°ÇÃAIÇ∆ìØÇ∂Ç»ÇÁèàóùÇÇµÇ»Ç¢-----//
+    if (ai_state == state) return;
+
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivedState::Start); break;
+    case AiState::Idle: fChangeState(DivedState::Idle); break;
+    case AiState::Move: fChangeState(DivedState::Move); break;
+    case AiState::Damaged: fChangeState(DivedState::Damaged); break;
+    case AiState::AttackBegin: fChangeState(DivedState::AttackBegin); break;
+    case AiState::AttackRun: fChangeState(DivedState::AttackRun); break;
+    case AiState::AttackMiddle: fChangeState(DivedState::AttackMiddle); break;
+    case AiState::AttackEnd: fChangeState(DivedState::AttackEnd); break;
+    case AiState::Die: fChangeState(DivedState::Die); break;
+    case AiState::Escape: fChangeState(DivedState::Escape); break;
+    case AiState::Stun: fChangeState(DivedState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 
 void SwordEnemy::fSpawnInit()
 {

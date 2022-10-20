@@ -39,6 +39,26 @@ void SwordEnemy_Ace::fUpdateAttackCapsule()
     throw std::logic_error("Not implemented");
 }
 
+void SwordEnemy_Ace::fSetEnemyState(int state)
+{
+    //-----ç°ÇÃAIÇ∆ìØÇ∂Ç»ÇÁèàóùÇÇµÇ»Ç¢-----//
+    if (ai_state == state) return;
+
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivideState::Start); break;
+    case AiState::Idle: fChangeState(DivideState::Idle); break;
+    case AiState::CounterStart: fChangeState(DivideState::CounterStart); break;
+    case AiState::CounterMiddle: fChangeState(DivideState::CounterMiddle); break;
+    case AiState::CounterEnd: fChangeState(DivideState::CounterEnd); break;
+    case AiState::Move: fChangeState(DivideState::Move); break;
+    case AiState::Stun: fChangeState(DivideState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 
 void SwordEnemy_Ace::fRegisterFunctions()
 {

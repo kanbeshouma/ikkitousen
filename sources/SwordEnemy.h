@@ -62,7 +62,7 @@ public:
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fRegisterFunctions() override; // ステートを登録
     void fUpdateAttackCapsule() override;
-
+    void fSetEnemyState(int state) override;
    //****************************************************************
    //
    // 変数

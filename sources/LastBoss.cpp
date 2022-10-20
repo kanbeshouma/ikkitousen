@@ -197,6 +197,61 @@ void LastBoss::fSetStun(bool Arg_, bool IsJust_)
     }
 }
 
+void LastBoss::fSetEnemyState(int state)
+{
+    //-----今のAIと同じなら処理をしない-----//
+    if (ai_state == state) return;
+
+    //-----それぞれのステートに遷移-----//
+    switch (ai_state)
+    {
+    case AiState::ShipStart: fChangeState(DivideState::ShipStart); break;
+    case AiState::ShipIdle: fChangeState(DivideState::ShipIdle); break;
+    case AiState::ShipAttack: fChangeState(DivideState::ShipAttack); break;
+    case AiState::ShipBeamStart: fChangeState(DivideState::ShipBeamStart); break;
+    case AiState::ShipBeamCharge: fChangeState(DivideState::ShipBeamCharge); break;
+    case AiState::ShipBeamShoot: fChangeState(DivideState::ShipBeamShoot); break;
+    case AiState::ShipBeamEnd: fChangeState(DivideState::ShipBeamEnd); break;
+    case AiState::ShipToHuman: fChangeState(DivideState::ShipToHuman); break;
+    case AiState::HumanIdle: fChangeState(DivideState::HumanIdle); break;
+    case AiState::HumanMove: fChangeState(DivideState::HumanMove); break;
+    case AiState::HumanAllShot: fChangeState(DivideState::HumanAllShot); break;
+    case AiState::HumanRotAttack: fChangeState(DivideState::HumanRotAttack); break;
+    case AiState::HumanWithdrawal_Begin: fChangeState(DivideState::HumanWithdrawal_Begin); break;
+    case AiState::HumanWithdrawal_Middle: fChangeState(DivideState::HumanWithdrawal_Middle); break;
+    case AiState::HumanWithdrawal_End: fChangeState(DivideState::HumanWithdrawal_End); break;
+    case AiState::HumanBlowAttack: fChangeState(DivideState::HumanBlowAttack); break;
+    case AiState::HumanSpAway: fChangeState(DivideState::HumanSpAway); break;
+    case AiState::HumanSpWait: fChangeState(DivideState::HumanSpWait); break;
+    case AiState::HumanSpOver: fChangeState(DivideState::HumanSpOver); break;
+    case AiState::HumanSpCharge: fChangeState(DivideState::HumanSpCharge); break;
+    case AiState::HumanSpShoot: fChangeState(DivideState::HumanSpShoot); break;
+    case AiState::HumanSpDamage: fChangeState(DivideState::HumanSpDamage); break;
+    case AiState::HumanRush: fChangeState(DivideState::HumanRush); break;
+    case AiState::HumanDieStart: fChangeState(DivideState::HumanDieStart); break;
+    case AiState::HumanDieMiddle: fChangeState(DivideState::HumanDieMiddle); break;
+    case AiState::HumanToDragon: fChangeState(DivideState::HumanToDragon); break;
+    case AiState::DragonIdle: fChangeState(DivideState::DragonIdle); break;
+    case AiState::DragonDieStart: fChangeState(DivideState::DragonDieStart); break;
+    case AiState::DragonDieEnd: fChangeState(DivideState::DragonDieEnd); break;
+    case AiState::DragonHideStart: fChangeState(DivideState::DragonHideStart); break;
+    case AiState::DragonAppear: fChangeState(DivideState::DragonAppear); break;
+    case AiState::DragonBreathCharge: fChangeState(DivideState::DragonBreathCharge); break;
+    case AiState::DragonBreathShot: fChangeState(DivideState::DragonBreathShot); break;
+    case AiState::DragonRushHide: fChangeState(DivideState::DragonRushHide); break;
+    case AiState::DragonRushAppear: fChangeState(DivideState::DragonRushAppear); break;
+    case AiState::DragonMoveStart: fChangeState(DivideState::DragonMoveStart); break;
+    case AiState::DragonBeamStart: fChangeState(DivideState::DragonBeamStart); break;
+    case AiState::DragonBeamCharge: fChangeState(DivideState::DragonBeamCharge); break;
+    case AiState::DragonBeamShoot: fChangeState(DivideState::DragonBeamShoot); break;
+    case AiState::DragonBeamEnd: fChangeState(DivideState::DragonBeamEnd); break;
+    case AiState::Stun: fChangeState(DivideState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 void LastBoss::fRegisterFunctions()
 {
     {

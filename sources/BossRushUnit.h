@@ -20,6 +20,17 @@ class BossRushUnit final :public BaseEnemy
         inline static constexpr const char* Rush = "Rush";
         inline static constexpr const char* End = "End";
     };
+
+    enum AiState
+    {
+        None,
+        Start,
+        Change,
+        RushAi,
+        End,
+    };
+
+
 public:
     BossRushUnit(GraphicsPipeline& Graphics_);
     BossRushUnit(GraphicsPipeline& Graphics_,const DirectX::XMFLOAT3& EntryPosition);
@@ -30,6 +41,8 @@ public:
     void fStartAppear(const DirectX::XMFLOAT3& EntryPosition);
 
     bool fGetIsStart()const;
+
+    void fSetEnemyState(int state) override;
 
 private:
     DirectX::XMFLOAT3 mVelocity{};

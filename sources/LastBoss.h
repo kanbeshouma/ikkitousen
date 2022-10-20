@@ -263,6 +263,7 @@ public:
 
     void fSetStun(bool Arg_, bool IsJust_) override;
 
+    void fSetEnemyState(int state) override;
 
 protected:
     void fRegisterFunctions() override;

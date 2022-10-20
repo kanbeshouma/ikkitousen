@@ -63,6 +63,7 @@ public:
 
     bool fDamaged(int Damage_, float InvincibleTime_,
         GraphicsPipeline& Graphics_, float elapsedTime_) ;
+    void fSetEnemyState(int state) override;
 
 private:
     bool fJudge_in_view() const;

@@ -57,6 +57,7 @@ public:
     ~SpearEnemy_Ace() override = default;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
+    void fSetEnemyState(int state) override;
 
 protected:
     void fRegisterFunctions() override;

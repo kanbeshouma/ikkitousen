@@ -62,6 +62,25 @@ void BossUnit::fSetStun(bool Arg_, bool IsJust_)
     }
 }
 
+void BossUnit::fSetEnemyState(int state)
+{
+    //-----今のAIと同じなら処理をしない-----//
+    if (ai_state == state) return;
+
+    //-----それぞれのステートに遷移-----//
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivideState::Start); break;
+    case AiState::Idle: fChangeState(DivideState::Idle); break;
+    case AiState::Wonder: fChangeState(DivideState::Wonder); break;
+    case AiState::AttackBegin: fChangeState(DivideState::AttackBegin); break;
+    case AiState::Stun: fChangeState(DivideState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 void BossUnit::fRegisterFunctions()
 {
     {
@@ -204,6 +223,7 @@ void BossUnit::fStartInit()
 {
     mDissolve = 1.0f;
     mpModel->play_animation(mAnimPara, AnimationName::IDLE, true);
+    ai_state = AiState::Start;
 }
 
 void BossUnit::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -221,6 +241,7 @@ void BossUnit::fIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::IDLE);
     mTimer = 0.0f;
+    ai_state = AiState::Idle;
 }
 
 void BossUnit::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -240,6 +261,7 @@ void BossUnit::fWonderInit()
     mTimer = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::MOVE);
     mMoveRev = false;
+    ai_state = AiState::Wonder;
 }
 
 void BossUnit::fWonderUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -314,6 +336,8 @@ void BossUnit::fAttackChargeInit()
 
    mpModel->play_animation(mAnimPara, AnimationName::BEAM_CHARGE_START);
     mTimer = 0.0f;
+
+    ai_state = AiState::AttackBegin;
 }
 
 void BossUnit::fAttackChargeUpdate(float elapsedTime_,
@@ -361,6 +385,10 @@ void BossUnit::fAttackBeamInit()
     mIsAttack = true;
     mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_START);
     mpBeamEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+
+
+    ai_state = AiState::AttackBeam;
+
 }
 
 void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -387,6 +415,8 @@ void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     {
         mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_IDLE);
     }
+
+
 }
 
 void BossUnit::fStunInit()
@@ -395,6 +425,8 @@ void BossUnit::fStunInit()
     mpModel->play_animation(mAnimPara, AnimationName::STUN, true);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+
+    ai_state = AiState::Stun;
 
 }
 

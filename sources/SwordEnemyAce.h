@@ -53,6 +53,8 @@ public:
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
 
+    void fSetEnemyState(int state) override;
+
 private:
     void fRegisterFunctions() override;
     float mWaitTimer{};

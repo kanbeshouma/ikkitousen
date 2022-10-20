@@ -46,11 +46,32 @@ bool BossRushUnit::fGetIsStart() const
     return mIsStart;
 }
 
+void BossRushUnit::fSetEnemyState(int state)
+{
+    //-----今のAIと同じなら処理をしない-----//
+    if (ai_state == state) return;
+
+    //-----それぞれのステートに遷移-----//
+    switch (ai_state)
+    {
+    case AiState::None: fChangeState(DivideState::None); break;
+    case AiState::Start: fChangeState(DivideState::Start); break;
+    case AiState::Change: fChangeState(DivideState::Change); break;
+    case AiState::RushAi: fChangeState(DivideState::Rush); break;
+    case AiState::End: fChangeState(DivideState::End); break;
+    default:
+        break;
+    }
+
+}
+
 void BossRushUnit::fNoneInit()
 {
     mDissolve = 1.0f;
     mPosition = { 0.0f,500.0f,0.0f };
     mIsStart = false;
+
+    ai_state = AiState::None;
 }
 
 void BossRushUnit::fNoneUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -62,6 +83,8 @@ void BossRushUnit::fAppearInit()
 {
     mDissolve = 1.0f;
     mpModel->play_animation(mAnimPara, AnimationName::Idle, true);
+    ai_state = AiState::Start;
+
 }
 
 void BossRushUnit::fAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -78,6 +101,7 @@ void BossRushUnit::fAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void BossRushUnit::fChangeInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::BeginChange);
+    ai_state = AiState::Change;
 
 }
 
@@ -99,6 +123,7 @@ void BossRushUnit::fRushInit()
     mIsAttack = true;
     // 対象とのベクトルを作成
     mVelocity = Math::Normalize(mPlayerPosition - mPosition);
+    ai_state = AiState::RushAi;
 
 }
 
@@ -118,6 +143,7 @@ void BossRushUnit::fEndInit()
 {
     mDissolve = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::EndChange);
+    ai_state = AiState::End;
 }
 
 void BossRushUnit::fEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

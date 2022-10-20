@@ -8,9 +8,9 @@ class ShieldEnemy_Ace final :public BaseEnemy
 {
 public:
     //****************************************************************
-    // 
+    //
     // 構造体
-    // 
+    //
     //****************************************************************
     struct DivedState
     {
@@ -47,9 +47,9 @@ public:
     };
 public:
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
     ShieldEnemy_Ace(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
@@ -64,13 +64,15 @@ public:
     bool fDamaged(int Damage_, float InvincibleTime_,
         GraphicsPipeline& Graphics_, float elapsedTime_);
 
+    void fSetEnemyState(int state) override;
+
 private:
     bool fJudge_in_view() const;
 
     //****************************************************************
-    // 
+    //
     // 変数
-    // 
+    //
     //****************************************************************
 private:
     float mWaitTimer{}; // 待ち時間
@@ -79,9 +81,9 @@ private:
     inline static const char* mkShieldPath = "./resources/Effect/shield.efk";
 
     //****************************************************************
-    // 
-    // 定数 
-    // 
+    //
+    // 定数
+    //
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // 移動速度
     const float mDifenceRange{ 40.0f };    // 攻撃範囲
@@ -93,9 +95,9 @@ private:
     const float mShieldReadySec{ 3.0f };          // 盾を構える
 private:
     //****************************************************************
-    // 
+    //
     // ステートマシン
-    // 
+    //
     //****************************************************************
     //--------------------<剣の敵の共通の動き>--------------------//
     // スポーン

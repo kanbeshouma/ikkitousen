@@ -165,6 +165,27 @@ bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_,GraphicsPipeline& 
     return ret;
 }
 
+void ShieldEnemy::fSetEnemyState(int state)
+{
+    //-----¡‚ÌAI‚Æ“¯‚¶‚È‚çˆ—‚ð‚µ‚È‚¢-----//
+    if (ai_state == state) return;
+
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivedState::Start); break;
+    case AiState::Move: fChangeState(DivedState::Move); break;
+    case AiState::ShieldReady: fChangeState(DivedState::ShieldReady); break;
+    case AiState::ShieldAttack: fChangeState(DivedState::ShieldAttack); break;
+    case AiState::Shield: fChangeState(DivedState::Shield); break;
+    case AiState::Damaged: fChangeState(DivedState::Damaged); break;
+    case AiState::Die: fChangeState(DivedState::Die); break;
+    case AiState::Stun: fChangeState(DivedState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 void ShieldEnemy::fSpawnInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);

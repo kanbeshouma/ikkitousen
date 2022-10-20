@@ -56,6 +56,31 @@ void ArcherEnemy_Ace::fUpdateAttackCapsule()
 {
 }
 
+void ArcherEnemy_Ace::fSetEnemyState(int state)
+{
+    //-----今のAIと同じなら処理をしない-----//
+    if (ai_state == state) return;
+
+    //-----それぞれのステートに遷移-----//
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivedeState::Start); break;
+    case AiState::Idle: fChangeState(DivedeState::Idle); break;
+    case AiState::Move: fChangeState(DivedeState::Move); break;
+    case AiState::Damaged: fChangeState(DivedeState::Damaged); break;
+    case AiState::AttackReady: fChangeState(DivedeState::AttackReady); break;
+    case AiState::AttackIdle: fChangeState(DivedeState::AttackIdle); break;
+    case AiState::AttackShot: fChangeState(DivedeState::AttackShot); break;
+    case AiState::Approach: fChangeState(DivedeState::Approach); break;
+    case AiState::Leave: fChangeState(DivedeState::Leave); break;
+    case AiState::Die: fChangeState(DivedeState::Die); break;
+    case AiState::Stun: fChangeState(DivedeState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 
 void ArcherEnemy_Ace::fRegisterFunctions()
 {

@@ -115,7 +115,7 @@ protected:
     int ai_state{};
 public:
     int fGetEnemyState() { return ai_state; }
-    void fSetEnemyState(int state) { ai_state = state; }
+    virtual void fSetEnemyState(int state) = 0;
 public:
     std::unique_ptr<SpriteBatch> mpIcon{ nullptr };//ミニマップで使う用のアイコン
     bool mIsSuccesGuard = false;

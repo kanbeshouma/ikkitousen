@@ -49,6 +49,28 @@ void SpearEnemy_Ace::fUpdateAttackCapsule()
                           mAttackCapsule.mBottom, up);
 }
 
+void SpearEnemy_Ace::fSetEnemyState(int state)
+{
+    //-----ç°ÇÃAIÇ∆ìØÇ∂Ç»ÇÁèàóùÇÇµÇ»Ç¢-----//
+    if (ai_state == state) return;
+
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivideState::Start); break;
+    case AiState::Idle: fChangeState(DivideState::Idle); break;
+    case AiState::Move: fChangeState(DivideState::Move); break;
+    case AiState::WipeBegin: fChangeState(DivideState::WipeBegin); break;
+    case AiState::WipeAttack: fChangeState(DivideState::WipeAttack); break;
+    case AiState::WipeEnd: fChangeState(DivideState::WipeEnd); break;
+    case AiState::ThrustBegin: fChangeState(DivideState::ThrustBegin); break;
+    case AiState::Thrust: fChangeState(DivideState::Thrust); break;
+    case AiState::Stun: fChangeState(DivideState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 
 void SpearEnemy_Ace::fRegisterFunctions()
 {

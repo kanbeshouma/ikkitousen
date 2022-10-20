@@ -464,8 +464,6 @@ void BaseEnemy::fSetReceivePosition(DirectX::XMFLOAT3 pos)
     mStartlerp = true;
 }
 
-
-
 void BaseEnemy::fChangeState(const char* Tag_)
 {
     //-----Tag_と同じ名前をmap内から探す-----//

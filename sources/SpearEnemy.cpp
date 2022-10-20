@@ -29,6 +29,28 @@ void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 #endif
 }
 
+void SpearEnemy::fSetEnemyState(int state)
+{
+    //-----¡‚ÌAI‚Æ“¯‚¶‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
+    if (ai_state == state) return;
+
+    switch (ai_state)
+    {
+    case AiState::Start: fChangeState(DivedState::Start); break;
+    case AiState::Idle: fChangeState(DivedState::Idle); break;
+    case AiState::Move: fChangeState(DivedState::Move); break;
+    case AiState::Damaged: fChangeState(DivedState::Damaged); break;
+    case AiState::ThrustBegin: fChangeState(DivedState::ThrustBegin); break;
+    case AiState::ThrustMiddle: fChangeState(DivedState::ThrustMiddle); break;
+    case AiState::ThrustEnd: fChangeState(DivedState::ThrustEnd); break;
+    case AiState::Die: fChangeState(DivedState::Die); break;
+    case AiState::Stun: fChangeState(DivedState::Stun); break;
+    default:
+        break;
+    }
+
+}
+
 void SpearEnemy::fUpdateAttackCapsule()
 {
 
