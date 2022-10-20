@@ -235,43 +235,6 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
 
     CorrespondenceManager::Instance().UdpSend(data, size);
 
-#if 0
-    EnemiesMoveData send_data;
-
-    //-----コマンドを設定する-----//
-    send_data.cmd[ComLocation::ComList] = CommandList::Update;
-    send_data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
-    send_data.cmd[ComLocation::DataKind] = type;
-
-    EnemySendData::EnemyData enemy_d;
-
-    for (const auto enemy : mEnemyVec)
-    {
-        if (enemy->GetEnemyType() != type) continue;
-        //-----オブジェクト番号設定-----//
-        enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
-
-        //-----AIのステート設定-----//
-        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
-
-        //-----自分の位置を設定-----//
-        enemy_d.pos = enemy->fGetPosition();
-
-        //-----ターゲットの位置設定-----//
-        enemy_d.target_pos = enemy->GetTargetPosition();
-
-        send_data.enemy_data.emplace_back(enemy_d);
-    }
-
-    //-----データサイズを設定-----//
-    send_data.cmd[ComLocation::Other] = send_data.enemy_data.size();
-
-    int size = sizeof(send_data) + (send_data.enemy_data.size() * sizeof(EnemyData));
-
-    CorrespondenceManager::Instance().UdpSend((char*)&send_data, size);
-
-#endif // 0
-
 }
 
 void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySendData::EnemyData data)
@@ -286,7 +249,7 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySend
         if (enemy->fGetObjectId() != data.enemy_data[EnemyDataArray::ObjectId]) continue;
 
         //-----自分の位置を設定-----//
-        enemy->fSetPosition(data.pos);
+        enemy->fSetReceivePosition(data.pos);
 
         //-----AIステート設定-----//
         enemy->fSetEnemyState(data.enemy_data[EnemyDataArray::AiState]);

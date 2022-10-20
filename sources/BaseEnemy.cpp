@@ -52,6 +52,9 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         elapsedTime_ *= 0.8f;
     }
 
+    //-----位置の補間-----//
+    if (mStartlerp)LerpPosition(elapsedTime_);
+
     //-----無敵時間の設定-----//
     mInvincibleTime -= elapsedTime_;
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
@@ -393,7 +396,7 @@ bool BaseEnemy::fGetStun() const
 
 float BaseEnemy::fGetCurrentHitPoint() const
 {
-    return mCurrentHitPoint;
+    return static_cast<float>(mCurrentHitPoint);
 }
 
 bool BaseEnemy::fGetAppears() const
@@ -427,6 +430,38 @@ bool BaseEnemy::fGetIsBoss() const
 bool BaseEnemy::fGetInnerCamera()
 {
     return mIsInCamera;
+}
+
+void BaseEnemy::LerpPosition(float elapsedTime_)
+{
+    using namespace DirectX;
+    XMVECTOR p1{ XMLoadFloat3(&mPosition) };
+    XMVECTOR p2{ XMLoadFloat3(&mReceivePositiom) };
+    XMVECTOR dir{ p2 - p1 };
+
+    XMFLOAT3 l{};
+    XMStoreFloat3(&l, dir);
+
+    float length = Math::Length(l);
+
+    if (length > AllowableLimitPosition)
+    {
+        mPosition = Math::lerp(mPosition, mReceivePositiom, elapsedTime_);
+    }
+    else
+    {
+        mStartlerp = false;
+    }
+
+}
+
+void BaseEnemy::fSetReceivePosition(DirectX::XMFLOAT3 pos)
+{
+    //-----補間終了位置を設定-----//
+    mReceivePositiom = pos;
+
+    //-----補間開始-----//
+    mStartlerp = true;
 }
 
 

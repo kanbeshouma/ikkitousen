@@ -83,8 +83,22 @@ protected:
     std::vector<DirectX::XMFLOAT4X4> transform{};
 
     DirectX::XMFLOAT3 mPlayerPosition{};
+
+    //-----受信した位置を設定-----//
+    DirectX::XMFLOAT3 mReceivePositiom{};
+
+    //-----受信データの位置の許容値-----//
+    const float AllowableLimitPosition{ 2.0f };
+
+    //-----位置の補間をするフラグ-----//
+    bool mStartlerp{ false };
+
+    //-----位置の補間-----//
+    void LerpPosition(float elapsedTime_);
 public:
     void fSetPosition(DirectX::XMFLOAT3 pos) { mPosition = pos; }
+
+    void fSetReceivePosition(DirectX::XMFLOAT3 pos);
 
     DirectX::XMFLOAT3 GetTargetPosition() { return mPlayerPosition; }
 
