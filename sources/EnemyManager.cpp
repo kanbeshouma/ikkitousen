@@ -206,14 +206,16 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
         enemy_d.target_pos = enemy->GetTargetPosition();
 
 
-        std::memcpy(data + 4 + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
+        std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
 
         data_set_count++;
     }
     //-----データサイズを設定-----//
     data[ComLocation::Other] = data_set_count;
 
-    CorrespondenceManager::Instance().UdpSend(data, sizeof(data));
+    int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
+
+    CorrespondenceManager::Instance().UdpSend(data, size);
 
 #if 0
     EnemiesMoveData send_data;

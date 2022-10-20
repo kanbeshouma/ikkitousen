@@ -247,4 +247,7 @@ private:
     // ImGui
     bool mOpenGuiMenu{};
 
+    //-----敵の位置データを送信する時のコマンドのサイズ-----//
+    const int SendEnemyDataComSize = 4;
+
 };
