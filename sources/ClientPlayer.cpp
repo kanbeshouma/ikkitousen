@@ -3,6 +3,8 @@
 #include "ClientPlayer.h"
 #include"Correspondence.h"
 #include"user.h"
+#include"DebugConsole.h"
+
 
 ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
     :BasePlayer()
@@ -678,9 +680,11 @@ void ClientPlayer::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 
 void ClientPlayer::SendPlayerAttackResultData()
 {
+    int host = CorrespondenceManager::Instance().GetHostId();
+    int ope = CorrespondenceManager::Instance().GetOperationPrivateId();
     //-----マルチプレイ中ならデータ送信(ホストの場合データを送信する)-----//
     if (CorrespondenceManager::Instance().GetMultiPlay() &&
-        CorrespondenceManager::Instance().GetHostId() == CorrespondenceManager::Instance().GetOperationPrivateId())
+         host == ope)
     {
         PlayerAttackResultData data;
         data.cmd[ComLocation::ComList] = CommandList::Update;
@@ -694,6 +698,12 @@ void ClientPlayer::SendPlayerAttackResultData()
 
         //-----ブロックされたかどうか-----//
         data.block = is_block;
+
+        std::string txt = "プレイヤー : " + std::to_string(object_id) + "コンボカウント" + std::to_string(combo_count);
+        DebugConsole::Instance().WriteDebugConsole(txt, TextColor::Green);
+
+        //-----データを送信-----//
+        CorrespondenceManager::Instance().UdpSend((char*)&data,sizeof(PlayerAttackResultData));
     }
 }
 

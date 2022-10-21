@@ -89,6 +89,7 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 
 	//----------プレイヤー(操作することができる自分のこと)の番号を保存
 	CorrespondenceManager::Instance().SetOperationPrivateId(player_manager->GetPrivatePlayerId());
+	CorrespondenceManager::Instance().SetHostId(player_manager->GetPrivatePlayerId());
 
 	//-----サーバーのソケット情報の初期化-----//
 	if (CorrespondenceManager::Instance().InitializeServer())

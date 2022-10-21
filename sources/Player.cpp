@@ -1357,6 +1357,9 @@ void Player::SendPlayerAttackResultData()
 
         //-----ブロックされたかどうか-----//
         data.block = is_block;
+
+        //-----データを送信-----//
+        CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(PlayerAttackResultData));
     }
 }
 
