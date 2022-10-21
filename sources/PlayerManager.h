@@ -146,7 +146,12 @@ public:
     ////-----データを設定する-----//
     //=====================
     //第1引数 : データ
-    void SetPlayerAvoidanceData(PlayerActionData data);
+    void SetPlayerActionData(PlayerActionData data);
+
+    ////-----データを設定する-----//
+    //=====================
+    //第1引数 : データ
+    void SetPlayerPlayerAttackResultData(PlayerAttackResultData data);
 
 private:
     ////-----プレイヤーを入れる変数-----//

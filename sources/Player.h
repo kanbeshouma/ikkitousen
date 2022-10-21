@@ -121,6 +121,9 @@ private:
     //-----PositionData‚ğİ’è-----//
     void SendPositionData();
 
+    //-----PlayerAttackResultData‚ğİ’è-----//
+    void SendPlayerAttackResultData();
+
     //-----PlayerActionData‚ğİ’è-----//
     void SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec = {});
 

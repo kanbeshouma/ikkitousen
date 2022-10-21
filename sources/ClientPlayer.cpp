@@ -639,6 +639,8 @@ void ClientPlayer::InflectionParameters(float elapesd_time)
 
 }
 
+
+
 void ClientPlayer::AddCombo(int count, bool& block)
 {
     //ブロックされたかどうかを
@@ -649,8 +651,11 @@ void ClientPlayer::AddCombo(int count, bool& block)
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(count);
         is_enemy_hit = true;
+        combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+        //-----データを送信する-----//
+        SendPlayerAttackResultData();
     }
-    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
 }
 
 void ClientPlayer::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
@@ -662,10 +667,34 @@ void ClientPlayer::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
     {
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(hit_count1 + hit_count2);
+        combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+        //-----データを送信する-----//
+        SendPlayerAttackResultData();
         is_enemy_hit = true;
     }
-    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
+}
+
+
+void ClientPlayer::SendPlayerAttackResultData()
+{
+    //-----マルチプレイ中ならデータ送信(ホストの場合データを送信する)-----//
+    if (CorrespondenceManager::Instance().GetMultiPlay() &&
+        CorrespondenceManager::Instance().GetHostId() == CorrespondenceManager::Instance().GetOperationPrivateId())
+    {
+        PlayerAttackResultData data;
+        data.cmd[ComLocation::ComList] = CommandList::Update;
+        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerAttackResultCommand;
+
+        //-----プレイヤーの番号設定-----//
+        data.player_id = object_id;
+
+        //-----コンボカウント設定-----//
+        data.combo_count = combo_count;
+
+        //-----ブロックされたかどうか-----//
+        data.block = is_block;
+    }
 }
 
 void ClientPlayer::GetPlayerDirections()

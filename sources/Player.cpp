@@ -919,9 +919,6 @@ void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
     //-----誰のどのデータかを設定-----//
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerActionCommand;
 
-    //-----どのタイプのデータ設定-----//
-    data.cmd[ComLocation::DataKind] = PlayerActionKind::AvoidanceData;
-
     //-----どのボタンを押したかを設定-----//
     data.new_button_state = button;
 
@@ -946,6 +943,7 @@ void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
     instance.UdpSend((char*)&data, sizeof(PlayerActionData));
+
 
 }
 
@@ -1316,8 +1314,11 @@ void Player::AddCombo(int count, bool& block)
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(count);
         is_enemy_hit = true;
+        combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+        //-----データを送信する-----//
+        SendPlayerAttackResultData();
     }
-    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
 }
 
 void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
@@ -1330,10 +1331,35 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         is_enemy_hit = true;
+        combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+        //-----データを送信する-----//
+        SendPlayerAttackResultData();
     }
-    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
 
 }
+
+void Player::SendPlayerAttackResultData()
+{
+    //-----マルチプレイ中ならデータ送信(ホストの場合データを送信する)-----//
+    if (CorrespondenceManager::Instance().GetMultiPlay() &&
+        CorrespondenceManager::Instance().GetHostId() == CorrespondenceManager::Instance().GetOperationPrivateId())
+    {
+        PlayerAttackResultData data;
+        data.cmd[ComLocation::ComList] = CommandList::Update;
+        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerAttackResultCommand;
+
+        //-----プレイヤーの番号設定-----//
+        data.player_id = object_id;
+
+        //-----コンボカウント設定-----//
+        data.combo_count = combo_count;
+
+        //-----ブロックされたかどうか-----//
+        data.block = is_block;
+    }
+}
+
 
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {

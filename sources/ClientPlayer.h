@@ -661,4 +661,7 @@ public:
     void SetName(std::string n);
 
     void SetPlayerToClientLength(float l)override { player_length = l; }
+private:
+    //-----PlayerAttackResultData‚ğİ’è-----//
+    void SendPlayerAttackResultData();
 };

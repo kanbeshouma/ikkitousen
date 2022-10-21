@@ -38,16 +38,14 @@ enum UpdateCommand
     //-----プレイヤーのアクションデータ-----//
     PlayerActionCommand,
 
+    //-----プレイヤーの当たり判定(攻撃関連)のデータ-----//
+    PlayerAttackResultCommand,
+
     //-----敵の出現データ-----//
     EnemySpawnCommand,
 
     //-----敵の基本データ-----//
     EnemiesMoveCommand,
-};
-
-enum PlayerActionKind
-{
-    AvoidanceData,
 };
 
 
@@ -190,6 +188,22 @@ struct PlayerActionData
     GamePadButton new_button_state;
 };
 
+//-----プレイヤーの当たり判定(攻撃関連)のデータ-----//
+struct PlayerAttackResultData
+{
+    //通信コマンド
+    char cmd[4]{};
+
+    //-----プレイヤーの番号-----//
+    int player_id{ -1 };
+
+    //-----コンボカウント-----//
+    float combo_count{};
+
+    //-----ブロックされたかどうか-----//
+    bool block{ false };
+};
+
 //-----プレイヤーのデータ構造体が全て入っている-----//
 struct PlayerAllDataStruct
 {
@@ -200,7 +214,10 @@ struct PlayerAllDataStruct
     std::vector<PlayerPositionData> player_position_data;
 
     //-----プレイヤーのアクションデータ-----//
-    std::vector<PlayerActionData> player_avoidance_data;
+    std::vector<PlayerActionData> player_action_data;
+
+    //-----プレイヤーの攻撃当たり判定データ(結果が入る)-----//
+    std::vector<PlayerAttackResultData> player_attack_result_data;
 
 };
 

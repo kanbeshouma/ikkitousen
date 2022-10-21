@@ -151,7 +151,7 @@ void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
 
 }
 
-void PlayerManager::SetPlayerAvoidanceData(PlayerActionData data)
+void PlayerManager::SetPlayerActionData(PlayerActionData data)
 {
     for (auto& player : players)
     {
@@ -159,6 +159,20 @@ void PlayerManager::SetPlayerAvoidanceData(PlayerActionData data)
         if (player->GetObjectId() == data.player_id)
         {
             player->SetPlayerAvoidanceData(data);
+        }
+    }
+
+}
+
+void PlayerManager::SetPlayerPlayerAttackResultData(PlayerAttackResultData data)
+{
+    for (auto& player : players)
+    {
+        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
+        if (player->GetObjectId() == data.player_id)
+        {
+            //-----結果を入れる-----//
+            player->AddCombo(data.combo_count, data.block);
         }
     }
 
@@ -269,31 +283,11 @@ void PlayerManager::PlayerAttackVsEnemy(EnemyManager* enemy_manager, GraphicsPip
         block = false;
         if (player->GetIsAwakening())
         {
-            player->AwakingAddCombo
-            (
-                enemy_manager->fCalcPlayerAttackVsEnemies
-                (
-                    player->GetSwordCapsuleParam(0).start,
-                    player->GetSwordCapsuleParam(0).end,
-                    player->GetSwordCapsuleParam(0).rasius,
-                    player->GetPlayerPower(),
-                    graphics,
-                    elapsed_time,
-                    block
-                ),
-                enemy_manager->fCalcPlayerAttackVsEnemies
-                (
-                    player->GetSwordCapsuleParam(1).start,
-                    player->GetSwordCapsuleParam(1).end,
-                    player->GetSwordCapsuleParam(1).rasius,
-                    player->GetPlayerPower(),
-                    graphics,
-                    elapsed_time,
-                    block
-                )
-                , block
-            );
+            //-----覚醒中は武器が二つあるから二つ分当たり判定をとる-----//
+            int hit_count_1{ enemy_manager->fCalcPlayerAttackVsEnemies(player->GetSwordCapsuleParam(0).start,player->GetSwordCapsuleParam(0).end,player->GetSwordCapsuleParam(0).rasius,player->GetPlayerPower(),graphics,elapsed_time,block)};
+            int hit_count_2{ enemy_manager->fCalcPlayerAttackVsEnemies(player->GetSwordCapsuleParam(1).start,player->GetSwordCapsuleParam(1).end,player->GetSwordCapsuleParam(1).rasius,player->GetPlayerPower(),graphics,elapsed_time,block)};
 
+            player->AwakingAddCombo(hit_count_1,hit_count_2,block);
         }
         else
         {

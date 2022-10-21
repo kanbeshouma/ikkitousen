@@ -410,13 +410,10 @@ void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
         mIsAttack = false;
     }
 
-
     if (mpModel->end_of_animation(mAnimPara))
     {
         mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_IDLE);
     }
-
-
 }
 
 void BossUnit::fStunInit()
