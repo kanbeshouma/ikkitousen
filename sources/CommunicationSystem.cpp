@@ -433,6 +433,7 @@ void CommunicationSystem::TcpAccept(char* port)
     }
     else
     {
+#if 0
         //----------クライアント検索----------//
         for (int i = 0; i < MAX_CLIENT; i++)
         {
@@ -448,6 +449,8 @@ void CommunicationSystem::TcpAccept(char* port)
                 return;
             }
         }
+
+#endif // 0
         //----------クライアント受け入れ----------//
         for (int i = 0; i < MAX_CLIENT; i++)
         {

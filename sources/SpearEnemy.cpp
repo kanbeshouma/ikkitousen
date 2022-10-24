@@ -24,6 +24,7 @@ void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     if (display_scape_imgui)
     {
         ImGui::Begin(name.c_str());
+        ImGui::DragFloat3("position", &mPosition.x, 0.1f);
         ImGui::End();
     }
 #endif

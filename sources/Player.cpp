@@ -902,6 +902,8 @@ void Player::SendPositionData()
     //-----位置設定-----//
     data.position = position;
 
+    //-----入力情報-----//
+    data.move_vec = GetInputMoveVec();
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
@@ -927,9 +929,6 @@ void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
 
     //-----位置設定-----//
     data.position = position;
-
-    //-----回転値設定-----//
-    data.orientation = orientation;
 
     //-----チャージ位置設定-----//
     data.charge_point = charge_point;

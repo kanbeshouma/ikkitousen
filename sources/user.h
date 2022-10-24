@@ -23,6 +23,11 @@
 #include <string>
 #include <windows.h>
 #include "imgui_include.h"
+
+//-----ˆÓ–¡‚Ì‚È‚¢ˆø”-----//
+#define EmptyArgument 1.0f
+
+
 //------< inline function >-----------------------------------------------------
 namespace Math
 {

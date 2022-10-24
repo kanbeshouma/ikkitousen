@@ -158,6 +158,9 @@ struct PlayerPositionData
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
 
+    //-----入力方向-----//
+    DirectX::XMFLOAT3 move_vec{};
+
 };
 
 //-----プレイヤーのアクションデータ(ボタン入力と位置、回転など)-----//
@@ -171,9 +174,6 @@ struct PlayerActionData
 
     //-----位置-----//
     DirectX::XMFLOAT3 position{};
-
-    //-----回転-----//
-    DirectX::XMFLOAT4 orientation{0,0,0,1.0f};
 
     //-----チャージポイント-----//
     DirectX::XMFLOAT3 charge_point{};

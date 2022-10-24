@@ -1124,11 +1124,11 @@ void Player::TransitionChargeInit()
 
     //-----データ送信-----//
     //SendActionData(GamePad::BTN_ATTACK_B);
+    //-----データ送信-----//
+    SendPlayerActionData(GamePad::BTN_ATTACK_B ,GetInputMoveVec());
 
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
-    //-----データ送信-----//
-    SendPlayerActionData(GamePad::BTN_ATTACK_B ,GetInputMoveVec());
 }
 
 void Player::TransitionCharge(float blend_seconds)

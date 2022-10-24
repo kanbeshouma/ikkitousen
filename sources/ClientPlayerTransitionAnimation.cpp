@@ -51,7 +51,7 @@ void ClientPlayer::TransitionAvoidance()
     //方向転換の回数
     avoidance_direction_count = 3;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+    //charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //-----------------------------------------------------------------------------------------//
     //覚醒状態の時の回避アニメーションの設定
     if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingAvoidance, false, true);
@@ -135,7 +135,7 @@ void ClientPlayer::TransitionChargeInit()
     //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+    //charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //加速のレート
     lerp_rate = 1.0f;
     //アニメーションをしていいかどうか
@@ -234,7 +234,7 @@ void ClientPlayer::TransitionAttackType2(float blend_seconds)
     //アニメーション速度の設定
     animation_speed = ATTACK2_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+    //charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間

@@ -489,7 +489,16 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
         //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
         //そこに向かって補完していく
         SetLerpPosition(data.position);
+
     }
+    else
+    {
+        //-----許容範囲より内側なら位置をそのまま代入する-----//
+        position = data.position;
+    }
+
+    //-----入力データ設定する-----//
+    SetMoveVecter(data.move_vec);
 }
 
 void ClientPlayer::SetPlayerAvoidanceData(PlayerActionData data)
@@ -500,9 +509,6 @@ void ClientPlayer::SetPlayerAvoidanceData(PlayerActionData data)
     //そこに向かって補完していく
     SetLerpPosition(data.position);
 
-    //-----回転値設定-----//
-    orientation = data.orientation;
-
     //-----チャージ位置設定-----//
     charge_point = data.charge_point;
 
@@ -511,6 +517,9 @@ void ClientPlayer::SetPlayerAvoidanceData(PlayerActionData data)
 
     //-----入力方向データを設定-----//
     receive_action_vec = data.move_vec;
+
+    //-----入力データ設定する-----//
+    SetMoveVecter(data.move_vec);
 
     //-----ボタンデータを設定-----//
     SetSendButton(data.new_button_state);
