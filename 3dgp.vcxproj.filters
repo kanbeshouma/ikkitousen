@@ -205,9 +205,6 @@
     <Filter Include="Sources\Character\player\PlayerManager">
       <UniqueIdentifier>{db573eac-50b2-4b29-b82b-eab301f623ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Character\player\Base">
-      <UniqueIdentifier>{00cd1c45-4ac4-4145-b895-766d9697ac75}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Character\player\Player">
       <UniqueIdentifier>{c2fad5e8-b3a4-47d1-a360-cf9580b63860}</UniqueIdentifier>
     </Filter>
@@ -255,6 +252,9 @@
     </Filter>
     <Filter Include="Sources\Character\enemy\EnemyManager">
       <UniqueIdentifier>{1fd081d3-8963-4a2c-88e9-3ba60604c626}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Character\player\Base">
+      <UniqueIdentifier>{00cd1c45-4ac4-4145-b895-766d9697ac75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

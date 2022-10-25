@@ -262,8 +262,12 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
 
 
-	std::vector<DirectX::XMFLOAT3> pos;
-	pos.emplace_back(player->GetPosition());
+	std::vector<std::tuple<int, DirectX::XMFLOAT3>> pos;
+	//std::tuple<object_id,position>
+		//-----’l‚ð“ü‚ê‚é-----//
+	auto tuple = std::make_tuple(player->GetObjectId(), player->GetPosition());
+	pos.emplace_back(tuple);
+
 	enemyManager->fSetPlayerPosition(pos);
 	mBulletManager.fUpdate(elapsed_time);
 

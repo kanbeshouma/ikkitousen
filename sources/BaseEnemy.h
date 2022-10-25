@@ -86,6 +86,9 @@ protected:
 
     DirectX::XMFLOAT3 mPlayerPosition{};
 
+    //-----今ターゲットしているプレイヤーの番号-----//
+    int target_player_id{ -1 };
+
     //-----受信した位置を設定-----//
     DirectX::XMFLOAT3 mReceivePositiom{};
 
@@ -103,6 +106,10 @@ public:
     void fSetReceivePosition(DirectX::XMFLOAT3 pos);
 
     DirectX::XMFLOAT3 GetTargetPosition() { return mPlayerPosition; }
+
+    void fSetTargetPlayerId(int id) { target_player_id = id; }
+
+    int fGetTargetPlayerId() { return target_player_id; }
 
 protected:
     SkinnedMesh::anim_Parameters mAnimPara{};

@@ -54,8 +54,9 @@ public:
 
     ////-----プレイヤーの位置取得-----//
     //=========================
-    //戻り値 : 登録されているプレイヤーの位置の配列
-    std::vector<DirectX::XMFLOAT3> GetPosition();
+    //戻り値 : 登録されているプレイヤーのオブジェクト番号と位置
+    //std::tuple<object_id,position>
+    std::vector<std::tuple<int,DirectX::XMFLOAT3>> GetPosition();
 
     ////-----チェイン攻撃の作成時間中かどうか-----//
     bool DuringSearchTime();

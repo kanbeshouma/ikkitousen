@@ -224,7 +224,7 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
         enemy_d.target_pos = enemy->GetTargetPosition();
 
         //-----体力-----//
-        enemy_d.hitpoint = enemy->fGetCurrentHitPoint();
+        enemy_d.hitpoint = static_cast<int>(enemy->fGetCurrentHitPoint());
 
         std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
 
@@ -621,33 +621,52 @@ void EnemyManager::fSetIsPlayerChainTime(bool IsChain_)
     mIsPlayerChainTime = IsChain_;
 }
 
-void EnemyManager::fSetPlayerPosition(std::vector<DirectX::XMFLOAT3> Position_)
+void EnemyManager::fSetPlayerPosition(std::vector<std::tuple<int, DirectX::XMFLOAT3>> Position_)
 {
-    mPlayerPosition = Position_;
+
+    //std::tuple<object_id,position>
+
+    //-----中に入っているデータを削除-----//
+    mPlayerPosition.clear();
 
     //-----一番近いプレイヤーの位置-----//
     DirectX::XMFLOAT3 near_pos{};
+
     //-----一番近いプレイヤーの位置との距離-----//
-    float near_length{ 100000.0f };
+    float near_length{ FLT_MAX };
+
+    int id{ -1 };
     //-----計算した長さを入れる-----//
     float length{};
 
     for(const auto& enemy:mEnemyVec)
     {
         near_pos = {};
-        near_length = 100000.0f;
+        near_length = FLT_MAX;
         for (const auto p : Position_)
         {
-            length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), p);
+
+            length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), std::get<1>(p));
+
+            //-----位置を配列に保存-----//
+            mPlayerPosition.emplace_back(std::get<1>(p));
+
             //-----一番近い距離と今の敵の位置との距離を比較して小さかったら値を更新-----//
             if (near_length > length)
             {
                 near_length = length;
-                near_pos = p;
+
+                //-----位置を保存-----//
+                near_pos = std::get<1>(p);
+                //-----idを保存------//
+                id = std::get<0>(p);
             }
         }
         enemy->fSetPlayerPosition(near_pos);
+        enemy->fSetTargetPlayerId(id);
     }
+
+
 }
 
 void EnemyManager::fSetPlayerSearch(bool Arg_)
@@ -936,6 +955,8 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
+
+#if 0
     //-----一番近いプレイヤーの位置-----//
     DirectX::XMFLOAT3 near_pos{};
     //-----一番近いプレイヤーの位置との距離-----//
@@ -943,12 +964,14 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
     //-----計算した長さを入れる-----//
     float length{};
 
+#endif // 0
+
     // 更新
     for (const auto enemy : mEnemyVec)
     {
+#if 0
         near_pos = {};
         near_length = 100000.0f;
-
         for (const auto p : mPlayerPosition)
         {
             length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), p);
@@ -960,7 +983,9 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
             }
         }
 
-            enemy->fSetPlayerPosition(near_pos);
+       enemy->fSetPlayerPosition(near_pos);
+#endif // 0
+
             enemy->fUpdate(Graphics_,elapsedTime_);
             if (enemy->fGetIsAlive() == false)
             {

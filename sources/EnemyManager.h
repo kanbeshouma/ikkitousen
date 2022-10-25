@@ -95,7 +95,7 @@ public:
     [[nodiscard]] bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
     void fSetIsPlayerChainTime(bool IsChain_);//プレイヤーがチェイン状態であるかどうかをエネミーが受け取る関数
-    void fSetPlayerPosition(std::vector<DirectX::XMFLOAT3> Position_);
+    void fSetPlayerPosition(std::vector<std::tuple<int, DirectX::XMFLOAT3>> Position_);
     void fSetPlayerSearch(bool Arg_); // プレイヤーがチェイン攻撃中にTrue
     void fSetIsTutorial(bool Arg_);
 public:

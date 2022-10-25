@@ -228,9 +228,10 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             mStartGame = false;
         }
         break;
+    case WaveState::Game:
         // ƒNƒŠƒAó‘Ô‚É‘JˆÚ
         if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
-    case WaveState::Game:
+
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
         break;

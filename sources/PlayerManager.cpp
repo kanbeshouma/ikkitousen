@@ -239,13 +239,16 @@ bool PlayerManager::GetIsJustAvoidance()
     return false;
 }
 
-std::vector<DirectX::XMFLOAT3> PlayerManager::GetPosition()
+std::vector<std::tuple<int, DirectX::XMFLOAT3>> PlayerManager::GetPosition()
 {
-    std::vector<DirectX::XMFLOAT3> pos;
+    //std::tuple<object_id,position>
+    std::vector<std::tuple<int, DirectX::XMFLOAT3>> pos;
+
     for (auto& player : players)
     {
         //-----’l‚ð“ü‚ê‚é-----//
-        pos.emplace_back(player->GetPosition());
+        auto tuple = std::make_tuple(player->GetObjectId(), player->GetPosition());
+        pos.emplace_back(tuple);
     }
     return pos;
 }
