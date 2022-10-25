@@ -1058,6 +1058,9 @@ void SceneMultiGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, floa
 	//-----敵のインスタンスを生成-----//
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
 
+	//-----クライアントがロックオンしている敵を設定する-----//
+	player_manager->SearchClientPlayerLockOnEnemy(enemyManager);
+
 	//-----敵とのあたり判定(当たったらコンボ加算)-----//
 	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
 

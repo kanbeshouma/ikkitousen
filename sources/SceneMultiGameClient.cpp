@@ -1005,6 +1005,9 @@ void SceneMultiGameClient::PlayerManagerUpdate(GraphicsPipeline& graphics, float
 	//-----更新処理-----//
 	player_manager->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 
+	//-----クライアントがロックオンしている敵を設定する-----//
+	player_manager->SearchClientPlayerLockOnEnemy(enemyManager);
+
 	//-----ロックオンのポストエフェクトをかける-----//
 	player_manager->LockOnPostEffect(elapsed_time, post_effect.get());
 

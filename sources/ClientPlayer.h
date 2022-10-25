@@ -119,7 +119,7 @@ public:
     void ChangePlayerJustificationLength()override {};
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
-    void SetPlayerAvoidanceData(PlayerActionData data)override;
+    void SetPlayerActionData(PlayerActionData data)override;
 
 private:
     //プレイヤーの最大体力
@@ -397,7 +397,7 @@ private:
         return nullptr;
     }
     //一番近い敵を持って来てその位置をセットする
-    void SetTarget(BaseEnemy* target_enemy)override {};
+    void SetTarget(BaseEnemy* target_enemy)override;
     DirectX::XMFLOAT3 GetTarget() override { return target; };
     void AddCombo(int count, bool& block)override;
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
@@ -664,4 +664,6 @@ public:
 private:
     //-----PlayerAttackResultDataを設定-----//
     void SendPlayerAttackResultData();
+private:
+    void LockOn();
 };

@@ -91,6 +91,9 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     //クリア演出中じゃないとき
     else
     {
+        //-----ロックオンしている敵の位置を設定-----//
+        LockOn();
+
         PlayerJustification(elapsed_time, position);
 
         GetPlayerDirections();
@@ -489,7 +492,6 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
         //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
         //そこに向かって補完していく
         SetLerpPosition(data.position);
-
     }
     else
     {
@@ -501,13 +503,13 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     SetMoveVecter(data.move_vec);
 }
 
-void ClientPlayer::SetPlayerAvoidanceData(PlayerActionData data)
+void ClientPlayer::SetPlayerActionData(PlayerActionData data)
 {
 
     //-----位置データを設定-----//
     //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
     //そこに向かって補完していく
-    SetLerpPosition(data.position);
+    position = data.position;
 
     //-----チャージ位置設定-----//
     charge_point = data.charge_point;
@@ -652,6 +654,11 @@ void ClientPlayer::InflectionParameters(float elapesd_time)
 
 
 
+void ClientPlayer::SetTarget(BaseEnemy* target_enemies)
+{
+    target_enemy = target_enemies;
+}
+
 void ClientPlayer::AddCombo(int count, bool& block)
 {
     //ブロックされたかどうかを
@@ -713,6 +720,18 @@ void ClientPlayer::SendPlayerAttackResultData()
 
         //-----データを送信-----//
         CorrespondenceManager::Instance().UdpSend((char*)&data,sizeof(PlayerAttackResultData));
+    }
+}
+
+void ClientPlayer::LockOn()
+{
+    //-----死んでいたら処理をとばす-----//
+    if (condition_state == ConditionState::Die) return;
+
+    //-----敵の位置を設定する-----//
+    if (target_enemy != nullptr)
+    {
+        target = target_enemy->fGetPosition();
     }
 }
 

@@ -158,7 +158,7 @@ void PlayerManager::SetPlayerActionData(PlayerActionData data)
         //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
         if (player->GetObjectId() == data.player_id)
         {
-            player->SetPlayerAvoidanceData(data);
+            player->SetPlayerActionData(data);
         }
     }
 
@@ -319,6 +319,22 @@ void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
         enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
             player->GetBodyCapsuleParam().end,
             player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+    }
+}
+
+void PlayerManager::SearchClientPlayerLockOnEnemy(EnemyManager* enemy_manager)
+{
+    for (auto& player : players)
+    {
+        //-----自分(操作しているプレイヤー)ならとばす-----//
+        if (player->GetObjectId() == private_object_id) continue;
+        for (const auto enemy : enemy_manager->fGetEnemies())
+        {
+            //-----同じ番号でなかったらとばす-----//
+            if (player->GetLockPnEnemyId() != enemy->fGetObjectId()) continue;
+            player->SetTarget(enemy);
+            break;
+        }
     }
 }
 

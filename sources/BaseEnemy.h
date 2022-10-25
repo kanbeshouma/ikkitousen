@@ -60,6 +60,7 @@ public:
     [[nodiscard]] const Capsule& fGetAttackCapsule()const;
     [[nodiscard]] const DirectX::XMFLOAT3& fGetPosition()const;
     [[nodiscard]] bool fGetIsAlive()const;
+    [[nodiscard]] void fSetIsAlive(bool arg);
     [[nodiscard]] bool fComputeAndGetIntoCamera()const;
     [[nodiscard]] int fGetAttackPower()const;
     [[nodiscard]] float fGetAttackInvTime()const;
@@ -67,6 +68,7 @@ public:
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
     [[nodiscard]] float fGetCurrentHitPoint()const;
+    [[nodiscard]] void fSetCurrentHitPoint(int hp);
     //-----ìGÇ™èoåªÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©----//
     [[nodiscard]] bool fGetAppears()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;

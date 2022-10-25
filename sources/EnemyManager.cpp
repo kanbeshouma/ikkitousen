@@ -223,6 +223,8 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
         //-----ターゲットの位置設定-----//
         enemy_d.target_pos = enemy->GetTargetPosition();
 
+        //-----体力-----//
+        enemy_d.hitpoint = enemy->fGetCurrentHitPoint();
 
         std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
 
@@ -256,6 +258,9 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySend
 
         //-----ターゲットの位置を設定-----//
         enemy->fSetPlayerPosition(data.target_pos);
+
+        //-----体力設定------//
+        enemy->fSetCurrentHitPoint(data.hitpoint);
     }
 }
 
@@ -304,6 +309,17 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     }
 
     //-----受信した敵のデータを設定する-----//
+    for (const auto& data : receive_data.enemy_die_data)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            if (enemy->fGetObjectId() == data.object_id)
+            {
+                enemy->fDie(graphics_);
+            }
+        }
+    }
+
     for (const auto& all_data : receive_data.enemy_move_data)
     {
         for (const auto& e_data : all_data.enemy_data)

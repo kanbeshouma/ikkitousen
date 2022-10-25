@@ -472,6 +472,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                     velocity.y *= 0.2f;
                     velocity.z *= 0.2f;
                     TransitionAttackType2(attack_animation_blends_speeds.z);
+
                 }
             }
         }
@@ -1251,6 +1252,9 @@ void Player::TransitionAttackType2(float blend_seconds)
     //-----データ送信-----//
     //SendActionData(GamePad::BTN_ATTACK_B);
 
+    //-----データ送信-----//
+    SendPlayerActionData(GamePad::BTN_ATTACK_B);
+
     //２撃目の更新関数に切り替える
     player_activity = &Player::AttackType2Update;
 }
@@ -1289,6 +1293,9 @@ void Player::TransitionAttackType3(float blend_seconds)
 
     //-----データ送信-----//
     //SendActionData(GamePad::BTN_ATTACK_B);
+
+    //-----データ送信-----//
+    SendPlayerActionData(GamePad::BTN_ATTACK_B);
 
     //３撃目の更新関数に切り替える
     player_activity = &Player::AttackType3Update;

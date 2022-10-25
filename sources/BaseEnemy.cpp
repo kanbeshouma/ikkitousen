@@ -1,7 +1,12 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"BaseEnemy.h"
 #include "collision.h"
 #include"resource_manager.h"
 #include"Operators.h"
+#include"NetWorkInformationStucture.h"
+#include"Correspondence.h"
+
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const char* FileName_,
                      const EnemyParamPack& Param_,
@@ -136,6 +141,18 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
     // カメラシェイク
     camera_shake->reset(Graphics_);
     audio_manager->play_se(SE_INDEX::ENEMY_EXPLOSION);
+
+    //-----死んだことを送信する-----//
+    EnemySendData::EnemyDieData data;
+
+    data.cmd[ComLocation::ComList] = CommandList::Update;
+    data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemyDieCommand;
+
+    data.object_id = object_id;
+
+    //-----データを送信する-----//
+    CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(EnemySendData::EnemyDieData));
+
 }
 
 
@@ -350,6 +367,11 @@ bool BaseEnemy::fGetIsAlive() const
     return mIsAlive;
 }
 
+void BaseEnemy::fSetIsAlive(bool arg)
+{
+    mIsAlive = arg;
+}
+
 bool BaseEnemy::fComputeAndGetIntoCamera() const
 {
     const DirectX::XMFLOAT3 minPoint{
@@ -397,6 +419,11 @@ bool BaseEnemy::fGetStun() const
 float BaseEnemy::fGetCurrentHitPoint() const
 {
     return static_cast<float>(mCurrentHitPoint);
+}
+
+void BaseEnemy::fSetCurrentHitPoint(int hp)
+{
+    mCurrentHitPoint = hp;
 }
 
 bool BaseEnemy::fGetAppears() const
@@ -451,17 +478,35 @@ void BaseEnemy::LerpPosition(float elapsedTime_)
     else
     {
         mStartlerp = false;
+        mPosition = mReceivePositiom;
     }
 
 }
 
 void BaseEnemy::fSetReceivePosition(DirectX::XMFLOAT3 pos)
 {
-    //-----補間終了位置を設定-----//
-    mReceivePositiom = pos;
+    using namespace DirectX;
+    XMVECTOR p1{ XMLoadFloat3(&mPosition) };
+    XMVECTOR p2{ XMLoadFloat3(&mReceivePositiom) };
+    XMVECTOR dir{ p2 - p1 };
 
-    //-----補間開始-----//
-    mStartlerp = true;
+    XMFLOAT3 l{};
+    XMStoreFloat3(&l, dir);
+
+    float length = Math::Length(l);
+
+    if (length > AllowableLimitPosition)
+    {
+        //-----補間終了位置を設定-----//
+        mReceivePositiom = pos;
+
+        //-----補間開始-----//
+        mStartlerp = true;
+    }
+    else
+    {
+        mPosition = pos;
+    }
 }
 
 void BaseEnemy::fChangeState(const char* Tag_)

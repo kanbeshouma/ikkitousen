@@ -72,6 +72,9 @@ public:
     ////-----オブジェクトIDのゲッター-----//
     int GetObjectId() { return object_id; }
 
+    //------クライアントのロックオンしている敵の番号-----//
+    int GetLockPnEnemyId() { return lock_on_enemy_id; }
+
     virtual  void SetEndDashEffect(bool a) = 0;
   virtual  void SetCameraTarget(DirectX::XMFLOAT3 p) = 0;
   virtual  void SetBossCamera(bool boss_c) = 0;
@@ -144,7 +147,7 @@ public:
     //-----受信データを設定する-----//
     virtual void SetReceiveData(PlayerMoveData data) = 0;
     virtual void SetReceivePositionData(PlayerPositionData data) = 0;
-    virtual void SetPlayerAvoidanceData(PlayerActionData data) = 0;
+    virtual void SetPlayerActionData(PlayerActionData data) = 0;
 public:
     virtual DirectX::XMFLOAT3 GetEnentCameraEye() = 0;
     virtual DirectX::XMFLOAT3 GetEnentCameraJoint() = 0;

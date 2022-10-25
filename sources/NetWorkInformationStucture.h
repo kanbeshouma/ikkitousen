@@ -46,6 +46,9 @@ enum UpdateCommand
 
     //-----敵の基本データ-----//
     EnemiesMoveCommand,
+
+    //-----敵の死亡データ-----//
+    EnemyDieCommand,
 };
 
 
@@ -251,7 +254,6 @@ namespace EnemySendData
         EnemyType type{};
     };
 
-
     //-----敵の基本データ-----//
     struct EnemyData
     {
@@ -266,6 +268,9 @@ namespace EnemySendData
 
         //-----ターゲットの位置-----//
         DirectX::XMFLOAT3 target_pos;
+
+        //-----体力-----//
+        int hitpoint{};
     };
 
     //-----敵の基本データが入っている構造体-----//
@@ -282,6 +287,15 @@ namespace EnemySendData
         //-----敵のデータ-----//
         std::vector<EnemyData> enemy_data;
     };
+
+    //-----敵の死亡データ-----//
+    struct EnemyDieData
+    {
+        //-----通信コマンド-----//
+        char cmd[4]{};
+
+        int object_id{ -1 };
+    };
 }
 //-----敵のデータ構造体が全て入っている-----//
 struct EnemyAllDataStruct
@@ -292,4 +306,6 @@ struct EnemyAllDataStruct
     //-----敵の基本データ-----//
     std::vector<EnemySendData::EnemiesMoveData> enemy_move_data;
 
+    //-----敵の死亡データ-----//
+    std::vector<EnemySendData::EnemyDieData> enemy_die_data;
 };

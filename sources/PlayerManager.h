@@ -72,6 +72,9 @@ public:
     ////-----敵の攻撃との当たり判定-----//
     void EnemyAttackVsPlayer(EnemyManager* enemy_manager);
 
+    ////-----クライアントがロックオンしている敵を検索する-----//
+    void SearchClientPlayerLockOnEnemy(EnemyManager* enemy_manager);
+
     ////-----敵の弾とプレイヤーの当たり判定-----//
     void BulletVsPlayer(BulletManager& bullet_manager);
 

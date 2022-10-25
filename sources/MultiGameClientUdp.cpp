@@ -122,7 +122,15 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
 
         break;
     }
-
+    //-----敵の死亡データ-----//
+    case UpdateCommand::EnemyDieCommand:
+    {
+        //-----データをキャスト-----//
+        EnemySendData::EnemyDieData* d = (EnemySendData::EnemyDieData*)data;
+        //-----データを保存----//
+        receive_all_enemy_data.enemy_die_data.emplace_back(*d);
+        break;
+    }
     default:
         break;
     }

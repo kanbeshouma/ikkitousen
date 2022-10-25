@@ -110,7 +110,7 @@ public:
     void ChangePlayerJustificationLength()override;
     void SetReceiveData(PlayerMoveData data) override {}
     void SetReceivePositionData(PlayerPositionData data)override {}
-    void SetPlayerAvoidanceData(PlayerActionData data)override {}
+    void SetPlayerActionData(PlayerActionData data)override {}
 private:
     //-----データを送信する-----//
     void SendPlayerData(float elapsed_time);
