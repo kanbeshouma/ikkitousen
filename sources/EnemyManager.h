@@ -4,12 +4,16 @@
 #include"EnemiesEditor.h"
 #include"practical_entities.h"
 #include"BossRushUnit.h"
+#include"BasePlayer.h"
 #include<vector>
 
 
 #include "Common.h"
 #include "LastBoss.h"
 #include"NetWorkInformationStucture.h"
+
+//-----前方宣言-----//
+class PlayerManager;
 
 //****************************************************************
 //
@@ -95,7 +99,13 @@ public:
     [[nodiscard]] bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
     void fSetIsPlayerChainTime(bool IsChain_);//プレイヤーがチェイン状態であるかどうかをエネミーが受け取る関数
+
+    //-----一番近いプレイヤーの位置を設定する-----//
     void fSetPlayerPosition(std::vector<std::tuple<int, DirectX::XMFLOAT3>> Position_);
+
+    //-----ターゲットIDからプレイヤーの位置を取得する-----//
+    void fSetPlayerIdPosition(const std::vector<std::shared_ptr<BasePlayer>>& players);
+
     void fSetPlayerSearch(bool Arg_); // プレイヤーがチェイン攻撃中にTrue
     void fSetIsTutorial(bool Arg_);
 public:

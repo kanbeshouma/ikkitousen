@@ -231,7 +231,9 @@ namespace EnemySendData
     enum EnemyDataArray
     {
         ObjectId,
-        AiState
+        AiState,
+        TargetId,
+        Hitpoint,
     };
 
 
@@ -261,16 +263,12 @@ namespace EnemySendData
         //==============
         //[0] : object_id
         //[1] : state(AI)
+        //[2] : target_id
+        //[3] : hitpoint
         char enemy_data[4];
 
         //-----自分の位置-----//
         DirectX::XMFLOAT3 pos;
-
-        //-----ターゲットの位置-----//
-        DirectX::XMFLOAT3 target_pos;
-
-        //-----体力-----//
-        int hitpoint{};
     };
 
     //-----敵の基本データが入っている構造体-----//

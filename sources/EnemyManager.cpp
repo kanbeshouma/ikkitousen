@@ -31,6 +31,7 @@
 #include <fstream>
 #include <chrono>
 
+
 //****************************************************************
 //
 // 敵の管理クラス
@@ -217,14 +218,14 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
         //-----AIのステート設定-----//
         enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
 
-        //-----自分の位置を設定-----//
-        enemy_d.pos = enemy->fGetPosition();
-
-        //-----ターゲットの位置設定-----//
-        enemy_d.target_pos = enemy->GetTargetPosition();
+        //-----ターゲットしているプレイヤーのId-----//
+        enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
 
         //-----体力-----//
-        enemy_d.hitpoint = static_cast<int>(enemy->fGetCurrentHitPoint());
+        enemy_d.enemy_data[EnemyDataArray::Hitpoint] = static_cast<int>(enemy->fGetCurrentHitPoint());
+
+        //-----自分の位置を設定-----//
+        enemy_d.pos = enemy->fGetPosition();
 
         std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
 
@@ -257,10 +258,10 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySend
         enemy->fSetEnemyState(data.enemy_data[EnemyDataArray::AiState]);
 
         //-----ターゲットの位置を設定-----//
-        enemy->fSetPlayerPosition(data.target_pos);
+        enemy->fSetTargetPlayerId(data.enemy_data[EnemyDataArray::TargetId]);
 
         //-----体力設定------//
-        enemy->fSetCurrentHitPoint(data.hitpoint);
+        enemy->fSetCurrentHitPoint(data.enemy_data[EnemyDataArray::Hitpoint]);
     }
 }
 
@@ -667,6 +668,23 @@ void EnemyManager::fSetPlayerPosition(std::vector<std::tuple<int, DirectX::XMFLO
     }
 
 
+}
+
+
+void EnemyManager::fSetPlayerIdPosition(const std::vector<std::shared_ptr<BasePlayer>>& players)
+{
+    for (const auto& enemy : mEnemyVec)
+    {
+        for (const auto player : players)
+        {
+            //-----ターゲットのIDと違うならとばす-----//
+            if (enemy->fGetTargetPlayerId() != player->GetObjectId()) continue;
+
+            //-----位置を設定する-----//
+            enemy->fSetPlayerPosition(player->GetPosition());
+            break;
+        }
+    }
 }
 
 void EnemyManager::fSetPlayerSearch(bool Arg_)

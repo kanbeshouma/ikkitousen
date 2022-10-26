@@ -328,7 +328,8 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	cameraManager->CalcViewProjection(graphics);
 
 	//-----プレイヤーの位置を設定-----//
-	enemyManager->fSetPlayerPosition(player_manager->GetPosition());
+	//enemyManager->fSetPlayerPosition(player_manager->GetPosition());
+	enemyManager->fSetPlayerIdPosition(player_manager->GetPlayerVector());
 
 	//-----プレイヤーのチェイン攻撃のロックオン中かどうかを設定-----//
 	enemyManager->fSetPlayerSearch(player_manager->DuringSearchTime());

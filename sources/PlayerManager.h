@@ -163,6 +163,8 @@ private:
 
     ////-----削除するプレイヤーを入れる変数-----//
     std::vector<std::shared_ptr<BasePlayer>> remove_players;
+public:
+    std::vector<std::shared_ptr<BasePlayer>> GetPlayerVector() { return players; }
 private:
     //-----この端末で操作することができるプレイヤーのオブジェクト番号-----//
     int private_object_id{ -1 };
