@@ -264,7 +264,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                 avoidance_boost_time = 0.0f;
 
                 //-----データ送信-----//
-                            (GamePad::BTN_RIGHT_SHOULDER, movevec);
+                SendPlayerActionData(GamePad::BTN_RIGHT_SHOULDER, movevec);
             }
         }
     }
