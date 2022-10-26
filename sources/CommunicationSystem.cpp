@@ -298,6 +298,9 @@ bool CommunicationSystem::InitializeClientUdpSocket(char* port)
     if (getaddrinfo(SocketCommunicationManager::Instance().my_ip, port, &hints, &addr_info) != 0)
     {
         DebugConsole::Instance().WriteDebugConsole("UDP クライアント : インターネットアドレスの取得に失敗しました", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
         return false;
     }
 

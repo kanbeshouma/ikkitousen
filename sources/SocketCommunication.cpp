@@ -37,6 +37,9 @@ SocketCommunicationManager::~SocketCommunicationManager()
 void SocketCommunicationManager::ClearData()
 {
     DebugConsole::Instance().WriteDebugConsole("ソケットなどの情報を初期化");
+
+    WSACleanup();
+
     if (udp_sock != INVALID_SOCKET)
     {
         closesocket(udp_sock);
@@ -61,4 +64,14 @@ void SocketCommunicationManager::ClearData()
     FD_ZERO(&udp_fds);
     FD_ZERO(&tcp_fds);
     client_tcp_fds_count = 0;
+
+    WSADATA was_data;
+    if (WSAStartup(MAKEWORD(2, 2), &was_data) != 0)
+    {
+        //初期化に失敗
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+
+    }
 }

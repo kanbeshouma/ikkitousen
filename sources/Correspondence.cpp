@@ -3,12 +3,6 @@
 #include"DebugConsole.h"
 CorrespondenceManager::CorrespondenceManager()
 {
-    WSADATA was_data;
-    if (WSAStartup(MAKEWORD(2, 2), &was_data) != 0)
-    {
-        //初期化に失敗
-        WSAGetLastError();
-    }
 
     communication_system = std::make_unique<CommunicationSystem>();
     //配列をリサイズする
@@ -105,6 +99,7 @@ bool CorrespondenceManager::InitializeClient()
     SocketCommunicationManager::Instance().ClearData();
     //----------ソケットの初期化----------//
     return communication_system->InitializeClient(tcp_port,udp_port);
+
 }
 
 void CorrespondenceManager::UdpSend(char* data, int size)
