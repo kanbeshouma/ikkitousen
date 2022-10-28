@@ -49,17 +49,17 @@ CEREAL_CLASS_VERSION(EnemyParamPack, 2);
 enum class EnemyType
 {
     // «««««««««‚±‚±‚©‚ç‰º‚É‘‚â‚·«««««««««««««
-    Archer, //‰“‹——£UŒ‚
-    Shield, //‚‚¿
-    Sword,  // “‚Ì“G
-    Spear,
-    Archer_Ace, //‰“‹——£UŒ‚
-    Shield_Ace, //‚‚¿
-    Sword_Ace,  // “‚Ì“G
-    Spear_Ace,
-    Boss,
-    Tutorial_NoMove,
-    Boss_Unit,
+    Archer, //0 ‰“‹——£UŒ‚
+    Shield, //1 ‚‚¿
+    Sword,  //2 “‚Ì“G
+    Spear,//3
+    Archer_Ace, //4 ‰“‹——£UŒ‚
+    Shield_Ace, //5 ‚‚¿
+    Sword_Ace,  //6 “‚Ì“G
+    Spear_Ace,//7
+    Boss,//8
+    Tutorial_NoMove,//9
+    Boss_Unit,//10
     // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
     Count, // í—Ş‚Ì‘—Ê
 };
