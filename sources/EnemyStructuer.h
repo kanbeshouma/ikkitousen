@@ -85,8 +85,8 @@ struct EnemySource
     DirectX::XMFLOAT3 mEmitterPoint{};
     // 敵の種類
     EnemyType mType{};
-    //-----ホストかどうか-----//
-    bool host{};
+    //-----敵のグループの中でのリーダーかどうか-----//
+    bool master{};
     //-----ホスト譲渡順-----//
     int transfer_host{};
 
@@ -110,7 +110,7 @@ struct EnemySource
                 cereal::make_nvp("Timer", mSpawnTimer),
                 cereal::make_nvp("Emitter", mEmitterPoint),
                 cereal::make_nvp("Type", mType),
-                cereal::make_nvp("Host", host),
+                cereal::make_nvp("Host", master),
                 cereal::make_nvp("TransferHost", transfer_host));
 
             break;

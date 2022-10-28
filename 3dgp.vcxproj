@@ -225,6 +225,7 @@
     <ClCompile Include="sources\DebugConsole.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
+    <ClCompile Include="sources\MasterEnemyDataAdmin.cpp" />
     <ClCompile Include="sources\MultiGameClientTcp.cpp" />
     <ClCompile Include="sources\MultiGameClientUdp.cpp" />
     <ClCompile Include="sources\MultiGameHostTcp.cpp" />
@@ -352,6 +353,7 @@
     <ClInclude Include="sources\Correspondence.h" />
     <ClInclude Include="sources\DebugConsole.h" />
     <ClInclude Include="sources\DragonBreath.h" />
+    <ClInclude Include="sources\MasterEnemyDataAdmin.h" />
     <ClInclude Include="sources\NetWorkInformationStucture.h" />
     <ClInclude Include="sources\PlayerManager.h" />
     <ClInclude Include="sources\player_condition.h" />

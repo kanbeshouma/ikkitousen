@@ -256,6 +256,9 @@
     <Filter Include="Sources\Character\player\Base">
       <UniqueIdentifier>{00cd1c45-4ac4-4145-b895-766d9697ac75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Character\enemy\MasterEnemyData">
+      <UniqueIdentifier>{209bea42-d824-44fc-aea4-50afff46a322}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -642,6 +645,9 @@
     <ClCompile Include="sources\EnemyManager.cpp">
       <Filter>Sources\Character\enemy\EnemyManager</Filter>
     </ClCompile>
+    <ClCompile Include="sources\MasterEnemyDataAdmin.cpp">
+      <Filter>Sources\Character\enemy\MasterEnemyData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">
@@ -1015,6 +1021,9 @@
     </ClInclude>
     <ClInclude Include="sources\EnemyManager.h">
       <Filter>Sources\Character\enemy\EnemyManager</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\MasterEnemyDataAdmin.h">
+      <Filter>Sources\Character\enemy\MasterEnemyData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
