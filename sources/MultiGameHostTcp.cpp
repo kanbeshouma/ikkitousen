@@ -120,11 +120,14 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 
 	//-----今つながっているクライアントに新しくログインしてきた相手のデータを送る-----//
 
+
 	//-----データを設定-----//
 	SendClientLoginData client_send{};
 	client_send.cmd[0] = CommandList::Login;
 	client_send.new_client_id = client_id;
 	client_send.addr = create;
+	client_send.name = receive_data->name;
+	client_send.player_color = receive_data->player_color;
 
 	for (int i = 0; i < MAX_CLIENT; i++)
 	{
@@ -135,7 +138,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 		if (id < 0 || id == client_id) continue;
 
 		//--------新しくログインして来た相手にデータを送信---------//
-		CorrespondenceManager::Instance().TcpSend(id, (char*)&client_send, sizeof(LoginData));
+		CorrespondenceManager::Instance().TcpSend(id, (char*)&client_send, sizeof(SendClientLoginData));
 
 	}
 

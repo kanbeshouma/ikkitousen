@@ -32,6 +32,8 @@ void SceneMultiGameClient::ReceiveTcpData()
                 //-----プレイヤーの追加フラグとIDを設定-----//
                 register_player = true;
                 register_player_id = login_data->new_client_id;
+                register_player_color = login_data->player_color;
+                CorrespondenceManager::Instance().names[register_player_id] = login_data->name;
 
                 //-----新しく追加したプレイヤーのID登録する-----//
                 if (CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->new_client_id) < 0)

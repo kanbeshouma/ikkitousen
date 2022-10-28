@@ -111,6 +111,10 @@ struct SendClientLoginData
     int new_client_id{ -1 };
     //今接続している(自分も含める)クライアントのアドレスを取得
     sockaddr_in addr;
+    //-----名前-----//
+    std::string name{};
+    //-----プレイヤーの色-----//
+    int player_color{};
 };
 
 ////-----ログアウト時に送るデータ-----//
