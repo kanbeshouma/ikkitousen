@@ -48,6 +48,7 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
     fAllClear();
     mUniqueCount = 0;
 
+
     // キャッシュに登録
     fRegisterCash(graphics_);
 
@@ -1166,6 +1167,23 @@ void EnemyManager::fLoad(const char* FileName_)
         if (ifs)
         {
             cereal::JSONInputArchive o_archive(ifs);
+            o_archive(mCurrentWaveVec);
+        }
+    }
+}
+
+void EnemyManager::fSave(const char* FileName_)
+{
+    // Jsonファイルから値を取得
+    std::filesystem::path path = FileName_;
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
+    {
+        std::ofstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONOutputArchive o_archive(ifs);
             o_archive(mCurrentWaveVec);
         }
     }

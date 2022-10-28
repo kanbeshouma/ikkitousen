@@ -1,241 +1,294 @@
 {
   "value0": [
-    {
-      "Timer": 3.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": -10.0
+      {
+        "cereal_class_version": 2,
+        "Timer": 3.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": -10.0
+        },
+        "Type": 2,
+        "Host" : true,
+        "TransferHost" : 5
       },
-      "Type": 2
-    },
-    {
-      "Timer": 3.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": 10.0
+      {
+        "Timer": 3.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": 10.0
+        },
+        "Type": 2,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 2
-    },
-    {
-      "Timer": 3.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": 0.0
+      {
+        "Timer": 3.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 6,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 6
-    },
-
-    {
-      "Timer": 8.0,
-      "Emitter": {
-        "x": 20.0,
-        "y": 0.0,
-        "z": -10.0
+  
+      {
+        "Timer": 8.0,
+        "Emitter": {
+          "x": 20.0,
+          "y": 0.0,
+          "z": -10.0
+        },
+        "Type": 7,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 7
-    },
-    {
-      "Timer": 8.0,
-      "Emitter": {
-        "x": 20.0,
-        "y": 0.0,
-        "z": -10.0
+      {
+        "Timer": 8.0,
+        "Emitter": {
+          "x": 20.0,
+          "y": 0.0,
+          "z": -10.0
+        },
+        "Type": 3,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 3
-    },
-    {
-      "Timer": 8.0,
-      "Emitter": {
-        "x": 20.0,
-        "y": 0.0,
-        "z": -10.0
+      {
+        "Timer": 8.0,
+        "Emitter": {
+          "x": 20.0,
+          "y": 0.0,
+          "z": -10.0
+        },
+        "Type": 7,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 7
-    },
-    {
-      "Timer": 15.0,
-      "Emitter": {
-        "x": 10.0,
-        "y": 0.0,
-        "z": -30.0
+      {
+        "Timer": 15.0,
+        "Emitter": {
+          "x": 10.0,
+          "y": 0.0,
+          "z": -30.0
+        },
+        "Type": 3,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 3
-    },
-    {
-      "Timer": 15.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": -30.0
+      {
+        "Timer": 15.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -30.0
+        },
+        "Type": 3,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 3
-    },
-    {
-      "Timer": 15.0,
-      "Emitter": {
-        "x": -10.0,
-        "y": 0.0,
-        "z": -30.0
+      {
+        "Timer": 15.0,
+        "Emitter": {
+          "x": -10.0,
+          "y": 0.0,
+          "z": -30.0
+        },
+        "Type": 3,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 3
-    },
-    {
-      "Timer": 18.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": -40.0
+      {
+        "Timer": 18.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -40.0
+        },
+        "Type": 4,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 4
-    },
-    {
-      "Timer": 18.0,
-      "Emitter": {
-        "x": -30.0,
-        "y": 0.0,
-        "z": 0.0
+      {
+        "Timer": 18.0,
+        "Emitter": {
+          "x": -30.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 6,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 6
-    },
-
-    {
-      "Timer": 18.0,
-      "Emitter": {
-        "x": -40.0,
-        "y": 0.0,
-        "z": 0.0
+  
+      {
+        "Timer": 18.0,
+        "Emitter": {
+          "x": -40.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 6,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 6
-    },
-    {
-      "Timer": 20.0,
-      "Emitter": {
-        "x": 10.0,
-        "y": 0.0,
-        "z": 30.0
+      {
+        "Timer": 20.0,
+        "Emitter": {
+          "x": 10.0,
+          "y": 0.0,
+          "z": 30.0
+        },
+        "Type": 0,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 0
-    },
-    {
-      "Timer": 20.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 30.0
+      {
+        "Timer": 20.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 30.0
+        },
+        "Type": 4
+        ,  "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 4
-    },
-    {
-      "Timer": 20.0,
-      "Emitter": {
-        "x": -10.0,
-        "y": 0.0,
-        "z": 30.0
+      {
+        "Timer": 20.0,
+        "Emitter": {
+          "x": -10.0,
+          "y": 0.0,
+          "z": 30.0
+        },
+        "Type": 0,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 0
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": -30.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -30.0
+        },
+        "Type": 0,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 0
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": -40.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -40.0
+        },
+        "Type": 4,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 4
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": -30.0,
-        "y": 0.0,
-        "z": 0.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": -30.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 1,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 1
-    },
-
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": -40.0,
-        "y": 0.0,
-        "z": 0.0
+  
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": -40.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 5,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 5
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 30.0,
-        "y": 0.0,
-        "z": 0.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 30.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 2,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 2
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 40.0,
-        "y": 0.0,
-        "z": 0.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 40.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Type": 7,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 7
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 30.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 30.0
+        },
+        "Type": 3,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 3
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 40.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 40.0
+        },
+        "Type": 7,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 7
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": 10.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": 10.0
+        },
+        "Type": 1,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 1
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": 10.0
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": 10.0
+        },
+        "Type": 1,
+        "Host" : false,
+        "TransferHost" : 1
       },
-      "Type": 1
-    },
-    {
-      "Timer": 30.0,
-      "Emitter": {
-        "x": -20.0,
-        "y": 0.0,
-        "z": 10.0
-      },
-      "Type": 1
-    }
-  ]
+      {
+        "Timer": 30.0,
+        "Emitter": {
+          "x": -20.0,
+          "y": 0.0,
+          "z": 10.0
+        },
+        "Type": 1,
+        "Host" : false,
+        "TransferHost" : 1
+      }
+    ]
 }

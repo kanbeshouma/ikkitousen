@@ -12,8 +12,6 @@
 #include "LastBoss.h"
 #include"NetWorkInformationStucture.h"
 
-//-----‘O•ûéŒ¾-----//
-class PlayerManager;
 
 //****************************************************************
 //
@@ -177,6 +175,7 @@ private:
     void fCollisionEnemyVsEnemy();
 
     void fLoad(const char* FileName_);
+    void fSave(const char* FileName_);
     //****************************************************************
     //
     // •Ï”

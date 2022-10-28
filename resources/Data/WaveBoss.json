@@ -1,6 +1,7 @@
 {
   "value0": [
     {
+      "cereal_class_version": 2,
       "Timer": 3.0,
       "Emitter": {
         "x": 0.0,

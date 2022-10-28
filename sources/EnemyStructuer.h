@@ -79,17 +79,46 @@ enum SendEnemyType
 
 struct EnemySource
 {
-    float mSpawnTimer{};  // 出現タイミングを記録
-    DirectX::XMFLOAT3 mEmitterPoint{}; // 出現位置の番号
-    EnemyType mType{};          // 敵の種類
+    // 出現タイミングを記録
+    float mSpawnTimer{};
+    //出現位置の番号
+    DirectX::XMFLOAT3 mEmitterPoint{};
+    // 敵の種類
+    EnemyType mType{};
+    //-----ホストかどうか-----//
+    bool host{};
+    //-----ホスト譲渡順-----//
+    int transfer_host{};
 
     // シリアライズ
     template<class Archive>
-    void serialize(Archive& archive)
+    void serialize(Archive& archive, std::uint32_t const version)
     {
-        archive(
-            cereal::make_nvp("Timer", mSpawnTimer),
-            cereal::make_nvp("Emitter", mEmitterPoint),
-            cereal::make_nvp("Type", mType));
+        switch (version)
+        {
+        case 1:
+        {
+            archive(
+                cereal::make_nvp("Timer", mSpawnTimer),
+                cereal::make_nvp("Emitter", mEmitterPoint),
+                cereal::make_nvp("Type", mType));
+            break;
+        }
+        case 2:
+        {
+            archive(
+                cereal::make_nvp("Timer", mSpawnTimer),
+                cereal::make_nvp("Emitter", mEmitterPoint),
+                cereal::make_nvp("Type", mType),
+                cereal::make_nvp("Host", host),
+                cereal::make_nvp("TransferHost", transfer_host));
+
+            break;
+        }
+        default:
+            break;
+        }
     }
 };
+
+CEREAL_CLASS_VERSION(EnemySource, 2);
