@@ -41,6 +41,11 @@ public:
     //第一引数 : グループ番号
     std::tuple<bool, MasterData> GetMasterData(int group);
 
+    ////-----特定のデータ削除-----//
+    //====================//
+    //第一引数 : グループ番号(mapのkey)
+    void DeleteSpecificData(int grope);
+
     ////-----データの全削除-----//
     void ResetMasterData();
 };

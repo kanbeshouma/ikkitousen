@@ -534,3 +534,12 @@ void BaseEnemy::SetEnemyGropeData(bool master_arg, int transfer_arg, int grope_a
     transfer_host = transfer_arg;
     grope_id = grope_arg;
 }
+
+void BaseEnemy::fSetMasterData(DirectX::XMFLOAT3 m_pos, int m_ai, int m_target)
+{
+    //-----それぞれのデータを設定-----//
+    master_pos = m_pos;
+    master_ai_state = m_ai;
+    master_target_id = m_target;
+
+}

@@ -23,12 +23,12 @@ void SwordEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     elapsedTime_=fBaseUpdate(elapsedTime_,Graphics_);
     mIsHit = false;
 #ifdef USE_IMGUI
-    static bool display_scape_imgui;
     std::string name = "SwordEnemy_Ace" + std::to_string(object_id);
     imgui_menu_bar("Enemy", name, display_scape_imgui);
     if (display_scape_imgui)
     {
         ImGui::Begin(name.c_str());
+        ImGui::RadioButton("Master", master);
         ImGui::End();
     }
 #endif

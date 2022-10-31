@@ -80,7 +80,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     float3 L = normalize(-light_direction.xyz);
     float3 diffuse = color.rgb * max(0, dot(N, L));
-    float V = normalize(camera_position.xyz - pin.world_position.xyz);
+    float V = normalize(camera_position.xyz - pin.world_position.xyz).x;
 
     float3 specular = pow(max(0, dot(N, normalize(V + L))), 128);
 

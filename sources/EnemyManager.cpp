@@ -1026,16 +1026,28 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
             }
         }
 
-       enemy->fSetPlayerPosition(near_pos);
+        enemy->fSetPlayerPosition(near_pos);
 #endif // 0
+        //-----リーダーのデータを取得-----//
+        if (enemy->fGetMaster() == false)
+        {
+            //-----構造化束縛でtupleのデータを取得-----//
+            auto [check, data] = master_enemy_data->GetMasterData(enemy->fGetGropeId());
+            //-----trueならリーダーが存在してデータを取得することができる-----//
+            if (check) enemy->fSetMasterData(data.position, data.ai_state, data.target_id);
 
-            enemy->fUpdate(Graphics_,elapsedTime_);
-            if (enemy->fGetIsAlive() == false)
-            {
-                mRemoveVec.emplace_back(enemy);
-                // 死んでいる敵がいたら振る時間を加算
-                mCameraShakeTime += mkOneShakeSec;
-            }
+        }
+
+        //-----敵の更新-----//
+        enemy->fUpdate(Graphics_, elapsedTime_);
+
+        //-----死んでいたら削除用のvectorに登録-----//
+        if (enemy->fGetIsAlive() == false)
+        {
+            mRemoveVec.emplace_back(enemy);
+            // 死んでいる敵がいたら振る時間を加算
+            mCameraShakeTime += mkOneShakeSec;
+        }
     }
 
 
@@ -1248,10 +1260,9 @@ void EnemyManager::TransferMaster(int grope)
     }
 
     //-----もし値が入っているならマスターに昇格する-----//
-    if (e != nullptr)
-    {
-        e->fSetMaster(true);
-    }
+    if (e != nullptr)e->fSetMaster(true);
+    //-----値が入っていないなら譲渡先がいないのでそのデータは消す-----//
+    else master_enemy_data->DeleteSpecificData(grope);
 }
 
 void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)

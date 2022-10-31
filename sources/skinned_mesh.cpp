@@ -200,7 +200,7 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename,
 }
 
 
-const skeleton::bone& SkinnedMesh::get_bone_by_name(std::string name)
+const skeleton::bone SkinnedMesh::get_bone_by_name(std::string name)
 {
     skeleton::bone dummy = {};
     for (const mesh& mesh : meshes)

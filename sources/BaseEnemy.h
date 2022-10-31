@@ -176,9 +176,9 @@ protected:
 public:
     void fSetObjectId(char id) { object_id = id; }
     char fGetObjectId() { return object_id; }
-//----------敵のホスト、譲渡順、グループの番号の変数----------//
-//==============================================//
-#pragma region EnemyMasterData
+    //----------敵のホスト、譲渡順、グループの番号の変数----------//
+    //==============================================//
+#pragma region EnemyMasterCheck
 protected:
     //-----ホストかどうか-----//
     bool master{ false };
@@ -205,7 +205,39 @@ public:
     //第三引数 : グループ番号
     void SetEnemyGropeData(bool master_arg,int transfer_arg,int grope_arg);
 #pragma endregion
-//=================================================//
+    //=================================================//
+
+    //----------リーダーの位置、AI,ターゲットしているプレイヤーの番号-----//
+    //=====================================================//
+#pragma region EnemyMasterData
+protected:
+    //-----リーダーの位置-----//
+    DirectX::XMFLOAT3 master_pos{};
+public:
+    void fSetMasterPos(DirectX::XMFLOAT3 arg) { master_pos = arg; }
+protected:
+    //-----リーダーのAIステート-----//
+    int master_ai_state{ -1 };
+public:
+    void fSetMasterAi(int arg) { master_ai_state = arg; }
+protected:
+    //-----リーダーがターゲットしているプレイヤーの番号-----//
+    int master_target_id{ -1 };
+public:
+    void fSetMasterTargetId(int arg) { master_target_id = arg; }
+
+    //-----全てのデータを一括で設定-----//
+    //==========================//
+    //第一引数 : マスターの位置
+    //第二引数 : マスターのAI
+    //第三引数 : マスターのターゲットしているID
+    void fSetMasterData(DirectX::XMFLOAT3 m_pos, int m_ai, int  m_target);
+
+#pragma endregion
+    //=====================================================//
+
+    //----------エフェクト---------//
+    //===================//
 #pragma region EnemyEffect
 protected:
     //--------------------<エフェクト>--------------------//
@@ -222,7 +254,10 @@ protected:
     inline static const char* mkDamagePath = "./resources/Effect/enemy_hit.efk";
 
 #pragma endregion
-
+    //===================//
+protected:
     bool mIsInCamera{};
+
+    bool display_scape_imgui{ false };
 };
 

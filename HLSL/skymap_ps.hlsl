@@ -14,7 +14,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 diffuse_color = skymap.Sample(sampler_states[ANISOTROPIC], pin.world_position.xyz);
 
     const float GAMMA = 2.2;
-    float3 diffuse_reflection = pow(diffuse_color.rgb, GAMMA);
+    float3 diffuse_reflection = pow(abs(diffuse_color.rgb), GAMMA);
     float alpha = diffuse_color.a;
 
     const float intensity = 0.8;

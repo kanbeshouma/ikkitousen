@@ -33,7 +33,7 @@ VS_OUT main(VS_IN vin)
     vin.normal = float4(blended_normal.xyz, 0.0f);
     vin.tangent = float4(blended_tangent.xyz, 0.0f);
 
-    float3 n = normalize(vin.normal);
+    float3 n = normalize(vin.normal.xyz);
     vin.position.xyz += n * 0.2f;
 
     VS_OUT vout;

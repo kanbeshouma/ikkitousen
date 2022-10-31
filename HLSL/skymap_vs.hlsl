@@ -28,5 +28,7 @@ VS_OUT main(VS_IN vin)
     vout.texcoord = vin.texcoord;
     vout.color = 1.0;
 
+    vout.shadow_texcoord = float3(1, 1,1);
+
     return vout;
 }

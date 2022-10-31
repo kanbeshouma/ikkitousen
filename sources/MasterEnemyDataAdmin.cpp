@@ -54,6 +54,11 @@ std::tuple<bool, MasterEnemyDataAdmin::MasterData> MasterEnemyDataAdmin::GetMast
 
 }
 
+void MasterEnemyDataAdmin::DeleteSpecificData(int grope)
+{
+    master_data_map.erase(grope);
+}
+
 void MasterEnemyDataAdmin::ResetMasterData()
 {
     master_data_map.clear();

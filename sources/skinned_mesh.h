@@ -505,7 +505,7 @@ public:
     bool end_of_animation() const { return anim_para.end_of_animation; }
     bool end_of_animation(anim_Parameters& para) const { return para.end_of_animation; }
 
-    const skeleton::bone& get_bone_by_name(std::string name);
+    const skeleton::bone get_bone_by_name(std::string name);
     void fech_by_bone(const DirectX::XMFLOAT4X4& world, const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
     void fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4& world, const skeleton::bone& bone,
         DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up, DirectX::XMFLOAT4X4 rotation_mat = {});

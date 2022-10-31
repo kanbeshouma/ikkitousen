@@ -166,7 +166,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     }
 
     // sub color による線形補完
-        float3 lerp_color_map = color_map;
+        float3 lerp_color_map = color_map.xyz;
 
     if (sub_color_purple.r > 0.9f && sub_color_purple.g > 0.9f && sub_color_purple.b > 0.9f
      && sub_color_red.r > 0.9f    && sub_color_red.g > 0.9f    && sub_color_red.b > 0.9f)
@@ -176,11 +176,11 @@ float4 main(VS_OUT pin) : SV_TARGET
     {
         if (sub_color_threshold_purple > 0.01f)
         {
-            lerp_color_map = lerp(color_map, sub_color_purple, sub_color_threshold_purple);
+            lerp_color_map = lerp(color_map, sub_color_purple, sub_color_threshold_purple).xyz;
         }
         if (sub_color_threshold_red > 0.01f)
         {
-            lerp_color_map = lerp(sub_color_purple, sub_color_red, sub_color_threshold_red);
+            lerp_color_map = lerp(sub_color_purple, sub_color_red, sub_color_threshold_red).xyz;
         }
     }
 
@@ -202,14 +202,14 @@ float4 main(VS_OUT pin) : SV_TARGET
     // 滑らかさ
     float smooth = roughness_map.r;
     // 視線に向かって伸びるベクトルを計算する
-    float3 toEye = normalize(camera_position - pin.world_position);
+    float3 toEye = normalize(camera_position - pin.world_position).xyz;
     // シンプルなディズニーベースの拡散反射を実装する
     float diffuseFromFresnel = calc_diffuse_from_fresnel(normal, -light_direction.xyz * 2.0f, toEye);
     float NdotL = saturate(dot(normal, -light_direction.xyz * 2.0f));
-    float3 lambertDiffuse = float4(1, 1, 1, 1) * NdotL / PI;
+    float3 lambertDiffuse = float3(1, 1, 1) * NdotL / PI;
     float3 diffuse = color_map.rgb * diffuseFromFresnel * lambertDiffuse;
     // Cook-Torranceモデルを利用した鏡面反射率を計算する
-    float3 spec = cook_torrance_specular(-light_direction.xyz * 2.0f, toEye, normal, smooth) * float4(1, 1, 1, 1);
+    float3 spec = cook_torrance_specular(-light_direction.xyz * 2.0f, toEye, normal, smooth) * float3(1, 1, 1);
     spec *= lerp(float3(1, 1, 1), color_map.rgb, metallic);
     // 滑らかさを使って、拡散反射光と鏡面反射光を合成する
     float3 lig = diffuse * (1.0f - smooth) + spec * 2;

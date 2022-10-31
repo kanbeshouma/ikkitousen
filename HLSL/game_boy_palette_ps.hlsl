@@ -12,9 +12,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 color = texture_maps[0].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
 
     float gamma = 1.5;
-    color.r = pow(color.r, gamma);
-    color.g = pow(color.g, gamma);
-    color.b = pow(color.b, gamma);
+    color.r =  pow(abs(color.r), gamma);
+    color.g = pow(abs(color.g), gamma);
+    color.b = pow(abs(color.b), gamma);
 
     float3 col1 = border_color1.rgb;
     float3 col2 = border_color2.rgb;
