@@ -89,6 +89,8 @@ struct EnemySource
     bool master{};
     //-----ホスト譲渡順-----//
     int transfer_host{};
+    //-----グループ番号-----//
+    int grope_id{};
 
     // シリアライズ
     template<class Archive>
@@ -111,7 +113,8 @@ struct EnemySource
                 cereal::make_nvp("Emitter", mEmitterPoint),
                 cereal::make_nvp("Type", mType),
                 cereal::make_nvp("Host", master),
-                cereal::make_nvp("TransferHost", transfer_host));
+                cereal::make_nvp("TransferHost", transfer_host),
+                cereal::make_nvp("GropeId", grope_id));
 
             break;
         }
