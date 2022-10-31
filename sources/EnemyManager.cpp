@@ -38,6 +38,12 @@
 //
 //****************************************************************
 
+EnemyManager::EnemyManager()
+{
+    //-----敵のマスターデータ管理クラスの実態生成-----//
+    master_enemy_data = std::make_unique<MasterEnemyDataAdmin>();
+}
+
 EnemyManager::~EnemyManager()
 {
 }
@@ -55,8 +61,6 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
     // チュートリアルかどうかを初期化
     mIsTutorial = false;
 
-    //-----敵のマスターデータ管理クラスの実態生成-----//
-    master_enemy_data = std::make_unique<MasterEnemyDataAdmin>();
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -102,6 +106,9 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
         }
         return;
     }
+
+    //-----敵のリーダーのデータを設定-----//
+    SetEnemyGropeHostData();
 
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
@@ -220,7 +227,7 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
         enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
         //-----AIのステート設定-----//
-        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyState();
+        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
 
         //-----ターゲットしているプレイヤーのId-----//
         enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
@@ -332,6 +339,10 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
             fSetReceiveEnemyData(elapsedTime_,all_data.cmd[ComLocation::DataKind] ,e_data);
         }
     }
+
+    //-----敵のリーダーのデータを設定-----//
+    SetEnemyGropeHostData();
+
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
 
@@ -1205,6 +1216,44 @@ void EnemyManager::fSave(const char* FileName_)
     }
 }
 
+void EnemyManager::SetEnemyGropeHostData()
+{
+    for (const auto& ene : mEnemyVec)
+    {
+        //-----リーダー出ないならとばす-----//
+        if (ene->fGetMaster() == false) continue;
+
+        //-----リーダーのデータを設定する-----//
+        master_enemy_data->SetMasterData(ene->fGetGropeId(),ene->fGetPosition(),ene->fGetTargetPlayerId(),ene->fGetEnemyAiState());
+    }
+
+}
+
+void EnemyManager::TransferMaster(int grope)
+{
+    int transfer{ INT_MAX };
+    BaseEnemy* e{ nullptr };
+
+    for (const auto& enemy : mEnemyVec)
+    {
+        //-----マスターの場合かグループ番号が違うならとばす-----//
+        if (enemy->fGetMaster() || enemy->fGetGropeId() != grope) continue;
+
+        //-----譲渡番号が一番小さい敵を取得-----//
+        if (transfer > enemy->fGetTransfer())
+        {
+            transfer = enemy->fGetTransfer();
+            e = enemy;
+        }
+    }
+
+    //-----もし値が入っているならマスターに昇格する-----//
+    if (e != nullptr)
+    {
+        e->fSetMaster(true);
+    }
+}
+
 void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 {
     imgui_menu_bar("Game", "EnemyManager", mOpenGuiMenu);
@@ -1340,6 +1389,12 @@ void EnemyManager::fDeleteEnemies()
         auto e = std::find(mEnemyVec.begin(), mEnemyVec.end(), enemy);
         if (e != mEnemyVec.end())
         {
+            //-----マスターの場合譲渡する-----//
+            if ((*e)->fGetMaster())
+            {
+                TransferMaster((*e)->fGetGropeId());
+            }
+
             safe_delete(*e);
             mEnemyVec.erase(e);
         }

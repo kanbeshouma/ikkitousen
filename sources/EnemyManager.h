@@ -24,7 +24,7 @@ class EnemyManager final :public PracticalEntities
     //
     //****************************************************************
 public:
-    EnemyManager() = default;
+    EnemyManager();
     ~EnemyManager() override;
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
@@ -174,6 +174,15 @@ private:
 
     void fLoad(const char* FileName_);
     void fSave(const char* FileName_);
+
+    //-----敵のグループのホストのデータを設定する-----//
+    void SetEnemyGropeHostData();
+
+    //-----マスターを譲渡する-----//
+    //======================
+    //第一引数 : 譲渡対象のグループ-----//
+    void TransferMaster(int grope);
+
     //****************************************************************
     //
     // 変数

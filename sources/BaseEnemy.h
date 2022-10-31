@@ -123,7 +123,7 @@ public:
 protected:
     int ai_state{};
 public:
-    int fGetEnemyState() { return ai_state; }
+    int fGetEnemyAiState() { return ai_state; }
     virtual void fSetEnemyState(int state) = 0;
 public:
     std::unique_ptr<SpriteBatch> mpIcon{ nullptr };//ミニマップで使う用のアイコン
@@ -183,20 +183,20 @@ protected:
     //-----ホストかどうか-----//
     bool master{ false };
 public:
-    bool GetMaster() { return master; }
-    void SetMaster(bool arg) { master = arg; }
+    bool fGetMaster() { return master; }
+    void fSetMaster(bool arg) { master = arg; }
 protected:
     //-----ホストの譲渡順-----//
     int transfer_host{ -1 };
 public:
-    int GetTransfer() { return transfer_host; }
-    void SetMaster(int arg) { transfer_host = arg; }
+    int fGetTransfer() { return transfer_host; }
+    void fSetMaster(int arg) { transfer_host = arg; }
  protected:
      //-----グループのID-----//
      int grope_id{ -1 };
 public:
-    int GetGropeId() { return grope_id; }
-    void SetGropeId(int arg) { grope_id = arg; }
+    int fGetGropeId() { return grope_id; }
+    void fSetGropeId(int arg) { grope_id = arg; }
 public:
     ////-----敵のグループデータの一括設定-----//
     //================================
