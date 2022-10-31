@@ -176,21 +176,52 @@ protected:
 public:
     void fSetObjectId(char id) { object_id = id; }
     char fGetObjectId() { return object_id; }
+//----------敵のホスト、譲渡順、グループの番号の変数----------//
+//==============================================//
+#pragma region EnemyMasterData
+protected:
+    //-----ホストかどうか-----//
+    bool master{ false };
+public:
+    bool GetMaster() { return master; }
+    void SetMaster(bool arg) { master = arg; }
+protected:
+    //-----ホストの譲渡順-----//
+    int transfer_host{ -1 };
+public:
+    int GetTransfer() { return transfer_host; }
+    void SetMaster(int arg) { transfer_host = arg; }
+ protected:
+     //-----グループのID-----//
+     int grope_id{ -1 };
+public:
+    int GetGropeId() { return grope_id; }
+    void SetGropeId(int arg) { grope_id = arg; }
+public:
+    ////-----敵のグループデータの一括設定-----//
+    //================================
+    //第一引数 : ホストかどうか
+    //第二引数 : 譲渡順
+    //第三引数 : グループ番号
+    void SetEnemyGropeData(bool master_arg,int transfer_arg,int grope_arg);
+#pragma endregion
+//=================================================//
+#pragma region EnemyEffect
 protected:
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };
     inline static const char* mkVernierPath = "./resources/Effect/sluster_enemy2.efk";
     std::unique_ptr<Effect> mStunEffect{ nullptr };
     inline static const char* mkStunPath = "./resources/Effect/stun.efk";
-
 protected:
     std::unique_ptr<Effect> mBombEffect{ nullptr };
     inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";
-
     std::unique_ptr<Effect> mDeathEffect{ nullptr };
     inline static const char* mkDeathPath = "./resources/Effect/Bomb2.efk";
     std::unique_ptr<Effect> mDamageEffect{ nullptr };
     inline static const char* mkDamagePath = "./resources/Effect/enemy_hit.efk";
+
+#pragma endregion
 
     bool mIsInCamera{};
 };

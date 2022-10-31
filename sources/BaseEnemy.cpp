@@ -526,3 +526,11 @@ void BaseEnemy::fChangeState(const char* Tag_)
     //-----初期化関数を呼び出す-----//
     std::get<0>(mCurrentTuple)();
 }
+
+void BaseEnemy::SetEnemyGropeData(bool master_arg, int transfer_arg, int grope_arg)
+{
+    //-----それぞれのデータを設定-----//
+    master = master_arg;
+    transfer_host = transfer_arg;
+    grope_id = grope_arg;
+}

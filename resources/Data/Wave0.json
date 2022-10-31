@@ -3,12 +3,18 @@
         {
             "Timer": 0.0,
             "Emitter": 0,
-            "Type": 0
+            "Type": 0,
+            "Host" : true,
+            "TransferHost" : 0,
+            "GropeId" : 1    
         },
         {
             "Timer": 0.0,
             "Emitter": 1,
-            "Type": 0
+            "Type": 0,
+            "Host" : false,
+            "TransferHost" : 1,
+            "GropeId" : 1    
         }
     ]
 }

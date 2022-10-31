@@ -8,7 +8,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 8
+      "Type": 8,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 1
     }
   ]
 }

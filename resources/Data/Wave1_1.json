@@ -7,7 +7,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 1
     },
     {
       "Timer": 3.0,
@@ -16,7 +19,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 1
     },
     {
       "Timer": 3.0,
@@ -25,7 +31,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 6
+      "Type": 6,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 1
     },
 
     {
@@ -35,7 +44,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 2
     },
     {
       "Timer": 8.0,
@@ -44,7 +56,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 2
     },
     {
       "Timer": 8.0,
@@ -53,7 +68,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 2
     },
     {
       "Timer": 15.0,
@@ -62,7 +80,10 @@
         "y": 0.0,
         "z": -30.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 3
     },
     {
       "Timer": 15.0,
@@ -71,7 +92,10 @@
         "y": 0.0,
         "z": -30.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 3
     },
     {
       "Timer": 15.0,
@@ -80,7 +104,10 @@
         "y": 0.0,
         "z": -30.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 3
     },
 
     {
@@ -90,7 +117,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 4
     },
     {
       "Timer": 20.0,
@@ -99,7 +129,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 4
+      "Type": 4,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 4
     },
     {
       "Timer": 20.0,
@@ -108,7 +141,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 4
     },
     {
       "Timer": 30.0,
@@ -117,7 +153,10 @@
         "y": 0.0,
         "z": -30.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 4,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -126,7 +165,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 4
+      "Type": 4,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -135,7 +177,11 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 5,
+      "GropeId" : 5
+
     },
 
     {
@@ -145,7 +191,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 5
+      "Type": 5,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -154,7 +203,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -163,7 +215,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -172,7 +227,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 5
     },
     {
       "Timer": 30.0,
@@ -181,7 +239,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 5
     }
   ]
 }

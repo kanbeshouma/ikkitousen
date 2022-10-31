@@ -53,3 +53,8 @@ std::tuple<bool, MasterEnemyDataAdmin::MasterData> MasterEnemyDataAdmin::GetMast
     }
 
 }
+
+void MasterEnemyDataAdmin::ResetMasterData()
+{
+    master_data_map.clear();
+}

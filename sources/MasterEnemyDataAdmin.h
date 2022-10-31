@@ -40,4 +40,7 @@ public:
     //戻り値 : std::tuple<データがあったかどうか,マスターデータ>(false : データ無し true : データ有り)
     //第一引数 : グループ番号
     std::tuple<bool, MasterData> GetMasterData(int group);
+
+    ////-----データの全削除-----//
+    void ResetMasterData();
 };

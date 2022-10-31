@@ -172,7 +172,7 @@ void PlayerManager::SetPlayerPlayerAttackResultData(PlayerAttackResultData data)
         if (player->GetObjectId() == data.player_id)
         {
             //-----Œ‹‰Ê‚ð“ü‚ê‚é-----//
-            player->AddCombo(data.combo_count, data.block);
+            player->AddCombo(static_cast<int>(data.combo_count), data.block);
         }
     }
 

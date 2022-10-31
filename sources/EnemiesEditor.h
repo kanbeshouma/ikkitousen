@@ -19,7 +19,7 @@ class EnemyEditor final
 public:
     EnemyEditor();
     ~EnemyEditor();
-     const EnemyParamPack& fGetParam(EnemyType Type_);
+     const EnemyParamPack fGetParam(EnemyType Type_);
      void fGuiMenu();
 
 private:
@@ -39,7 +39,7 @@ inline EnemyEditor::~EnemyEditor()
     fSave();
 }
 
-inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
+inline const EnemyParamPack EnemyEditor::fGetParam(EnemyType Type_)
 {
     const char* enemyName[] = {
         "Archer","Shield","Sword","Spear",

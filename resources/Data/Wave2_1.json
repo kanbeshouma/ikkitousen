@@ -7,7 +7,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 1
     },
     {
       "Timer": 1.0,
@@ -16,7 +19,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 1
     },
     {
       "Timer": 1.0,
@@ -25,7 +31,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 1
     },
     {
       "Timer": 1.0,
@@ -34,7 +43,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 6
+      "Type": 6,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 1
     },
     {
       "Timer": 8.0,
@@ -43,7 +55,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 2
     },
     {
       "Timer": 8.0,
@@ -52,7 +67,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 2
     },
     {
       "Timer": 8.0,
@@ -61,7 +79,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 4
+      "Type": 4,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 2
     },
     {
       "Timer": 8.0,
@@ -70,7 +91,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 2
     },
 
     {
@@ -80,7 +104,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 3
     },
     {
       "Timer": 15.0,
@@ -89,7 +116,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 3
     },
     {
       "Timer": 15.0,
@@ -98,7 +128,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 3
     },
     {
       "Timer": 15.0,
@@ -107,7 +140,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 3
     },
     {
       "Timer": 22.0,
@@ -125,7 +161,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 4
     },
     {
       "Timer": 22.0,
@@ -134,7 +173,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 5
+      "Type": 5,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 4
     },
     {
       "Timer": 22.0,
@@ -143,7 +185,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 4
     },
     {
       "Timer": 28.0,
@@ -152,7 +197,10 @@
         "y": 0.0,
         "z": 30.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -161,7 +209,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -170,7 +221,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -179,7 +233,10 @@
         "y": 0.0,
         "z": 40.0
       },
-      "Type": 6
+      "Type": 6,
+      "Host" : false,
+      "TransferHost" : 4,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -188,7 +245,10 @@
         "y": 0.0,
         "z": 50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -197,7 +257,10 @@
         "y": 0.0,
         "z": 50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 5,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -206,7 +269,10 @@
         "y": 0.0,
         "z": 50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 5
     },
     {
       "Timer": 28.0,
@@ -215,7 +281,10 @@
         "y": 0.0,
         "z": 50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 7,
+      "GropeId" : 5
     },
 
     {
@@ -225,7 +294,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -234,7 +306,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -243,7 +318,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 4
+      "Type": 4,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -252,7 +330,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 2
+      "Type": 2,
+      "Host" : false,
+      "TransferHost" : 4,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -261,7 +342,10 @@
         "y": 0.0,
         "z": 20.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -270,7 +354,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 5,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -279,7 +366,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 6
     },
     {
       "Timer": 38.0,
@@ -288,7 +378,10 @@
         "y": 0.0,
         "z": -20.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 7,
+      "GropeId" : 6
     },
 
     {
@@ -298,7 +391,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -307,7 +403,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -316,7 +415,10 @@
         "y": 0.0,
         "z": 0.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -325,7 +427,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 1
+      "Type": 1,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -334,7 +439,10 @@
         "y": 0.0,
         "z": 10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 4,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -343,7 +451,10 @@
         "y": 0.0,
         "z": 20.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 5,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -352,7 +463,10 @@
         "y": 0.0,
         "z": -10.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 7
     },
     {
       "Timer": 48.0,
@@ -361,7 +475,10 @@
         "y": 0.0,
         "z": -20.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 7,
+      "GropeId" : 7
     },
     {
       "Timer": 58.0,
@@ -370,7 +487,10 @@
         "y": 0.0,
         "z": -30.0
       },
-      "Type": 0
+      "Type": 0,
+      "Host" : false,
+      "TransferHost" : 1,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -379,7 +499,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 2,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -388,7 +511,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 5
+      "Type": 5,
+      "Host" : true,
+      "TransferHost" : 0,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -397,7 +523,10 @@
         "y": 0.0,
         "z": -40.0
       },
-      "Type": 3
+      "Type": 3,
+      "Host" : false,
+      "TransferHost" : 3,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -406,7 +535,10 @@
         "y": 0.0,
         "z": -50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 4,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -415,7 +547,10 @@
         "y": 0.0,
         "z": -50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 5,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -424,7 +559,10 @@
         "y": 0.0,
         "z": -50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 6,
+      "GropeId" : 8
     },
     {
       "Timer": 58.0,
@@ -433,7 +571,10 @@
         "y": 0.0,
         "z": -50.0
       },
-      "Type": 7
+      "Type": 7,
+      "Host" : false,
+      "TransferHost" : 7,
+      "GropeId" : 8
     }
 
   ]

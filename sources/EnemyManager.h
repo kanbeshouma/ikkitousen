@@ -1,17 +1,15 @@
 #pragma once
 #include"BaseEnemy.h"
-#include"EnemyFileSystem.h"
-#include"EnemiesEditor.h"
-#include"practical_entities.h"
-#include"BossRushUnit.h"
 #include"BasePlayer.h"
-#include<vector>
-
-
+#include"BossRushUnit.h"
 #include "Common.h"
+#include"EnemiesEditor.h"
+#include"EnemyFileSystem.h"
 #include "LastBoss.h"
+#include"MasterEnemyDataAdmin.h"
 #include"NetWorkInformationStucture.h"
-
+#include"practical_entities.h"
+#include<vector>
 
 //****************************************************************
 //
@@ -186,6 +184,9 @@ private:
     std::vector<BaseEnemy*> mRemoveVec; // 敵を格納するコンテナ
     // リソースマネージャーが情報を保持できるようにキャッシュとしてモデルデーを登録する
     std::vector<BaseEnemy*> mCashEnemyVec{};
+
+    //-----敵のマスターデータを入れるクラス------//
+    std::unique_ptr<MasterEnemyDataAdmin> master_enemy_data;
 
     //--------------------<ウェーブに関する変数>--------------------//
     float mWaveTimer{}; // 各ウェーブ開始からの経過時間

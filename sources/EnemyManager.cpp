@@ -54,6 +54,9 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 
     // チュートリアルかどうかを初期化
     mIsTutorial = false;
+
+    //-----敵のマスターデータ管理クラスの実態生成-----//
+    master_enemy_data = std::make_unique<MasterEnemyDataAdmin>();
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -730,108 +733,118 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     //-----マルチプレイの時にデータを送信-----//
     fSendSpawnData(Source_);
 
+    BaseEnemy* enemy = nullptr;
+
+    //-----switch文の中-----//
+    //実態生成
+    //ID設定
+    //種類設定
+    //グループデータ設定
+
     switch (Source_.mType)
     {
     case EnemyType::Archer:
     {
-        BaseEnemy* enemy = new ArcherEnemy(graphics_,
+        enemy = new ArcherEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Archer);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
     break;
     case EnemyType::Shield:
     {
-        BaseEnemy* enemy = new ShieldEnemy(graphics_,
+        enemy = new ShieldEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Shield);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
     break;
     case EnemyType::Sword:
     {
-        BaseEnemy* enemy = new SwordEnemy(graphics_,
+        enemy = new SwordEnemy(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Sword);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
     break;
     case EnemyType::Spear:
     {
-        BaseEnemy* enemy = new SpearEnemy(graphics_,
-            Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType));
+        enemy = new SpearEnemy(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Spear);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
     break;
     case EnemyType::Archer_Ace:
     {
-        BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
-            Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType));
+        enemy = new ArcherEnemy_Ace(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Archer);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
-        break;
+    break;
     case EnemyType::Shield_Ace:
     {
-        BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
+        enemy = new ShieldEnemy_Ace(graphics_,
             Source_.mEmitterPoint, param);
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Shield);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
-        break;
+    break;
     case EnemyType::Sword_Ace:
     {
-        BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
-            Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType));
+        enemy = new SwordEnemy_Ace(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Sword);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
     break;
     case EnemyType::Spear_Ace:
     {
-        BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
-            Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType));
+        enemy = new SpearEnemy_Ace(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType));
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Spear);
-        mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
-        break;
+    break;
     case EnemyType::Boss:
-        {
-        BaseEnemy* enemy = new LastBoss(graphics_,
-            Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType),this);
+    {
+        enemy = new LastBoss(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType), this);
         enemy->fSetObjectId(object_count);
         enemy->SetEnemyType(SendEnemyType::Boss);
-        mEnemyVec.emplace_back(enemy);
-        }
-        break;
-    case EnemyType::Count: break;
-case EnemyType::Tutorial_NoMove:
-{
-    BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
-        Source_.mEmitterPoint,
-        mEditor.fGetParam(Source_.mType));
-    enemy->fSetObjectId(object_count);
-    mEnemyVec.emplace_back(enemy);
-}
-    break;
-case EnemyType::Boss_Unit:
-    break;
-    default:;
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
     }
+    break;
+    case EnemyType::Count: break;
+    case EnemyType::Tutorial_NoMove:
+    {
+        enemy = new TutorialEnemy_NoAttack(graphics_,
+            Source_.mEmitterPoint,mEditor.fGetParam(Source_.mType));
+        enemy->fSetObjectId(object_count);
+        enemy->SetEnemyGropeData(Source_.master, Source_.transfer_host, Source_.grope_id);
+    }
+    break;
+    case EnemyType::Boss_Unit:
+        break;
+        //-----敵のタグが無いときはここでリターンする-----//
+    default:
+        return;
+        break;
+    }
+
+
+
+    //-----敵のvectorに入れる-----//
+    mEnemyVec.emplace_back(enemy);
 
     object_count++;
 }
@@ -1093,6 +1106,9 @@ void EnemyManager::fAllClear()
         }
     }
     mEnemyVec.clear();
+
+    //-----マスターデータの削除-----//
+    master_enemy_data->ResetMasterData();
 }
 
 void EnemyManager::fCollisionEnemyVsEnemy()
