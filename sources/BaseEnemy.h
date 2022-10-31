@@ -236,6 +236,33 @@ public:
 #pragma endregion
     //=====================================================//
 
+    //----------敵の大まかなAIの遷移関数とステート----------//
+    //========================================//
+protected:
+    //-----マスターが設定するAI-----//
+    enum MasterAiState
+                    {
+                        //-----待機-----//
+                        Idle,
+                        //-----移動-----//
+                        Move,
+                        //-----攻撃-----//
+                        Attack
+                    };
+#pragma region TransitionAiFunc
+protected:
+    //-----待機に遷移-----//
+    virtual void AiTransitionIdle() = 0;
+
+    //-----移動に遷移-----//
+    virtual void AiTransitionMove() = 0;
+
+    //-----攻撃に遷移-----//
+    virtual void AiTransformAttack() = 0;
+
+#pragma endregion
+    //========================================//
+
     //----------エフェクト---------//
     //===================//
 #pragma region EnemyEffect

@@ -409,3 +409,19 @@ void SwordEnemy::fSetStun(bool Arg_, bool IsJust_)
         fChangeState(DivedState::Stun);
     }
 }
+
+void SwordEnemy::AiTransitionIdle()
+{
+    fChangeState(DivedState::Idle);
+}
+
+void SwordEnemy::AiTransitionMove()
+{
+    fChangeState(DivedState::Move);
+}
+
+void SwordEnemy::AiTransformAttack()
+{
+    fChangeState(DivedState::AttackBegin);
+}
+

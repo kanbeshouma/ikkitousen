@@ -336,3 +336,18 @@ void SwordEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
     }
 }
 
+void SwordEnemy_Ace::AiTransitionIdle()
+{
+    fChangeState(DivideState::Idle);
+}
+
+void SwordEnemy_Ace::AiTransitionMove()
+{
+    fChangeState(DivideState::Move);
+}
+
+void SwordEnemy_Ace::AiTransformAttack()
+{
+    fChangeState(DivideState::CounterStart);
+}
+

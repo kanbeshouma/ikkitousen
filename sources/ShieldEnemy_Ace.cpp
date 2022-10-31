@@ -328,6 +328,21 @@ void ShieldEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
         fChangeState(DivedState::Stun);
     }
 }
+void ShieldEnemy_Ace::AiTransitionIdle()
+{
+    fChangeState(DivedState::Start);
+}
+
+void ShieldEnemy_Ace::AiTransitionMove()
+{
+    fChangeState(DivedState::Move);
+}
+
+void ShieldEnemy_Ace::AiTransformAttack()
+{
+    fChangeState(DivedState::ShieldReady);
+}
+
 //ƒvƒŒƒCƒ„[‚ª©•ª‚Ì‹ŠE“à‚É‚¢‚é‚©”»•Ê
 bool ShieldEnemy_Ace::fJudge_in_view() const
 {

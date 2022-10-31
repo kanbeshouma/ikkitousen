@@ -87,4 +87,17 @@ private:
     void fStunUpdate(float elapsedTime_);
 public:
     void fSetStun(bool Arg_, bool IsJust_) override;
+    //----------“G‚Ì‘å‚Ü‚©‚ÈAI‚Ì‘JˆÚŠÖ”‚ÆƒXƒe[ƒg----------//
+#pragma region TransitionAiFunc
+protected:
+    //-----‘Ò‹@‚É‘JˆÚ-----//
+    void AiTransitionIdle() override;
+
+    //-----ˆÚ“®‚É‘JˆÚ-----//
+    void AiTransitionMove() override;
+
+    //-----UŒ‚‚É‘JˆÚ-----//
+    void AiTransformAttack() override;
+
+#pragma endregion
 };

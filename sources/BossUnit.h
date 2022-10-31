@@ -105,6 +105,19 @@ private:
 
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    //----------“G‚Ì‘å‚Ü‚©‚ÈAI‚Ì‘JˆÚŠÖ”‚ÆƒXƒe[ƒg----------//
+#pragma region TransitionAiFunc
+protected:
+    //-----‘Ò‹@‚É‘JˆÚ-----//
+    void AiTransitionIdle() override {};
+
+    //-----ˆÚ“®‚É‘JˆÚ-----//
+    void AiTransitionMove() override {};
+
+    //-----UŒ‚‚É‘JˆÚ-----//
+    void AiTransformAttack() override {};
+
+#pragma endregion
 public:
     void fRender(GraphicsPipeline& Graphics_) override;
 };

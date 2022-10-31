@@ -53,6 +53,19 @@ private:
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fSetStun(bool Arg_, bool IsJust_) override;
+    //----------“G‚Ì‘å‚Ü‚©‚ÈAI‚Ì‘JˆÚŠÖ”‚ÆƒXƒe[ƒg----------//
+#pragma region TransitionAiFunc
+protected:
+    //-----‘Ò‹@‚É‘JˆÚ-----//
+    void AiTransitionIdle() override {};
+
+    //-----ˆÚ“®‚É‘JˆÚ-----//
+    void AiTransitionMove() override {};
+
+    //-----UŒ‚‚É‘JˆÚ-----//
+    void AiTransformAttack() override {};
+
+#pragma endregion
 };
 
 inline void TutorialEnemy_NoAttack::fSetStun(bool Arg_, bool IsJust_)
@@ -127,6 +140,19 @@ private:
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fSetStun(bool Arg_, bool IsJust_) override;
+    //----------“G‚Ì‘å‚Ü‚©‚ÈAI‚Ì‘JˆÚŠÖ”‚ÆƒXƒe[ƒg----------//
+#pragma region TransitionAiFunc
+protected:
+    //-----‘Ò‹@‚É‘JˆÚ-----//
+    void AiTransitionIdle() override {};
+
+    //-----ˆÚ“®‚É‘JˆÚ-----//
+    void AiTransitionMove() override {};
+
+    //-----UŒ‚‚É‘JˆÚ-----//
+    void AiTransformAttack() override {};
+
+#pragma endregion
 };
 
 inline void TutorialEnemy::fSetStun(bool Arg_, bool IsJust_)

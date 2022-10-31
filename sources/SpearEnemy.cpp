@@ -347,3 +347,18 @@ void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
         fChangeState(DivedState::Stun);
     }
 }
+
+void SpearEnemy::AiTransitionIdle()
+{
+    fChangeState(DivedState::Idle);
+}
+
+void SpearEnemy::AiTransitionMove()
+{
+    fChangeState(DivedState::Move);
+}
+
+void SpearEnemy::AiTransformAttack()
+{
+    fChangeState(DivedState::ThrustBegin);
+}

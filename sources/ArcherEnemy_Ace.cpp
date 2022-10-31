@@ -508,6 +508,21 @@ void ArcherEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
     }
 }
 
+void ArcherEnemy_Ace::AiTransitionIdle()
+{
+    fChangeState(DivedeState::Idle);
+}
+
+void ArcherEnemy_Ace::AiTransitionMove()
+{
+    fChangeState(DivedeState::Move);
+}
+
+void ArcherEnemy_Ace::AiTransformAttack()
+{
+    fChangeState(DivedeState::AttackReady);
+}
+
 void ArcherEnemy_Ace::fGuiMenu()
 {
 #ifdef USE_IMGUI
