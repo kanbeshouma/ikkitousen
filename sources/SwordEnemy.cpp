@@ -30,6 +30,18 @@ void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     {
         ImGui::Begin(name.c_str());
         ImGui::RadioButton("Master", master);
+        if (master)
+        {
+            ImGui::DragFloat3("master_pos", &mPosition.x, 0.0f);
+            ImGui::DragInt("master_ai_state", &ai_state, 0.0f);
+            ImGui::DragInt("master_target_id", &target_player_id, 0.0f);
+        }
+        else
+        {
+            ImGui::DragFloat3("master_pos", &master_pos.x, 0.0f);
+            ImGui::DragInt("master_ai_state", &master_ai_state, 0.0f);
+            ImGui::DragInt("master_target_id", &master_target_id, 0.0f);
+        }
         ImGui::End();
     }
 #endif
@@ -195,7 +207,7 @@ void SwordEnemy::fSpawnInit()
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
     //-----ステート設定-----//
-    ai_state = AiState::Start;
+    ai_state = MasterAiState::Idle;
 }
 
 void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -220,7 +232,7 @@ void SwordEnemy::fIdleInit()
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
     //-----ステート設定-----//
-    ai_state = AiState::Idle;
+    ai_state = MasterAiState::Idle;
 
 }
 
@@ -240,7 +252,7 @@ void SwordEnemy::fWalkInit()
     mpModel->play_animation(mAnimPara,AnimationName::walk,true);
     mWaitTimer = 0.0f;
     //-----ステート設定-----//
-    ai_state = AiState::Move;
+    ai_state = MasterAiState::Move;
 }
 
 void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -264,8 +276,7 @@ void SwordEnemy::fAttackBeginInit()
     mpModel->play_animation(mAnimPara,AnimationName::attack_idle);
     mWaitTimer = 0.0f;
     //-----ステート設定-----//
-    ai_state = AiState::AttackBegin;
-
+    ai_state = MasterAiState::Attack;
 }
 void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -286,7 +297,6 @@ void SwordEnemy::fAttackRunInit()
     mMoveTimer = 0;
     audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
     //-----ステート設定-----//
-    ai_state = AiState::AttackRun;
 
 }
 
@@ -308,8 +318,6 @@ void SwordEnemy::fAttackPreActionInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_up, false, false);
     mWaitTimer = 0.0f;
-    //-----ステート設定-----//
-    ai_state = AiState::AttackMiddle;
 
 }
 void SwordEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -327,8 +335,6 @@ void SwordEnemy::fAttackEndInit()
     mWaitTimer = 0.0f;
     fSetAttack(true);
     fSetAttackOperation(false);
-    //-----ステート設定-----//
-    ai_state = AiState::AttackEnd;
 
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -345,8 +351,6 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void SwordEnemy::fEscapeInit()
 {
     mMoveTimer = 0;
-    //-----ステート設定-----//
-    ai_state = AiState::Escape;
 }
 
 void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -372,8 +376,6 @@ void SwordEnemy::fStunInit()
 
     mWaitTimer = mStunTime ;
     mIsAttack = false;
-    //-----ステート設定-----//
-    ai_state = AiState::Stun;
     //-----攻撃動作に入ったことを知らせる-----//
     fSetAttackOperation(false);
 }

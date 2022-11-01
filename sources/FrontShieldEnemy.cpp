@@ -191,7 +191,7 @@ void ShieldEnemy::fSpawnInit()
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
-    ai_state = AiState::Start;
+    ai_state = MasterAiState::Idle;
 
 }
 
@@ -216,7 +216,7 @@ void ShieldEnemy::fMoveInit()
     // アニメーションを再生
     mpModel->play_animation(mAnimPara, AnimationName::move, true);
     mWaitTimer = 0.0f;
-    ai_state = AiState::Move;
+    ai_state = MasterAiState::Move;
 }
 
 void ShieldEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -239,7 +239,7 @@ void ShieldEnemy::fShieldReadyInit()
     mpModel->play_animation(mAnimPara, AnimationName::shield_ready);
     mWaitTimer = 0.0f;
     is_shield = true; //シールド効果ON
-    ai_state = AiState::ShieldReady;
+    ai_state = MasterAiState::Attack;
 }
 
 void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -259,7 +259,6 @@ void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graph
 void ShieldEnemy::fShieldAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::shield_Attack);
-    ai_state = AiState::ShieldAttack;
 }
 
 void ShieldEnemy::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -275,7 +274,6 @@ void ShieldEnemy::fShieldInit()
     mpModel->play_animation(mAnimPara, AnimationName::shield);
     mShieldEffect->play(effect_manager->get_effekseer_manager(), mPosition,5);
     mShieldEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
-    ai_state = AiState::Shield;
 }
 
 void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -296,7 +294,6 @@ void ShieldEnemy::fStunInit()
 
     mWaitTimer = 0.0f;
     is_shield = false;
-    ai_state = AiState::Stun;
 }
 
 void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -318,7 +315,6 @@ void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ShieldEnemy::fDieInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::die);
-    ai_state = AiState::Die;
 }
 
 void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

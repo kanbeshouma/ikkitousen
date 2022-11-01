@@ -241,14 +241,14 @@ public:
 protected:
     //-----マスターが設定するAI-----//
     enum MasterAiState
-                    {
-                        //-----待機-----//
-                        Idle,
-                        //-----移動-----//
-                        Move,
-                        //-----攻撃-----//
-                        Attack
-                    };
+    {
+        //-----待機-----//
+        Idle,
+        //-----移動-----//
+        Move,
+        //-----攻撃-----//
+        Attack
+    };
 #pragma region TransitionAiFunc
 protected:
     //-----待機に遷移-----//
