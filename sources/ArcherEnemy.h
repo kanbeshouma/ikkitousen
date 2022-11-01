@@ -162,7 +162,7 @@ private:
     //移動時間（一定時間移動したらアイドル状態に）
     const float MOVE_TIME = 3.0f;
     //移動スピード
-    const float MAX_MOVE_SPEED = 3.0f;
+    const float MAX_MOVE_SPEED = 30.0f;
     //回転スピード
     const float ROT_SPEED = 10.0f;
 

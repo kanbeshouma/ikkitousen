@@ -1235,6 +1235,9 @@ void EnemyManager::SetEnemyGropeHostData()
         //-----リーダー出ないならとばす-----//
         if (ene->fGetMaster() == false) continue;
 
+        //-----リーダーがスタンしている場合はホスト権限を譲渡する-----//
+        if(ene->fGetStun()) TransferMaster(ene->fGetGropeId());
+
         //-----リーダーのデータを設定する-----//
         master_enemy_data->SetMasterData(ene->fGetGropeId(),ene->fGetPosition(),ene->fGetTargetPlayerId(),ene->fGetEnemyAiState());
     }

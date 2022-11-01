@@ -164,7 +164,6 @@ void SpearEnemy_Ace::fRegisterFunctions()
 
 void SpearEnemy_Ace::fStartInit()
 {
-    ai_state = AiState::Start;
 }
 void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -179,8 +178,8 @@ void SpearEnemy_Ace::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 
 void SpearEnemy_Ace::fIdleInit()
 {
-    mpModel->play_animation(mAnimPara,AnimationName::ace_attack_ready);
-    ai_state = AiState::Idle;
+    mpModel->play_animation(mAnimPara,AnimationName::attack_idle);
+    ai_state = MasterAiState::Idle;
 }
 
 void SpearEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -196,16 +195,29 @@ void SpearEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void SpearEnemy_Ace::fMoveInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::walk,true);
-    ai_state = AiState::Move;
+    ai_state = MasterAiState::Move;
+    //-----取り巻きの移動位置を決める-----//
+    SetMasterSurroundingsPos();
+
 }
 
 void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_, 20.0f);
+
     // プレイヤー方向に進む
     const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
-    const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
-    mPosition += (norm * elapsedTime_ * mMoveSpeed);
+    //--------------------<プレイヤーのいる向きに移動>--------------------//
+    fMoveFront(elapsedTime_, mMoveSpeed);
+
+    //--------------------<プレイヤーの方向に回転>--------------------//
+    if (master)fTurnToPlayer(elapsedTime_, 20.0f);
+    else
+    {
+        //-----ターゲット位置との距離を確認-----//
+        CheckFollowersTargetPos();
+        fTurnToTarget(elapsedTime_, 20.0, followers_target_pos);
+    }
+
     if(Math::Length(vec)<= mAttackLength)
     {
         //-----マスター以外はマスターからの指示をまつ-----//

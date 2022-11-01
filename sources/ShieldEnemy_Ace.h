@@ -85,7 +85,7 @@ private:
     // 定数
     //
     //****************************************************************
-    const float mMoveSpeed{ 10.0f };      // 移動速度
+    const float mMoveSpeed{ 30.0f };      // 移動速度
     const float mDifenceRange{ 40.0f };    // 攻撃範囲
     const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
     const float mSpawnDelaySec{ 1.0f };   // 登場後の長さ（秒）

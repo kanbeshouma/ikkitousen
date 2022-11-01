@@ -249,6 +249,8 @@ void SwordEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void SwordEnemy::fWalkInit()
 {
+    SetMasterSurroundingsPos();
+
     // アニメーションを再生
     mpModel->play_animation(mAnimPara,AnimationName::walk,true);
     mWaitTimer = 0.0f;
@@ -259,10 +261,16 @@ void SwordEnemy::fWalkInit()
 void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<プレイヤーのいる向きに移動>--------------------//
+    fMoveFront(elapsedTime_, mMoveSpeed);
 
-    fMoveFront(elapsedTime_, 10.0f);
     //--------------------<プレイヤーの方向に回転>--------------------//
-    fTurnToPlayer(elapsedTime_, 2.0f);
+    if (master)fTurnToPlayer(elapsedTime_, 20.0f);
+    else
+    {
+        //-----ターゲット位置との距離を確認-----//
+        CheckFollowersTargetPos();
+        fTurnToTarget(elapsedTime_, 20.0, followers_target_pos);
+    }
 
     // プレイヤーとの距離が一定以下になったら
     if(mAttackRange >= Math::Length(mPlayerPosition-mPosition))

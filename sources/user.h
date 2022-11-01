@@ -82,6 +82,14 @@ namespace Math
         const float n = std::fmod(v - lo, hi - lo);
         return n >= 0 ? (n + lo) : (n + hi);
     }
+
+    inline float RandomRange(float min, float max)
+    {
+        //0.0 ~ 1.0f1の間までのランダム値
+        float value = static_cast<float>(rand()) / RAND_MAX;
+        //min~,axまでのランダム値に変換
+        return min + (max - min) * value;
+    }
     //--------------------------------------------------------------
     //  任意のフレーム後にtrueを返す
     //--------------------------------------------------------------

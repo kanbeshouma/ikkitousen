@@ -270,6 +270,24 @@ protected:
 
 #pragma endregion
     //========================================//
+protected:
+    //-----リーダーの周りのターゲット位置を決める-----//
+    void SetMasterSurroundingsPos();
+
+    //-----取り巻きのターゲット位置の距離をチェック-----//
+    void CheckFollowersTargetPos();
+
+    //-----ランダムで動ける半径-----//
+    const float SurroundingsRadius = 30.0f;
+
+    //-----取り巻きのターゲット位置の距離の最低値-----//
+    const float FollowersMinLength = 2.0f;
+
+    //-----リーダーの周りに動く時のターゲット位置-----//
+    DirectX::XMFLOAT3 followers_target_pos;
+
+    //-----動く時の補間レート-----//
+    float followers_move_rate{ 0.0f };
 
     //----------エフェクト---------//
     //===================//

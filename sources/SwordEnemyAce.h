@@ -103,4 +103,8 @@ protected:
     void AiTransformAttack() override;
 
 #pragma endregion
+
+
+    const float mMoveSpeed{ 30.0f };      // ˆÚ“®‘¬“x
+
 };

@@ -78,7 +78,7 @@ private:
     //
     //****************************************************************
 #pragma region Constant
-    const float mMoveSpeed{ 10.0f };      // ˆÚ“®‘¬“x
+    const float mMoveSpeed{ 30.0f };      // ˆÚ“®‘¬“x
     const float mAttackRange{ 60.0f };    // UŒ‚”ÍˆÍ
     const float mAttackDelaySec{ 1.0f };  // UŒ‚Œã‚ÌŒ„‚Ì’·‚³i•bj
     const float mSpawnDelaySec{ 1.0f };   // “oêŒã‚Ì’·‚³i•bj

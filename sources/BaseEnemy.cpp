@@ -110,8 +110,8 @@ void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
         transform.emplace_back(world);
     }
 
-    const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
-    mpModel->render(Graphics_.get_dc().Get(), mAnimPara, transform.at(0), color,mDissolve);
+        const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
+        mpModel->render(Graphics_.get_dc().Get(), mAnimPara, transform.at(0), color, mDissolve);
 }
 
 bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -178,12 +178,14 @@ void BaseEnemy::fUpdateVernierEffectPos()
 
 void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 {
-    // �v���C���[�̕����ɉ�]
+    //上ベクトル
     constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
 
-    // �v���C���[�Ƃ̃x�N�g��
-    const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
-    // �����̐��ʃx�N�g��
+    DirectX::XMFLOAT3 vToPlayer{};
+    //ターゲットまでのベクトル作成-----//
+    vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
+
+    //前方向ベクトル
     const auto front = Math::Normalize(Math::GetFront(mOrientation));
      float dot = Math::Dot(vToPlayer, front);
 
@@ -262,9 +264,10 @@ void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
 
 void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
 {
-    // �O�����ɐi
+    //移動処理-----//
     const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
     mPosition += (velocity * elapsedTime_);
+
 }
 
 void BaseEnemy::fComputeInCamera()
@@ -568,6 +571,32 @@ void BaseEnemy::fSetMasterData(DirectX::XMFLOAT3 m_pos, int m_ai, int m_target)
     //-----それぞれのデータを設定-----//
     master_pos = m_pos;
     master_ai_state = m_ai;
-    master_target_id = m_target;
+    target_player_id = m_target;
 
 }
+
+void BaseEnemy::SetMasterSurroundingsPos()
+{
+    float theta = Math::RandomRange(-DirectX::XM_PI, DirectX::XM_PI);
+    float range = Math::RandomRange(0.0f, SurroundingsRadius);
+
+    followers_target_pos.x = master_pos.x + sinf(theta) * range;
+    followers_target_pos.y = master_pos.y;
+    followers_target_pos.z = master_pos.z + cosf(theta) * range;
+
+    //-----少しだけレートを増やしておく(再設定されないように)-----//
+    followers_move_rate = 0.01f;
+}
+
+void BaseEnemy::CheckFollowersTargetPos()
+{
+    //-----ターゲット位置との距離を算出-----//
+    float length = Math::Length(mPosition - followers_target_pos);
+
+    //-----一定距離以下ならターゲット位置を再設定する-----//
+    if (length < FollowersMinLength)
+    {
+        SetMasterSurroundingsPos();
+    }
+}
+

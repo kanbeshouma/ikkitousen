@@ -80,7 +80,7 @@ private:
     const float mIdleSec{ 4.0f };        // 待機時間
     const float mStartSec{ 1.0f };        // 待機時間
     const float mAttackLength{ 100.0f }; // プレイヤーとの距離がこの距離以下になったら
-    const float mMoveSpeed{ 20.0f };     // 移動速度
+    const float mMoveSpeed{ 30.0f };     // 移動速度
     const float mThrustBeginSec{ 1.0f }; // 突進準備の時間
     const float mThrustMiddleSec{ 0.2f };// 槍を突き出す長さ
     const float mThrustEndSec{ 3.0f };   // 突進中の長さ

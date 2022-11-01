@@ -277,6 +277,10 @@ void ArcherEnemy::fMoveInit()
     mAttackingTime = 0.0f;
     //-----ステート設定-----//
     ai_state = MasterAiState::Move;
+
+    //-----取り巻きの移動位置を決める-----//
+    SetMasterSurroundingsPos();
+
 }
 
 void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -304,13 +308,23 @@ void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void ArcherEnemy::fMoveApproachInit()
 {
+    //-----取り巻きの移動位置を決める-----//
+    SetMasterSurroundingsPos();
+
     mStayTimer = 0.0f;
 }
 
 void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     fMove(elapsedTime_);
-    fTurnToPlayer(elapsedTime_, ROT_SPEED);
+    //--------------------<プレイヤーの方向に回転>--------------------//
+    if (master)fTurnToPlayer(elapsedTime_, 20.0f);
+    else
+    {
+        //-----ターゲット位置との距離を確認-----//
+        CheckFollowersTargetPos();
+        fTurnToTarget(elapsedTime_, 20.0, followers_target_pos);
+    }
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
 
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
@@ -337,6 +351,8 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
 
 void ArcherEnemy::fMoveLeaveInit()
 {
+    //-----取り巻きの移動位置を決める-----//
+    SetMasterSurroundingsPos();
     mStayTimer = 0.0f;
 }
 
@@ -538,23 +554,11 @@ void ArcherEnemy::fGuiMenu()
        // fDamaged(1, 0.6f);
     }
 #endif
-
 }
 
 void ArcherEnemy::fMove(float elapsed_time)
 {
-    //ターゲットに向かって回転
-    DirectX::XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&mOrientation);
-    DirectX::XMVECTOR forward;
-    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
-    DirectX::XMFLOAT4X4 m4x4 = {};
-    DirectX::XMStoreFloat4x4(&m4x4, m);
-    forward = { m4x4._31, m4x4._32, m4x4._33 };
-    forward = DirectX::XMVector3Normalize(forward);
-    DirectX::XMFLOAT3 f;
-    DirectX::XMStoreFloat3(&f, forward);
 
-
-    mPosition += f * MAX_MOVE_SPEED * elapsed_time;
-
+    //--------------------<プレイヤーのいる向きに移動>--------------------//
+    fMoveFront(elapsed_time, MAX_MOVE_SPEED);
 }

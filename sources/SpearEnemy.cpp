@@ -195,12 +195,14 @@ void SpearEnemy::fMoveInit()
     // 突進先の座標を初期化
     mThrustTarget = mPlayerPosition;
     ai_state = MasterAiState::Move;
+    //-----取り巻きの移動位置を決める-----//
+    SetMasterSurroundingsPos();
+
 
 }
 void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    //--------------------<プレイヤーの方向に回転>--------------------//
-    fTurnToPlayer(elapsedTime_, 2.0f);
+
     // プレイヤーと突進方向のなす角が一定以下になったら突進する
     auto v1 = mThrustTarget- mPosition;
     auto v2 = Math::GetFront(mOrientation);
@@ -224,6 +226,15 @@ void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         //--------------------<プレイヤーのいる向きに移動>--------------------//
         fMoveFront(elapsedTime_, mMoveSpeed);
+    }
+
+    //--------------------<プレイヤーの方向に回転>--------------------//
+    if (master)fTurnToPlayer(elapsedTime_, 20.0f);
+    else
+    {
+        //-----ターゲット位置との距離を確認-----//
+        CheckFollowersTargetPos();
+        fTurnToTarget(elapsedTime_, 20.0, followers_target_pos);
     }
 }
 //--------------------<突進準備>--------------------//

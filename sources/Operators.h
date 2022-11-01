@@ -169,6 +169,8 @@ inline DirectX::XMFLOAT3 operator / (const DirectX::XMFLOAT3 a, const DirectX::X
     return ret;
 }
 
+
+
 // Š|‚¯ŽZ
 inline DirectX::XMFLOAT3 operator * (const DirectX::XMFLOAT3 a, const float b)
 {
