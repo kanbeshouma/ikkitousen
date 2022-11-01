@@ -76,6 +76,7 @@ private:
     // 定数
     //
     //****************************************************************
+#pragma region Constant
     const float mIdleSec{ 4.0f };        // 待機時間
     const float mStartSec{ 1.0f };        // 待機時間
     const float mAttackLength{ 100.0f }; // プレイヤーとの距離がこの距離以下になったら
@@ -85,6 +86,8 @@ private:
     const float mThrustEndSec{ 3.0f };   // 突進中の長さ
     const float mThrustSpeed{ 70.0f };   // 突進の速さ
     const float mThrustDegree{ 30.0f };  // 突進の角度
+
+#pragma endregion
 
 
 private:

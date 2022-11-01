@@ -77,6 +77,7 @@ private:
     // 定数
     //
     //****************************************************************
+#pragma region Constant
     const float mMoveSpeed{ 10.0f };      // 移動速度
     const float mAttackRange{ 60.0f };    // 攻撃範囲
     const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
@@ -84,9 +85,11 @@ private:
 
     //--------------------<各ステートの待ち時間>--------------------//
     const float mAttackBeginTimeSec{ 0.85f };    // 剣を振りあげるまでの時間
-    const float mAttackPreActionTimeSec{0.1f};   // 剣を振り下ろす予備動作
+    const float mAttackPreActionTimeSec{ 0.1f };   // 剣を振り下ろす予備動作
     const float mAttackDownSec{ 1.0f };          // 剣を振り下ろす
     const float mMoveTimeLimit{ 2.0f };          // プレイヤーに向かうのとプレイヤーから退く制限時間
+
+#pragma endregion
 private:
     //****************************************************************
     //

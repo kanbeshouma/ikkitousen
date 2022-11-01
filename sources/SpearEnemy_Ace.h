@@ -67,8 +67,25 @@ private:
     float mWaitTimer{}; // 待機時間
     skeleton::bone mpSpearBoneBottom{};
     skeleton::bone mpSpearBoneTop{};
-    const float mAttackLength{ 8.0f }; // プレイヤーとの距離がこの距離以下になったら
 
+    //----------定数--------//
+    //==============//
+#pragma region Constant
+private:
+    // プレイヤーとの距離がこの距離以下になったら
+    const float mAttackLength{ 8.0f };
+
+    //-----移動速度-----//
+    const float mMoveSpeed{ 30.0f };
+
+    //-----攻撃時の移動速度-----//
+    const float mAttackMoveSpeed{ 60.0f };
+
+    //-----プレイヤーの最低距離の倍率-----//
+    const float mLeastAttackLength{ mAttackLength * 0.8f };
+
+#pragma endregion
+    //==============//
 private:
     // ステートマシンの関数群
     void fStartInit();

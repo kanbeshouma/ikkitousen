@@ -205,13 +205,13 @@ void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     // プレイヤー方向に進む
     const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
     const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
-    mPosition += (norm * elapsedTime_ * 30.0f);
+    mPosition += (norm * elapsedTime_ * mMoveSpeed);
     if(Math::Length(vec)<= mAttackLength)
     {
         //-----マスター以外はマスターからの指示をまつ-----//
         if (master)fChangeState(DivideState::WipeReady);
         //-----あまりにも距離が近い場合は攻撃に遷移する-----//
-        else if (Math::Length(vec) <= mAttackLength * 0.8)fChangeState(DivideState::WipeReady);
+        else if (Math::Length(vec) <= mLeastAttackLength)fChangeState(DivideState::WipeReady);
     }
 }
 
@@ -229,7 +229,7 @@ void SpearEnemy_Ace::fWipeReadyUpdate(float elapsedTime_, GraphicsPipeline& Grap
     // プレイヤー方向に進む
     const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
     const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
-    mPosition += (norm * elapsedTime_ * 60.0f);
+    mPosition += (norm * elapsedTime_ * mAttackMoveSpeed);
 
     if (Math::Length(vec) <= 7.0f)
     {
