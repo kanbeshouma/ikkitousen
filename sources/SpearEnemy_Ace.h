@@ -67,6 +67,7 @@ private:
     float mWaitTimer{}; // 待機時間
     skeleton::bone mpSpearBoneBottom{};
     skeleton::bone mpSpearBoneTop{};
+    const float mAttackLength{ 8.0f }; // プレイヤーとの距離がこの距離以下になったら
 
 private:
     // ステートマシンの関数群

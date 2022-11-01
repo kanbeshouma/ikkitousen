@@ -269,6 +269,8 @@ void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         //-----マスター以外はマスターからの指示をまつ-----//
         if (master)fChangeState(DivedState::AttackBegin);
+        //-----あまりにも距離が近い場合は攻撃に遷移する-----//
+        else if (mAttackRange / 2 >= Math::Length(mPlayerPosition - mPosition))fChangeState(DivedState::AttackBegin);
     }
 }
 

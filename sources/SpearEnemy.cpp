@@ -216,6 +216,9 @@ void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         //-----マスター以外はマスターからの指示をまつ-----//
         if (master)fChangeState(DivedState::ThrustBegin);
+        //-----あまりにも距離が近い場合は攻撃に遷移する-----//
+        else if(Math::Length(mPosition - mPlayerPosition) <= mAttackLength / 2&&
+            fabs(dot) <= mThrustDegree)fChangeState(DivedState::ThrustBegin);
     }
     else
     {
