@@ -68,7 +68,11 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     fUpdateVernierEffectPos();
 
     //-----タプルに保存された更新処理を呼び出す-----//
-    std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
+    //-----マスターなら自分で行動する-----//
+    if (master)std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
+    //-----マスターじゃなかったらマスターの行動で切り替える-----//
+    else FollowersTransitionAi(Graphics_,elapsedTime_);
+
 
     //-----アニメーションの更新処理-----//
     mpModel->update_animation(mAnimPara, elapsedTime_ );
@@ -507,6 +511,30 @@ void BaseEnemy::fSetReceivePosition(DirectX::XMFLOAT3 pos)
     {
         mPosition = pos;
     }
+}
+
+void BaseEnemy::FollowersTransitionAi(GraphicsPipeline& Graphics_, float elapsedTime_)
+{
+    //-----既に同じステートなら入らない-----//
+    if (current_my_ai != master_ai_state && is_appears)
+    {
+        switch (master_ai_state)
+        {
+        case MasterAiState::Idle:
+            AiTransitionIdle();
+            break;
+        case MasterAiState::Move:
+            AiTransitionMove();
+            break;
+        case MasterAiState::Attack:
+            AiTransformAttack();
+            break;
+        default:
+            break;
+        }
+        current_my_ai = master_ai_state;
+    }
+    std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
 }
 
 void BaseEnemy::fChangeState(const char* Tag_)

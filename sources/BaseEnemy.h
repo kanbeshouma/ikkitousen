@@ -157,7 +157,12 @@ protected:
     // ボスかどうか
     bool mIsBoss{};
 private:
+    //-----ホストの敵のAI更新-----//
     FunctionTuple mCurrentTuple{};
+
+    //-----ホスト以外のAI更新-----//
+    void FollowersTransitionAi(GraphicsPipeline& Graphics_, float elapsedTime_);
+
 protected:
     virtual void fRegisterFunctions() = 0;
     void fChangeState(const char* Tag_);
@@ -236,7 +241,7 @@ public:
 #pragma endregion
     //=====================================================//
 
-    //----------敵の大まかなAIの遷移関数とステート----------//
+    //----------敵の大まかなAIの遷移関数とステート、変数----------//
     //========================================//
 protected:
     //-----マスターが設定するAI-----//
@@ -259,6 +264,9 @@ protected:
 
     //-----攻撃に遷移-----//
     virtual void AiTransformAttack() = 0;
+protected:
+    //-----ホスト以外の敵の現在遷移したステート-----//
+    int current_my_ai{ -1 };
 
 #pragma endregion
     //========================================//
