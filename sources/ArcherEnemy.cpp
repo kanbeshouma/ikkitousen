@@ -266,7 +266,8 @@ void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mStayTimer += elapsedTime_;
     if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
-    fChangeState(DivedState::Move);
+    //-----マスター以外はマスターからの指示をまつ-----//
+    if (master)fChangeState(DivedState::Move);
 }
 
 void ArcherEnemy::fMoveInit()
@@ -314,7 +315,8 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
 
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::AttackReady);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::AttackReady);
         return;
     }
 
@@ -374,7 +376,8 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::AttackReady);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::AttackReady);
         return;
     }
 
@@ -388,7 +391,8 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     mStayTimer += elapsedTime_;
     if (mStayTimer >= MOVE_TIME)
     {
-        fChangeState(DivedState::Idle);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Idle);
         mStayTimer = 0;
     }
 }

@@ -114,6 +114,18 @@ void SpearEnemy_Ace::fRegisterFunctions()
     {
         InitFunc ini = [=]()->void
         {
+            fWipeReadyInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fWipeReadyUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::WipeReady, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
             fWipeBeginInit();
         };
         UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
@@ -176,13 +188,14 @@ void SpearEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     fTurnToPlayer(elapsedTime_, 20.0f);
    if(mpModel->end_of_animation(mAnimPara))
    {
-       fChangeState(DivideState::Move);
+       //-----マスター以外はマスターからの指示をまつ-----//
+       if (master)fChangeState(DivideState::Move);
    }
 }
 
 void SpearEnemy_Ace::fMoveInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::ace_attack_idle,true);
+    mpModel->play_animation(mAnimPara, AnimationName::walk,true);
     ai_state = AiState::Move;
 }
 
@@ -192,8 +205,31 @@ void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     // プレイヤー方向に進む
     const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
     const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
-    mPosition += (norm * elapsedTime_ * 60.0f);
+    mPosition += (norm * elapsedTime_ * 30.0f);
     if(Math::Length(vec)<=7.0f)
+    {
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivideState::WipeReady);
+    }
+}
+
+void SpearEnemy_Ace::fWipeReadyInit()
+{
+    //-----攻撃動作に入ったことを知らせる-----//
+    fSetAttackOperation(true);
+    mpModel->play_animation(mAnimPara, AnimationName::ace_attack_ready);
+    ai_state = MasterAiState::Attack;
+}
+
+void SpearEnemy_Ace::fWipeReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 20.0f);
+    // プレイヤー方向に進む
+    const DirectX::XMFLOAT3 vec = mPlayerPosition - mPosition;
+    const DirectX::XMFLOAT3 norm = Math::Normalize(vec);
+    mPosition += (norm * elapsedTime_ * 60.0f);
+
+    if (Math::Length(vec) <= 7.0f)
     {
         fChangeState(DivideState::WipeBegin);
     }
@@ -201,10 +237,7 @@ void SpearEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void SpearEnemy_Ace::fWipeBeginInit()
 {
-    //-----攻撃動作に入ったことを知らせる-----//
-    fSetAttackOperation(true);
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_start);
-    ai_state = MasterAiState::Attack;
 }
 
 void SpearEnemy_Ace::fWipeBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -277,6 +310,6 @@ void SpearEnemy_Ace::AiTransitionMove()
 
 void SpearEnemy_Ace::AiTransformAttack()
 {
-    fChangeState(DivideState::WipeBegin);
+    fChangeState(DivideState::WipeReady);
 }
 

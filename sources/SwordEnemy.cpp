@@ -242,7 +242,8 @@ void SwordEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 一定時間経過で移動に遷移
     if (mWaitTimer >= mSpawnDelaySec)
     {
-        fChangeState(DivedState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Move);
     }
 }
 
@@ -266,7 +267,8 @@ void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // プレイヤーとの距離が一定以下になったら
     if(mAttackRange >= Math::Length(mPlayerPosition-mPosition))
     {
-        fChangeState(DivedState::AttackBegin);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::AttackBegin);
     }
 }
 
@@ -296,7 +298,6 @@ void SwordEnemy::fAttackRunInit()
     fSetAttackOperation(true);
     mMoveTimer = 0;
     audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
-    //-----ステート設定-----//
 
 }
 

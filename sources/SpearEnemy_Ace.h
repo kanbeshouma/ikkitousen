@@ -12,6 +12,7 @@ class SpearEnemy_Ace final : public BaseEnemy
         inline static const char* Start       = "Start";
         inline static const char* Idle        = "Idle";
         inline static const char* Move        = "Move";
+        inline static const char* WipeReady   = "WipeReady";   // ì„Ç¨ï•Ç¢èÄîı
         inline static const char* WipeBegin   = "WipeBegin";   // ì„Ç¨ï•Ç¢ÇÕÇ∂Çﬂ
         inline static const char* WipeAttack  = "WipeAttack";  // ì„Ç¨ï•Ç¢íÜ
         inline static const char* WipeEnd     = "WipeEnd";     // ì„Ç¨ï•Ç¢èIÇÌÇË
@@ -78,6 +79,8 @@ private:
     void fMoveInit();
     void fMoveUpdate( float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fWipeReadyInit();
+    void fWipeReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fWipeBeginInit();
     void fWipeBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fWipeAttackInit();

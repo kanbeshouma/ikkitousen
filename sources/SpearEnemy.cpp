@@ -184,7 +184,8 @@ void SpearEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mWaitTimer += elapsedTime_;
     if(mWaitTimer>=mIdleSec)
     {
-        fChangeState(DivedState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Move);
     }
 }
 //--------------------<移動>--------------------//
@@ -213,7 +214,8 @@ void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     if(Math::Length(mPosition-mPlayerPosition)<=mAttackLength&&
         fabs(dot)<=mThrustDegree)
     {
-        fChangeState(DivedState::ThrustBegin);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::ThrustBegin);
     }
     else
     {

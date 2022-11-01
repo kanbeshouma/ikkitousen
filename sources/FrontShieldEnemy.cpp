@@ -207,7 +207,8 @@ void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
         //-----出現フラグをtrueにする-----//
         is_appears = true;
-        fChangeState(DivedState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Move);
     }
 }
 
@@ -230,7 +231,8 @@ void ShieldEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // プレイヤーとの距離が一定以下で自分の視界内にいたら
     if (mDifenceRange >= Math::Length(mPlayerPosition - mPosition) && fJudge_in_view())
     {
-        fChangeState(DivedState::ShieldReady);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::ShieldReady);
     }
 }
 
@@ -251,7 +253,8 @@ void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graph
     if (mWaitTimer >= mShieldReadySec * mAnimationSpeed)
     {
         is_shield = false; //シールド効果OFF
-        fChangeState(DivedState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Move);
     }
 
 }
@@ -265,7 +268,8 @@ void ShieldEnemy::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Grap
 {
     if (mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivedState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivedState::Move);
     }
 }
 
@@ -280,7 +284,7 @@ void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     if (mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivedState::Move);
+        fChangeState(DivedState::Start);
     }
 }
 

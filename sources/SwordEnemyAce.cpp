@@ -190,7 +190,8 @@ void SwordEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     mWaitTimer += elapsedTime_;
     if(mWaitTimer>=3.0f)
     {
-        fChangeState(DivideState::Move);
+        //-----マスター以外はマスターからの指示をまつ-----//
+        if (master)fChangeState(DivideState::Move);
     }
 }
 
