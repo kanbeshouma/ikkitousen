@@ -240,24 +240,43 @@ namespace EnemySendData
         Hitpoint,
     };
 
+    //-----敵の出現データの中の配列の内容-----//
+    enum EnemySpawnCmdArray
+    {
+        //-----cmdの中-----//
+        EnemyId = 2,
+        EnemyType = 3,
+        //============//
+    };
+
+    //-----敵の出現データの中のグループ用の配列の中身-----//
+    enum EnemySpawnGropeArray
+    {
+        //-----マスターかどうか-----//
+        Master,
+        //-----グループ番号-----//
+        GropeId,
+        //-----ホスト譲渡優先度-----//
+        Transfer,
+    };
 
     //-----敵のスポーンデータ-----//
     struct EnemySpawnData
     {
         //通信コマンド
+        //[0] : コマンド
+        //[1] : スポーンデータ
+        //[2] : enemy_id
+        //[3] : enemy_type
         char cmd[4]{};
-
-        //-----敵の番号-----//
-        int enemy_id{ -1 };
-
-        //出現タイミングを記録
-        float spawn_timer{};
 
         //出現位置の番号
         DirectX::XMFLOAT3 emitter_point{};
 
-        //敵の種類
-        EnemyType type{};
+        //[0] : リーダーかどうか
+        //[1] : グループ番号
+        //[2] : 譲渡番号
+        char grope_data[3]{};
     };
 
     //-----敵の基本データ-----//

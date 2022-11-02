@@ -2,6 +2,7 @@
 
 #include"EnemyManager.h"
 #include "EnemyFileSystem.h"
+#include"EnemyStructuer.h"
 
 #include"TestEnemy.h"
 #include"NormalEnemy.h"
@@ -170,36 +171,8 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
 
     if (milliseconds > EnemyDataFrequency)
     {
-        //-----データ送信-----//
-        switch (send_enemy_type)
-        {
-        case SendEnemyType::Sword:
-            //-----データを送る-----//
-            fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
-            //-----次に送るデータのステートに設定-----//
-            send_enemy_type = SendEnemyType::Archer;
-            break;
-        case SendEnemyType::Archer:
-            fSendEnemyData(elapsedTime_, SendEnemyType::Archer);
-            //-----次に送るデータのステートに設定-----//
-            send_enemy_type = SendEnemyType::Spear;
-            break;
-        case SendEnemyType::Spear:
-            fSendEnemyData(elapsedTime_, SendEnemyType::Spear);
-            //-----次に送るデータのステートに設定-----//
-            send_enemy_type = SendEnemyType::Shield;
-            break;
-        case SendEnemyType::Shield:
-            fSendEnemyData(elapsedTime_, SendEnemyType::Shield);
-            //-----次に送るデータのステートに設定-----//
-            send_enemy_type = SendEnemyType::Sword;
-            break;
-        case SendEnemyType::Boss:
-            fSendEnemyData(elapsedTime_, SendEnemyType::Boss);
-            break;
-        default:
-            break;
-        }
+        //-----データを送る-----//
+        fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
 
         //-----タイマーを初期化-----//
         start = std::chrono::system_clock::now();
@@ -214,15 +187,15 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
     //-----コマンドを設定する-----//
     data[ComLocation::ComList] = CommandList::Update;
     data[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
-    data[ComLocation::DataKind] = type;
 
     int data_set_count = 0;
 
     EnemySendData::EnemyData enemy_d;
 
+    //-----マスターのデータを送信する-----//
     for (const auto enemy : mEnemyVec)
     {
-        if (enemy->GetEnemyType() != type) continue;
+        if (enemy->fGetMaster() == false) continue;
         //-----オブジェクト番号設定-----//
         enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
@@ -256,9 +229,6 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySend
     using namespace EnemySendData;
     for (const auto& enemy : mEnemyVec)
     {
-        //-----受信した敵の種類と違うならとばす-----//
-        if (enemy->GetEnemyType() != static_cast<SendEnemyType>(type)) continue;
-
         //-----自分のオブジェクト番号とデータの番号が違うならとばす-----//
         if (enemy->fGetObjectId() != data.enemy_data[EnemyDataArray::ObjectId]) continue;
 
@@ -862,18 +832,33 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
 
 void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& graphics_)
 {
+    //-----受信したデータから敵の種類を取得-----//
+    EnemyType type = static_cast<EnemyType>(data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyType]);
+
+    //-----番号を取得-----//
+    int id = data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyId];
+
     // 送られてきたデータをもとに敵を出現させる
-    const auto param = mEditor.fGetParam(data.type);
+    const auto param = mEditor.fGetParam(type);
 
+    //-----マスターかどうか-----//
+    bool master = static_cast<bool>(data.grope_data[EnemySendData::EnemySpawnGropeArray::Master]);
 
-    switch (data.type)
+    //-----グループ番号-----//
+    int grope_id = static_cast<int>(data.grope_data[EnemySendData::EnemySpawnGropeArray::GropeId]);
+
+    //-----ホスト譲渡優先度-----//
+    int transfer = static_cast<int>(data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer]);
+
+    switch (type)
     {
     case EnemyType::Archer:
     {
         BaseEnemy* enemy = new ArcherEnemy(graphics_,
             data.emitter_point, param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Archer);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -881,8 +866,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     {
         BaseEnemy* enemy = new ShieldEnemy(graphics_,
             data.emitter_point, param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Shield);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -890,8 +876,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     {
         BaseEnemy* enemy = new SwordEnemy(graphics_,
             data.emitter_point, param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Sword);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -900,8 +887,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new SpearEnemy(graphics_,
             data.emitter_point,
             param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Spear);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -910,8 +898,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
             data.emitter_point,
             param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Archer);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -919,8 +908,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     {
         BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
             data.emitter_point, param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Shield);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -929,8 +919,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
             data.emitter_point,
             param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Sword);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -939,8 +930,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
             data.emitter_point,
             param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Spear);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -949,8 +941,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new LastBoss(graphics_,
             data.emitter_point,
             param,this);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Boss);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
         }
         break;
@@ -960,8 +953,9 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
             data.emitter_point,
             param);
-        enemy->fSetObjectId(data.enemy_id);
+        enemy->fSetObjectId(id);
         mEnemyVec.emplace_back(enemy);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
     }
     break;
 case EnemyType::Boss_Unit:
@@ -981,17 +975,26 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
 
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemySpawnCommand;
 
-    //-----出現する敵の番号設定-----//
-    data.enemy_id = object_count;
+    //-----敵のID-----//
+    data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyId] = object_count;
 
-    //-----出現タイミング-----//
-    data.spawn_timer = Source_.mSpawnTimer;
+    //-----敵のタイプ-----//
+    data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyType] = static_cast<int>(Source_.mType);
 
     //-----出現位置-----//
     data.emitter_point = Source_.mEmitterPoint;
 
-    //-----敵の種類-----//
-    data.type = Source_.mType;
+    //-----グループデータを設定-----//
+
+    //-----マスターかどうか-----//
+    data.grope_data[EnemySendData::EnemySpawnGropeArray::Master] = Source_.master;
+
+    //-----マスターかどうか-----//
+    data.grope_data[EnemySendData::EnemySpawnGropeArray::GropeId] = Source_.grope_id;
+
+    //-----マスターかどうか-----//
+    data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer] = Source_.transfer_host;
+
 
     CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(EnemySendData::EnemySpawnData));
 }
@@ -1232,7 +1235,7 @@ void EnemyManager::SetEnemyGropeHostData()
 {
     for (const auto& ene : mEnemyVec)
     {
-        //-----リーダー出ないならとばす-----//
+        //-----リーダーじゃないならとばす-----//
         if (ene->fGetMaster() == false) continue;
 
         //-----リーダーがスタンしている場合はホスト権限を譲渡する-----//
