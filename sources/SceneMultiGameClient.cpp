@@ -114,6 +114,8 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		t.swap(udp_thread);
 	}
 
+	CorrespondenceManager::Instance().SetHost(false);
+
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
 	cameraManager->RegisterCamera(new GameCamera(player));
@@ -1020,6 +1022,37 @@ void SceneMultiGameClient::PlayerManagerUpdate(GraphicsPipeline& graphics, float
 
 	//-----プレイヤーにカメラのターゲットを設定する-----//
 	player_manager->SetCameraTarget(c->get_target());
+}
+
+void SceneMultiGameClient::PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time)
+{
+	//-----弾のインスタンスを生成-----//
+	BulletManager& mBulletManager = BulletManager::Instance();
+
+	//-----敵のインスタンスを生成-----//
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	//-----クライアントがロックオンしている敵を設定する-----//
+	player_manager->SearchClientPlayerLockOnEnemy(enemyManager);
+
+	//-----敵とのあたり判定(当たったらコンボ加算)-----//
+	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
+
+	////-----ジャスト回避が可能かどうかの当たり判定-----//
+	//player_manager->PlayerCounterVsEnemyAttack(enemyManager);
+
+	////-----敵の攻撃とプレイヤーの当たり判定-----//
+	//player_manager->EnemyAttackVsPlayer(enemyManager);
+
+	////-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
+	//player_manager->PlayerStunVsEnemy(enemyManager);
+
+	////-----プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる-----//
+	//player_manager->SetPlayerChainTime(enemyManager);
+
+	////-----弾とプレイヤーの当たり判定-----//
+	//player_manager->BulletVsPlayer(mBulletManager);
+
 }
 
 void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)

@@ -160,6 +160,12 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
 }
 
 
+void BaseEnemy::fReceiveDamaged(int damage, GraphicsPipeline& graphics_)
+{
+    mCurrentHitPoint -= damage;
+
+}
+
 void BaseEnemy::fUpdateVernierEffectPos()
 {
     //--------------------<�o�[�j�A�̂̈ʒu�����肷��>--------------------//

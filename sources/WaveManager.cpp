@@ -126,6 +126,12 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     //---‚±‚±‚Ü‚Å--//
 }
 
+void WaveManager::fSetReceiveEnemyDamageData(EnemySendData::EnemyDamageData d,GraphicsPipeline& graphics_)
+{
+    using namespace EnemySendData;
+    mEnemyManager.SetReciveDamageData(d.data[EnemyDamageCmdArray::DamageComEnemyId], d.data[EnemyDamageCmdArray::DamageComDamage],graphics_);
+}
+
 void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
 {
     // ‘Ò‚Á‚ÄƒNƒŠƒA‰‰o‚Ö

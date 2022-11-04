@@ -47,6 +47,9 @@ enum UpdateCommand
     //-----敵の基本データ-----//
     EnemiesMoveCommand,
 
+    //-----敵のダメージデータ-----//
+    EnemyDamageCommand,
+
     //-----敵の死亡データ-----//
     EnemyDieCommand,
 };
@@ -66,6 +69,8 @@ enum ComLocation
 };
 
 
+
+#pragma region Login
 ////-----ログイン情報------//
 struct LoginData
 {
@@ -86,7 +91,6 @@ struct LoginData
     //ホストの番号
     int host_id{ -1 };
 };
-
 
 ////-----ホストに送るログインデータ-----//
 struct SendHostLoginData
@@ -127,6 +131,8 @@ struct LogoutData
     int id{ -1 };
 };
 
+#pragma endregion
+
 ////------マッチング終了に送るデータ-----//
 struct MachingEndData
 {
@@ -134,6 +140,7 @@ struct MachingEndData
     char cmd[4]{};
 };
 
+#pragma region Player
 //-----プレイヤーが送る動きとターゲットのデータ-----//
 struct PlayerMoveData
 {
@@ -228,6 +235,8 @@ struct PlayerAllDataStruct
 
 };
 
+#pragma endregion
+
 
 namespace EnemySendData
 {
@@ -258,6 +267,13 @@ namespace EnemySendData
         GropeId,
         //-----ホスト譲渡優先度-----//
         Transfer,
+    };
+
+    //-----敵のダメージデータの配列の中身-----//
+    enum EnemyDamageCmdArray
+    {
+        DamageComEnemyId = 2,
+        DamageComDamage = 3
     };
 
     //-----敵のスポーンデータ-----//
@@ -316,6 +332,17 @@ namespace EnemySendData
         char cmd[4]{};
 
         int object_id{ -1 };
+    };
+
+    //-----敵のダメージデータ-----//
+    struct EnemyDamageData
+    {
+        //=================
+        //[0] : CommandList
+        //[1] : UpdateCommand
+        //[2] : 敵の番号
+        //[3] : 与えたダメージ
+        char data[4]{};
     };
 }
 //-----敵のデータ構造体が全て入っている-----//

@@ -172,14 +172,14 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
     if (milliseconds > EnemyDataFrequency)
     {
         //-----データを送る-----//
-        fSendEnemyData(elapsedTime_, SendEnemyType::Sword);
+        fSendEnemyData(elapsedTime_);
 
         //-----タイマーを初期化-----//
         start = std::chrono::system_clock::now();
     }
 }
 
-void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
+void EnemyManager::fSendEnemyData(float elapsedTime_)
 {
     using namespace EnemySendData;
 
@@ -222,6 +222,18 @@ void EnemyManager::fSendEnemyData(float elapsedTime_, SendEnemyType type)
 
     CorrespondenceManager::Instance().UdpSend(data, size);
 
+}
+
+void EnemyManager::fSendEnemyDamage(int obj_id, int damage)
+{
+    EnemySendData::EnemyDamageData d;
+    d.data[ComLocation::ComList] = CommandList::Update;
+    d.data[ComLocation::UpdateCom] = UpdateCommand::EnemyDamageCommand;
+    d.data[EnemySendData::EnemyDamageCmdArray::DamageComEnemyId] = obj_id;
+    d.data[EnemySendData::EnemyDamageCmdArray::DamageComDamage] = damage;
+
+    //-----ホストにダメージデータを送信-----//
+    CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&d, sizeof(EnemySendData::EnemyDamageData));
 }
 
 void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySendData::EnemyData data)
@@ -360,6 +372,18 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     }
 }
 
+void EnemyManager::SetReciveDamageData(int obj_id, int damage, GraphicsPipeline& graphics_)
+{
+    for (const auto& enemy : mEnemyVec)
+    {
+        //-----IDが違うならとばす-----//
+        if (enemy->fGetObjectId() != obj_id) continue;
+
+        //----ダメージを設定する-----//
+        enemy->fReceiveDamaged(damage,graphics_);
+    }
+}
+
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
 {
     //--------------------<敵の描画処理>--------------------//
@@ -400,13 +424,21 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // 当たっていたら
             if (result)
             {
-                if(enemy->fDamaged(PlayerAttackPower_, 0.1f,Graphics_,elapsedTime_))
+                if(enemy->fDamaged(PlayerAttackPower_, EnemyInvincibleTime,Graphics_,elapsedTime_))
                 {
                     audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
 
                     //攻撃を防がれたら即リターン
                     hitCounts++;
                     mSloeTime = 0.1f;
+
+                    //-----マルチプレイの時かつホストでは無いとき-----//
+                    if (CorrespondenceManager::Instance().GetMultiPlay() &&
+                        CorrespondenceManager::Instance().GetHost() == false)
+                    {
+                        //-----ダメージのデータを設定する-----//
+                        fSendEnemyDamage(enemy->fGetObjectId(), PlayerAttackPower_);
+                    }
                 }
                 else
                 {

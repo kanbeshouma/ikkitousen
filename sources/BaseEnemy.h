@@ -37,6 +37,8 @@ public:
     [[nodiscard]]float fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     virtual void fRender(GraphicsPipeline& Graphics_);
     virtual bool  fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_);
+    //-----受信したダメージデータを使用してダメージを受けるときに使用する-----//
+    void fReceiveDamaged(int damage, GraphicsPipeline& graphics_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
     void fTurnToTarget(float elapsedTime_,float RotSpeed_,DirectX::XMFLOAT3 Target_);

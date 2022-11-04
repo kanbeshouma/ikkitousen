@@ -45,6 +45,8 @@ std::mutex SceneMultiGameHost::mutex;
 
 PlayerAllDataStruct SceneMultiGameHost::receive_all_data;
 
+std::vector<EnemySendData::EnemyDamageData> SceneMultiGameHost::enemy_damage_data_array;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -109,6 +111,7 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 			std::thread t(ReceiveUdpData);
 			t.swap(udp_thread);
 		}
+		CorrespondenceManager::Instance().SetHost(true);
 	}
 	else
 	{
@@ -281,9 +284,15 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();
 
-	//-----ステージ中のウェーブの更新処理-----//
-	if(is_start_game)mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 
+	if (is_start_game)
+	{
+		//----敵のダメージデータを設定-----//
+		SetEnemyDamageData(graphics);
+
+	    //-----ステージ中のウェーブの更新処理-----//
+		mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	}
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
 	{
@@ -1207,4 +1216,22 @@ void SceneMultiGameHost::SetReceiveData()
 		receive_all_data.player_action_data.clear();
 	}
 
+}
+
+void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
+{
+	//-----敵のダメージデータを設定する-----//
+	if (enemy_damage_data_array.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+
+		//-----データを設定する-----//
+		for (const auto& data : enemy_damage_data_array)
+		{
+			mWaveManager.fSetReceiveEnemyDamageData(data,graphics_);
+		}
+
+		//-----データを削除する-----//
+		enemy_damage_data_array.clear();
+	}
 }

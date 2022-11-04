@@ -34,6 +34,9 @@ public:
     //-----マルチプレイ時にクライアント側が呼ぶ更新処理-----//
     void fClientUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
 
+    //-----ダメージデータを設定する-----//
+    void SetReciveDamageData(int obj_id, int damage, GraphicsPipeline& graphics_);
+
     void fRender(GraphicsPipeline& graphics_);
 
     void fFinalize();
@@ -47,7 +50,10 @@ private:
     void fCheckSendEnemyData(float elapsedTime_);
 
     //-----敵のデータを送信-----//
-    void fSendEnemyData(float elapsedTime_, SendEnemyType type);
+    void fSendEnemyData(float elapsedTime_);
+
+    //-----敵のダメージデータを送信-----//
+    void fSendEnemyDamage(int obj_id,int damage);
 
     //-----受信した敵のデータを設定-----//
     void fSetReceiveEnemyData(float elapsedTime_,char type,EnemySendData::EnemyData data);
@@ -275,4 +281,7 @@ private:
 
     //-----データの送信頻度(ミリ秒)-----//
     const float EnemyDataFrequency = 300.0f;
+
+    //-----敵がダメージを受けたときの無敵時間-----//
+    const float EnemyInvincibleTime = 0.1f;
 };

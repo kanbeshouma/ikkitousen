@@ -163,4 +163,10 @@ private:
 
     //-----マルチプレイかどうか-----//
     bool is_multi{ false };
+
+    //-----ホストかどうか-----//
+    bool is_host{ false };
+public:
+    bool GetHost() { return is_host; }
+    void SetHost(bool arg) { is_host = arg; }
 };

@@ -197,6 +197,8 @@ private:
     //----------プレイヤーの更新処理----------//
     void PlayerManagerUpdate(GraphicsPipeline& graphics, float elapsed_time);
 
+    //---------プレイヤー関係の当たり判定----------//
+    void PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time);
 private:
     //-----TCP通信を管理するスレッド-----//
     std::thread tcp_thread;

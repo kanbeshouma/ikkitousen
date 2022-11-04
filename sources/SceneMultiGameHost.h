@@ -312,7 +312,14 @@ private:
     ////-----受信データを設定する-----//
     void SetReceiveData();
 
+    //-----敵のダメージデータを設定-----//
+    void SetEnemyDamageData(GraphicsPipeline& graphics);
+
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
+
+    //-----敵のダメージデータを入れる-----//
+    static std::vector<EnemySendData::EnemyDamageData> enemy_damage_data_array;
+
 };

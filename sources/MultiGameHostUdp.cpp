@@ -69,6 +69,15 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         CheckPlayerActionCommand(data[ComLocation::DataKind],data);
         break;
     }
+    //-----敵のダメージデータ-----//
+    case UpdateCommand::EnemyDamageCommand:
+    {
+        using namespace EnemySendData;
+        EnemyDamageData* e_data = (EnemyDamageData*)data;
+
+        enemy_damage_data_array.emplace_back(*e_data);
+        break;
+    }
     default:
         break;
     }
