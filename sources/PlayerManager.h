@@ -171,4 +171,11 @@ private:
 public:
     void SetPrivateObjectId(int id) { private_object_id = id; }
      int GetPrivatePlayerId() { return private_object_id; }
+private:
+    //-----マルチプレイの時のHP-----//
+    int multiplay_health{ 100 };
+public:
+    int GetMultiPlayHealth() { return multiplay_health; }
+    void SetMultiPlayHealth(int arg) { multiplay_health = arg; }
+
 };

@@ -317,12 +317,15 @@ void PlayerManager::PlayerCounterVsEnemyAttack(EnemyManager* enemy_manager)
 
 void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
 {
+    //-----シングルプレイの時のダメージ処理-----//
     for (auto& player : players)
     {
         enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
             player->GetBodyCapsuleParam().end,
             player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
     }
+
+
 }
 
 void PlayerManager::SearchClientPlayerLockOnEnemy(EnemyManager* enemy_manager)

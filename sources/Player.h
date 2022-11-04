@@ -19,7 +19,6 @@
 #include "reticle.h"
 #include"player_condition.h"
 
-
 enum class SePriset : uint16_t
 {
     None = (0 << 0),

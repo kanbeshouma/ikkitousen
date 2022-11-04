@@ -1025,6 +1025,9 @@
     <ClInclude Include="sources\MasterEnemyDataAdmin.h">
       <Filter>Sources\Character\enemy\MasterEnemyData</Filter>
     </ClInclude>
+    <ClInclude Include="sources\magic_enum_include.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
