@@ -1,6 +1,7 @@
 #define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
 #include "PlayerManager.h"
+#include"Correspondence.h"
 
 PlayerManager::PlayerManager()
 {
@@ -12,6 +13,7 @@ PlayerManager::~PlayerManager()
 
 void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    if (CorrespondenceManager::Instance().GetMultiPlay()) invincible_timer -= 1.0f * elapsed_time;
     for (auto& player : players)
     {
         player->Update(elapsed_time, graphics, sky_dome, enemies);
@@ -317,12 +319,28 @@ void PlayerManager::PlayerCounterVsEnemyAttack(EnemyManager* enemy_manager)
 
 void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
 {
-    //-----シングルプレイの時のダメージ処理-----//
     for (auto& player : players)
     {
-        enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
-            player->GetBodyCapsuleParam().end,
-            player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+        //-----操作キャラクターじゃなかったらとばす-----//
+        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            //-----プレイヤーの体力をマルチ用のデータに設定(同期をとる)-----//
+            player->SetHealth(multiplay_current_health);
+
+            //-----シングルプレイの時のダメージ処理-----//
+            enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
+                player->GetBodyCapsuleParam().end,
+                player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+        }
+        else
+        {
+            //-----シングルプレイの時のダメージ処理-----//
+            enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
+                player->GetBodyCapsuleParam().end,
+                player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+        }
     }
 
 

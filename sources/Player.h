@@ -489,6 +489,9 @@ public:
     void PlayerKnocKback(float elapsed_time)override;
     //プレイヤーのジャスト回避用の当たり判定に当たったら
     void PlayerJustAvoidance(bool hit)override;
+    int GetHealth() override { return player_health; }
+    void SetHealth(int arg) override { player_health = arg; }
+
 public:
     void FalseCameraReset() override { camera_reset = false; }
     void FalseCameraLockOn() override { is_camera_lock_on = false; }

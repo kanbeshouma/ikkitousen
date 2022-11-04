@@ -173,9 +173,14 @@ public:
      int GetPrivatePlayerId() { return private_object_id; }
 private:
     //-----マルチプレイの時のHP-----//
-    int multiplay_health{ 100 };
-public:
-    int GetMultiPlayHealth() { return multiplay_health; }
-    void SetMultiPlayHealth(int arg) { multiplay_health = arg; }
+    int multiplay_current_health{ 100 };
 
+    //-----マルチプレイ時の最大HP(プレイヤーの接続数によって可変するので定数ではない)-----//
+    int multiplay_max_health{ 100 };
+
+    //-----無敵時間-----//
+    float invincible_timer{};
+public:
+    int GetMultiPlayHealth() { return multiplay_current_health; }
+    void SetMultiPlayHealth(int arg) { multiplay_current_health = arg; }
 };

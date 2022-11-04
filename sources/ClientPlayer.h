@@ -120,7 +120,6 @@ public:
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
     void SetPlayerActionData(PlayerActionData data)override;
-
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;
@@ -408,6 +407,9 @@ private:
     void PlayerKnocKback(float elapsed_time)override {};
     //プレイヤーのジャスト回避用の当たり判定に当たったら
     void PlayerJustAvoidance(bool hit)override {};
+    int GetHealth() override { return player_health; }
+    void SetHealth(int arg) override { player_health = arg; }
+
 public:
     void FalseCameraReset() override {}
     void FalseCameraLockOn() override {}

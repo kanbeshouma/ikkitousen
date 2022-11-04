@@ -22,7 +22,6 @@ public:
     virtual bool EnemiesIsStun(std::vector<BaseEnemy*> enemies) = 0;
     virtual void ConfigRender(GraphicsPipeline& graphics, float elapsed_time) = 0;
     virtual void ChangePlayerJustificationLength() = 0;
-
 protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
@@ -128,6 +127,9 @@ public:
     virtual  void PlayerKnocKback(float elapsed_time) = 0;
     //プレイヤーのジャスト回避用の当たり判定に当たったら
     virtual void PlayerJustAvoidance(bool hit) = 0;
+
+    virtual int GetHealth() = 0;
+    virtual void SetHealth(int arg) = 0;
 public:
     virtual void FalseCameraReset() = 0;
     virtual void FalseCameraLockOn() = 0;
