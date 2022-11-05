@@ -115,6 +115,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	}
 
 	CorrespondenceManager::Instance().SetHost(false);
+	CorrespondenceManager::Instance().SetMultiPlay(true);
 
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
@@ -350,6 +351,9 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 
 	//-----プレイヤー関係の更新処理-----//
 	PlayerManagerUpdate(graphics, elapsed_time);
+
+	//-----プレイヤー関係の当たり判定-----//
+	PlayerManagerCollision(graphics, elapsed_time);
 
 	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
 	last_boss_mode = enemyManager->fGetBossMode();
@@ -1041,8 +1045,11 @@ void SceneMultiGameClient::PlayerManagerCollision(GraphicsPipeline& graphics, fl
 	////-----ジャスト回避が可能かどうかの当たり判定-----//
 	//player_manager->PlayerCounterVsEnemyAttack(enemyManager);
 
+	//-----プレイヤーの体力の同期をとる-----//
+	ReceivePlayerHealthData();
+
 	////-----敵の攻撃とプレイヤーの当たり判定-----//
-	//player_manager->EnemyAttackVsPlayer(enemyManager);
+	player_manager->EnemyAttackVsPlayer(enemyManager);
 
 	////-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
 	//player_manager->PlayerStunVsEnemy(enemyManager);
@@ -1152,21 +1159,6 @@ void SceneMultiGameClient::SetReceiveData()
 		//-----データを削除する-----//
 		receive_all_player_data.player_action_data.clear();
 	}
-
-	//-----プレイヤーの攻撃結果が入っている場合-----//
-	if (receive_all_player_data.player_attack_result_data.empty() == false)
-	{
-		std::lock_guard<std::mutex> lock(mutex);
-		//-----データを設定する-----//
-		for (const auto& p_data : receive_all_player_data.player_attack_result_data)
-		{
-			player_manager->SetPlayerPlayerAttackResultData(p_data);
-		}
-
-		//-----データを削除する-----//
-		receive_all_player_data.player_attack_result_data.clear();
-	}
-
 }
 
 void SceneMultiGameClient::ClearEnemyReceiveData()
@@ -1176,5 +1168,22 @@ void SceneMultiGameClient::ClearEnemyReceiveData()
 
 	//-----敵の動きデータを削除する-----//
 	receive_all_enemy_data.enemy_move_data.clear();
+
+}
+
+void SceneMultiGameClient::ReceivePlayerHealthData()
+{
+	if (receive_all_player_data.player_health_data.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		//-----データを設定する-----//
+		for (const auto& p_data : receive_all_player_data.player_health_data)
+		{
+			player_manager->ReceivePlayerHealthData(p_data);
+		}
+
+		//-----データを削除する-----//
+		receive_all_player_data.player_health_data.clear();
+	}
 
 }

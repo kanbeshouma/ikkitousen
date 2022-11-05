@@ -261,6 +261,10 @@ private:
 
     ////-----敵の受信データを削除する-----//
     void ClearEnemyReceiveData();
+
+    //-----プレイヤーの体力のデータの設定-----//
+    void ReceivePlayerHealthData();
+
 private:
     //-----プレイヤーの受信データを入れる-----//
     static PlayerAllDataStruct receive_all_player_data;

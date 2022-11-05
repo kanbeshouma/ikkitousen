@@ -18,6 +18,11 @@ void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDo
     {
         player->Update(elapsed_time, graphics, sky_dome, enemies);
     }
+#ifdef USE_IMGUI
+    ImGui::Begin("PlayerManager");
+    ImGui::DragInt("multiplay_current_health",&multiplay_current_health);
+    ImGui::End();
+#endif // USE_IMGUI
 }
 
 void PlayerManager::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
@@ -166,17 +171,45 @@ void PlayerManager::SetPlayerActionData(PlayerActionData data)
 
 }
 
-void PlayerManager::SetPlayerPlayerAttackResultData(PlayerAttackResultData data)
+void PlayerManager::SendPlayerHealthData()
 {
-    for (auto& player : players)
+    //-----マルチプレイのときはデータを送信する-----//
+    if (CorrespondenceManager::Instance().GetMultiPlay())
     {
-        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
-        if (player->GetObjectId() == data.player_id)
-        {
-            //-----結果を入れる-----//
-            player->AddCombo(static_cast<int>(data.combo_count), data.block);
-        }
+        PlayerHealthData d;
+        d.data[ComLocation::ComList] = CommandList::Update;
+        d.data[ComLocation::UpdateCom] = UpdateCommand::PlayerHealthCommand;
+        //-----ダメージを送信する-----//
+        d.data[PlayerHealthEnum::Damage] = 0;
+        //-----今の体力を設定する-----//
+        d.health = multiplay_current_health;
+
+        //-----全員に送信する-----//
+        CorrespondenceManager::Instance().UdpSend((char*)&d, sizeof(PlayerHealthData));
     }
+
+}
+
+void PlayerManager::ReceivePlayerHealthData(PlayerHealthData d)
+{
+    //-----ホストはダメージの値を使用して体力を減らす-----//
+    if(CorrespondenceManager::Instance().GetHost()) multiplay_current_health -= d.data[PlayerHealthEnum::Damage];
+    //-----クライアント側は体力の総量を使用して同期をとる-----//
+    else multiplay_current_health = d.health;
+}
+
+void PlayerManager::AddPlayerMultiHealth()
+{
+    //-----現在の体力と最大値を増やす-----//
+    multiplay_current_health += OnePersonMultiHealth;
+    multiplay_max_health += OnePersonMultiHealth;
+}
+
+void PlayerManager::SubPlayerMultiHealth()
+{
+    //-----現在の体力と最大値をへらす-----//
+    multiplay_current_health -= OnePersonMultiHealth;
+    multiplay_max_health -= OnePersonMultiHealth;
 
 }
 
@@ -329,10 +362,18 @@ void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
             //-----プレイヤーの体力をマルチ用のデータに設定(同期をとる)-----//
             player->SetHealth(multiplay_current_health);
 
-            //-----シングルプレイの時のダメージ処理-----//
-            enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
+            if (enemy_manager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
                 player->GetBodyCapsuleParam().end,
-                player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+                player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc()))
+            {
+                //-----ホストが今の体力の総量を送信する-----//
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    multiplay_current_health = player->GetHealth();
+                    //=====プレイヤーの体力のデータを送信する=====//
+                    SendPlayerHealthData();
+                }
+            }
         }
         else
         {

@@ -152,10 +152,17 @@ public:
     //第1引数 : データ
     void SetPlayerActionData(PlayerActionData data);
 
-    ////-----データを設定する-----//
-    //=====================
-    //第1引数 : データ
-    void SetPlayerPlayerAttackResultData(PlayerAttackResultData data);
+    ////-----プレイヤーの体力の総量を送信する-----//
+    void SendPlayerHealthData();
+
+    ////-----プレイヤーの体力を設定する-----//
+    void ReceivePlayerHealthData(PlayerHealthData d);
+
+    //-----プレイヤーがログインしてたときに体力を増やす-----//
+    void AddPlayerMultiHealth();
+
+    //-----プレイヤーがログアウトした時に体力をへらす-----//
+    void SubPlayerMultiHealth();
 
 private:
     ////-----プレイヤーを入れる変数-----//
@@ -177,6 +184,10 @@ private:
 
     //-----マルチプレイ時の最大HP(プレイヤーの接続数によって可変するので定数ではない)-----//
     int multiplay_max_health{ 100 };
+
+    //-----マルチプレイの時のプレイヤー1人分の体力-----//
+    const int OnePersonMultiHealth = 100;
+
 
     //-----無敵時間-----//
     float invincible_timer{};

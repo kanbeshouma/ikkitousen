@@ -315,6 +315,9 @@ private:
     //-----敵のダメージデータを設定-----//
     void SetEnemyDamageData(GraphicsPipeline& graphics);
 
+    //-----プレイヤーの体力のデータの設定-----//
+    void ReceivePlayerHealthData();
+
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;

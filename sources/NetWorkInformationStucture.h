@@ -38,8 +38,8 @@ enum UpdateCommand
     //-----プレイヤーのアクションデータ-----//
     PlayerActionCommand,
 
-    //-----プレイヤーの当たり判定(攻撃関連)のデータ-----//
-    PlayerAttackResultCommand,
+    //-----プレイヤーの体力データ-----//
+    PlayerHealthCommand,
 
     //-----敵の出現データ-----//
     EnemySpawnCommand,
@@ -202,20 +202,22 @@ struct PlayerActionData
     GamePadButton new_button_state;
 };
 
-//-----プレイヤーの当たり判定(攻撃関連)のデータ-----//
-struct PlayerAttackResultData
+enum PlayerHealthEnum
 {
-    //通信コマンド
-    char cmd[4]{};
+    Damage = 2,
+};
 
-    //-----プレイヤーの番号-----//
-    int player_id{ -1 };
+//-----プレイヤーの体力の同期-----//
+struct PlayerHealthData
+{
 
-    //-----コンボカウント-----//
-    float combo_count{};
+    //-----データ-----//
+    //[0] : ComList
+    //[1] : UpdateCom
+    //[2] : damage(ここの値はホストが使用する)
+    char data[4]{};
 
-    //-----ブロックされたかどうか-----//
-    bool block{ false };
+    int health{};
 };
 
 //-----プレイヤーのデータ構造体が全て入っている-----//
@@ -230,10 +232,11 @@ struct PlayerAllDataStruct
     //-----プレイヤーのアクションデータ-----//
     std::vector<PlayerActionData> player_action_data;
 
-    //-----プレイヤーの攻撃当たり判定データ(結果が入る)-----//
-    std::vector<PlayerAttackResultData> player_attack_result_data;
+    //-----プレイヤーの体力のデータ-----//
+    std::vector<PlayerHealthData> player_health_data;
 
 };
+
 
 #pragma endregion
 

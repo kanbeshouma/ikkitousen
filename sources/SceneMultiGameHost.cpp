@@ -1076,6 +1076,9 @@ void SceneMultiGameHost::PlayerManagerCollision(GraphicsPipeline& graphics, floa
 	//-----ジャスト回避が可能かどうかの当たり判定-----//
 	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
 
+	//-----プレイヤーの体力の同期をとる-----//
+	ReceivePlayerHealthData();
+
 	//-----敵の攻撃とプレイヤーの当たり判定-----//
 	player_manager->EnemyAttackVsPlayer(enemyManager);
 
@@ -1129,6 +1132,15 @@ void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 		register_player_id = -1;
 		register_player = false;
 		register_player_color = 0;
+
+		if (CorrespondenceManager::Instance().GetHost())
+		{
+			//-----プレイヤーの体力を増やす-----//
+			player_manager->AddPlayerMultiHealth();
+
+			//-----体力を送信する-----//
+			player_manager->SendPlayerHealthData();
+		}
 	}
 }
 
@@ -1165,6 +1177,15 @@ void SceneMultiGameHost::DeletePlayer()
 
 		//-----プレイヤーの削除-----//
 		player_manager->DeletePlayer(id);
+
+		if (CorrespondenceManager::Instance().GetHost())
+		{
+			//-----プレイヤーの体力を減らす-----//
+			player_manager->SubPlayerMultiHealth();
+
+			//-----体力を送信する-----//
+			player_manager->SendPlayerHealthData();
+		}
 	}
 
 	//-----ログアウトデータを削除する-----//
@@ -1234,4 +1255,25 @@ void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
 		//-----データを削除する-----//
 		enemy_damage_data_array.clear();
 	}
+}
+
+void SceneMultiGameHost::ReceivePlayerHealthData()
+{
+	if (receive_all_data.player_health_data.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		//-----データを設定する-----//
+		for (const auto& p_data : receive_all_data.player_health_data)
+		{
+			player_manager->ReceivePlayerHealthData(p_data);
+		}
+
+		//-----データを削除する-----//
+		receive_all_data.player_health_data.clear();
+
+		//-----同期を取った体力を送信する-----//
+		player_manager->SendPlayerHealthData();
+	}
+
+
 }

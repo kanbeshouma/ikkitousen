@@ -72,13 +72,13 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
         CheckPlayerActionCommand(data[ComLocation::DataKind], data);
         break;
     }
-    //-----プレイヤーの攻撃結果-----//
-    case UpdateCommand::PlayerAttackResultCommand:
+    //-----プレイヤーの体力のデータ-----//
+    case UpdateCommand::PlayerHealthCommand:
     {
         //-----データをキャスト-----//
-        PlayerAttackResultData* p_data = (PlayerAttackResultData*)data;
+        PlayerHealthData* p_data = (PlayerHealthData*)data;
         //-----データを保存-----//
-        receive_all_player_data.player_attack_result_data.emplace_back(*p_data);
+        receive_all_player_data.player_health_data.emplace_back(*p_data);
         break;
     }
     //-----敵の出現データ-----//

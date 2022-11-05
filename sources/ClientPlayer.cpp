@@ -670,8 +670,6 @@ void ClientPlayer::AddCombo(int count, bool& block)
         combo_count += static_cast<float>(count);
         is_enemy_hit = true;
         combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
-        //-----データを送信する-----//
-        SendPlayerAttackResultData();
     }
 
 }
@@ -686,41 +684,15 @@ void ClientPlayer::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
         //もしブロックされていたら怯む
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
-        //-----データを送信する-----//
-        SendPlayerAttackResultData();
         is_enemy_hit = true;
     }
 
 }
 
-
-void ClientPlayer::SendPlayerAttackResultData()
+void ClientPlayer::DamagedCheck(int damage, float InvincibleTime)
 {
-    int host = CorrespondenceManager::Instance().GetHostId();
-    int ope = CorrespondenceManager::Instance().GetOperationPrivateId();
-    //-----マルチプレイ中ならデータ送信(ホストの場合データを送信する)-----//
-    if (CorrespondenceManager::Instance().GetMultiPlay() &&
-         host == ope)
-    {
-        PlayerAttackResultData data;
-        data.cmd[ComLocation::ComList] = CommandList::Update;
-        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerAttackResultCommand;
 
-        //-----プレイヤーの番号設定-----//
-        data.player_id = object_id;
 
-        //-----コンボカウント設定-----//
-        data.combo_count = combo_count;
-
-        //-----ブロックされたかどうか-----//
-        data.block = is_block;
-
-        std::string txt = "プレイヤー : " + std::to_string(object_id) + "コンボカウント" + std::to_string(combo_count);
-        DebugConsole::Instance().WriteDebugConsole(txt, TextColor::Green);
-
-        //-----データを送信-----//
-        CorrespondenceManager::Instance().UdpSend((char*)&data,sizeof(PlayerAttackResultData));
-    }
 }
 
 void ClientPlayer::LockOn()

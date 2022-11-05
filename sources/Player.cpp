@@ -1314,8 +1314,6 @@ void Player::AddCombo(int count, bool& block)
         combo_count += static_cast<float>(count);
         is_enemy_hit = true;
         combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
-        //-----データを送信する-----//
-        SendPlayerAttackResultData();
     }
 
 }
@@ -1331,37 +1329,10 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         is_enemy_hit = true;
         combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
-        //-----データを送信する-----//
-        SendPlayerAttackResultData();
     }
 
 
 }
-
-void Player::SendPlayerAttackResultData()
-{
-    //-----マルチプレイ中ならデータ送信(ホストの場合データを送信する)-----//
-    if (CorrespondenceManager::Instance().GetMultiPlay() &&
-        CorrespondenceManager::Instance().GetHostId() == CorrespondenceManager::Instance().GetOperationPrivateId())
-    {
-        PlayerAttackResultData data;
-        data.cmd[ComLocation::ComList] = CommandList::Update;
-        data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerAttackResultCommand;
-
-        //-----プレイヤーの番号設定-----//
-        data.player_id = object_id;
-
-        //-----コンボカウント設定-----//
-        data.combo_count = combo_count;
-
-        //-----ブロックされたかどうか-----//
-        data.block = is_block;
-
-        //-----データを送信-----//
-        CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(PlayerAttackResultData));
-    }
-}
-
 
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
@@ -1397,11 +1368,21 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
-    // 死亡した時の処理
-    /*if (player_health <= 0)
+    //-----マルチプレイのときはデータを送信する-----//
+    if (CorrespondenceManager::Instance().GetMultiPlay())
     {
+            PlayerHealthData d;
+            d.data[ComLocation::ComList] = CommandList::Update;
+            d.data[ComLocation::UpdateCom] = UpdateCommand::PlayerHealthCommand;
+            //-----ダメージを送信する-----//
+            d.data[PlayerHealthEnum::Damage] = damage;
+            //-----今の体力を設定する-----//
+            d.health = player_health;
 
-    }*/
+            //-----クライアント側はホストだけに送信する(ここではホスト以外しか送信しない)-----//
+            if(CorrespondenceManager::Instance().GetHost() == false)CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&d, sizeof(PlayerHealthData));
+    }
+
 }
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)

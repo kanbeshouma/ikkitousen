@@ -69,6 +69,15 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         CheckPlayerActionCommand(data[ComLocation::DataKind],data);
         break;
     }
+    //-----プレイヤーの体力のデータ-----//
+    case UpdateCommand::PlayerHealthCommand:
+    {
+        //-----データをキャスト-----//
+        PlayerHealthData* p_data = (PlayerHealthData*)data;
+        //-----データを保存-----//
+        receive_all_data.player_health_data.emplace_back(*p_data);
+        break;
+    }
     //-----敵のダメージデータ-----//
     case UpdateCommand::EnemyDamageCommand:
     {

@@ -402,7 +402,7 @@ private:
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
     void AwakingAddCombo(int hit_count1, int hit_count2, bool& block)override;
     //--------------------<敵からダメージを受ける>--------------------//
-    void DamagedCheck(int damage, float InvincibleTime)override {};
+    void DamagedCheck(int damage, float InvincibleTime)override;
     void TutorialDamagedCheck(int damage, float InvincibleTime)override {};
     void PlayerKnocKback(float elapsed_time)override {};
     //プレイヤーのジャスト回避用の当たり判定に当たったら
@@ -663,9 +663,6 @@ public:
     void SetName(std::string n);
 
     void SetPlayerToClientLength(float l)override { player_length = l; }
-private:
-    //-----PlayerAttackResultDataを設定-----//
-    void SendPlayerAttackResultData();
 private:
     void LockOn();
 };

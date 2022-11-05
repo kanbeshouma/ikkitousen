@@ -79,6 +79,7 @@ public:
         AddDamageFunc Func_
     );
 
+
     // 敵の攻撃とプレイヤーのカウンターの当たり判定
     bool fCalcEnemiesAttackVsPlayerCounter(
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
