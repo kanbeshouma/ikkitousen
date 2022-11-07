@@ -312,6 +312,7 @@ void BaseEnemy::fSetStun(bool Arg_, bool IsJust_)
     mIsStun = Arg_;
     //-----スタンになったことを送信する-----//
     SendEnemyConditionData(EnemySendData::EnemyConditionEnum::Stun);
+
 }
 
 
@@ -622,5 +623,6 @@ void BaseEnemy::SendEnemyConditionData(int condition)
 
     //-----データを送信する-----//
     CorrespondenceManager::Instance().UdpSend((char*)&d, sizeof(EnemyConditionData));
+
 }
 

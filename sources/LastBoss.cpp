@@ -194,6 +194,9 @@ void LastBoss::fSetStun(bool Arg_, bool IsJust_)
     {
         mIsStun = true;
         fChangeState(DivideState::Stun);
+        //-----ƒXƒ^ƒ“‚É‚È‚Á‚½‚±‚Æ‚ğ‘—M‚·‚é-----//
+        SendEnemyConditionData(EnemySendData::EnemyConditionEnum::Stun);
+
     }
 }
 

@@ -357,6 +357,9 @@ void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
         fSetAttackOperation(false);
         mIsStun = Arg_;
         fChangeState(DivedState::Stun);
+        //-----ƒXƒ^ƒ“‚É‚È‚Á‚½‚±‚Æ‚ğ‘—M‚·‚é-----//
+        SendEnemyConditionData(EnemySendData::EnemyConditionEnum::Stun);
+
     }
 }
 

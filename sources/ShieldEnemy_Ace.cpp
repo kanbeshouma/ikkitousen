@@ -334,6 +334,9 @@ void ShieldEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
     {
         mIsStun = Arg_;
         fChangeState(DivedState::Stun);
+        //-----ƒXƒ^ƒ“‚É‚È‚Á‚½‚±‚Æ‚ğ‘—M‚·‚é-----//
+        SendEnemyConditionData(EnemySendData::EnemyConditionEnum::Stun);
+
     }
 }
 void ShieldEnemy_Ace::AiTransitionIdle()

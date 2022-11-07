@@ -268,7 +268,7 @@ void EnemyManager::fSetReceiveConditionData(EnemySendData::EnemyConditionData da
             {
                 //-----スタンになっていないならスタンさせる-----//
             case EnemySendData::EnemyConditionEnum::Stun:
-                if (enemy->fGetStun() == false) enemy->fSetStun(true);
+                enemy->fSetStun(true);
                 break;
             default:
                 break;
@@ -334,6 +334,12 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         }
     }
 
+    //----状態データを設定-----//
+    for (const auto& data : receive_data.enemy_condition_data)
+    {
+        fSetReceiveConditionData(data);
+    }
+
     //-----移動データを設定-----//
     for (const auto& all_data : receive_data.enemy_move_data)
     {
@@ -343,11 +349,6 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         }
     }
 
-    //----状態データを設定-----//
-    for (const auto& data : receive_data.enemy_condition_data)
-    {
-        fSetReceiveConditionData(data);
-    }
 
 
 
