@@ -302,6 +302,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							lockon_suggests.emplace_back(enemy_suggest);
 
 							enemies.at(i)->fSetIsLockOnOfChain(true);
+							enemies.at(i)->fSetStun(true);
 							// reticle生成
 							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
 
@@ -388,7 +389,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 					{
 						if (enemies.at(i)->fIsLockOnOfChain()) continue;
 						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
-						if (!enemies.at(i)->fGetStun()) continue;
+						if (enemies.at(i)->fGetStun() == false) continue;
 						if (enemies.at(i)->fGetInnerCamera()) continue;
 
 						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
