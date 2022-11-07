@@ -45,6 +45,9 @@ public:
     //-----敵のダメージデータを設定-----//
     void fSetReceiveEnemyDamageData(EnemySendData::EnemyDamageData data, GraphicsPipeline& graphics_);
 
+    //-----敵の状態データを設定-----//
+    void fSetReceiveEnemyConditionData(EnemySendData::EnemyConditionData data);
+
     //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_, AddBulletFunc Func_);
 

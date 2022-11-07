@@ -132,6 +132,12 @@ void WaveManager::fSetReceiveEnemyDamageData(EnemySendData::EnemyDamageData d,Gr
     mEnemyManager.SetReciveDamageData(d.data[EnemyDamageCmdArray::DamageComEnemyId], d.data[EnemyDamageCmdArray::DamageComDamage],graphics_);
 }
 
+void WaveManager::fSetReceiveEnemyConditionData(EnemySendData::EnemyConditionData data)
+{
+    using namespace EnemySendData;
+    mEnemyManager.fSetReceiveConditionData(data);
+}
+
 void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
 {
     // ‘Ò‚Á‚ÄƒNƒŠƒA‰‰o‚Ö

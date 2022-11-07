@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"SwordEnemyAce.h"
 #include"Operators.h"
 SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
@@ -240,7 +242,7 @@ void SwordEnemy_Ace::fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& 
 
 void SwordEnemy_Ace::fCounterAttackInit()
 {
-    mpModel->play_animation(AnimationName::ace_attack, false, true, 0.3f, 2.0f);
+    mpModel->play_animation(mAnimPara,AnimationName::ace_attack, false, true, 0.3f, 2.0f);
     mWaitTimer = 0.0f;
     mAnimationSpeed = 2.0f;
     mIsAttack = true;
@@ -311,7 +313,7 @@ void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void SwordEnemy_Ace::fStunInit()
 {
-    mpModel->play_animation(AnimationName::stun, true);
+    mpModel->play_animation(mAnimPara,AnimationName::stun, true);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     audio_manager->play_se(SE_INDEX::STAN);

@@ -4,7 +4,6 @@
 #include "collision.h"
 #include"resource_manager.h"
 #include"Operators.h"
-#include"NetWorkInformationStucture.h"
 #include"Correspondence.h"
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
@@ -311,6 +310,8 @@ void BaseEnemy::fLimitPosition()
 void BaseEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
+    //-----スタンになったことを送信する-----//
+    SendEnemyConditionData(EnemySendData::EnemyConditionEnum::Stun);
 }
 
 
@@ -524,8 +525,8 @@ void BaseEnemy::fSetReceivePosition(DirectX::XMFLOAT3 pos)
 
 void BaseEnemy::FollowersTransitionAi(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    //-----既に同じステートなら入らない-----//
-    if (current_my_ai != master_ai_state && is_appears)
+    //-----既に同じステート,出現中、スタン中以外は入らない-----//
+    if (current_my_ai != master_ai_state && is_appears && mIsStun == false)
     {
         switch (master_ai_state)
         {
@@ -604,5 +605,22 @@ void BaseEnemy::CheckFollowersTargetPos()
     {
         SetMasterSurroundingsPos();
     }
+}
+
+void BaseEnemy::SendEnemyConditionData(int condition)
+{
+    using namespace EnemySendData;
+
+    EnemyConditionData d;
+
+    d.data[ComLocation::ComList] = CommandList::Update;
+    d.data[ComLocation::UpdateCom] = UpdateCommand::EnemyConditionCommand;
+    //------敵の番号を設定-----//
+    d.data[EnemyConditionArray::EnemyConditionObjectId] = object_id;
+    //-----状態を設定-----//
+    d.data[EnemyConditionArray::EnemyCondition] = condition;
+
+    //-----データを送信する-----//
+    CorrespondenceManager::Instance().UdpSend((char*)&d, sizeof(EnemyConditionData));
 }
 

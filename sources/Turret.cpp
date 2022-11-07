@@ -1,9 +1,10 @@
 //****************************************************************
-// 
+//
 // タレットの実装
-// 
+//
 //****************************************************************
 
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 
 #include"LastBoss.h"
 
@@ -20,7 +21,7 @@ void LastBoss::Turret::fUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mpModel->update_animation(elapsedTime_);
 }
 
-void LastBoss::Turret::fRender(GraphicsPipeline& graphics_, 
+void LastBoss::Turret::fRender(GraphicsPipeline& graphics_,
     const DirectX::XMFLOAT4X4& ParentWorld_,
     const DirectX::XMFLOAT3& Position_)
 {
@@ -47,9 +48,9 @@ DirectX::XMFLOAT3 LastBoss::Turret::fGetPosition() const
 }
 
 //****************************************************************
-// 
+//
 // 第二砲身
-// 
+//
 //****************************************************************
 LastBoss::SecondGun::SecondGun(GraphicsPipeline& Graphics_)
 {

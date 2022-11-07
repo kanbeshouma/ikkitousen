@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include"SpearEnemy_Ace.h"
 #include"Operators.h"
 SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_,

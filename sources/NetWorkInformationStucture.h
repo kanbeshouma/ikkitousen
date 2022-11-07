@@ -47,6 +47,9 @@ enum UpdateCommand
     //-----敵の基本データ-----//
     EnemiesMoveCommand,
 
+    //-----敵の状態データ-----//
+    EnemyConditionCommand,
+
     //-----敵のダメージデータ-----//
     EnemyDamageCommand,
 
@@ -243,24 +246,7 @@ struct PlayerAllDataStruct
 
 namespace EnemySendData
 {
-    //-----EnemyDataで使用する配列の種類-----//
-    enum EnemyDataArray
-    {
-        ObjectId,
-        AiState,
-        TargetId,
-        Hitpoint,
-    };
-
-    //-----敵の出現データの中の配列の内容-----//
-    enum EnemySpawnCmdArray
-    {
-        //-----cmdの中-----//
-        EnemyId = 2,
-        EnemyType = 3,
-        //============//
-    };
-
+#pragma region EnemySpawnData
     //-----敵の出現データの中のグループ用の配列の中身-----//
     enum EnemySpawnGropeArray
     {
@@ -272,11 +258,13 @@ namespace EnemySendData
         Transfer,
     };
 
-    //-----敵のダメージデータの配列の中身-----//
-    enum EnemyDamageCmdArray
+    //-----敵の出現データの中の配列の内容-----//
+    enum EnemySpawnCmdArray
     {
-        DamageComEnemyId = 2,
-        DamageComDamage = 3
+        //-----cmdの中-----//
+        EnemyId = 2,
+        EnemyType = 3,
+        //============//
     };
 
     //-----敵のスポーンデータ-----//
@@ -296,6 +284,18 @@ namespace EnemySendData
         //[1] : グループ番号
         //[2] : 譲渡番号
         char grope_data[3]{};
+    };
+
+#pragma endregion
+
+#pragma region EnemyMoveData
+    //-----EnemyDataで使用する配列の種類-----//
+    enum EnemyDataArray
+    {
+        ObjectId,
+        AiState,
+        TargetId,
+        Hitpoint,
     };
 
     //-----敵の基本データ-----//
@@ -320,13 +320,42 @@ namespace EnemySendData
         //=================
         //[0] : CommandList
         //[1] : UpdateCommand
-        //[2] : DataKind(送る敵の種類)
+        //[2] : DataKind(送る敵の種類) :※今は使用してない
         //[3] : vector型のサイズ
         char cmd[4]{};
 
         //-----敵のデータ-----//
         std::vector<EnemyData> enemy_data;
     };
+#pragma endregion
+
+
+#pragma region EnemyConditionData
+
+    //-----敵の状態のenum-----//
+    enum EnemyConditionEnum
+    {
+        Stun
+    };
+
+    //-----敵の状態の配列の中身-----//
+    enum EnemyConditionArray
+    {
+        EnemyConditionObjectId = 2,
+        EnemyCondition = 3,
+    };
+
+    //-----敵の状況データ(スタンとか)-----//
+    struct EnemyConditionData
+    {
+        //-----データ-----//
+        //[0] : CommandList
+        //[1] : UpdateCommand
+        //[2] : 敵の番号
+        //[3] : どの状態か()
+        char data[4]{};
+    };
+#pragma endregion
 
     //-----敵の死亡データ-----//
     struct EnemyDieData
@@ -335,6 +364,14 @@ namespace EnemySendData
         char cmd[4]{};
 
         int object_id{ -1 };
+    };
+
+#pragma region EnemyDamageData
+    //-----敵のダメージデータの配列の中身-----//
+    enum EnemyDamageCmdArray
+    {
+        DamageComEnemyId = 2,
+        DamageComDamage = 3
     };
 
     //-----敵のダメージデータ-----//
@@ -347,6 +384,8 @@ namespace EnemySendData
         //[3] : 与えたダメージ
         char data[4]{};
     };
+
+#pragma endregion
 }
 //-----敵のデータ構造体が全て入っている-----//
 struct EnemyAllDataStruct
@@ -356,6 +395,9 @@ struct EnemyAllDataStruct
 
     //-----敵の基本データ-----//
     std::vector<EnemySendData::EnemiesMoveData> enemy_move_data;
+
+    //-----敵の状態データ-----//
+    std::vector<EnemySendData::EnemyConditionData> enemy_condition_data;
 
     //-----敵の死亡データ-----//
     std::vector<EnemySendData::EnemyDieData> enemy_die_data;

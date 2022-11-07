@@ -1,3 +1,5 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+
 #include "enemy_hp_gauge.h"
 #include "Operators.h"
 #include "codinate_convert.h"

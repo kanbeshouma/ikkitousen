@@ -1,3 +1,4 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 #include "BossRushUnit.h"
 #include"Operators.h"
 BossRushUnit::BossRushUnit(GraphicsPipeline& Graphics_)

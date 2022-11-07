@@ -37,6 +37,10 @@ public:
     //-----ダメージデータを設定する-----//
     void SetReciveDamageData(int obj_id, int damage, GraphicsPipeline& graphics_);
 
+    //-----敵の状態データの設定-----//
+    void fSetReceiveConditionData(EnemySendData::EnemyConditionData data);
+
+
     void fRender(GraphicsPipeline& graphics_);
 
     void fFinalize();

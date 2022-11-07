@@ -5,6 +5,8 @@
 #include"skinned_mesh.h"
 #include"EnemyStructuer.h"
 #include"Effects.h"
+#include"NetWorkInformationStucture.h"
+
 #include<memory>
 #include<functional>
 
@@ -273,6 +275,9 @@ protected:
 #pragma endregion
     //========================================//
 protected:
+    //----------取り巻きの動き----------//
+    //=======================//
+#pragma region FollowersMove
     //-----リーダーの周りのターゲット位置を決める-----//
     void SetMasterSurroundingsPos();
 
@@ -290,6 +295,9 @@ protected:
 
     //-----動く時の補間レート-----//
     float followers_move_rate{ 0.0f };
+
+#pragma endregion
+    //=======================//
 
     //----------エフェクト---------//
     //===================//
@@ -310,6 +318,11 @@ protected:
 
 #pragma endregion
     //===================//
+protected:
+    //-----敵の状態を送る-----//
+    //==================//
+    //第一引数 : 敵の状態
+    void SendEnemyConditionData(int condition);
 protected:
     bool mIsInCamera{};
 

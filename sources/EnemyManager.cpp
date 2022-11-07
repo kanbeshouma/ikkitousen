@@ -258,6 +258,26 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySend
     }
 }
 
+void EnemyManager::fSetReceiveConditionData(EnemySendData::EnemyConditionData data)
+{
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->fGetObjectId() == data.data[EnemySendData::EnemyConditionArray::EnemyConditionObjectId])
+        {
+            switch (data.data[EnemySendData::EnemyConditionArray::EnemyCondition])
+            {
+                //-----スタンになっていないならスタンさせる-----//
+            case EnemySendData::EnemyConditionEnum::Stun:
+                if (enemy->fGetStun() == false) enemy->fSetStun(true);
+                break;
+            default:
+                break;
+            }
+
+        }
+    }
+}
+
 void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
@@ -314,6 +334,7 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         }
     }
 
+    //-----移動データを設定-----//
     for (const auto& all_data : receive_data.enemy_move_data)
     {
         for (const auto& e_data : all_data.enemy_data)
@@ -321,6 +342,14 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
             fSetReceiveEnemyData(elapsedTime_,all_data.cmd[ComLocation::DataKind] ,e_data);
         }
     }
+
+    //----状態データを設定-----//
+    for (const auto& data : receive_data.enemy_condition_data)
+    {
+        fSetReceiveConditionData(data);
+    }
+
+
 
     //-----敵のリーダーのデータを設定-----//
     SetEnemyGropeHostData();

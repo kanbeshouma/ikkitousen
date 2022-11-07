@@ -78,6 +78,15 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         receive_all_data.player_health_data.emplace_back(*p_data);
         break;
     }
+    //-----敵の状態データ-----//
+    case UpdateCommand::EnemyConditionCommand:
+    {
+        using namespace EnemySendData;
+        EnemyConditionData* e_data = (EnemyConditionData*)data;
+
+        enemy_condition_data_array.emplace_back(*e_data);
+        break;
+    }
     //-----敵のダメージデータ-----//
     case UpdateCommand::EnemyDamageCommand:
     {

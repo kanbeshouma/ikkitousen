@@ -47,6 +47,8 @@ PlayerAllDataStruct SceneMultiGameHost::receive_all_data;
 
 std::vector<EnemySendData::EnemyDamageData> SceneMultiGameHost::enemy_damage_data_array;
 
+std::vector<EnemySendData::EnemyConditionData> SceneMultiGameHost::enemy_condition_data_array;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -289,6 +291,9 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		//----敵のダメージデータを設定-----//
 		SetEnemyDamageData(graphics);
+
+		//-----敵の状態データを設定-----//
+		SetEnemyConditionData();
 
 	    //-----ステージ中のウェーブの更新処理-----//
 		mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
@@ -1255,6 +1260,25 @@ void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
 		//-----データを削除する-----//
 		enemy_damage_data_array.clear();
 	}
+}
+
+void SceneMultiGameHost::SetEnemyConditionData()
+{
+	//-----敵のダメージデータを設定する-----//
+	if (enemy_condition_data_array.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+
+		//-----データを設定する-----//
+		for (const auto& data : enemy_condition_data_array)
+		{
+			mWaveManager.fSetReceiveEnemyConditionData(data);
+		}
+
+		//-----データを削除する-----//
+		enemy_condition_data_array.clear();
+	}
+
 }
 
 void SceneMultiGameHost::ReceivePlayerHealthData()

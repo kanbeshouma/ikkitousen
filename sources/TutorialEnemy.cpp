@@ -1,3 +1,4 @@
+#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
 #include"TutorialEnemy.h"
 #include"Operators.h"
 TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics,

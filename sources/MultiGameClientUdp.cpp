@@ -122,6 +122,16 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
 
         break;
     }
+    //-----敵の基本データ-----//
+    case UpdateCommand::EnemyConditionCommand:
+    {
+        EnemySendData::EnemyConditionData* e_data = new EnemySendData::EnemyConditionData;
+
+        //-----データを保存----//
+        receive_all_enemy_data.enemy_condition_data.emplace_back(*e_data);
+
+        break;
+    }
     //-----敵の死亡データ-----//
     case UpdateCommand::EnemyDieCommand:
     {

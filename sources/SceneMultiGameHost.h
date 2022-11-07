@@ -315,12 +315,18 @@ private:
     //-----敵のダメージデータを設定-----//
     void SetEnemyDamageData(GraphicsPipeline& graphics);
 
+    //-----敵の状態データを設定-----//
+    void SetEnemyConditionData();
+
     //-----プレイヤーの体力のデータの設定-----//
     void ReceivePlayerHealthData();
 
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
+
+    //-----敵の状態データを入れる-----//
+    static std::vector<EnemySendData::EnemyConditionData> enemy_condition_data_array;
 
     //-----敵のダメージデータを入れる-----//
     static std::vector<EnemySendData::EnemyDamageData> enemy_damage_data_array;
