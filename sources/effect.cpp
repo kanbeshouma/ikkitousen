@@ -26,12 +26,8 @@ Effect::~Effect()
 //----------------------------------------------//
 void Effect::play(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3& position, float scale)
 {
-    if (is_play == false)
-    {
         effekseer_handle = effekseer_manager->Play(effekseer_effect, position.x, position.y, position.z);
         effekseer_manager->SetScale(effekseer_handle, scale, scale, scale);
-        is_play = true;
-    }
     //Effekseer::Color c = { static_cast<uint8_t>(255),static_cast<uint8_t>(255),static_cast<uint8_t>(255),static_cast<uint8_t>(120) };
     //effekseer_manager->SetAllColor(effekseer_handle, c);
 }
@@ -41,11 +37,7 @@ void Effect::play(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3
 //----------------------------------------------//
 void Effect::stop(Effekseer::Manager* effekseer_manager)
 {
-    if (is_play)
-    {
-        effekseer_manager->StopEffect(effekseer_handle);
-        is_play = false;
-    }
+    effekseer_manager->StopEffect(effekseer_handle);
 }
 
 //-----------------------------------------------//
@@ -53,7 +45,7 @@ void Effect::stop(Effekseer::Manager* effekseer_manager)
 //----------------------------------------------//
 void Effect::set_position(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3& position)
 {
-    if(is_play)effekseer_manager->SetLocation(effekseer_handle, position.x, position.y, position.z);
+    effekseer_manager->SetLocation(effekseer_handle, position.x, position.y, position.z);
 }
 
 //-----------------------------------------------//
@@ -61,7 +53,7 @@ void Effect::set_position(Effekseer::Manager* effekseer_manager, const DirectX::
 //----------------------------------------------//
 void Effect::set_scale(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3& scale)
 {
-    if (is_play)effekseer_manager->SetScale(effekseer_handle, scale.x, scale.y, scale.z);
+   effekseer_manager->SetScale(effekseer_handle, scale.x, scale.y, scale.z);
 }
 
 //-----------------------------------------------//
@@ -69,7 +61,7 @@ void Effect::set_scale(Effekseer::Manager* effekseer_manager, const DirectX::XMF
 //----------------------------------------------//
 void Effect::set_speed(Effekseer::Manager* effekseer_manager, float speed)
 {
-    if (is_play)effekseer_manager->SetSpeed(effekseer_handle, speed);
+    effekseer_manager->SetSpeed(effekseer_handle, speed);
 }
 
 //-----------------------------------------------//
@@ -77,16 +69,12 @@ void Effect::set_speed(Effekseer::Manager* effekseer_manager, float speed)
 //----------------------------------------------//
 void Effect::set_rotationY(Effekseer::Manager* effekseer_manager, const float angle)
 {
-    if (is_play == false) return;
-
     Effekseer::Vector3D up{ 0,1,0 };
     effekseer_manager->SetRotation(effekseer_handle, up, angle);
 }
 
 void Effect::set_rotation_axis(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3& axis, const float angle)
 {
-    if (is_play == false) return;
-
     Effekseer::Vector3D Axis = { axis.x,axis.y,axis.z };
     effekseer_manager->SetRotation(effekseer_handle, Axis, angle);
 
@@ -95,7 +83,6 @@ void Effect::set_rotation_axis(Effekseer::Manager* effekseer_manager, const Dire
 
 void Effect::set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4 orientation)
 {
-    if (is_play == false) return;
     //クォータニオン→回転行列
     auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
         DirectX::XMFLOAT4 o)
@@ -131,7 +118,6 @@ void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3
 //----------------------------------------------//
 void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat,float ang)
 {
-    if (is_play == false) return;
 
     Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(rotate_mat);
 

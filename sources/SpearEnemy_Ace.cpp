@@ -267,12 +267,13 @@ void SpearEnemy_Ace::fWipeBeginUpdate(float elapsedTime_, GraphicsPipeline& Grap
 void SpearEnemy_Ace::fWipeAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack);
-    mIsAttack = true;
     mAnimationSpeed = 1.5f;
 }
 
 void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Graphics_)
 {
+    if (mAnimPara.animation_tick > 0.2f && mIsAttack == false)  mIsAttack = true;
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::Idle);
