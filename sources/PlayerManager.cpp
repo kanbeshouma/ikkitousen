@@ -13,7 +13,13 @@ PlayerManager::~PlayerManager()
 
 void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    if (CorrespondenceManager::Instance().GetMultiPlay()) invincible_timer -= 1.0f * elapsed_time;
+    if (CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        //-----無敵時間の更新-----//
+        invincible_timer -= 1.0f * elapsed_time;
+        //-----HPのクランプ-----//
+        multiplay_current_health = Math::clamp(multiplay_current_health, 0, multiplay_max_health);
+    }
     for (auto& player : players)
     {
         player->Update(elapsed_time, graphics, sky_dome, enemies);

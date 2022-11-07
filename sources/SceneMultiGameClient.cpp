@@ -1043,7 +1043,7 @@ void SceneMultiGameClient::PlayerManagerCollision(GraphicsPipeline& graphics, fl
 	player_manager->PlayerAttackVsEnemy(enemyManager, graphics, elapsed_time);
 
 	////-----ジャスト回避が可能かどうかの当たり判定-----//
-	//player_manager->PlayerCounterVsEnemyAttack(enemyManager);
+	player_manager->PlayerCounterVsEnemyAttack(enemyManager);
 
 	//-----プレイヤーの体力の同期をとる-----//
 	ReceivePlayerHealthData();
@@ -1052,13 +1052,13 @@ void SceneMultiGameClient::PlayerManagerCollision(GraphicsPipeline& graphics, fl
 	player_manager->EnemyAttackVsPlayer(enemyManager);
 
 	////-----プレイヤーがジャスト回避した時の範囲スタンの当たり判定-----//
-	//player_manager->PlayerStunVsEnemy(enemyManager);
+	player_manager->PlayerStunVsEnemy(enemyManager);
 
 	////-----プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる-----//
 	//player_manager->SetPlayerChainTime(enemyManager);
 
 	////-----弾とプレイヤーの当たり判定-----//
-	//player_manager->BulletVsPlayer(mBulletManager);
+	player_manager->BulletVsPlayer(mBulletManager);
 
 }
 
