@@ -321,14 +321,14 @@ private:
     //-----プレイヤーの体力のデータの設定-----//
     void ReceivePlayerHealthData();
 
+    ////-----敵の受信データを削除する-----//
+    void ClearEnemyReceiveData();
+
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
 
-    //-----敵の状態データを入れる-----//
-    static std::vector<EnemySendData::EnemyConditionData> enemy_condition_data_array;
-
-    //-----敵のダメージデータを入れる-----//
-    static std::vector<EnemySendData::EnemyDamageData> enemy_damage_data_array;
+    //-----敵の受信データを入れる-----//
+    static EnemyAllDataStruct receive_all_enemy_data;
 
 };

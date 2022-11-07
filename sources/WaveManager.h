@@ -51,8 +51,8 @@ public:
     //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_, AddBulletFunc Func_);
 
-    //-----マルチプレイ時にクライアント側が呼ぶ更新処理-----//
-    void fClientUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
+    //-----マルチプレイ時に呼ぶ更新処理-----//
+    void fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
 
     //----------------------------------
     // TODO:藤岡が書いたところ
@@ -231,6 +231,12 @@ public:
     const STAGE_IDENTIFIER& get_current_stage() { return current_stage; }
     const bool get_game_clear() const { return game_clear; }
 
+private:
+    //-----敵の行動権を持っているかどうか-----//
+    bool is_host{ false };
+public:
+    void SetHost(bool arg) { is_host = arg; }
+    bool GetHost() { return is_host; }
     //---ここまで--//
 };
 

@@ -45,9 +45,7 @@ std::mutex SceneMultiGameHost::mutex;
 
 PlayerAllDataStruct SceneMultiGameHost::receive_all_data;
 
-std::vector<EnemySendData::EnemyDamageData> SceneMultiGameHost::enemy_damage_data_array;
-
-std::vector<EnemySendData::EnemyConditionData> SceneMultiGameHost::enemy_condition_data_array;
+EnemyAllDataStruct SceneMultiGameHost::receive_all_enemy_data;
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
@@ -82,6 +80,8 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
+	//-----ホストかどうかを設定-----//
+	mWaveManager.SetHost(true);
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
@@ -289,14 +289,16 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (is_start_game)
 	{
-		//----敵のダメージデータを設定-----//
-		SetEnemyDamageData(graphics);
+		{
+			//-----ロックする-----//
+			std::lock_guard<std::mutex> lock(mutex);
 
-		//-----敵の状態データを設定-----//
-		SetEnemyConditionData();
+			//-----ステージ中のウェーブの更新処理-----//
+			mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
 
-	    //-----ステージ中のウェーブの更新処理-----//
-		mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+			//-----敵のデータを削除-----//
+			ClearEnemyReceiveData();
+		}
 	}
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
@@ -1247,36 +1249,36 @@ void SceneMultiGameHost::SetReceiveData()
 void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
 {
 	//-----敵のダメージデータを設定する-----//
-	if (enemy_damage_data_array.empty() == false)
+	if (receive_all_enemy_data.enemy_damage_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 
 		//-----データを設定する-----//
-		for (const auto& data : enemy_damage_data_array)
+		for (const auto& data : receive_all_enemy_data.enemy_damage_data)
 		{
 			mWaveManager.fSetReceiveEnemyDamageData(data,graphics_);
 		}
 
 		//-----データを削除する-----//
-		enemy_damage_data_array.clear();
+		receive_all_enemy_data.enemy_damage_data.clear();
 	}
 }
 
 void SceneMultiGameHost::SetEnemyConditionData()
 {
 	//-----敵のダメージデータを設定する-----//
-	if (enemy_condition_data_array.empty() == false)
+	if (receive_all_enemy_data.enemy_condition_data.empty() == false)
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 
 		//-----データを設定する-----//
-		for (const auto& data : enemy_condition_data_array)
+		for (const auto& data : receive_all_enemy_data.enemy_condition_data)
 		{
 			mWaveManager.fSetReceiveEnemyConditionData(data);
 		}
 
 		//-----データを削除する-----//
-		enemy_condition_data_array.clear();
+		receive_all_enemy_data.enemy_condition_data.clear();
 	}
 
 }
@@ -1298,6 +1300,27 @@ void SceneMultiGameHost::ReceivePlayerHealthData()
 		//-----同期を取った体力を送信する-----//
 		player_manager->SendPlayerHealthData();
 	}
+
+
+}
+
+void SceneMultiGameHost::ClearEnemyReceiveData()
+{
+	//-----敵の出現データを削除する-----//
+	receive_all_enemy_data.enemy_spawn_data.clear();
+
+	//-----敵の動きデータを削除する-----//
+	receive_all_enemy_data.enemy_move_data.clear();
+
+	//-----ダメージデータ削除-----//
+	receive_all_enemy_data.enemy_damage_data.clear();
+
+	//-----死亡データ削除-----//
+	receive_all_enemy_data.enemy_die_data.clear();
+
+	//-----状態データ削除-----//
+	receive_all_enemy_data.enemy_condition_data.clear();
+
 
 
 }

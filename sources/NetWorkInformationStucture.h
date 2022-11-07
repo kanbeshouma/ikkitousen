@@ -399,6 +399,9 @@ struct EnemyAllDataStruct
     //-----敵の状態データ-----//
     std::vector<EnemySendData::EnemyConditionData> enemy_condition_data;
 
+    //-----敵のダメージデータ-----//
+    std::vector<EnemySendData::EnemyDamageData> enemy_damage_data;
+
     //-----敵の死亡データ-----//
     std::vector<EnemySendData::EnemyDieData> enemy_die_data;
 };

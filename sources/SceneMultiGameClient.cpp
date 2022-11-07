@@ -81,6 +81,8 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
+	//-----ホストかどうかを設定-----//
+	mWaveManager.SetHost(false);
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
@@ -268,7 +270,7 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		std::lock_guard<std::mutex> lock(mutex);
 
 		//-----ステージ中のウェーブの更新処理-----//
-		mWaveManager.fClientUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
+		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
 
 		//-----敵のデータを削除-----//
 		ClearEnemyReceiveData();
@@ -1168,6 +1170,15 @@ void SceneMultiGameClient::ClearEnemyReceiveData()
 
 	//-----敵の動きデータを削除する-----//
 	receive_all_enemy_data.enemy_move_data.clear();
+
+	//-----ダメージデータ削除-----//
+	receive_all_enemy_data.enemy_damage_data.clear();
+
+	//-----死亡データ削除-----//
+	receive_all_enemy_data.enemy_die_data.clear();
+
+	//-----状態データ削除-----//
+	receive_all_enemy_data.enemy_condition_data.clear();
 
 }
 

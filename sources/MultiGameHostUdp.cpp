@@ -84,7 +84,7 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         using namespace EnemySendData;
         EnemyConditionData* e_data = (EnemyConditionData*)data;
 
-        enemy_condition_data_array.emplace_back(*e_data);
+        receive_all_enemy_data.enemy_condition_data.emplace_back(*e_data);
         break;
     }
     //-----敵のダメージデータ-----//
@@ -93,7 +93,7 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         using namespace EnemySendData;
         EnemyDamageData* e_data = (EnemyDamageData*)data;
 
-        enemy_damage_data_array.emplace_back(*e_data);
+        receive_all_enemy_data.enemy_damage_data.emplace_back(*e_data);
         break;
     }
     default:

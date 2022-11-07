@@ -243,7 +243,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     case WaveState::Game:
         // クリア状態に遷移
         //-----今は遷移しないように処理をけしておく-----//
-        //if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
+        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
 
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
@@ -257,8 +257,10 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     fGuiMenu();
 }
 
-void WaveManager::fClientUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
+void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
+
+
     // 待ってクリア演出へ
     if (clear_flg)
     {
@@ -360,10 +362,35 @@ void WaveManager::fClientUpdate(GraphicsPipeline& Graphics_, float elapsedTime_,
         }
         break;
     case WaveState::Game:
-        mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
+
+
+
+        //-----敵のホスト権を持っている場合とそうでない場合のアップデートで切り分けている-----//
+        if (is_host)
+        {
+            if (receive_data.enemy_damage_data.empty() == false)
+            {
+                //-----データを設定する-----//
+                for (const auto& data : receive_data.enemy_damage_data)
+                {
+                    fSetReceiveEnemyDamageData(data, Graphics_);
+                }
+            }
+
+            if (receive_data.enemy_condition_data.empty() == false)
+            {
+                //-----データを設定する-----//
+                for (const auto& data : receive_data.enemy_condition_data)
+                {
+                    fSetReceiveEnemyConditionData(data);
+                }
+            }
+            mEnemyManager.fUpdate(Graphics_, elapsedTime_, Func_);
+        }
+        else  mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
 
         // クリア状態に遷移
-        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
+        //if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
 
         break;
     case WaveState::Clear:
