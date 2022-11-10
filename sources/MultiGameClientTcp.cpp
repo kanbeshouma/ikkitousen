@@ -63,12 +63,6 @@ void SceneMultiGameClient::ReceiveTcpData()
                 }
                 break;
             }
-            case CommandList::TransferEnemyControlRequest:
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-
-                break;
-            }
             case CommandList::TransferEnemyControlResult:
             {
                 std::lock_guard<std::mutex> lock(mutex);

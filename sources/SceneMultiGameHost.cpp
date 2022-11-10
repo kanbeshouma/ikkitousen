@@ -56,6 +56,9 @@ int SceneMultiGameHost::transfer_enemy_request_id = -1;
 //-----敵のホスト権の譲渡リクエスト-----//
 bool SceneMultiGameHost::transfer_enemy_host_request = false;
 
+//-----敵のホスト権が帰って来たかどうか-----//
+bool SceneMultiGameHost::return_enemy_control = false;
+
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
@@ -528,6 +531,8 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	//-------------敵のホスト権の譲渡リクエストなどの処理----------------//
 	//=================================================//
 	TransferEnenyControlProcessing();
+
+	ReturnEnemyControl();
 
 	//****************************************************************
 	//
@@ -1372,5 +1377,14 @@ void SceneMultiGameHost::TransferEnenyControlProcessing()
 
 		transfer_enemy_request_id = -1;
 		transfer_enemy_host_request = false;
+	}
+}
+
+void SceneMultiGameHost::ReturnEnemyControl()
+{
+	if (return_enemy_control)
+	{
+		mWaveManager.SetHost(true);
+		return_enemy_control = false;
 	}
 }

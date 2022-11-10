@@ -29,7 +29,9 @@ enum CommandList
     //-----敵の操作権の譲渡をリクエストする------//
     TransferEnemyControlRequest,
     //-----敵のホスト権の譲渡リクエストの結果-----//
-    TransferEnemyControlResult
+    TransferEnemyControlResult,
+    //-----敵のホスト権を返す-----//
+    ReturnEnemyControl
 };
 
 enum UpdateCommand

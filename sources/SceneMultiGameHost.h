@@ -327,6 +327,8 @@ private:
     ////-----敵のホスト権譲渡関係の処理-----//
     void TransferEnenyControlProcessing();
 
+    ////-----敵のホスト権が帰ってきた時の処理-----//
+    void ReturnEnemyControl();
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
@@ -342,4 +344,7 @@ private:
 
     //-----敵のホスト権の譲渡されたかどうか-----//
     static bool transfer_enemy_host_result;
+
+    //-----敵のホスト権が帰って来たかどうか-----//
+    static bool return_enemy_control;
 };

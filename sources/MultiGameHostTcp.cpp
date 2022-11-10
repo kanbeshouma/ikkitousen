@@ -55,10 +55,11 @@ void SceneMultiGameHost::ReceiveTcpData()
 				transfer_enemy_request_id = client_id;
 				break;
 			}
-			case CommandList::TransferEnemyControlResult:
+			case CommandList::ReturnEnemyControl:
 			{
 				std::lock_guard<std::mutex> lock(mutex);
-
+				//-----‹A‚Á‚Ä‚«‚½‚±‚Æ‚ð’m‚ç‚¹‚é-----//
+				return_enemy_control = true;
 				break;
 			}
 			default:

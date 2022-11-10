@@ -546,6 +546,17 @@ void WaveManager::fGuiMenu()
                 SendTransferHost();
             }
         }
+        else
+        {
+            if (CorrespondenceManager::Instance().GetHost() == false)
+            {
+                if (ImGui::Button("ReturnEnemyHost"))
+                {
+                    ReturnEnemyControl();
+                }
+
+            }
+        }
 
         ImGui::End();
     }
@@ -958,6 +969,17 @@ void WaveManager::SendTransferHost()
 
     //-----敵の操作権の譲渡リクエスト-----//
     CorrespondenceManager::Instance().TcpSend((char*)&data, 1);
+}
+
+void WaveManager::ReturnEnemyControl()
+{
+    char data{};
+    data = CommandList::ReturnEnemyControl;
+
+    //-----敵の操作権の譲渡リクエスト-----//
+    CorrespondenceManager::Instance().TcpSend((char*)&data, 1);
+
+    is_host = false;
 }
 
 void WaveFile::load()
