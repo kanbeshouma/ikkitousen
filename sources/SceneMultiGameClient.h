@@ -265,6 +265,8 @@ private:
     //-----プレイヤーの体力のデータの設定-----//
     void ReceivePlayerHealthData();
 
+    //-----敵のホスト権譲渡の結果確認-----//
+    void CheckTransferEnemyControl();
 private:
     //-----プレイヤーの受信データを入れる-----//
     static PlayerAllDataStruct receive_all_player_data;
@@ -272,4 +274,12 @@ private:
     //-----敵の受信データを入れる-----//
     static EnemyAllDataStruct receive_all_enemy_data;
 
+    //-----敵のホスト権の譲渡リクエストを受けたかどうか-----//
+    static bool transfer_enemy_host_request;
+
+    //-----敵のホスト権の譲渡されたかどうか-----//
+    static bool transfer_enemy_host_result;
+
+    //-----敵のホスト権の譲渡結果-----//
+    static TransferEnemyControl::TransferEnemyResult transfer_enemy_result;
 };

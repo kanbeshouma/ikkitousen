@@ -63,6 +63,23 @@ void SceneMultiGameClient::ReceiveTcpData()
                 }
                 break;
             }
+            case CommandList::TransferEnemyControlRequest:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+
+                break;
+            }
+            case CommandList::TransferEnemyControlResult:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                //------データを設定-----//
+                memcpy_s(transfer_enemy_result.data, sizeof(transfer_enemy_result.data), data, sizeof(transfer_enemy_result.data));
+
+                transfer_enemy_host_result = true;
+
+                DebugConsole::Instance().WriteDebugConsole("譲渡結果のデータを受け取りました");
+                break;
+            }
             default:
                 std::string text = "コマンド :" + std::to_string(data[ComLocation::ComList]);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);

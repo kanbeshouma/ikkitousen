@@ -324,6 +324,9 @@ private:
     ////-----敵の受信データを削除する-----//
     void ClearEnemyReceiveData();
 
+    ////-----敵のホスト権譲渡関係の処理-----//
+    void TransferEnenyControlProcessing();
+
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
@@ -331,4 +334,12 @@ private:
     //-----敵の受信データを入れる-----//
     static EnemyAllDataStruct receive_all_enemy_data;
 
+    //-----敵のホスト権の譲渡リクエストを受けたかどうか-----//
+    static bool transfer_enemy_host_request;
+
+    //-----リクエストして来たプレイヤーの番号-----//
+    static int transfer_enemy_request_id;
+
+    //-----敵のホスト権の譲渡されたかどうか-----//
+    static bool transfer_enemy_host_result;
 };

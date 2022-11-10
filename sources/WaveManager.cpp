@@ -7,6 +7,8 @@
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "post_effect.h"
+#include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
 
 #define ProtoType
 
@@ -252,7 +254,8 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         fClearUpdate(elapsedTime_);
 
         break;
-    default: ;
+    default:
+        break;
     }
     fGuiMenu();
 }
@@ -362,9 +365,6 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         }
         break;
     case WaveState::Game:
-
-
-
         //-----敵のホスト権を持っている場合とそうでない場合のアップデートで切り分けている-----//
         if (is_host)
         {
@@ -392,13 +392,14 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         // クリア状態に遷移
         //if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
 
+        fGuiMenu();
         break;
     case WaveState::Clear:
         fClearUpdate(elapsedTime_);
         break;
-    default: ;
+    default:
+        break;
     }
-    fGuiMenu();
 }
 
 void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
@@ -511,9 +512,9 @@ void WaveManager::fStartWave()
 
 void WaveManager::fGuiMenu()
 {
-    imgui_menu_bar("System", "WaveManager", mOpenGui);
 
 #ifdef USE_IMGUI
+    imgui_menu_bar("System", "WaveManager", mOpenGui);
     if (mOpenGui)
     {
         ImGui::Begin("WaveManager");
@@ -535,6 +536,15 @@ void WaveManager::fGuiMenu()
         case WaveState::Game:  ImGui::Text("Game");  break;
         case WaveState::Clear: ImGui::Text("Clear"); break;
         default: break;
+        }
+
+        ImGui::RadioButton("is_host", is_host);
+        if (is_host == false)
+        {
+            if (ImGui::Button("SendHost"))
+            {
+                SendTransferHost();
+            }
         }
 
         ImGui::End();
@@ -941,6 +951,14 @@ void WaveManager::update_enlargement(float elapsed_time)
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f)) { close = true; }
 }
 
+void WaveManager::SendTransferHost()
+{
+    char data{};
+    data = CommandList::TransferEnemyControlRequest;
+
+    //-----敵の操作権の譲渡リクエスト-----//
+    CorrespondenceManager::Instance().TcpSend((char*)&data, 1);
+}
 
 void WaveFile::load()
 {

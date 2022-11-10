@@ -237,6 +237,10 @@ private:
 public:
     void SetHost(bool arg) { is_host = arg; }
     bool GetHost() { return is_host; }
+private:
+    //-----“G‚ÌƒzƒXƒgŒ ‚ğ÷“n‚·‚é-----//
+    void SendTransferHost();
+
     //---‚±‚±‚Ü‚Å--//
 };
 

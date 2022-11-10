@@ -36,6 +36,31 @@ void SceneMultiGameHost::ReceiveTcpData()
 				//-----ログアウト処理-----//
 				Logout(data);
 				break;
+			case CommandList::TransferEnemyControlRequest:
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				//-----既にtrueなら他の接続者が今リクエストしているから中止させる-----//
+				if (transfer_enemy_host_request)
+				{
+					char data[2]{};
+
+					data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
+					data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Prohibition;
+
+					CorrespondenceManager::Instance().TcpSend(data, sizeof(data));
+				}
+
+				DebugConsole::Instance().WriteDebugConsole("リクエストを受けました", TextColor::Green);
+				transfer_enemy_host_request = true;
+				transfer_enemy_request_id = client_id;
+				break;
+			}
+			case CommandList::TransferEnemyControlResult:
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+
+				break;
+			}
 			default:
 				break;
 			}

@@ -47,7 +47,14 @@ PlayerAllDataStruct SceneMultiGameClient::receive_all_player_data;
 //-----敵のデータを入れる-----//
 EnemyAllDataStruct SceneMultiGameClient::receive_all_enemy_data;
 
+//-----敵のホスト権の譲渡されたかどうか-----//
+bool SceneMultiGameClient::transfer_enemy_host_result = false;
 
+//-----敵のホスト権の譲渡リクエスト-----//
+bool SceneMultiGameClient::transfer_enemy_host_request = false;
+
+//-----敵のホスト権の譲渡結果-----//
+TransferEnemyControl::TransferEnemyResult SceneMultiGameClient::transfer_enemy_result;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -487,6 +494,15 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	shadow_map->debug_imgui();
 
 	effect_manager->update(elapsed_time);
+
+	//=================================================//
+	//-------------敵のホスト権の譲渡リクエストなどの処理----------------//
+	//=================================================//
+
+	//-----譲渡のリクエスト結果の処理-----//
+	CheckTransferEnemyControl();
+
+
 
 	//****************************************************************
 	//
@@ -1197,4 +1213,32 @@ void SceneMultiGameClient::ReceivePlayerHealthData()
 		receive_all_player_data.player_health_data.clear();
 	}
 
+}
+
+void SceneMultiGameClient::CheckTransferEnemyControl()
+{
+	if (transfer_enemy_host_result)
+	{
+		switch (transfer_enemy_result.data[TransferEnemyControl::DataArray::Result])
+		{
+			//-----許可-----//
+		case TransferEnemyControl::Result::Permit:
+			mWaveManager.SetHost(true);
+			DebugConsole::Instance().WriteDebugConsole("許可を受けました", TextColor::Green);
+			break;
+			//-----無許可-----//
+		case TransferEnemyControl::Result::Prohibition:
+			DebugConsole::Instance().WriteDebugConsole("許可をもらえませんでした", TextColor::Red);
+
+			break;
+		default:
+			DebugConsole::Instance().WriteDebugConsole("値がおかしいです", TextColor::Red);
+			break;
+		}
+
+		//-----初期値を入れる-----//
+		transfer_enemy_result.data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::None;
+		//-----処理をしたらフラグを戻す-----//
+		transfer_enemy_host_result = false;
+	}
 }

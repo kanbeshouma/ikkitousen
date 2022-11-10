@@ -25,6 +25,11 @@ enum CommandList
     Update,
     //IPアドレス取得
     IpAddress,
+
+    //-----敵の操作権の譲渡をリクエストする------//
+    TransferEnemyControlRequest,
+    //-----敵のホスト権の譲渡リクエストの結果-----//
+    TransferEnemyControlResult
 };
 
 enum UpdateCommand
@@ -55,6 +60,8 @@ enum UpdateCommand
 
     //-----敵の死亡データ-----//
     EnemyDieCommand,
+
+
 };
 
 
@@ -329,7 +336,6 @@ namespace EnemySendData
     };
 #pragma endregion
 
-
 #pragma region EnemyConditionData
 
     //-----敵の状態のenum-----//
@@ -386,6 +392,7 @@ namespace EnemySendData
     };
 
 #pragma endregion
+
 }
 //-----敵のデータ構造体が全て入っている-----//
 struct EnemyAllDataStruct
@@ -405,3 +412,27 @@ struct EnemyAllDataStruct
     //-----敵の死亡データ-----//
     std::vector<EnemySendData::EnemyDieData> enemy_die_data;
 };
+
+namespace TransferEnemyControl
+{
+    //-----データ配列の場所-----//
+    enum DataArray
+    {
+        Result = 1
+    };
+
+    //-----結果-----//
+    enum Result
+    {
+        None,
+        //-----許可-----//
+        Permit,
+        //-----無許可-----//
+        Prohibition
+    };
+
+    struct TransferEnemyResult
+    {
+        char data[2]{};
+    };
+}

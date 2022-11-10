@@ -47,6 +47,16 @@ PlayerAllDataStruct SceneMultiGameHost::receive_all_data;
 
 EnemyAllDataStruct SceneMultiGameHost::receive_all_enemy_data;
 
+//-----敵のホスト権の譲渡されたかどうか-----//
+bool SceneMultiGameHost::transfer_enemy_host_result = false;
+
+//-----リクエストして来たプレイヤーの番号-----//
+int SceneMultiGameHost::transfer_enemy_request_id = -1;
+
+//-----敵のホスト権の譲渡リクエスト-----//
+bool SceneMultiGameHost::transfer_enemy_host_request = false;
+
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -513,6 +523,11 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	shadow_map->debug_imgui();
 
 	effect_manager->update(elapsed_time);
+
+	//=================================================//
+	//-------------敵のホスト権の譲渡リクエストなどの処理----------------//
+	//=================================================//
+	TransferEnenyControlProcessing();
 
 	//****************************************************************
 	//
@@ -1323,4 +1338,39 @@ void SceneMultiGameHost::ClearEnemyReceiveData()
 
 
 
+}
+
+void SceneMultiGameHost::TransferEnenyControlProcessing()
+{
+	if (transfer_enemy_host_request)
+	{
+		//-----敵のホスト権を取得していたら譲渡OK-----//
+		if (mWaveManager.GetHost())
+		{
+			char data[2]{};
+
+			data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
+			data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Permit;
+
+			CorrespondenceManager::Instance().TcpSend(transfer_enemy_request_id,data, sizeof(data));
+			DebugConsole::Instance().WriteDebugConsole("許可送信",TextColor::Green);
+
+			//-----ホスト権を無くす-----//
+			mWaveManager.SetHost(false);
+		}
+		//-----敵のホスト権を持っていなかったら譲渡NG-----//
+		else
+		{
+			char data[2]{};
+
+			data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
+			data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Prohibition;
+
+			CorrespondenceManager::Instance().TcpSend(transfer_enemy_request_id,data, sizeof(data));
+			DebugConsole::Instance().WriteDebugConsole("禁止送信", TextColor::Red);
+		}
+
+		transfer_enemy_request_id = -1;
+		transfer_enemy_host_request = false;
+	}
 }
