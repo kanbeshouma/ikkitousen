@@ -534,6 +534,11 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	ReturnEnemyControl();
 
+	//-----敵のホスト権がある時にしかチェイン攻撃ができないようにする-----//
+	if (mWaveManager.GetHost())player_manager->PermitChainAttack();
+	else player_manager->ProhibitionChainAttack();
+
+
 	//****************************************************************
 	//
 	// オブジェクトの削除処理はこの下でやるルール
@@ -1362,6 +1367,8 @@ void SceneMultiGameHost::TransferEnenyControlProcessing()
 
 			//-----ホスト権を無くす-----//
 			mWaveManager.SetHost(false);
+
+
 		}
 		//-----敵のホスト権を持っていなかったら譲渡NG-----//
 		else

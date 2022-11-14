@@ -167,6 +167,9 @@ public:
     //-----チェイン攻撃の許可-----//
     void PermitChainAttack();
 
+    //-----チェイン攻撃の禁止-----//
+    void ProhibitionChainAttack();
+
     //-----敵のホスト権の返還-----//
     bool GetReturnEnemyControl();
     void SetReturnEnemyControl(bool arg);
