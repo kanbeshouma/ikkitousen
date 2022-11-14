@@ -56,6 +56,8 @@ bool SceneMultiGameClient::transfer_enemy_host_request = false;
 //-----敵のホスト権の譲渡結果-----//
 TransferEnemyControl::TransferEnemyResult SceneMultiGameClient::transfer_enemy_result;
 
+StageSituation SceneMultiGameClient::stage_situation = StageSituation::NoneFlg;
+
 SceneMultiGameClient::SceneMultiGameClient()
 {
 }
@@ -249,6 +251,15 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	//-----ゲームオーバー,ゲームクリアの時は止める-----//
 	if (is_game_over) return;
 	if (is_game_clear) return;
+
+
+#ifdef USE_IMGUI
+	ImGui::Begin("StageSituation");
+	ImGui::RadioButton("StageClear", stage_situation & StageSituation::StageClearFlg);
+	ImGui::RadioButton("GameClear", stage_situation & StageSituation::GameClearFlg);
+	ImGui::RadioButton("GameOver", stage_situation & StageSituation::GameOverFlg);
+	ImGui::End();
+#endif // USE_IMGUI
 
 	//-----ゲームクリア-----//
 	if (mWaveManager.get_game_clear()) { is_game_clear = true; }

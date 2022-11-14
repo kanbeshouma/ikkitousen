@@ -28,6 +28,24 @@
 #include"SpriteBatch.h"
 #include"PlayerManager.h"
 
+//-----ステージの状況のenum class-----//
+enum class StageSituation : uint8_t
+{
+    //-----何も無し-----//
+    NoneFlg = (1 << 0),
+    //-----ステージクリア-----//
+    StageClearFlg = (1 << 1),
+    //-----ゲームクリア-----//
+    GameClearFlg = (1 << 2),
+    //-----ゲームオーバー-----//
+    GameOverFlg = (1 << 3),
+};
+inline bool operator&(StageSituation lhs, StageSituation rhs)
+{
+    return static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs);
+}
+
+
 class SceneMultiGameClient : public Scene, public PracticalEntities
 {
 public:
@@ -282,4 +300,7 @@ private:
 
     //-----敵のホスト権の譲渡結果-----//
     static TransferEnemyControl::TransferEnemyResult transfer_enemy_result;
+
+    //-----ステージの状況-----//
+    static StageSituation stage_situation;
 };

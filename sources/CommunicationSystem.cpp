@@ -610,6 +610,36 @@ void CommunicationSystem::TcpSend(char* data, int size)
     }
 }
 
+void CommunicationSystem::TcpSendAllClient(char* data, int size)
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+    for (int i = 0; i < MAX_CLIENT; i++)
+    {
+        //-----ソケットに何も設定されていない時か自分の番号と同じならとばす-----//
+        if (instance.login_client_sock[i] == INVALID_SOCKET || i == CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        //データをクライアントに送る
+        int send_size = send(instance.login_client_sock[i], data, size, 0);
+        //エラーの時はSOCKET_ERRORが入る
+        if (send_size == SOCKET_ERROR)
+        {
+            //コンソール画面に出力
+            if (tcp_error_num != WSAGetLastError())
+            {
+                tcp_error_num = WSAGetLastError();
+                DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+                std::string text = "error number:" + std::to_string(tcp_error_num);
+                DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+            }
+        }
+        else
+        {
+            std::string text = std::to_string(i) + "番目にTCP通信で" + "コマンド :" + std::to_string(data[0]) + " で" + std::to_string(send_size) + "バイト送信しました";
+
+            DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
+        }
+    }
+}
+
 bool CommunicationSystem::CloseTcpHost(char* data, int size,int operation_private_id)
 {
 

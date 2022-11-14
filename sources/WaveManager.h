@@ -243,6 +243,14 @@ private:
 public:
     //-----敵のホスト権を返す-----//
     void ReturnEnemyControl();
+private:
+    //-----ステージクリアを送信-----//
+    void SendStageClear();
+    //-----ゲームクリア送信-----//
+    void SendGameClear();
+
+    //-----クリアのデータを送信したかどうか-----//
+    bool is_send_clear_data{ false };
 
     //---ここまで--//
 };

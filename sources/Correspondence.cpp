@@ -70,6 +70,13 @@ void CorrespondenceManager::TcpSend(char* data, int size)
     communication_system->TcpSend(data, size);
 }
 
+void CorrespondenceManager::TcpSendAllClient(char* data, int size)
+{
+    if (is_multi == false) return;
+
+    communication_system->TcpSendAllClient(data, size);
+}
+
 bool CorrespondenceManager::CloseTcpHost()
 {
     MachingEndData data;

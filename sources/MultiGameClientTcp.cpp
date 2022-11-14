@@ -63,6 +63,7 @@ void SceneMultiGameClient::ReceiveTcpData()
                 }
                 break;
             }
+            //-----敵のホスト権の譲渡も結果-----//
             case CommandList::TransferEnemyControlResult:
             {
                 std::lock_guard<std::mutex> lock(mutex);
@@ -72,6 +73,27 @@ void SceneMultiGameClient::ReceiveTcpData()
                 transfer_enemy_host_result = true;
 
                 DebugConsole::Instance().WriteDebugConsole("譲渡結果のデータを受け取りました");
+                break;
+            }
+            //-----ステージクリア-----//
+            case CommandList::StageClear:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                stage_situation = StageSituation::StageClearFlg;
+                break;
+            }
+            //-----ゲームクリア-----//
+            case CommandList::GameClear:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                stage_situation = StageSituation::GameClearFlg;
+                break;
+            }
+            //-----ゲームオーバー-----//
+            case CommandList::GameOver:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                stage_situation = StageSituation::GameOverFlg;
                 break;
             }
             default:

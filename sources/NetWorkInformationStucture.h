@@ -31,7 +31,13 @@ enum CommandList
     //-----敵のホスト権の譲渡リクエストの結果-----//
     TransferEnemyControlResult,
     //-----敵のホスト権を返す-----//
-    ReturnEnemyControl
+    ReturnEnemyControl,
+    //-----ステージクリア-----//
+    StageClear,
+    //-----ゲームクリア-----//
+    GameClear,
+    //------ゲームオーバー-----//
+    GameOver
 };
 
 enum UpdateCommand

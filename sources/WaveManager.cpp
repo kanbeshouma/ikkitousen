@@ -271,6 +271,13 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         // クリアのアニメーション
         if (current_stage != STAGE_IDENTIFIER::BOSS)
         {
+            if (is_send_clear_data == false)
+            {
+                is_send_clear_data = true;
+                           //-----ステージクリアを送信-----//
+                if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())SendStageClear();
+            }
+
             if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
             {
                 if (!clear_parameters.se_play)
@@ -330,6 +337,11 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         {
             audio_manager->stop_all_bgm();
             game_clear = true;
+            if (is_send_clear_data == false)
+            {
+                is_send_clear_data = true;
+                if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())SendGameClear();
+            }
 
             return;
         }
@@ -362,6 +374,7 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         {
             fStartWave();
             mStartGame = false;
+            is_send_clear_data = false;
         }
         break;
     case WaveState::Game:
@@ -373,7 +386,10 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         else  mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
 
         // クリア状態に遷移
-        //if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
+        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear())
+        {
+            clear_flg = true;
+        }
 
         fGuiMenu();
         break;
@@ -480,7 +496,7 @@ void WaveManager::fStartWave()
 {
     mWaveState = WaveState::Game;
     mCurrentWave = current_stage;
-
+    is_send_clear_data = false;
     // ファイルにセーブ
     WaveFile::get_instance().set_stage_to_start(mCurrentWave);
     WaveFile::get_instance().save();
@@ -540,6 +556,18 @@ void WaveManager::fGuiMenu()
 
             }
         }
+
+        if (ImGui::Button("SendStageClear")) SendStageClear();
+        if (ImGui::Button("SendGameClear")) SendGameClear();
+        if (ImGui::Button("SendGameOver"))
+        {
+            char data{};
+            data = CommandList::GameOver;
+            //-----ゲームクリアを送信-----//
+            CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
+
+        }
+
 
         ImGui::End();
     }
@@ -964,6 +992,25 @@ void WaveManager::ReturnEnemyControl()
 
     is_host = false;
 }
+
+
+void WaveManager::SendStageClear()
+{
+    char data{};
+    data = CommandList::StageClear;
+    //-----ステージクリアを送信-----//
+    CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
+}
+
+void WaveManager::SendGameClear()
+{
+    char data{};
+    data = CommandList::GameClear;
+    //-----ゲームクリアを送信-----//
+    CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
+}
+
+
 
 void WaveFile::load()
 {
