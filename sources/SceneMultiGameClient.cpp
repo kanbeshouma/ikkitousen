@@ -107,6 +107,8 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		p->SetName(CorrespondenceManager::Instance().names[i]);
 		p->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().player_colors[i]));
 		player_manager->RegisterPlayer(p);
+		//-----プレイヤーの体力を増やす-----//
+		player_manager->AddPlayerMultiHealth();
 	}
 
 	//-----TCP用のマルチスレッドを立ち上げる-----//
@@ -1106,6 +1108,10 @@ void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 		register_player_id = -1;
 		register_player = false;
 		register_player_color = 0;
+
+		//-----プレイヤーの体力を増やす-----//
+		player_manager->AddPlayerMultiHealth();
+
 	}
 
 }
@@ -1132,7 +1138,12 @@ void SceneMultiGameClient::DeletePlayer()
 
 		//-----プレイヤーの削除-----//
 		player_manager->DeletePlayer(id);
+
+		//-----プレイヤーの体力を減らす-----//
+		player_manager->SubPlayerMultiHealth();
 	}
+
+
 
 	//-----ログアウトデータを削除する-----//
 	logout_id.clear();

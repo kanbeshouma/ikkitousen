@@ -515,7 +515,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             std::string obj_id{ "object_id :" + std::to_string(object_id) };
             ImGui::Text(obj_id.c_str());
 
-            static bool control = false;
+            static bool control = true;
             ImGui::Checkbox("Control", &control);
 
             if (control)
