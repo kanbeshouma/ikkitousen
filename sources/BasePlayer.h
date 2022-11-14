@@ -163,5 +163,17 @@ public:
     virtual void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func) = 0;
 
 protected:
+    //-----マルチプレイ時のチェイン攻撃の許可-----//
+    bool permit_chain_attack{ false };
+public:
+    bool GetPermitChainAttack() { return permit_chain_attack; }
+    void SetPermitChainAttack(bool arg) { permit_chain_attack = arg; }
+protected:
+    //-----マルチプレイ時のチェイン攻撃終了して敵のホスト権を返還する-----//
+    bool return_enemy_control{ false };
+public:
+    bool GetRetrunEnemyControl() { return return_enemy_control; }
+    void SetReturnEnemyControl(bool arg) { return_enemy_control = arg; }
+protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };

@@ -202,6 +202,12 @@ void GamePad::update(float elapsed_time)
 		button_state[0] = 0;
 		button_down = 0;	// âüÇµÇΩèuä‘
 		button_up = 0;	// ó£ÇµÇΩèuä‘
+		axisLx = 0;
+		axisLy = 0;
+		axisRx = 0;
+		axisRy = 0;
+		triggerL = 0;
+		triggerR = 0;
 	}
 }
 

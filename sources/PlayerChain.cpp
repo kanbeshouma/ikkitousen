@@ -4,6 +4,7 @@
 #include <memory>
 #include "SwordTrail.h"
 #include "Player.h"
+#include"Correspondence.h"
 
 #include "BaseCamera.h"
 
@@ -142,6 +143,9 @@ void Player::ChainLockOn()
 
 void Player::chain_parm_reset()
 {
+	//-----敵のホスト権を返還する-----//
+	return_enemy_control = true;
+	permit_chain_attack = false;
 	chain_cancel = true;
 	transition_chain_search(); /*リセット*/
 	transition_normal_behavior();
@@ -179,6 +183,8 @@ void Player::transition_chain_search()
 	frame_time  = 0.0f;
 	frame_scope = 0.5f;
 	frame_alpha = 0.0f;
+
+
 	player_chain_activity = &Player::chain_search_update;
 }
 
@@ -328,7 +334,26 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 					}
 					chain_parm_reset();
 				}
-				else { transition_chain_lockon_begin(); }
+				else
+				{
+					//-----マルチプレイ時かつホストじゃないときにここに入る-----//
+					//マルチプレイじゃない時はそのままチェイン攻撃に入る。マルチプレイ時でもホストの時はチェイン攻撃にそのまま入る-----//
+					if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+					{
+						//-----敵のホスト権の譲渡が完了したら遷移-----//
+						if (permit_chain_attack)transition_chain_lockon_begin();
+						//-----許可がもらえなかったら終了-----//
+						else
+						{
+							for (const auto& enemy : enemies)
+							{
+								if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+							}
+							chain_parm_reset();
+						}
+					}
+					else transition_chain_lockon_begin();
+				}
 			}
 		}
 	}
@@ -425,7 +450,27 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 					}
 					chain_parm_reset();
 				}
-				else { transition_chain_lockon_begin(); }
+				else
+				{
+					//-----マルチプレイ時かつホストじゃないときにここに入る-----//
+					//マルチプレイじゃない時はそのままチェイン攻撃に入る。マルチプレイ時でもホストの時はチェイン攻撃にそのまま入る-----//
+					if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+					{
+						//-----敵のホスト権の譲渡が完了したら遷移-----//
+						if (permit_chain_attack)transition_chain_lockon_begin();
+						//-----許可がもらえなかったら終了-----//
+						else
+						{
+							for (const auto& enemy : enemies)
+							{
+								if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+							}
+							chain_parm_reset();
+
+						}
+					}
+					else transition_chain_lockon_begin();
+				}
 			}
 		}
 	}
@@ -449,6 +494,9 @@ void Player::transition_chain_lockon_begin()
 	velocity = {};
 
 	audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+
+	//-----許可権の変数を初期化-----//
+	permit_chain_attack = false;
 
 	if (GameFile::get_instance().get_vibration())game_pad->set_vibration(0.0f, 1.0f, 0.3f);
 
@@ -777,6 +825,14 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			transition_normal_behavior();
 
 			if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 0.0f, 0.3f);
+
+			if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+			{
+				//-----敵のホスト権を返還する-----//
+				return_enemy_control = true;
+				//-----チェイン攻撃の許可の変数を初期化-----//
+				permit_chain_attack = false;
+			}
 
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ

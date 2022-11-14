@@ -432,6 +432,11 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 if (change_normal_timer < 0 && game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
                 {
                     transition_chain_behavior();
+                    //-----マルチプレイ時かつホストでは無いときにリクエストを送信-----//
+                    if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+                    {
+                        SendTransferHost();
+                    }
                 }
                 //ロックオン
                 LockOn();
@@ -509,6 +514,18 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::Separator();
             std::string obj_id{ "object_id :" + std::to_string(object_id) };
             ImGui::Text(obj_id.c_str());
+
+            static bool control = false;
+            ImGui::Checkbox("Control", &control);
+
+            if (control)
+            {
+                game_pad->operation_activation();
+            }
+            else
+            {
+                game_pad->operation_disablement();
+            }
 
             if (ImGui::TreeNode("transform"))
             {
@@ -759,6 +776,17 @@ void Player::ConversionScreenPosition(GraphicsPipeline& graphics)
 
     object_id_font.position = screen_position;
 }
+
+void Player::SendTransferHost()
+{
+    char data{};
+    data = CommandList::TransferEnemyControlRequest;
+
+    //-----敵の操作権の譲渡リクエスト-----//
+    CorrespondenceManager::Instance().TcpSend((char*)&data, 1);
+
+}
+
 
 void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
 {

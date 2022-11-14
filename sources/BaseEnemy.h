@@ -134,7 +134,7 @@ public:
     bool mIsSuccesGuard = false;
 protected:
     float mAnimationSpeed{1.0f};
-    bool mIsStun{}; // スタン状態かどうか
+    bool mIsStun{false}; // スタン状態かどうか
 
     //-----敵が出現したかどうか-----//
     bool is_appears{ false };

@@ -78,6 +78,37 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         receive_all_data.player_health_data.emplace_back(*p_data);
         break;
     }
+    //-----敵の基本データ-----//
+    case UpdateCommand::EnemiesMoveCommand:
+    {
+        EnemySendData::EnemiesMoveData* e_data = new EnemySendData::EnemiesMoveData;
+
+        //-----どの敵の種類のデータか取得-----//
+        e_data->cmd[ComLocation::DataKind] = data[ComLocation::DataKind];
+
+        //-----vector型のサイズを取得
+        int size = data[ComLocation::Other];
+        e_data->cmd[ComLocation::Other] = size;
+
+        //----データをコマンド分ずらす-----//
+        data += 4;
+
+        e_data->enemy_data.resize(size);
+
+        for (int i = 0; i < size; i++)
+        {
+            //-----データをキャストする-----//
+            e_data->enemy_data.at(i) = *(EnemySendData::EnemyData*)data;
+
+            //-----キャストした構造体分メモリをずらす-----//
+            data += sizeof(EnemySendData::EnemyData);
+        }
+
+        //-----データを設定-----//
+        receive_all_enemy_data.enemy_move_data.emplace_back(*e_data);
+
+        break;
+    }
     //-----敵の状態データ-----//
     case UpdateCommand::EnemyConditionCommand:
     {
@@ -94,6 +125,15 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         EnemyDamageData* e_data = (EnemyDamageData*)data;
 
         receive_all_enemy_data.enemy_damage_data.emplace_back(*e_data);
+        break;
+    }
+    //-----敵の死亡データ-----//
+    case UpdateCommand::EnemyDieCommand:
+    {
+        //-----データをキャスト-----//
+        EnemySendData::EnemyDieData* d = (EnemySendData::EnemyDieData*)data;
+        //-----データを保存----//
+        receive_all_enemy_data.enemy_die_data.emplace_back(*d);
         break;
     }
     default:

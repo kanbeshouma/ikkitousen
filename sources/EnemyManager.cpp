@@ -122,7 +122,6 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 
     //--------------------<敵のスポナー>--------------------//
     fSpawn(graphics_);
-
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 
@@ -155,8 +154,133 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     }
 }
 
+void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
+{
+    //--------------------<管理クラス自体の更新処理>--------------------//
+
+    mSloeTime -= elapsedTime_;
+
+    // ウェーブ開始からの時間を更新
+    mDelay -= elapsedTime_;
+    if (!mDebugMode && !mIsTutorial && mDelay <= 0.0f)
+    {
+        //--------------------<敵がたまりすぎたら>--------------------//
+        if (mEnemyVec.size() < 30)
+        {
+            mWaveTimer += elapsedTime_;
+        }
+    }
+
+    // カメラシェイク
+    if (mCameraShakeTime > 0.0f)
+    {
+        if (GameFile::get_instance().get_shake()) camera_shake->shake(graphics_, elapsedTime_);
+    }
+    mCameraShakeTime -= elapsedTime_;
+    mCameraShakeTime = (std::max)(0.0f, mCameraShakeTime);
+
+    //--------------<プレイヤーがチェイン中はエネミーの行動をすべて停止させる>-------------//
+    if (mIsPlayerChainTime)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            //-----体力が0の時に死亡処理だけ通す-----//
+            if (enemy->fGetCurrentHitPoint() > 0) continue;
+
+            enemy->fDie(graphics_);
+
+
+            if (enemy->fGetIsAlive() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+            }
+        }
+        return;
+    }
+
+    //-----受信した敵のデータを設定する-----//
+    for (const auto& data : receive_data.enemy_die_data)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            if (enemy->fGetObjectId() == data.object_id)
+            {
+                enemy->fDie(graphics_);
+            }
+        }
+    }
+
+    //----状態データを設定-----//
+    for (const auto& data : receive_data.enemy_condition_data)
+    {
+        fSetReceiveConditionData(data);
+    }
+
+    //-----移動データを設定-----//
+    for (const auto& all_data : receive_data.enemy_move_data)
+    {
+        for (const auto& e_data : all_data.enemy_data)
+        {
+            fSetReceiveEnemyData(elapsedTime_, all_data.cmd[ComLocation::DataKind], e_data);
+        }
+    }
+
+
+    //-----敵のリーダーのデータを設定-----//
+    SetEnemyGropeHostData();
+
+    //--------------------<敵の更新処理>--------------------//
+    fEnemiesUpdate(graphics_, elapsedTime_);
+
+    //-----敵のデータを設定,送信-----//
+    fCheckSendEnemyData(elapsedTime_);
+
+    //--------------------<敵同士の当たり判定>--------------------//
+    fCollisionEnemyVsEnemy();
+
+    //--------------------<敵のスポナー>--------------------//
+    if (CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        //-----マルチプレイ時はホストしか敵の出現処理をしない-----//
+        if (CorrespondenceManager::Instance().GetHost())fSpawn(graphics_);
+    }
+
+    // ImGuiのメニュー
+    fGuiMenu(graphics_, Func_);
+
+    //--------------------<ボスが敵を召喚する>--------------------//
+    fCreateBossUnit(graphics_);
+
+    bool isCreate{};
+    for (const auto& source : mReserveVec)
+    {
+        isCreate = true;
+        fSpawn(source, graphics_);
+    }
+    if (isCreate)
+    {
+        mReserveVec.clear();
+    }
+
+    // ザコ的だけを全消しする
+    if (mIsReserveDelete)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            if (enemy->fGetIsBoss() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+            }
+        }
+        fDeleteEnemies();
+        mIsReserveDelete = false;
+    }
+
+}
+
 void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
 {
+    if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
 
     //-----時間を取得-----//
     static auto start = std::chrono::system_clock::now();
@@ -362,10 +486,19 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     fCollisionEnemyVsEnemy();
 
     //--------------------<敵のスポナー>--------------------//
-
-    for (auto data : receive_data.enemy_spawn_data)
     {
-        fSpawn(data,graphics_);
+        int spawnCounts = 0;
+
+        for (auto data : receive_data.enemy_spawn_data)
+        {
+            fSpawn(data, graphics_);
+            spawnCounts++;
+        }
+        // 追加したら先頭のデータを消す
+        for (int i = 0; i < spawnCounts; i++)
+        {
+            mCurrentWaveVec.erase(mCurrentWaveVec.begin());
+        }
     }
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
@@ -1030,6 +1163,7 @@ case EnemyType::Boss_Unit:
 
 void EnemyManager::fSendSpawnData(EnemySource Source_)
 {
+    if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
     EnemySendData::EnemySpawnData data;
 
     //-----コマンドを設定-----//

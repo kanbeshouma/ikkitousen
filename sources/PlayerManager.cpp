@@ -214,9 +214,43 @@ void PlayerManager::AddPlayerMultiHealth()
 void PlayerManager::SubPlayerMultiHealth()
 {
     //-----現在の体力と最大値をへらす-----//
-    multiplay_current_health -= OnePersonMultiHealth;
     multiplay_max_health -= OnePersonMultiHealth;
 
+}
+
+void PlayerManager::PermitChainAttack()
+{
+    for (auto& player : players)
+    {
+        //-----操作しないプレイヤーはとばす-----//
+        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        //-----許可フラグを出す-----//
+        player->SetPermitChainAttack(true);
+    }
+}
+
+bool PlayerManager::GetReturnEnemyControl()
+{
+    bool return_flg{ false };
+    for (auto& player : players)
+    {
+        //-----操作しないプレイヤーはとばす-----//
+        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        //-----敵のホスト権の返還フラグを取得-----//
+        return_flg = player->GetRetrunEnemyControl();
+    }
+    return return_flg;
+}
+
+void PlayerManager::SetReturnEnemyControl(bool arg)
+{
+    for (auto& player : players)
+    {
+        //-----操作しないプレイヤーはとばす-----//
+        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        //-----敵のホスト権の返還フラグを初期化-----//
+        player->SetReturnEnemyControl(false);
+    }
 }
 
 void PlayerManager::DeletePlayer(int id)

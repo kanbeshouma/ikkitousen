@@ -502,8 +502,13 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	//-----譲渡のリクエスト結果の処理-----//
 	CheckTransferEnemyControl();
 
-
-
+	//-----敵のホスト権の返還処理-----//
+	if (player_manager->GetReturnEnemyControl())
+	{
+		//-----敵のホスト権の返還-----//
+		mWaveManager.ReturnEnemyControl();
+		player_manager->SetReturnEnemyControl(false);
+	}
 	//****************************************************************
 	//
 	// オブジェクトの削除処理はこの下でやるルール
@@ -1225,6 +1230,7 @@ void SceneMultiGameClient::CheckTransferEnemyControl()
 		case TransferEnemyControl::Result::Permit:
 			mWaveManager.SetHost(true);
 			DebugConsole::Instance().WriteDebugConsole("許可を受けました", TextColor::Green);
+			player_manager->PermitChainAttack();
 			break;
 			//-----無許可-----//
 		case TransferEnemyControl::Result::Prohibition:

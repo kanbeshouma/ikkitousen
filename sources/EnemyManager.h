@@ -28,8 +28,11 @@ public:
     ~EnemyManager() override;
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
-    //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
+    //-----通常時時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
+
+    //-----マルチプレイ時のホストが呼ぶ更新処理-----//
+    void fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
 
     //-----マルチプレイ時にクライアント側が呼ぶ更新処理-----//
     void fClientUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);

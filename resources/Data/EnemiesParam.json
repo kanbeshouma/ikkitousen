@@ -1,0 +1,126 @@
+{
+    "value0": [
+        {
+            "key": "Archer",
+            "value": {
+                "cereal_class_version": 2,
+                "MaxHp": 10,
+                "AttackPower": 10,
+                "InvincibleTime": 1.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Archer_Ace",
+            "value": {
+                "MaxHp": 15,
+                "AttackPower": 10,
+                "InvincibleTime": 1.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Boss",
+            "value": {
+                "MaxHp": 400,
+                "AttackPower": 4,
+                "InvincibleTime": 0.7000000476837158,
+                "BodyCapsuleRad": 40.0,
+                "AttackCapsuleRad": 0.0,
+                "StunTime": 0.0
+            }
+        },
+        {
+            "key": "BossUnit",
+            "value": {
+                "MaxHp": 15,
+                "AttackPower": 2,
+                "InvincibleTime": 0.4000000059604645,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 2.0,
+                "StunTime": 150.0
+            }
+        },
+        {
+            "key": "Shield",
+            "value": {
+                "MaxHp": 10,
+                "AttackPower": 1,
+                "InvincibleTime": 1.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 3.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Shield_Ace",
+            "value": {
+                "MaxHp": 15,
+                "AttackPower": 1,
+                "InvincibleTime": 1.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 3.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Spear",
+            "value": {
+                "MaxHp": 10,
+                "AttackPower": 10,
+                "InvincibleTime": 2.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Spear_Ace",
+            "value": {
+                "MaxHp": 15,
+                "AttackPower": 10,
+                "InvincibleTime": 2.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Sword",
+            "value": {
+                "MaxHp": 10,
+                "AttackPower": 10,
+                "InvincibleTime": 2.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "Sword_Ace",
+            "value": {
+                "MaxHp": 15,
+                "AttackPower": 7,
+                "InvincibleTime": 2.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
+        },
+        {
+            "key": "TutorialNoMove",
+            "value": {
+                "MaxHp": 10,
+                "AttackPower": 1,
+                "InvincibleTime": 0.30000001192092898,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 3.0,
+                "StunTime": 20.0
+            }
+        }
+    ]
+}

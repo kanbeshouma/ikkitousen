@@ -240,7 +240,7 @@ public:
 private:
     //-----敵のホスト権を譲渡する-----//
     void SendTransferHost();
-
+public:
     //-----敵のホスト権を返す-----//
     void ReturnEnemyControl();
 

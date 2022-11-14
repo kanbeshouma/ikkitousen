@@ -923,4 +923,8 @@ private:
     std::string name;
 public:
     void SetName(char* n) { name = n; }
+private:
+    //-----敵のホスト権を譲渡のリクエスト-----//
+    void SendTransferHost();
+
 };

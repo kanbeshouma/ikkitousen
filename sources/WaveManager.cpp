@@ -368,24 +368,7 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         //-----敵のホスト権を持っている場合とそうでない場合のアップデートで切り分けている-----//
         if (is_host)
         {
-            if (receive_data.enemy_damage_data.empty() == false)
-            {
-                //-----データを設定する-----//
-                for (const auto& data : receive_data.enemy_damage_data)
-                {
-                    fSetReceiveEnemyDamageData(data, Graphics_);
-                }
-            }
-
-            if (receive_data.enemy_condition_data.empty() == false)
-            {
-                //-----データを設定する-----//
-                for (const auto& data : receive_data.enemy_condition_data)
-                {
-                    fSetReceiveEnemyConditionData(data);
-                }
-            }
-            mEnemyManager.fUpdate(Graphics_, elapsedTime_, Func_);
+            mEnemyManager.fHostUpdate(Graphics_, elapsedTime_, Func_, receive_data);
         }
         else  mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
 

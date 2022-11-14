@@ -164,6 +164,12 @@ public:
     //-----プレイヤーがログアウトした時に体力をへらす-----//
     void SubPlayerMultiHealth();
 
+    //-----チェイン攻撃の許可-----//
+    void PermitChainAttack();
+
+    //-----敵のホスト権の返還-----//
+    bool GetReturnEnemyControl();
+    void SetReturnEnemyControl(bool arg);
 private:
     ////-----プレイヤーを入れる変数-----//
     std::vector<std::shared_ptr<BasePlayer>> players;
