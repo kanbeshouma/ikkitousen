@@ -39,8 +39,8 @@ enum CommandList
     ReturnEnemyControl,
     //-----ステージクリア-----//
     StageClear,
-    //------ゲームオーバー-----//
-    GameOver
+    //------タイトルに戻る-----//
+    ReturnTitle,
 };
 
 enum UpdateCommand

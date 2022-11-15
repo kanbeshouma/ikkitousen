@@ -123,6 +123,23 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
             mSwordTrail[0].fEraseTrailPoint(elapsed_time);
         }
 
+
+        if (is_dying_update == false)
+        {
+            //覚醒状態の時は
+            if (is_awakening)
+            {
+                //モデルを映す
+                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            }
+            else
+            {
+                //モデルを消す
+                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            }
+        }
+
+
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
@@ -633,8 +650,21 @@ void ClientPlayer::StunSphere()
 
 }
 
+void ClientPlayer::PlayerAlive()
+{
+    player_health = Math::clamp(player_health, 0, MAX_HEALTH);
+    if (player_health <= 0 && condition_state == ConditionState::Alive)
+    {
+        condition_state = ConditionState::Die;
+        TransitionDie();
+    }
+}
+
 void ClientPlayer::InflectionParameters(float elapesd_time)
 {
+    //プレイヤーが死んでるかどうか
+    PlayerAlive();
+
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //足元のカプセル

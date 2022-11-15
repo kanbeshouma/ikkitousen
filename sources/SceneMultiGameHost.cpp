@@ -866,26 +866,46 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 		//画面が黒くなってからしか動かないように
 		if (is_set_black)
 		{
-			switch (game_over_state)
+			//-----何も選択していない時-----//
+			if (game_over_select_title == false)
 			{
-			case 0://タイトルに戻る
-				r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
-				if (game_pad->get_button_down() & GamePad::BTN_B)
+				switch (game_over_state)
 				{
-					audio_manager->play_se(SE_INDEX::DECISION);
+				case 0://タイトルに戻る
+					r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
+					if (game_pad->get_button_down() & GamePad::BTN_B)
+					{
+						audio_manager->play_se(SE_INDEX::DECISION);
+						//-----タイトルに戻るを選択したことを知らせる-----//
+						game_over_select_title = true;
+
+						char data = CommandList::ReturnTitle;
+						CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+					}
+					break;
+				case 1://再挑戦
+					r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
+					if (game_pad->get_button_down() & GamePad::BTN_B)
+					{
+						audio_manager->play_se(SE_INDEX::DECISION);
+						SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					}
+					break;
+				default:
+					break;
+				}
+			}
+			if (game_over_select_title)
+			{
+				//-----ログアウトしたプレイヤーを削除する-----//
+				DeletePlayer();
+
+				//-----接続者が自分だけになったらゲームを終了-----//
+				if (CorrespondenceManager::Instance().GetConnectedPersons() == 1)
+				{
 					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
 				}
-				break;
-			case 1://再挑戦
-				r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
-				if (game_pad->get_button_down() & GamePad::BTN_B)
-				{
-					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
-				}
-				break;
-			default:
-				break;
+
 			}
 		}
 	}

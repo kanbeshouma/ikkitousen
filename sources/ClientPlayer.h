@@ -325,6 +325,8 @@ private:
     void SwordCapsule();
     //範囲スタンのパラメータ設定
     void StunSphere();
+    //死んでるかどうか
+    void PlayerAlive();
 
     //-----パラメータの更新-----//
     void InflectionParameters(float elapesd_time);

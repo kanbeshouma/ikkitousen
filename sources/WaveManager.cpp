@@ -569,14 +569,6 @@ void WaveManager::fGuiMenu()
         }
 
         if (ImGui::Button("SendStageClear")) SendStageClear();
-        if (ImGui::Button("SendGameOver"))
-        {
-            char data{};
-            data = CommandList::GameOver;
-            //-----ゲームクリアを送信-----//
-            CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
-
-        }
 
 
         ImGui::End();
@@ -643,7 +635,8 @@ void WaveManager::fClearUpdate(float elapsedTime_)
             }
 
             //-----過半数をこえていたら-----//
-            if (CorrespondenceManager::Instance().GetConnectedPersons() * 0.5 <= votes_cast)
+            float persons = CorrespondenceManager::Instance().GetConnectedPersons();
+            if (persons * 0.5f <= static_cast<float>(votes_cast))
             {
                 //-----過半数を超えたらタイマーを増やす-----//
                 change_voting_results_timer += 1.0f * elapsedTime_;

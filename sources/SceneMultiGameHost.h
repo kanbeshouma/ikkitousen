@@ -166,6 +166,10 @@ private:
     // 再挑戦
     StepFontElement again;
     int game_over_state{ 0 };
+
+    //-----ゲームオーバーの時にタイトルを戻るを押した-----//
+    bool game_over_select_title{ false };
+
     //ゲームオーバーの文字の後ろに出てるフレーム
     std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
     //フレームのパラメータ

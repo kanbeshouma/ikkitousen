@@ -98,13 +98,6 @@ void SceneMultiGameClient::ReceiveTcpData()
                 stage_situation = StageSituation::StageClearFlg;
                 break;
             }
-            //-----ゲームオーバー-----//
-            case CommandList::GameOver:
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                stage_situation = StageSituation::GameOverFlg;
-                break;
-            }
             default:
                 std::string text = "コマンド :" + std::to_string(data[ComLocation::ComList]);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
