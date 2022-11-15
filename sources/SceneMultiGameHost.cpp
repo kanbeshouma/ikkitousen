@@ -115,6 +115,8 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	//----------プレイヤー(操作することができる自分のこと)の番号を保存
 	CorrespondenceManager::Instance().SetOperationPrivateId(player_manager->GetPrivatePlayerId());
 	CorrespondenceManager::Instance().SetHostId(player_manager->GetPrivatePlayerId());
+	//-----接続者数を増加させる-----//
+	CorrespondenceManager::Instance().AddConnectedPersons();
 
 	//-----サーバーのソケット情報の初期化-----//
 	if (CorrespondenceManager::Instance().InitializeServer())
@@ -1207,6 +1209,9 @@ void SceneMultiGameHost::RegisterPlayer(GraphicsPipeline& graphics)
 
 			//-----体力を送信する-----//
 			player_manager->SendPlayerHealthData();
+
+			//----接続者数を増やす-----//
+			CorrespondenceManager::Instance().AddConnectedPersons();
 		}
 	}
 }
@@ -1252,6 +1257,9 @@ void SceneMultiGameHost::DeletePlayer()
 
 			//-----体力を送信する-----//
 			player_manager->SendPlayerHealthData();
+
+			//-----接続者数を減らす-----//
+			CorrespondenceManager::Instance().SubConnectedPersons();
 		}
 	}
 

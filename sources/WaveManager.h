@@ -103,7 +103,8 @@ private:
     {
         REDUCTION,    // 縮小
         SELECTION,    // ステージ選択
-        SelectIdle,//他の接続者の選択をまつ-----//
+        SelectIdle,//他の接続者の選択をまつ//
+        VotingResults,//投票結果を決める
         MOVE,         // 移動
         ENLARGEMENT,  // 拡大
     };
@@ -270,6 +271,13 @@ private:
 public:
     //-----どのステージに投票したかを設定する-----//
     void SetStageVoting(STAGE_IDENTIFIER key);
+private:
+    //------投票率が過半数を超えたときの残り時間のタイマー-----//
+    float change_voting_results_timer{ 0.0f };
+    //-----投票率が過半数を超えたときの待機時間-----//
+    const float ChangeVotingResultsTime = 10.0f;
+public:
+    void SetEndResultNextStage(STAGE_IDENTIFIER next);
 
     //---ここまで--//
 };

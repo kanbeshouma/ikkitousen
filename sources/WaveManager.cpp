@@ -620,17 +620,71 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     case CLEAR_STATE::SelectIdle:
 #ifdef USE_IMGUI
         ImGui::Begin("SelectStage");
-
-        if (stage_voting.find(STAGE_IDENTIFIER::S_1_1) != stage_voting.end())ImGui::Text("S_1_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_1_1));
-         if (stage_voting.find(STAGE_IDENTIFIER::S_2_1) != stage_voting.end())ImGui::Text("S_2_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_1));
-         if (stage_voting.find(STAGE_IDENTIFIER::S_2_2) != stage_voting.end())ImGui::Text("S_2_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_2));
-         if (stage_voting.find(STAGE_IDENTIFIER::S_3_1) != stage_voting.end())ImGui::Text("S_3_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_1));
-         if (stage_voting.find(STAGE_IDENTIFIER::S_3_2) != stage_voting.end())ImGui::Text("S_3_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_2));
-         if (stage_voting.find(STAGE_IDENTIFIER::S_3_3) != stage_voting.end())ImGui::Text("S_3_3 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_3));
-         if (stage_voting.find(STAGE_IDENTIFIER::BOSS) != stage_voting.end())ImGui::Text("BOSS : %d", stage_voting.at(STAGE_IDENTIFIER::BOSS));
+        if (ImGui::TreeNode("stage_voting"))
+        {
+            if (stage_voting.find(STAGE_IDENTIFIER::S_1_1) != stage_voting.end())ImGui::Text("S_1_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_1_1));
+            if (stage_voting.find(STAGE_IDENTIFIER::S_2_1) != stage_voting.end())ImGui::Text("S_2_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_1));
+            if (stage_voting.find(STAGE_IDENTIFIER::S_2_2) != stage_voting.end())ImGui::Text("S_2_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_2));
+            if (stage_voting.find(STAGE_IDENTIFIER::S_3_1) != stage_voting.end())ImGui::Text("S_3_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_1));
+            if (stage_voting.find(STAGE_IDENTIFIER::S_3_2) != stage_voting.end())ImGui::Text("S_3_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_2));
+            if (stage_voting.find(STAGE_IDENTIFIER::S_3_3) != stage_voting.end())ImGui::Text("S_3_3 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_3));
+            if (stage_voting.find(STAGE_IDENTIFIER::BOSS) != stage_voting.end())ImGui::Text("BOSS : %d", stage_voting.at(STAGE_IDENTIFIER::BOSS));
+        }
+        ImGui::Text("change_voting_results_timer%f", change_voting_results_timer);
         ImGui::End();
 #endif
+        //-----投票数を確認(ホストだけ)-----//
+        if (CorrespondenceManager::Instance().GetHost())
+        {
+            int votes_cast = 0;
+            for (auto data : stage_voting)
+            {
+                votes_cast += data.second;
+            }
+
+            //-----過半数をこえていたら-----//
+            if (CorrespondenceManager::Instance().GetConnectedPersons() * 0.5 <= votes_cast)
+            {
+                //-----過半数を超えたらタイマーを増やす-----//
+                change_voting_results_timer += 1.0f * elapsedTime_;
+                if (change_voting_results_timer > ChangeVotingResultsTime)
+                {
+                    //-----一定時間たったら強制的にステージを決めるステートにいく-----//
+                    clear_state = CLEAR_STATE::VotingResults;
+                    change_voting_results_timer = 0.0f;
+                }
+            }
+            //-----同じ数なら-----//
+            else if (CorrespondenceManager::Instance().GetConnectedPersons() == votes_cast) clear_state = CLEAR_STATE::VotingResults;
+        }
         break;
+    case CLEAR_STATE::VotingResults:
+    {
+        //-----最終決定したステージ番号-----//
+        STAGE_IDENTIFIER end_result_next_stage = STAGE_IDENTIFIER::S_1_1;
+
+        //-----投票人数-----//
+        int voting_num{ 0 };
+        for (auto data : stage_voting)
+        {
+            //-----投票人数が多いステージ番号を保存-----//
+            if (voting_num < data.second)
+            {
+                end_result_next_stage = data.first;
+                voting_num = data.second;
+            }
+            //-----同じ数ならランダムで決める-----//
+        }
+        //-----最終決定したステージを設定-----//
+        next_stage = end_result_next_stage;
+
+        //-----最終決定したステージを他の接続者に送信する-----//
+        SendEndResultNextStage();
+
+        //-----ステートを動かす-----//
+        transition_move();
+        break;
+    }
     case CLEAR_STATE::MOVE:   //アイコン移動
         update_move(elapsedTime_);
         break;
@@ -1075,6 +1129,18 @@ void WaveManager::SetStageVoting(STAGE_IDENTIFIER key)
         //-----新しくステージのkeyを設定して投票数を1人設定-----//
         stage_voting.insert(std::make_pair(key, 1));
     }
+}
+
+void WaveManager::SetEndResultNextStage(STAGE_IDENTIFIER next)
+{
+    //----ステートが待機でなかったら処理をしない-----//
+    if (clear_state != CLEAR_STATE::SelectIdle) return;
+
+    //-----次のステージを設定-----//
+    next_stage = next;
+
+    //----ステートを動かす-----//
+    transition_move();
 }
 
 

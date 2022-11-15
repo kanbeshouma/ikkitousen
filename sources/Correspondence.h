@@ -175,4 +175,14 @@ private:
 public:
     bool GetHost() { return is_host; }
     void SetHost(bool arg) { is_host = arg; }
+private:
+    //-----Ú‘±Ò”-----//
+    int connected_persons{ 0 };
+public:
+    //-----Ú‘±Ò”‘‰Á-----//
+    void AddConnectedPersons() { connected_persons++; }
+    //------Ú‘±Ò”Œ¸­-----//
+    void SubConnectedPersons() { connected_persons--; }
+
+    int GetConnectedPersons() { return connected_persons; }
 };

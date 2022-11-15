@@ -83,6 +83,14 @@ void SceneMultiGameClient::ReceiveTcpData()
                 receive_stage_num = true;
                 break;
             }
+            //-----最終決定したステージの番号-----//
+            case CommandList::EndResultNextStage:
+            {
+                receive_end_result_next_stage = true;
+                //-----データを設定----//
+                result_next_stage = static_cast<WaveManager::STAGE_IDENTIFIER>(data[1]);
+                break;
+            }
             //-----ステージクリア-----//
             case CommandList::StageClear:
             {

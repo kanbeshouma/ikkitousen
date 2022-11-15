@@ -65,6 +65,11 @@ WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::current_stage = WaveManager:
 //-----ステージ番号を受信したかどうか-----//
 bool SceneMultiGameClient::receive_stage_num = false;
 
+//-----ステージ選択の最終決定データを受信したかどうか-----//
+bool SceneMultiGameClient::receive_end_result_next_stage = false;
+
+//-----最終決定したステージ-----//
+WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::result_next_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -112,7 +117,7 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
 	player_manager->RegisterPlayer(player);
 	player_manager->SetPrivateObjectId(CorrespondenceManager::Instance().GetOperationPrivateId());
-
+	CorrespondenceManager::Instance().AddConnectedPersons();
 	for(int i = 0; i < MAX_CLIENT; i++)
 	{
 		int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
@@ -123,6 +128,9 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 		player_manager->RegisterPlayer(p);
 		//-----プレイヤーの体力を増やす-----//
 		player_manager->AddPlayerMultiHealth();
+		//-----接続者数を増やす-----//
+		CorrespondenceManager::Instance().AddConnectedPersons();
+
 	}
 
 	//-----TCP用のマルチスレッドを立ち上げる-----//
@@ -317,6 +325,12 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		//-----ロックする-----//
 		std::lock_guard<std::mutex> lock(mutex);
 
+		//-----ステージを設定-----//
+		if (receive_end_result_next_stage)
+		{
+			mWaveManager.SetEndResultNextStage(result_next_stage);
+			receive_end_result_next_stage = false;
+		}
 		//-----ステージ中のウェーブの更新処理-----//
 		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
 
@@ -1160,6 +1174,9 @@ void SceneMultiGameClient::RegisterPlayer(GraphicsPipeline& graphics)
 		//-----プレイヤーの体力を増やす-----//
 		player_manager->AddPlayerMultiHealth();
 
+		//-----接続者数を増やす-----//
+		CorrespondenceManager::Instance().AddConnectedPersons();
+
 	}
 
 }
@@ -1189,6 +1206,9 @@ void SceneMultiGameClient::DeletePlayer()
 
 		//-----プレイヤーの体力を減らす-----//
 		player_manager->SubPlayerMultiHealth();
+
+		//-----接続者数を減らす-----//
+		CorrespondenceManager::Instance().SubConnectedPersons();
 	}
 
 

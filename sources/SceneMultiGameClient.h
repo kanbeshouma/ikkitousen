@@ -309,4 +309,10 @@ private:
 
     //-----ステージの状況-----//
     static StageSituation stage_situation;
+
+    //-----ステージ選択の最終決定データを受信したかどうか-----//
+    static bool receive_end_result_next_stage;
+
+    //-----最終決定したステージ-----//
+    static WaveManager::STAGE_IDENTIFIER result_next_stage;
 };
