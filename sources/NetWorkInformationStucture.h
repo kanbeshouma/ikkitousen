@@ -27,6 +27,10 @@ enum CommandList
     IpAddress,
     //-----ステージ番号を送信-----//
     CurrentStageNum,
+    //-----選択したステージを送信(これはクライアントが送信する)-----//
+    SelectNextStage,
+    //-----最終的にいくステージを送信(これはホストが送信する)-----//
+    EndResultNextStage,
     //-----敵の操作権の譲渡をリクエストする------//
     TransferEnemyControlRequest,
     //-----敵のホスト権の譲渡リクエストの結果-----//

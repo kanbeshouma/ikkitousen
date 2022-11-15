@@ -610,16 +610,31 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     // state別の更新処理
     switch (clear_state)
     {
-    case CLEAR_STATE::REDUCTION:   // 縮小
+    case CLEAR_STATE::REDUCTION:   //ステージ選択画像縮小
         update_reduction(elapsedTime_);
         break;
-    case CLEAR_STATE::SELECTION:   // 選択
+    case CLEAR_STATE::SELECTION:   //ステージ選択
         update_selection(elapsedTime_);
         break;
-    case CLEAR_STATE::MOVE:   // 選択
+        //-----他の接続者の選択をまつ-----//
+    case CLEAR_STATE::SelectIdle:
+#ifdef USE_IMGUI
+        ImGui::Begin("SelectStage");
+
+        if (stage_voting.find(STAGE_IDENTIFIER::S_1_1) != stage_voting.end())ImGui::Text("S_1_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_1_1));
+         if (stage_voting.find(STAGE_IDENTIFIER::S_2_1) != stage_voting.end())ImGui::Text("S_2_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_1));
+         if (stage_voting.find(STAGE_IDENTIFIER::S_2_2) != stage_voting.end())ImGui::Text("S_2_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_2_2));
+         if (stage_voting.find(STAGE_IDENTIFIER::S_3_1) != stage_voting.end())ImGui::Text("S_3_1 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_1));
+         if (stage_voting.find(STAGE_IDENTIFIER::S_3_2) != stage_voting.end())ImGui::Text("S_3_2 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_2));
+         if (stage_voting.find(STAGE_IDENTIFIER::S_3_3) != stage_voting.end())ImGui::Text("S_3_3 : %d", stage_voting.at(STAGE_IDENTIFIER::S_3_3));
+         if (stage_voting.find(STAGE_IDENTIFIER::BOSS) != stage_voting.end())ImGui::Text("BOSS : %d", stage_voting.at(STAGE_IDENTIFIER::BOSS));
+        ImGui::End();
+#endif
+        break;
+    case CLEAR_STATE::MOVE:   //アイコン移動
         update_move(elapsedTime_);
         break;
-    case CLEAR_STATE::ENLARGEMENT: // 拡大
+    case CLEAR_STATE::ENLARGEMENT: //ステージ選択画像拡大
         update_enlargement(elapsedTime_);
 
         break;
@@ -811,7 +826,20 @@ void WaveManager::update_selection(float elapsed_time)
     if (game_pad->get_button_down() & GamePad::BTN_B)
     {
         next_stage = stage_details[current_stage].journeys.at(route_state);
-        transition_move();
+
+        //-----マルチプレイ時は他の接続者の選択をまつステートにいく-----//
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            //-----クライアンは選択したステージを送信する-----//
+            if(CorrespondenceManager::Instance().GetHost() == false)SendNextStage();
+            //-----ホストは投票する-----//
+            else SetStageVoting(next_stage);
+            clear_state = CLEAR_STATE::SelectIdle;
+
+        }
+        //-----マルチプレイ時以外はそのまま動く-----//
+        else transition_move();
+
     }
 
     DirectX::XMFLOAT2 min_point = map.arg.pos;
@@ -1011,6 +1039,42 @@ void WaveManager::SendStageClear()
     data = CommandList::StageClear;
     //-----ステージクリアを送信-----//
     CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
+}
+
+void WaveManager::SendNextStage()
+{
+    char data[2]{};
+    data[0] = CommandList::SelectNextStage;
+    data[1] = next_stage;
+    //-----選択したステージを送信-----//
+    CorrespondenceManager::Instance().TcpSend((char*)&data, 2);
+
+}
+
+void WaveManager::SendEndResultNextStage()
+{
+    char data[2]{};
+    data[0] = CommandList::EndResultNextStage;
+    data[1] = next_stage;
+    //-----選択したステージを送信-----//
+    CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 2);
+}
+
+void WaveManager::SetStageVoting(STAGE_IDENTIFIER key)
+{
+    StageVotingMap::iterator it = stage_voting.find(key);
+    //-----見つかった場合-----//
+    if (it != stage_voting.end())
+    {
+        //----投票人数を1人増やす-----//
+        it->second++;
+    }
+    //-----見つからなかった場合-----//
+    else
+    {
+        //-----新しくステージのkeyを設定して投票数を1人設定-----//
+        stage_voting.insert(std::make_pair(key, 1));
+    }
 }
 
 

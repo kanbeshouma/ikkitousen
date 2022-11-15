@@ -59,7 +59,11 @@ bool SceneMultiGameHost::transfer_enemy_host_request = false;
 //-----敵のホスト権が帰って来たかどうか-----//
 bool SceneMultiGameHost::return_enemy_control = false;
 
+//-----今のステージ-----//
 WaveManager::STAGE_IDENTIFIER SceneMultiGameHost::current_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
+
+//-----クライアントが選択したステージ-----//
+std::vector<WaveManager::STAGE_IDENTIFIER>  SceneMultiGameHost::client_select_stage;
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
@@ -309,6 +313,16 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 			//-----ロックする-----//
 			std::lock_guard<std::mutex> lock(mutex);
 
+			if (client_select_stage.empty() == false)
+			{
+				//-----選択したステージデータを設定-----//
+				for (auto data : client_select_stage)
+				{
+					mWaveManager.SetStageVoting(data);
+				}
+				//-----データを削除-----//
+				client_select_stage.clear();
+			}
 			//-----ステージ中のウェーブの更新処理-----//
 			mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
 

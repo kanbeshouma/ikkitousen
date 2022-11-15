@@ -36,6 +36,15 @@ void SceneMultiGameHost::ReceiveTcpData()
 				//-----ログアウト処理-----//
 				Logout(data);
 				break;
+				//-----他のクライアントが送信したデータ-----//
+			case CommandList::SelectNextStage:
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				//-----データを設定-----//
+				client_select_stage.emplace_back(static_cast<WaveManager::STAGE_IDENTIFIER>(data[1]));
+
+				break;
+			}
 			case CommandList::TransferEnemyControlRequest:
 			{
 				std::lock_guard<std::mutex> lock(mutex);

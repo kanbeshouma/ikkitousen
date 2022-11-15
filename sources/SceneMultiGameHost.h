@@ -86,6 +86,10 @@ private:
     //-----今のステージ-----//
     static WaveManager::STAGE_IDENTIFIER current_stage;
 
+    //-----クライアントが選択したステージ-----//
+    static std::vector<WaveManager::STAGE_IDENTIFIER> client_select_stage;
+
+
     std::unique_ptr<PlayerManager> player_manager{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

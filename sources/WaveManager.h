@@ -103,6 +103,7 @@ private:
     {
         REDUCTION,    // 縮小
         SELECTION,    // ステージ選択
+        SelectIdle,//他の接続者の選択をまつ-----//
         MOVE,         // 移動
         ENLARGEMENT,  // 拡大
     };
@@ -256,6 +257,19 @@ private:
 public:
     void SetClearFlg(bool arg) { clear_flg = arg; }
     bool GetClearFlg() { return clear_flg; }
+private:
+    //-----選択した次のステージを送信----//
+    void SendNextStage();
+    //-----最終的に決定したステージを送信-----//
+    void SendEndResultNextStage();
+private:
+    //-----マルチプレイ時にステージの投票率を入れるmap-----//
+    //key : ステージ番号, value : 投票されたか数
+    using StageVotingMap =  std::map<STAGE_IDENTIFIER, int>;
+    StageVotingMap stage_voting;
+public:
+    //-----どのステージに投票したかを設定する-----//
+    void SetStageVoting(STAGE_IDENTIFIER key);
 
     //---ここまで--//
 };
