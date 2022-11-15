@@ -39,6 +39,8 @@ enum class StageSituation : uint8_t
     GameClearFlg = (1 << 2),
     //-----ゲームオーバー-----//
     GameOverFlg = (1 << 3),
+
+    Clear = StageClearFlg | GameClearFlg
 };
 inline bool operator&(StageSituation lhs, StageSituation rhs)
 {

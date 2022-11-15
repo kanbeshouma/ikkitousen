@@ -252,6 +252,10 @@ private:
     //-----クリアのデータを送信したかどうか-----//
     bool is_send_clear_data{ false };
 
+public:
+    void SetClearFlg(bool arg) { clear_flg = arg; }
+    bool GetClearFlg() { return clear_flg; }
+
     //---ここまで--//
 };
 

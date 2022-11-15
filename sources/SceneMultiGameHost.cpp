@@ -616,7 +616,13 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<“G‚ÌŠÇ—ƒNƒ‰ƒX‚Ì•`‰æˆ—>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
-	if (mIsBossCamera == false)player_manager->Render(graphics, elapsed_time);
+	if (mIsBossCamera == false)
+	{
+		//-----ƒQ[ƒ€‚ðƒNƒŠƒA‚µ‚½‚çŽ©•ª‚¾‚¯‚ð•`‰æ‚·‚é-----//
+		if (mWaveManager.GetClearFlg())player_manager->RenderOperationPlayer(graphics, elapsed_time);
+		//-----‚»‚êˆÈŠO‚Í‘Sˆõ•`‰æ‚·‚é-----//
+		else player_manager->Render(graphics, elapsed_time);
+	}
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
@@ -630,7 +636,7 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 		tunnel->render(graphics.get_dc().Get(), elapsed_time, tunnel_alpha, [&]() {
-			player_manager->Render(graphics, elapsed_time);
+			player_manager->RenderOperationPlayer(graphics, elapsed_time);
 			});
 	}
 

@@ -385,10 +385,13 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         }
         else  mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
 
-        // クリア状態に遷移
-        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear())
+        if (CorrespondenceManager::Instance().GetHost())
         {
-            clear_flg = true;
+            // クリア状態に遷移
+            if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear())
+            {
+                clear_flg = true;
+            }
         }
 
         fGuiMenu();

@@ -31,6 +31,9 @@ public:
 
     ////-----•`‰æŠÖ”-----//
     void Render(GraphicsPipeline& graphics, float elapsed_time);
+
+    ////-----©•ª‚¾‚¯‚ğ•`‰æ‚·‚é-----//
+    void RenderOperationPlayer(GraphicsPipeline& graphics, float elapsed_time);
 public:
     ////-----ƒvƒŒƒCƒ„[“o˜^ŠÖ”-----//
     void RegisterPlayer(BasePlayer* player);

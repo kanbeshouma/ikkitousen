@@ -261,8 +261,17 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	ImGui::End();
 #endif // USE_IMGUI
 
+	//-----	ステージかゲームをクリア-----//
+	if (stage_situation & StageSituation::Clear)
+	{
+		mWaveManager.SetClearFlg(true);
+		//-----フラグを初期化-----//
+		stage_situation = StageSituation::NoneFlg;
+	}
 	//-----ゲームクリア-----//
 	if (mWaveManager.get_game_clear()) { is_game_clear = true; }
+
+
 
 	//-----option------//
 	if (option->get_validity())
@@ -600,7 +609,16 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
-	if (mIsBossCamera == false)player_manager->Render(graphics, elapsed_time);
+
+	//-----プレイヤーの描画-----//
+	if (mIsBossCamera == false)
+	{
+		//-----ゲームをクリアしたら自分だけを描画する-----//
+		if(mWaveManager.GetClearFlg())player_manager->RenderOperationPlayer(graphics, elapsed_time);
+		//-----それ以外は全員描画する-----//
+		else player_manager->Render(graphics, elapsed_time);
+
+	}
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
@@ -614,7 +632,7 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 	{
 		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 		tunnel->render(graphics.get_dc().Get(), elapsed_time, tunnel_alpha, [&]() {
-			player_manager->Render(graphics, elapsed_time);
+			player_manager->RenderOperationPlayer(graphics, elapsed_time);
 			});
 	}
 

@@ -74,6 +74,17 @@ void PlayerManager::Render(GraphicsPipeline& graphics, float elapsed_time)
     }
 }
 
+void PlayerManager::RenderOperationPlayer(GraphicsPipeline& graphics, float elapsed_time)
+{
+    //-----自分以外は飛ばして描画する-----//
+    for (auto& player : players)
+    {
+        if (player->GetObjectId() != private_object_id) continue;
+        player->Render(graphics, elapsed_time);
+    }
+
+}
+
 void PlayerManager::RegisterPlayer(BasePlayer* player)
 {
     //-----プレイヤーの所有権をplayersに移して登録する-----//
