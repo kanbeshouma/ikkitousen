@@ -25,7 +25,8 @@ enum CommandList
     Update,
     //IPアドレス取得
     IpAddress,
-
+    //-----ステージ番号を送信-----//
+    CurrentStageNum,
     //-----敵の操作権の譲渡をリクエストする------//
     TransferEnemyControlRequest,
     //-----敵のホスト権の譲渡リクエストの結果-----//
@@ -34,8 +35,6 @@ enum CommandList
     ReturnEnemyControl,
     //-----ステージクリア-----//
     StageClear,
-    //-----ゲームクリア-----//
-    GameClear,
     //------ゲームオーバー-----//
     GameOver
 };

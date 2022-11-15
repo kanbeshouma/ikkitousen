@@ -340,7 +340,7 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
             if (is_send_clear_data == false)
             {
                 is_send_clear_data = true;
-                if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())SendGameClear();
+                if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())SendStageClear();
             }
 
             return;
@@ -504,7 +504,15 @@ void WaveManager::fStartWave()
     WaveFile::get_instance().set_stage_to_start(mCurrentWave);
     WaveFile::get_instance().save();
 
-    mEnemyManager.fStartWave(mCurrentWave);
+    //-----マルチプレイ時はホストしか敵の出現データを持たせない-----//
+    if (CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        if(CorrespondenceManager::Instance().GetHost())mEnemyManager.fStartWave(mCurrentWave);
+    }
+    else
+    {
+        mEnemyManager.fStartWave(mCurrentWave);
+    }
 }
 
  EnemyManager* WaveManager::fGetEnemyManager()
@@ -561,7 +569,6 @@ void WaveManager::fGuiMenu()
         }
 
         if (ImGui::Button("SendStageClear")) SendStageClear();
-        if (ImGui::Button("SendGameClear")) SendGameClear();
         if (ImGui::Button("SendGameOver"))
         {
             char data{};
@@ -614,6 +621,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         break;
     case CLEAR_STATE::ENLARGEMENT: // 拡大
         update_enlargement(elapsedTime_);
+
         break;
     }
     // 矢印の位置
@@ -1005,13 +1013,6 @@ void WaveManager::SendStageClear()
     CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
 }
 
-void WaveManager::SendGameClear()
-{
-    char data{};
-    data = CommandList::GameClear;
-    //-----ゲームクリアを送信-----//
-    CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 1);
-}
 
 
 

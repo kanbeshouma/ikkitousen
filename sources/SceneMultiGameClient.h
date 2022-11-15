@@ -35,12 +35,9 @@ enum class StageSituation : uint8_t
     NoneFlg = (1 << 0),
     //-----ステージクリア-----//
     StageClearFlg = (1 << 1),
-    //-----ゲームクリア-----//
-    GameClearFlg = (1 << 2),
     //-----ゲームオーバー-----//
     GameOverFlg = (1 << 3),
 
-    Clear = StageClearFlg | GameClearFlg
 };
 inline bool operator&(StageSituation lhs, StageSituation rhs)
 {
@@ -98,6 +95,13 @@ private:
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
 private:
     WaveManager mWaveManager{};
+
+    //-----今のステージ-----//
+    static WaveManager::STAGE_IDENTIFIER current_stage;
+
+    //-----ステージ番号を受信したかどうか-----//
+    static bool receive_stage_num;
+
     std::unique_ptr<PlayerManager> player_manager{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

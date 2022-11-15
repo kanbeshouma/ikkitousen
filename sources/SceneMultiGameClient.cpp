@@ -56,7 +56,15 @@ bool SceneMultiGameClient::transfer_enemy_host_request = false;
 //-----敵のホスト権の譲渡結果-----//
 TransferEnemyControl::TransferEnemyResult SceneMultiGameClient::transfer_enemy_result;
 
+//-----ステージの状況-----//
 StageSituation SceneMultiGameClient::stage_situation = StageSituation::NoneFlg;
+
+//-----今のステージ-----//
+WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::current_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
+
+//-----ステージ番号を受信したかどうか-----//
+bool SceneMultiGameClient::receive_stage_num = false;
+
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -92,6 +100,10 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
 	//-----ホストかどうかを設定-----//
 	mWaveManager.SetHost(false);
+
+	//-----ステージ番号を初期化する-----//
+	mWaveManager.SetCurrentStage(current_stage);
+	mWaveManager.SetCurrentWaveNum(current_stage);
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
@@ -230,6 +242,14 @@ void SceneMultiGameClient::effect_liberation(GraphicsPipeline& graphics)
 
 void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	//-----ステージ番号を受信した時-----//
+	if (receive_stage_num)
+	{
+		mWaveManager.SetCurrentStage(current_stage);
+		mWaveManager.SetCurrentWaveNum(current_stage);
+		receive_stage_num = false;
+	}
+
 	//-----ゲームクリア、ゲームオーバーでもないとき-----//
 	if (is_game_clear == false && is_game_over == false)
 	{
@@ -256,13 +276,12 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 #ifdef USE_IMGUI
 	ImGui::Begin("StageSituation");
 	ImGui::RadioButton("StageClear", stage_situation & StageSituation::StageClearFlg);
-	ImGui::RadioButton("GameClear", stage_situation & StageSituation::GameClearFlg);
 	ImGui::RadioButton("GameOver", stage_situation & StageSituation::GameOverFlg);
 	ImGui::End();
 #endif // USE_IMGUI
 
 	//-----	ステージかゲームをクリア-----//
-	if (stage_situation & StageSituation::Clear)
+	if (stage_situation & StageSituation::StageClearFlg)
 	{
 		mWaveManager.SetClearFlg(true);
 		//-----フラグを初期化-----//

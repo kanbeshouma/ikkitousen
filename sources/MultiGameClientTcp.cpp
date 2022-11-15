@@ -75,18 +75,19 @@ void SceneMultiGameClient::ReceiveTcpData()
                 DebugConsole::Instance().WriteDebugConsole("譲渡結果のデータを受け取りました");
                 break;
             }
+            //-----ステージ番号を取得-----//
+            case CommandList::CurrentStageNum:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                current_stage = static_cast<WaveManager::STAGE_IDENTIFIER>(data[1]);
+                receive_stage_num = true;
+                break;
+            }
             //-----ステージクリア-----//
             case CommandList::StageClear:
             {
                 std::lock_guard<std::mutex> lock(mutex);
                 stage_situation = StageSituation::StageClearFlg;
-                break;
-            }
-            //-----ゲームクリア-----//
-            case CommandList::GameClear:
-            {
-                std::lock_guard<std::mutex> lock(mutex);
-                stage_situation = StageSituation::GameClearFlg;
                 break;
             }
             //-----ゲームオーバー-----//

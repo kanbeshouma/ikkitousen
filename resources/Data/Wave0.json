@@ -1,6 +1,7 @@
 {
     "value0": [
         {
+            "cereal_class_version": 2,
             "Timer": 0.0,
             "Emitter": 0,
             "Type": 0,

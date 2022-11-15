@@ -59,6 +59,7 @@ bool SceneMultiGameHost::transfer_enemy_host_request = false;
 //-----敵のホスト権が帰って来たかどうか-----//
 bool SceneMultiGameHost::return_enemy_control = false;
 
+WaveManager::STAGE_IDENTIFIER SceneMultiGameHost::current_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
@@ -95,6 +96,9 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
 	//-----ホストかどうかを設定-----//
 	mWaveManager.SetHost(true);
+
+	//-----今のステージを保存しておく-----//
+	current_stage = mWaveManager.get_current_stage();
 
 	player_manager = std::make_unique<PlayerManager>();
 	//-----プレイヤーを登録-----//
@@ -228,7 +232,6 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	//-----プレイヤー追加変数の初期化-----//
 	register_player = false;
 	register_player_id = -1;
-
 }
 
 void SceneMultiGameHost::uninitialize()
@@ -1140,6 +1143,18 @@ void SceneMultiGameHost::StartGameUi(float elapsed_time)
 		if (game_start_timer > 1.4f)
 		{
 			is_start_game = true;
+
+			//-----パラメータを初期化-----//
+			game_start_gauge_parm.threshold = 1.0f;
+			game_start_timer = 0;
+
+			//-----今のステージを送信する-----//
+
+			char data[2]{};
+			data[0] = CommandList::CurrentStageNum;
+			data[1] = current_stage;
+			//-----ステージクリアを送信-----//
+			CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 2);
 		}
 	}
 	else

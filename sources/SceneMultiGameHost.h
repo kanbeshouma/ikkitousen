@@ -82,6 +82,10 @@ private:
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
 private:
     WaveManager mWaveManager{};
+
+    //-----今のステージ-----//
+    static WaveManager::STAGE_IDENTIFIER current_stage;
+
     std::unique_ptr<PlayerManager> player_manager{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

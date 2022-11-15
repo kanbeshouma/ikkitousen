@@ -486,20 +486,11 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     fCollisionEnemyVsEnemy();
 
     //--------------------<敵のスポナー>--------------------//
+    for (auto data : receive_data.enemy_spawn_data)
     {
-        int spawnCounts = 0;
-
-        for (auto data : receive_data.enemy_spawn_data)
-        {
-            fSpawn(data, graphics_);
-            spawnCounts++;
-        }
-        // 追加したら先頭のデータを消す
-        for (int i = 0; i < spawnCounts; i++)
-        {
-            mCurrentWaveVec.erase(mCurrentWaveVec.begin());
-        }
+        fSpawn(data, graphics_);
     }
+
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 

@@ -49,7 +49,7 @@ public:
     void fSetReceiveEnemyConditionData(EnemySendData::EnemyConditionData data);
 
     //-----通常時とマルチプレイの時に呼ぶ更新処理-----//
-    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_, AddBulletFunc Func_);
+    void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_);
 
     //-----マルチプレイ時に呼ぶ更新処理-----//
     void fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
@@ -158,12 +158,12 @@ private:
         std::map<ROUTE, STAGE_IDENTIFIER> journeys;
     };
     StageDetails stage_details[STAGE_IDENTIFIER::STAGE_COUNT];
-    STAGE_IDENTIFIER current_stage      = STAGE_IDENTIFIER::S_1_1;
-    STAGE_IDENTIFIER next_stage         = STAGE_IDENTIFIER::S_1_1;
-    STAGE_IDENTIFIER candidate_stage    = STAGE_IDENTIFIER::S_1_1; // 次に選べるルート候補
-    DirectX::XMFLOAT2 viewpoint         = {};
+    STAGE_IDENTIFIER current_stage = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER next_stage = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER candidate_stage = STAGE_IDENTIFIER::S_1_1; // 次に選べるルート候補
+    DirectX::XMFLOAT2 viewpoint = {};
     DirectX::XMFLOAT2 arrival_viewpoint = {};
-    DirectX::XMFLOAT2 arrival_scale     = {};
+    DirectX::XMFLOAT2 arrival_scale = {};
 
     struct SpriteArg
     {
@@ -205,8 +205,8 @@ private:
         SpriteArg clear;
         float threshold = -0.5f;
 
-        float timer     = 0;
-        int frame_y     = 0;
+        float timer = 0;
+        int frame_y = 0;
         bool start_anim = false;
 
         bool se_play = false;
@@ -215,12 +215,12 @@ private:
         {
             clear.color.w = 0.0f;
 
-            threshold  = -0.5f;
+            threshold = -0.5f;
 
-            timer      = 0;
-            frame_y    = 0;
+            timer = 0;
+            frame_y = 0;
             start_anim = false;
-            se_play    = false;
+            se_play = false;
         }
     };
     ClearParameters clear_parameters;
@@ -229,6 +229,9 @@ private:
 public:
     // getter
     const STAGE_IDENTIFIER& get_current_stage() { return current_stage; }
+    void SetCurrentStage(STAGE_IDENTIFIER arg) { current_stage = arg; }
+    void SetCurrentWaveNum(STAGE_IDENTIFIER arg) { mCurrentWave = arg; }
+
     const bool get_game_clear() const { return game_clear; }
 
 private:
@@ -246,8 +249,6 @@ public:
 private:
     //-----ステージクリアを送信-----//
     void SendStageClear();
-    //-----ゲームクリア送信-----//
-    void SendGameClear();
 
     //-----クリアのデータを送信したかどうか-----//
     bool is_send_clear_data{ false };
