@@ -66,6 +66,7 @@ void LastBoss::fShipStartInit()
     mTimer = 0.0f;
     mShipRoar = false;
     mSkipTimer = 0.0f;
+    count_grope_id = 1;
     //-----ステート設定-----//
     ai_state = AiState::ShipStart;
 
@@ -83,10 +84,11 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
             auto vec = Math::GetFront(mOrientation);
             DirectX::XMFLOAT3 pos = mPosition;
             pos.y = 0.0f;
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
+            mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id);
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id,1);
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id,2);
             mIsSpawnEnemy = true;
+            count_grope_id++;
         }
         if (mIsSpawnEnemy && t % 10 == 9)
         {
@@ -129,7 +131,8 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
    if (!mIsSpawnEnemy && t % 10 == 0)
    {
        // ランダムな敵を出現させる
-       mpEnemyManager->fCreateRandomEnemy(Graphics_, mPlayerPosition);
+       mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, mPlayerPosition, count_grope_id);
+       count_grope_id++;
        mIsSpawnEnemy = true;
    }
    if(mIsSpawnEnemy && t % 10 == 9)
@@ -351,7 +354,7 @@ void LastBoss::fChangeShipToHumanInit()
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
-    bool end{ false };
+    ship_to_human_event = false;
 
     if (game_pad->get_button() & GamePad::BTN_B)
     {
@@ -388,9 +391,9 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
     if (mpModel->end_of_animation(mAnimPara)||mSkipTimer>=1.0f)
     {
-        end = true;
+        ship_to_human_event = true;
     }
-    if (end)
+    if (ship_to_human_event)
     {
         PostEffect::clear_post_effect();
         fChangeState(DivideState::HumanIdle);
@@ -1132,7 +1135,7 @@ void LastBoss::fHumanToDragonInit()
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    bool end{ false };
+    human_to_dragon_event = { false };
     if (game_pad->get_button() & GamePad::BTN_B)
     {
         mSkipTimer += elapsedTime_ * 0.3f;
@@ -1217,9 +1220,9 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
     if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
     {
-        end = true;
+        human_to_dragon_event = true;
     }
-    if (end)
+    if (human_to_dragon_event)
     {
         mDrawSkip = false;
         fChangeState(DivideState::DragonHideStart);

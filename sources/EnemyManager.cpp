@@ -285,130 +285,6 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
 
 }
 
-void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
-{
-    if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
-
-    //-----時間を取得-----//
-    static auto start = std::chrono::system_clock::now();
-    auto end = std::chrono::system_clock::now();
-
-    //-----スタートとエンドの差分を出す-----//
-    auto dur = end - start;
-
-    //-----ミリ秒に変換する----//
-    milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
-
-
-    if (milliseconds > EnemyDataFrequency)
-    {
-        //-----データを送る-----//
-        fSendEnemyData(elapsedTime_);
-
-        //-----タイマーを初期化-----//
-        start = std::chrono::system_clock::now();
-    }
-}
-
-void EnemyManager::fSendEnemyData(float elapsedTime_)
-{
-    using namespace EnemySendData;
-
-    char data[512]{};
-    //-----コマンドを設定する-----//
-    data[ComLocation::ComList] = CommandList::Update;
-    data[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
-
-    int data_set_count = 0;
-
-    EnemySendData::EnemyData enemy_d;
-
-    //-----マスターのデータを送信する-----//
-    for (const auto enemy : mEnemyVec)
-    {
-        if (enemy->fGetMaster() == false) continue;
-        //-----オブジェクト番号設定-----//
-        enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
-
-        //-----AIのステート設定-----//
-        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
-
-        //-----ターゲットしているプレイヤーのId-----//
-        enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
-
-        //-----体力-----//
-        enemy_d.enemy_data[EnemyDataArray::Hitpoint] = static_cast<int>(enemy->fGetCurrentHitPoint());
-
-        //-----自分の位置を設定-----//
-        enemy_d.pos = enemy->fGetPosition();
-
-        std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
-
-        data_set_count++;
-    }
-    //-----データサイズを設定-----//
-    data[ComLocation::Other] = data_set_count;
-
-    int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
-
-    CorrespondenceManager::Instance().UdpSend(data, size);
-
-}
-
-void EnemyManager::fSendEnemyDamage(int obj_id, int damage)
-{
-    EnemySendData::EnemyDamageData d;
-    d.data[ComLocation::ComList] = CommandList::Update;
-    d.data[ComLocation::UpdateCom] = UpdateCommand::EnemyDamageCommand;
-    d.data[EnemySendData::EnemyDamageCmdArray::DamageComEnemyId] = obj_id;
-    d.data[EnemySendData::EnemyDamageCmdArray::DamageComDamage] = damage;
-
-    //-----ホストにダメージデータを送信-----//
-    CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&d, sizeof(EnemySendData::EnemyDamageData));
-}
-
-void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySendData::EnemyData data)
-{
-    using namespace EnemySendData;
-    for (const auto& enemy : mEnemyVec)
-    {
-        //-----自分のオブジェクト番号とデータの番号が違うならとばす-----//
-        if (enemy->fGetObjectId() != data.enemy_data[EnemyDataArray::ObjectId]) continue;
-
-        //-----自分の位置を設定-----//
-        enemy->fSetReceivePosition(data.pos);
-
-        //-----AIステート設定-----//
-        enemy->fSetEnemyState(data.enemy_data[EnemyDataArray::AiState]);
-
-        //-----ターゲットの位置を設定-----//
-        enemy->fSetTargetPlayerId(data.enemy_data[EnemyDataArray::TargetId]);
-
-        //-----体力設定------//
-        enemy->fSetCurrentHitPoint(data.enemy_data[EnemyDataArray::Hitpoint]);
-    }
-}
-
-void EnemyManager::fSetReceiveConditionData(EnemySendData::EnemyConditionData data)
-{
-    for (const auto enemy : mEnemyVec)
-    {
-        if (enemy->fGetObjectId() == data.data[EnemySendData::EnemyConditionArray::EnemyConditionObjectId])
-        {
-            switch (data.data[EnemySendData::EnemyConditionArray::EnemyCondition])
-            {
-                //-----スタンになっていないならスタンさせる-----//
-            case EnemySendData::EnemyConditionEnum::Stun:
-                enemy->fSetStun(true);
-                break;
-            default:
-                break;
-            }
-
-        }
-    }
-}
-
 void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
@@ -508,10 +384,7 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     for (const auto& source : mReserveVec)
     {
         isCreate = true;
-        for (auto data : receive_data.enemy_spawn_data)
-        {
-            fSpawn(data, graphics_);
-        }
+        fSpawn(source, graphics_);
     }
     if(isCreate)
     {
@@ -532,6 +405,131 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         mIsReserveDelete = false;
     }
 }
+
+void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
+{
+    if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
+
+    //-----時間を取得-----//
+    static auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
+
+    //-----スタートとエンドの差分を出す-----//
+    auto dur = end - start;
+
+    //-----ミリ秒に変換する----//
+    milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
+
+
+    if (milliseconds > EnemyDataFrequency)
+    {
+        //-----データを送る-----//
+        fSendEnemyData(elapsedTime_);
+
+        //-----タイマーを初期化-----//
+        start = std::chrono::system_clock::now();
+    }
+}
+
+void EnemyManager::fSendEnemyData(float elapsedTime_)
+{
+    using namespace EnemySendData;
+
+    char data[512]{};
+    //-----コマンドを設定する-----//
+    data[ComLocation::ComList] = CommandList::Update;
+    data[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
+
+    int data_set_count = 0;
+
+    EnemySendData::EnemyData enemy_d;
+
+    //-----マスターのデータを送信する-----//
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->fGetMaster() == false) continue;
+        //-----オブジェクト番号設定-----//
+        enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
+
+        //-----AIのステート設定-----//
+        enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
+
+        //-----ターゲットしているプレイヤーのId-----//
+        enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
+
+        //-----体力-----//
+        enemy_d.hp = static_cast<int>(enemy->fGetCurrentHitPoint());
+
+        //-----自分の位置を設定-----//
+        enemy_d.pos = enemy->fGetPosition();
+
+        std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
+
+        data_set_count++;
+    }
+    //-----データサイズを設定-----//
+    data[ComLocation::Other] = data_set_count;
+
+    int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
+
+    CorrespondenceManager::Instance().UdpSend(data, size);
+
+}
+
+void EnemyManager::fSendEnemyDamage(int obj_id, int damage)
+{
+    EnemySendData::EnemyDamageData d;
+    d.data[ComLocation::ComList] = CommandList::Update;
+    d.data[ComLocation::UpdateCom] = UpdateCommand::EnemyDamageCommand;
+    d.data[EnemySendData::EnemyDamageCmdArray::DamageComEnemyId] = obj_id;
+    d.data[EnemySendData::EnemyDamageCmdArray::DamageComDamage] = damage;
+
+    //-----ホストにダメージデータを送信-----//
+    CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&d, sizeof(EnemySendData::EnemyDamageData));
+}
+
+void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, char type, EnemySendData::EnemyData data)
+{
+    using namespace EnemySendData;
+    for (const auto& enemy : mEnemyVec)
+    {
+        //-----自分のオブジェクト番号とデータの番号が違うならとばす-----//
+        if (enemy->fGetObjectId() != data.enemy_data[EnemyDataArray::ObjectId]) continue;
+
+        //-----自分の位置を設定-----//
+        enemy->fSetReceivePosition(data.pos);
+
+        //-----AIステート設定-----//
+        enemy->fSetEnemyState(data.enemy_data[EnemyDataArray::AiState]);
+
+        //-----ターゲットの位置を設定-----//
+        enemy->fSetTargetPlayerId(data.enemy_data[EnemyDataArray::TargetId]);
+
+        //-----体力設定------//
+        enemy->fSetCurrentHitPoint(data.hp);
+    }
+}
+
+void EnemyManager::fSetReceiveConditionData(EnemySendData::EnemyConditionData data)
+{
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->fGetObjectId() == data.data[EnemySendData::EnemyConditionArray::EnemyConditionObjectId])
+        {
+            switch (data.data[EnemySendData::EnemyConditionArray::EnemyCondition])
+            {
+                //-----スタンになっていないならスタンさせる-----//
+            case EnemySendData::EnemyConditionEnum::Stun:
+                enemy->fSetStun(true);
+                break;
+            default:
+                break;
+            }
+
+        }
+    }
+}
+
 
 void EnemyManager::SetReciveDamageData(int obj_id, int damage, GraphicsPipeline& graphics_)
 {
@@ -824,7 +822,6 @@ void EnemyManager::fSetPlayerPosition(std::vector<std::tuple<int, DirectX::XMFLO
         near_length = FLT_MAX;
         for (const auto p : Position_)
         {
-
             length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), std::get<1>(p));
 
             //-----位置を配列に保存-----//
@@ -1240,9 +1237,49 @@ void EnemyManager::fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_)
     }
 }
 
+void EnemyManager::fCreateRandomMasterEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_, int grope_id)
+{
+    if (mEnemyVec.size() > 30)
+    {
+        return;
+    }
+
+    // 乱数で敵のタイプを取得
+    std::mt19937 mt{ std::random_device{}() };
+    std::uniform_int_distribution<int> RandTargetAdd(0, 7);
+    int randNumber = RandTargetAdd(mt);
+
+    // チュートリアルの敵なら違う敵を出す
+    if (randNumber == 9 || randNumber == 8)
+    {
+        randNumber = 10;
+    }
+
+    EnemySource source;
+
+    std::uniform_int_distribution<int> RandTargetAdd2(-5, 5);
+    const int randPosition = RandTargetAdd2(mt);
+    const int randPositionX = RandTargetAdd2(mt);
+    const int randPositionY = RandTargetAdd2(mt);
+    source.mEmitterPoint =
+    {
+        SeedPosition_.x +
+        (static_cast<float>(randPosition) * static_cast<float>(randPositionX)),
+        0.0f,
+        SeedPosition_.z +
+        static_cast<float>(randPosition) * static_cast<float>(randPositionY),
+    };
+
+    source.mType = static_cast<EnemyType>(randNumber);
+    source.master = true;
+    source.grope_id = grope_id;
+    source.transfer_host = 0;
+    mReserveVec.emplace_back(source);
+}
+
 void EnemyManager::fCreateRandomEnemy(
     GraphicsPipeline& Graphics_,
-    DirectX::XMFLOAT3 SeedPosition_)
+    DirectX::XMFLOAT3 SeedPosition_, int grope_id, int transfer_id)
 {
     if(mEnemyVec.size()>30)
     {
@@ -1251,7 +1288,7 @@ void EnemyManager::fCreateRandomEnemy(
 
     // 乱数で敵のタイプを取得
     std::mt19937 mt{ std::random_device{}() };
-    std::uniform_int_distribution<int> RandTargetAdd(0, 10);
+    std::uniform_int_distribution<int> RandTargetAdd(0, 7);
     int randNumber = RandTargetAdd(mt);
 
     // チュートリアルの敵なら違う敵を出す
@@ -1276,6 +1313,9 @@ void EnemyManager::fCreateRandomEnemy(
     };
 
     source.mType = static_cast<EnemyType>(randNumber);
+    source.master = false;
+    source.grope_id = grope_id;
+    source.transfer_host = transfer_id;
     mReserveVec.emplace_back(source);
 }
 

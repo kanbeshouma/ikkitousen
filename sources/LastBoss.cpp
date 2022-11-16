@@ -205,6 +205,7 @@ void LastBoss::fSetEnemyState(int state)
     //-----今のAIと同じなら処理をしない-----//
     if (ai_state == state) return;
 
+
     //-----それぞれのステートに遷移-----//
     switch (ai_state)
     {
@@ -814,7 +815,6 @@ void LastBoss::fGuiMenu()
         {
             areaSeed += 2;
         }
-
         ImGui::DragInt("areaSeed", &areaSeed);
 
         ImGui::TreePop();

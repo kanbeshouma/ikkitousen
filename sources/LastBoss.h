@@ -593,6 +593,16 @@ protected:
     void AiTransformAttack() override {};
 
 #pragma endregion
+private:
+    //-----船から人型になるアニメーションのイベントが終わったかどうか-----//
+    bool  ship_to_human_event = false;
+
+    //-----人型からドラゴン形態になるイベントが終わったかどうか-----//
+    bool human_to_dragon_event = false;
+
+    //-----雑魚的を出現させる時のグループid-----//
+    int count_grope_id{ 1 };
+
 public:
     void fRender(GraphicsPipeline& Graphics_) override;
     bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;

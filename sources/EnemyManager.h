@@ -142,7 +142,8 @@ public:
 
     // ボスから呼び出す
     void fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_);
-    void fCreateRandomEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_);
+    void fCreateRandomMasterEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_,int grope_id);
+    void fCreateRandomEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_,int grope_id,int transfer_id);
 
 
      // チュートリアルで呼び出す関数

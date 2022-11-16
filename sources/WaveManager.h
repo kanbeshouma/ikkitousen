@@ -304,7 +304,7 @@ private:
 #if 0
             stage_to_start = 0;
 #else
-            stage_to_start = WaveManager::STAGE_IDENTIFIER::S_3_1;
+            stage_to_start = WaveManager::STAGE_IDENTIFIER::BOSS;
 #endif
         }
         // シリアライズ
