@@ -71,6 +71,12 @@ void SceneMultiGameHost::ReceiveTcpData()
 				return_enemy_control = true;
 				break;
 			}
+			case CommandList::SelectTryingAgain:
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				select_trying_again.emplace_back(1);
+				break;
+			}
 			default:
 				break;
 			}

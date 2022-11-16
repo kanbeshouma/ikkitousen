@@ -128,6 +128,13 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     //---‚±‚±‚Ü‚Å--//
 }
 
+void WaveManager::RestartInitialize()
+{
+    mEnemyManager.RestartInitialize();
+    mStartGame = true;
+    mWaveState = WaveState::Start;
+}
+
 void WaveManager::fSetReceiveEnemyDamageData(EnemySendData::EnemyDamageData d,GraphicsPipeline& graphics_)
 {
     using namespace EnemySendData;

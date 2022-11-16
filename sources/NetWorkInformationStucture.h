@@ -41,6 +41,10 @@ enum CommandList
     StageClear,
     //------タイトルに戻る-----//
     ReturnTitle,
+    //-----再挑戦を選択-----//
+    SelectTryingAgain,
+    //------リトライ開始-----//
+    GameRetry
 };
 
 enum UpdateCommand

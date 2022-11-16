@@ -42,6 +42,9 @@ public:
     // 初期化
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
 
+   //-----リトライ時再初期化-----//
+    void RestartInitialize();
+
     //-----敵のダメージデータを設定-----//
     void fSetReceiveEnemyDamageData(EnemySendData::EnemyDamageData data, GraphicsPipeline& graphics_);
 

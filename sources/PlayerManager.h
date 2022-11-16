@@ -20,6 +20,9 @@ public:
     PlayerManager();
     ~PlayerManager();
 public:
+    //-----‰Šú‰»-----//
+    void RestartInitialize();
+
     ////----------XVŠÖ”----------//
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
 

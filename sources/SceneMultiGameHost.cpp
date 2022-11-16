@@ -65,6 +65,9 @@ WaveManager::STAGE_IDENTIFIER SceneMultiGameHost::current_stage = WaveManager::S
 //-----クライアントが選択したステージ-----//
 std::vector<WaveManager::STAGE_IDENTIFIER>  SceneMultiGameHost::client_select_stage;
 
+
+std::vector<int> SceneMultiGameHost::select_trying_again;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -217,6 +220,11 @@ void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
 
+
+	//game_over_select_idle.s = L"他の接続者の選択を待っています・・・";
+	game_over_idle = L"他の接続者の選択を待っています・・・";
+	game_over_select_idle.position = { 325.7f,212.9f };
+	game_over_select_idle.scale = { 1.0f,1.0f };
 
 	//-----ゲームスタートのUIに使う変数の初期化-----//
 	game_start_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
@@ -505,6 +513,14 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 				ImGui::DragFloat2("selecter2_scale", &selecter2.scale.x, 0.1f);
 				ImGui::TreePop();
 			}
+
+			if (ImGui::TreeNode("game_over_select_idle"))
+			{
+				ImGui::DragFloat2("pos", &game_over_select_idle.position.x, 0.1f);
+				ImGui::DragFloat2("scale", &game_over_select_idle.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+
 		}
 		ImGui::End();
 
@@ -567,6 +583,40 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//-----ログアウトしたプレイヤーを削除する-----//
 	DeletePlayer();
+}
+
+bool SceneMultiGameHost::StepString(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element, float speed, bool loop)
+{
+	step_font_element.timer += elapsed_time * speed;
+	step_font_element.step = static_cast<int>(step_font_element.timer);
+	size_t size = full_text.size();
+	if (step_font_element.index >= size + 1) // 一文字分時間を置く
+	{
+		if (!loop)
+		{
+			return true;
+		}
+		else
+		{
+			step_font_element.timer = 0.0f;
+			step_font_element.step = 0;
+			step_font_element.index = 0;
+			step_font_element.s = L"";
+		}
+	}
+
+	if (step_font_element.step % 2 == 0)
+	{
+		if (step_font_element.index < size)
+		{
+			step_font_element.s += full_text[step_font_element.index];
+			step_font_element.step = 1;
+			step_font_element.timer = 1.0f;
+		}
+		++step_font_element.index;
+	}
+
+	return false;
 }
 
 #define OFF_SCREEN_RENDERING
@@ -766,13 +816,23 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 		{
 			sprite_render("frame", sprite_back.get(), game_over_pram, 0, glow_vertical);
 
-			fonts->yu_gothic->Begin(graphics.get_dc().Get());
-			r_font_render(game_over_text);
-			r_font_render(back_title);
-			r_font_render(again);
-			fonts->yu_gothic->End(graphics.get_dc().Get());
-			r_sprite_render(sprite_selecter.get(), selecter1);
-			r_sprite_render(sprite_selecter.get(), selecter2);
+			if (game_over_trying_again == false)
+			{
+				fonts->yu_gothic->Begin(graphics.get_dc().Get());
+				r_font_render(game_over_text);
+				r_font_render(back_title);
+				r_font_render(again);
+				fonts->yu_gothic->End(graphics.get_dc().Get());
+				r_sprite_render(sprite_selecter.get(), selecter1);
+				r_sprite_render(sprite_selecter.get(), selecter2);
+			}
+			else
+			{
+				fonts->yu_gothic->Begin(graphics.get_dc().Get());
+				StepString(1.5f * elapsed_time, game_over_idle, game_over_select_idle, 2.0f, true);
+				r_font_render(game_over_select_idle);
+				fonts->yu_gothic->End(graphics.get_dc().Get());
+			}
 		}
 	}
 
@@ -866,8 +926,18 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 		//画面が黒くなってからしか動かないように
 		if (is_set_black)
 		{
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				//-----再挑戦を選択したプレイヤーをカウント-----//
+				if (select_trying_again.empty() == false)
+				{
+				   trying_again_count += select_trying_again.size();
+				    select_trying_again.clear();
+				}
+			}
+
 			//-----何も選択していない時-----//
-			if (game_over_select_title == false)
+			if (game_over_select_title == false || game_over_trying_again == false)
 			{
 				switch (game_over_state)
 				{
@@ -888,7 +958,11 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 					if (game_pad->get_button_down() & GamePad::BTN_B)
 					{
 						audio_manager->play_se(SE_INDEX::DECISION);
-						SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
+
+						//-----再挑戦を押した-----//
+						game_over_trying_again = true;
+						trying_again_count++;
+						//SceneManager::scene_switching(new SceneLoading(new SceneMultiGameHost()), DISSOLVE_TYPE::TYPE1, 2.0f);
 					}
 					break;
 				default:
@@ -907,8 +981,47 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 				}
 
 			}
+
+			//-----再挑戦を押した場合-----//
+			if (game_over_trying_again)
+			{
+				//-----接続者の人数と同じ数再挑戦を選択したらゲームをやり直す-----//
+				if (trying_again_count == CorrespondenceManager::Instance().GetConnectedPersons())
+				{
+					//-----フォントを変更-----//
+					game_over_idle = L"ステージを再挑戦します";
+					game_over_select_idle.position = { 441.0f,212.9f };
+
+					//-----データを送信-----//
+					char data = CommandList::GameRetry;
+					CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+
+					//-----ゲームを再初期化-----//
+					RestartInitialize();
+				}
+			}
 		}
 	}
+}
+
+void SceneMultiGameHost::RestartInitialize()
+{
+	//-----ゲームオーバーの時に使っていたフラグを初期化-----//
+	is_game_over = false;
+	game_over_trying_again = false;
+	is_set_black = false;
+	is_game_over_sprite = false;
+	brack_back_pram.color.w = 0.0f;
+
+	//-----ゲームの初期化-----//
+	player_manager->RestartInitialize();
+
+	mWaveManager.RestartInitialize();
+
+	BulletManager::Instance().RestartInitialize();
+
+	//-----ゲームをすぐに開始しないようにする-----//
+	is_start_game = false;
 }
 
 void SceneMultiGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& graphics)

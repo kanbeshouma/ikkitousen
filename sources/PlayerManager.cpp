@@ -11,6 +11,17 @@ PlayerManager::~PlayerManager()
 {
 }
 
+void PlayerManager::RestartInitialize()
+{
+    //-----‘Ì—Í‚ðÄÝ’è-----//
+    multiplay_current_health = multiplay_max_health;
+    //-----ƒvƒŒƒCƒ„[‚ð•œŠˆ-----//
+    for (auto& player : players)
+    {
+        player->RestartInitialize(multiplay_current_health);
+    }
+}
+
 void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     if (CorrespondenceManager::Instance().GetMultiPlay())

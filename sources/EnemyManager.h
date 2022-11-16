@@ -28,6 +28,10 @@ public:
     ~EnemyManager() override;
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
+
+    //-----リトライ時再初期化-----//
+    void RestartInitialize();
+
     //-----通常時時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
 

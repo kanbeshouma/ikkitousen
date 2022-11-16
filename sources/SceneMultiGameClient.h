@@ -54,6 +54,9 @@ public:
     ////----------初期化---------//
     void initialize(GraphicsPipeline& graphics) override;
 
+    //-----リトライ時に再初期化をする関数-----//
+    void RestartInitialize();
+
     ////----------終了化----------//
     void uninitialize() override;
 
@@ -155,6 +158,8 @@ private:
         DirectX::XMFLOAT2 texpos{};
         DirectX::XMFLOAT2 texsize{};
     };
+    bool StepString(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element, float speed = 1.0f, bool loop = false);
+
     Element selecter1;
     Element selecter2;
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
@@ -177,6 +182,18 @@ private:
     StepFontElement back_title;
     // 再挑戦
     StepFontElement again;
+
+    //-----再挑戦を選択した-----//
+    bool game_over_trying_again{ false };
+
+    //-----ゲームのリトライ-----//
+    static bool game_retry;
+
+    StepFontElement game_over_select_idle;
+    //-----ゲーム再挑戦を押したときの文字列-----//
+    std::wstring game_over_idle = L"";
+
+
     int game_over_state{ 0 };
     //ゲームオーバーの文字の後ろに出てるフレーム
     std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
@@ -197,6 +214,7 @@ private:
 
     //---------ゲームクリア-----------//
     void GameClearAct(float elapsed_time, GraphicsPipeline& graphics);
+
     //イベントカメラのセット
     bool set_joint_camera{ false };
     bool is_game_clear{ false };

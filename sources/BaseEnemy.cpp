@@ -45,7 +45,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
 BaseEnemy::~BaseEnemy()
 {
     int a = 0;
-  //  mVernierEffect->stop(effect_manager->get_effekseer_manager());
+   //mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -305,6 +305,11 @@ void BaseEnemy::fLimitPosition()
         v = Math::Normalize(v);
         mPosition = mPlayerPosition + (v * length);
     }
+}
+
+void BaseEnemy::StopEffec()
+{
+    mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void BaseEnemy::fSetStun(bool Arg_, bool IsJust_)

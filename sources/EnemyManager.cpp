@@ -64,6 +64,13 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 
 }
 
+void EnemyManager::RestartInitialize()
+{
+    //--------------------<初期化>--------------------//
+    fAllClear();
+    mUniqueCount = 0;
+}
+
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
@@ -1188,36 +1195,9 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
-
-#if 0
-    //-----一番近いプレイヤーの位置-----//
-    DirectX::XMFLOAT3 near_pos{};
-    //-----一番近いプレイヤーの位置との距離-----//
-    float near_length{ 100000.0f };
-    //-----計算した長さを入れる-----//
-    float length{};
-
-#endif // 0
-
     // 更新
     for (const auto enemy : mEnemyVec)
     {
-#if 0
-        near_pos = {};
-        near_length = 100000.0f;
-        for (const auto p : mPlayerPosition)
-        {
-            length = Math::calc_vector_AtoB_length(enemy->fGetPosition(), p);
-            //-----一番近い距離と今の敵の位置との距離を比較して小さかったら値を更新-----//
-            if (near_length > length)
-            {
-                near_length = length;
-                near_pos = p;
-            }
-        }
-
-        enemy->fSetPlayerPosition(near_pos);
-#endif // 0
         //-----リーダーのデータを取得-----//
         if (enemy->fGetMaster() == false)
         {
@@ -1311,6 +1291,7 @@ void EnemyManager::fAllClear()
     //--------------------<要素を全削除>--------------------//
     for (auto enemy : mEnemyVec)
     {
+        enemy->StopEffec();
         // 存在していれば削除
         if (enemy)
         {

@@ -170,6 +170,20 @@ private:
     //-----ゲームオーバーの時にタイトルを戻るを押した-----//
     bool game_over_select_title{ false };
 
+    //-----再挑戦を選択した-----//
+    bool game_over_trying_again{ false };
+
+    //-----再挑戦選択数-----//
+    int trying_again_count{};
+
+    //-----ゲーム再挑戦を押したときの文字列-----//
+    std::wstring game_over_idle = L"";
+
+    StepFontElement game_over_select_idle;
+
+    bool StepString(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element,float speed = 1.0f, bool loop = false);
+
+
     //ゲームオーバーの文字の後ろに出てるフレーム
     std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
     //フレームのパラメータ
@@ -216,6 +230,9 @@ private:
 
     //---------プレイヤー関係の当たり判定----------//
     void PlayerManagerCollision(GraphicsPipeline& graphics, float elapsed_time);
+
+    //-----リトライ時に再初期化をする関数-----//
+    void RestartInitialize();
 
 private:
     //-----ゲームを開始するかどうか(敵を出現させてもいいか)-----//
@@ -359,4 +376,7 @@ private:
 
     //-----敵のホスト権が帰って来たかどうか-----//
     static bool return_enemy_control;
+
+    //-----再挑戦を選択した時に増える-----//
+    static std::vector<int> select_trying_again;
 };

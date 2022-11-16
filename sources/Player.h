@@ -110,6 +110,8 @@ public:
     void SetReceiveData(PlayerMoveData data) override {}
     void SetReceivePositionData(PlayerPositionData data)override {}
     void SetPlayerActionData(PlayerActionData data)override {}
+
+    void RestartInitialize(int health) override;
 private:
     //-----データを送信する-----//
     void SendPlayerData(float elapsed_time);
@@ -153,8 +155,6 @@ private:
 
     //USE_IMGUI
 private:
-    //プレイヤーの最大体力
-    static constexpr int MAX_HEALTH = 100;
     //プレイヤーの体力の回復量
     static constexpr int RECOVERY_HEALTH = 100;
     //突進時間
@@ -338,8 +338,6 @@ private:
     float special_surge_opportunity{ 1.5f };
     //float special_surge_timer{ 0 };
     float opportunity_timer{ 0 };
-    //プレイヤーの体力
-    int player_health = MAX_HEALTH;
     //プレイヤー死んだかどうか
     bool is_alive{ true };
     //無敵時間

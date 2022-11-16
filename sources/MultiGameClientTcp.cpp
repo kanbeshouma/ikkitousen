@@ -98,6 +98,13 @@ void SceneMultiGameClient::ReceiveTcpData()
                 stage_situation = StageSituation::StageClearFlg;
                 break;
             }
+            //-----ステージリトライ-----//
+            case CommandList::GameRetry:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                game_retry = true;
+                break;
+            }
             default:
                 std::string text = "コマンド :" + std::to_string(data[ComLocation::ComList]);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);

@@ -52,6 +52,11 @@ void BulletManager::fFinalize()
     fAllClear();
 }
 
+void BulletManager::RestartInitialize()
+{
+    fAllClear();
+}
+
 AddBulletFunc BulletManager::fGetAddFunction() const
 {
     return mfAddBullet;

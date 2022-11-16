@@ -25,6 +25,7 @@ public:
     void fUpdate(float elapsedTime_);
     void fRender(GraphicsPipeline& Graphics_);
     void fFinalize();
+    void RestartInitialize();
     //--------------------<ƒQƒbƒ^[ŠÖ”>--------------------//
     [[nodiscard]]AddBulletFunc fGetAddFunction() const;
 

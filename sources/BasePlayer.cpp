@@ -37,3 +37,4 @@ void BasePlayer::SetColor(PlayerColor kind)
 		break;
 	}
 }
+

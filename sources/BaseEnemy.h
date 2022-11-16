@@ -48,6 +48,7 @@ public:
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
     void fComputeInCamera();
     void fLimitPosition();
+    void StopEffec();
 
     //--------------------<セッター関数>--------------------//
     virtual void fSetStun(bool Arg_, bool IsJust_ = false);

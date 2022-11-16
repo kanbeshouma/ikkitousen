@@ -845,6 +845,23 @@ void Player::ChangePlayerJustificationLength()
     max_length = 500.0f;
 }
 
+void Player::RestartInitialize(int health)
+{
+    //-----体力を設定-----//
+    player_health = health;
+
+    //-----ステートを生存に戻す-----//
+    condition_state = ConditionState::Alive;
+
+    //-----フラグを戻す-----//
+    is_alive = true;
+    is_dying_update = false;
+    threshold = 0.0f;
+
+    //-----待機にする-----//
+    TransitionIdle();
+}
+
 void Player::SendPlayerData(float elapsed_time)
 {
     //-----時間を取得-----//

@@ -34,4 +34,5 @@ private:
     Effekseer::Matrix43 transform_XMFLOAT4X4toMatrix43(DirectX::XMFLOAT4X4& mat_4x4);
     Effekseer::Effect* effekseer_effect{ nullptr };
     Effekseer::Handle effekseer_handle{ -1 };
+    bool is_play{ false };
 };

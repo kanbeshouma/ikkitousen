@@ -22,7 +22,17 @@ public:
     virtual bool EnemiesIsStun(std::vector<BaseEnemy*> enemies) = 0;
     virtual void ConfigRender(GraphicsPipeline& graphics, float elapsed_time) = 0;
     virtual void ChangePlayerJustificationLength() = 0;
+
+    //-----リトライ時再初期化-----//
+    virtual void RestartInitialize(int health) = 0;;
 protected:
+    //プレイヤーの最大体力
+    static constexpr int MAX_HEALTH = 100;
+
+    //プレイヤーの体力
+    int player_health = MAX_HEALTH;
+
+
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };

@@ -71,6 +71,9 @@ bool SceneMultiGameClient::receive_end_result_next_stage = false;
 //-----最終決定したステージ-----//
 WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::result_next_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
 
+//-----ゲームリトライ-----//
+bool SceneMultiGameClient::game_retry = false;
+
 SceneMultiGameClient::SceneMultiGameClient()
 {
 }
@@ -222,6 +225,31 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	again.scale = { 1.0f,1.0f };
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
+
+	game_over_idle = L"他の接続者の選択を待っています・・・";
+	game_over_select_idle.position = { 325.7f,212.9f };
+	game_over_select_idle.scale = { 1.0f,1.0f };
+
+}
+
+void SceneMultiGameClient::RestartInitialize()
+{
+	std::lock_guard<std::mutex> lock(mutex);
+
+	//-----ゲームオーバーの時に使っていたフラグを初期化-----//
+	is_game_over = false;
+	game_over_trying_again = false;
+	is_set_black = false;
+	is_game_over_sprite = false;
+	game_retry = false;
+	brack_back_pram.color.w = 0.0f;
+
+	//-----ゲームの初期化-----//
+	player_manager->RestartInitialize();
+
+	mWaveManager.RestartInitialize();
+
+	BulletManager::Instance().RestartInitialize();
 }
 
 void SceneMultiGameClient::uninitialize()
@@ -761,13 +789,24 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 		{
 			sprite_render("frame", sprite_back.get(), game_over_pram, 0, glow_vertical);
 
-			fonts->yu_gothic->Begin(graphics.get_dc().Get());
-			r_font_render(game_over_text);
-			r_font_render(back_title);
-			r_font_render(again);
-			fonts->yu_gothic->End(graphics.get_dc().Get());
-			r_sprite_render(sprite_selecter.get(), selecter1);
-			r_sprite_render(sprite_selecter.get(), selecter2);
+			if (game_over_trying_again == false)
+			{
+				fonts->yu_gothic->Begin(graphics.get_dc().Get());
+				r_font_render(game_over_text);
+				r_font_render(back_title);
+				r_font_render(again);
+				fonts->yu_gothic->End(graphics.get_dc().Get());
+				r_sprite_render(sprite_selecter.get(), selecter1);
+				r_sprite_render(sprite_selecter.get(), selecter2);
+			}
+			else
+			{
+				fonts->yu_gothic->Begin(graphics.get_dc().Get());
+				StepString(1.5f * elapsed_time, game_over_idle, game_over_select_idle, 2.0f, true);
+				r_font_render(game_over_select_idle);
+				fonts->yu_gothic->End(graphics.get_dc().Get());
+			}
+
 		}
 	}
 
@@ -779,6 +818,40 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 void SceneMultiGameClient::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
 	return;
+}
+
+bool SceneMultiGameClient::StepString(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element, float speed, bool loop)
+{
+	step_font_element.timer += elapsed_time * speed;
+	step_font_element.step = static_cast<int>(step_font_element.timer);
+	size_t size = full_text.size();
+	if (step_font_element.index >= size + 1) // 一文字分時間を置く
+	{
+		if (!loop)
+		{
+			return true;
+		}
+		else
+		{
+			step_font_element.timer = 0.0f;
+			step_font_element.step = 0;
+			step_font_element.index = 0;
+			step_font_element.s = L"";
+		}
+	}
+
+	if (step_font_element.step % 2 == 0)
+	{
+		if (step_font_element.index < size)
+		{
+			step_font_element.s += full_text[step_font_element.index];
+			step_font_element.step = 1;
+			step_font_element.timer = 1.0f;
+		}
+		++step_font_element.index;
+	}
+
+	return false;
 }
 
 void SceneMultiGameClient::GameOverAct(float elapsed_time)
@@ -862,26 +935,49 @@ void SceneMultiGameClient::GameOverAct(float elapsed_time)
 		//画面が黒くなってからしか動かないように
 		if (is_set_black)
 		{
-			switch (game_over_state)
+			if (game_over_trying_again == false)
 			{
-			case 0://タイトルに戻る
-				r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
-				if (game_pad->get_button_down() & GamePad::BTN_B)
+				switch (game_over_state)
 				{
-					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				case 0://タイトルに戻る
+					r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
+					if (game_pad->get_button_down() & GamePad::BTN_B)
+					{
+						audio_manager->play_se(SE_INDEX::DECISION);
+						SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					}
+					break;
+				case 1://再挑戦
+					r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
+					if (game_pad->get_button_down() & GamePad::BTN_B)
+					{
+						audio_manager->play_se(SE_INDEX::DECISION);
+						game_over_trying_again = true;
+
+						//-----ホストに再挑戦を押したことをしらセル------//
+						char data = CommandList::SelectTryingAgain;
+						CorrespondenceManager::Instance().TcpSend(&data, 1);
+
+						//SceneManager::scene_switching(new SceneLoading(new SceneMultiGameClient()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					}
+					break;
+				default:
+					break;
 				}
-				break;
-			case 1://再挑戦
-				r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
-				if (game_pad->get_button_down() & GamePad::BTN_B)
+			}
+
+			if (game_over_trying_again)
+			{
+				//-----ゲームのリトライフラグを取得したら初期化する-----//
+				if (game_retry)
 				{
-					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneMultiGameClient()), DISSOLVE_TYPE::TYPE1, 2.0f);
+					//-----フォントを変更-----//
+					game_over_idle = L"ステージを再挑戦します";
+
+					//-----ゲームを再挑戦-----//
+					RestartInitialize();
+
 				}
-				break;
-			default:
-				break;
 			}
 		}
 	}
