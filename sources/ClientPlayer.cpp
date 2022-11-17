@@ -278,6 +278,8 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
                 action_state = static_cast<ActionState>(state);
                 ImGui::TreePop();
             }
+            ImGui::Text("max_length%f", max_length);
+
             ImGui::PopID();
             ImGui::End();
         }
@@ -336,7 +338,7 @@ void ClientPlayer::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 
     //-------<2Dパート>--------//
-    if (CorrespondenceManager::Instance().GetMultiPlay() && player_length < max_length)
+    if (CorrespondenceManager::Instance().GetMultiPlay() && player_length < name_max_length)
     {
             graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
             ConversionScreenPosition(graphics);
@@ -474,6 +476,11 @@ void ClientPlayer::SetName(std::string n)
     name = n;
     //-----フォント設定-----//
     object_id_font.s = StringToWstring(name);
+}
+
+void ClientPlayer::ChangePlayerJustificationLength()
+{
+    max_length = 500.0f;
 }
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)

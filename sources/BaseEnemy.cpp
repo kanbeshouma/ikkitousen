@@ -1,4 +1,4 @@
-#define _WINSOCKAPI_  // windows.hを定義した際に、winsock.hを自動的にインクルードしない
+#define _WINSOCKAPI_// windows.hを定義した際にwinsock.hを自動的にインクルードしない
 
 #include"BaseEnemy.h"
 #include "collision.h"

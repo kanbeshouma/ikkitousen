@@ -77,6 +77,13 @@ void SceneMultiGameHost::ReceiveTcpData()
 				select_trying_again.emplace_back(1);
 				break;
 			}
+			//-----イベントが終了した時-----//
+			case CommandList::EndEvent:
+			{
+				std::lock_guard<std::mutex> lock(mutex);
+				end_event.emplace_back(1);
+				break;
+			}
 			default:
 				break;
 			}

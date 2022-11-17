@@ -164,6 +164,8 @@ public:
     void fReserveDeleteEnemies();
 
     void fLimitEnemies();
+
+    void EndEnventCount(int count);
 private:
     //--------------------<敵と関連する処理>--------------------//
 
@@ -265,6 +267,8 @@ private:
     //-----ミリ秒-----//
     float milliseconds{};
 
+    //-----イベントを終了した人数-----//
+    int end_event_count{ 0 };
 
     //****************************************************************
     //

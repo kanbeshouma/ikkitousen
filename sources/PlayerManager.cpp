@@ -94,7 +94,6 @@ void PlayerManager::RenderOperationPlayer(GraphicsPipeline& graphics, float elap
         if (player->GetObjectId() != private_object_id) continue;
         player->Render(graphics, elapsed_time);
     }
-
 }
 
 void PlayerManager::RegisterPlayer(BasePlayer* player)
@@ -173,7 +172,6 @@ void PlayerManager::SetPlayerMoveData(PlayerMoveData data)
         }
     }
 }
-
 void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
 {
     for (auto& player : players)

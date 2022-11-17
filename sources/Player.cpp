@@ -350,9 +350,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     //チェイン攻撃から戻ってきたときにカメラが戻ってくるまでは止めておく
     change_normal_timer -= 1.0f * elapsed_time;
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("chain");
-    if(ImGui::Button("transition chain behavior"))
+    if (ImGui::Button("transition chain behavior"))
     {
         transition_chain_behavior();
     }
@@ -366,6 +367,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
     ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
     ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
     //クリア演出中
     if (during_clear)
@@ -637,6 +640,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::Text("behavior_state%d", a);
             ImGui::Text("change_normal_timer%f", change_normal_timer);
             ImGui::Text("send_position_timer%f", send_position_timer);
+            ImGui::Text("max_length%f", max_length);
             bool b = during_chain_attack();
             ImGui::Checkbox("during_chain_attack", &b);
 

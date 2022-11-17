@@ -25,18 +25,31 @@ enum CommandList
     Update,
     //IPアドレス取得
     IpAddress,
+
+    //======ステージ番号の通信コマンド=====//
+#pragma region StageNumber
     //-----ステージ番号を送信-----//
     CurrentStageNum,
     //-----選択したステージを送信(これはクライアントが送信する)-----//
     SelectNextStage,
     //-----最終的にいくステージを送信(これはホストが送信する)-----//
     EndResultNextStage,
+
+#pragma endregion
+
+    //======敵の主導権の譲渡コマンド=====//
+#pragma region TransferEnemyControl
     //-----敵の操作権の譲渡をリクエストする------//
     TransferEnemyControlRequest,
     //-----敵のホスト権の譲渡リクエストの結果-----//
     TransferEnemyControlResult,
     //-----敵のホスト権を返す-----//
     ReturnEnemyControl,
+
+#pragma endregion
+
+    //=====ゲームループのコマンド=====//
+#pragma region GameRoop
     //-----ステージクリア-----//
     StageClear,
     //------タイトルに戻る-----//
@@ -44,7 +57,17 @@ enum CommandList
     //-----再挑戦を選択-----//
     SelectTryingAgain,
     //------リトライ開始-----//
-    GameRetry
+    GameRetry,
+
+#pragma endregion
+
+    //=====イベント時のコマンド=====//
+#pragma region Event
+    //-----イベントシーンを見終わった時------//
+    EndEvent,
+
+#pragma endregion
+
 };
 
 enum UpdateCommand

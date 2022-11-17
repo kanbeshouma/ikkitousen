@@ -324,6 +324,9 @@ protected:
     //==================//
     //‘æˆêˆø” : “G‚Ìó‘Ô
     void SendEnemyConditionData(int condition);
+public:
+    virtual void SetEndEvent(bool arg) {};
+
 protected:
     bool mIsInCamera{};
 

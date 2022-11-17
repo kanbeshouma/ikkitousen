@@ -1827,3 +1827,23 @@ void EnemyManager::fLimitEnemies()
         enemy->fLimitPosition();
     }
 }
+
+void EnemyManager::EndEnventCount(int count)
+{
+    end_event_count += count;
+    //-----接続した人数と同じならイベントを進める-----//
+    if (end_event_count == CorrespondenceManager::Instance().GetConnectedPersons())
+    {
+        //----次に備えてカウントを減らす-----//
+        end_event_count = 0;
+
+        for (auto enemy : mEnemyVec)
+        {
+            //-----ボスじゃなかったらとばす-----//
+            if (enemy->GetEnemyType() != SendEnemyType::Boss) continue;
+            enemy->SetEndEvent(true);
+            break;
+        }
+
+    }
+}

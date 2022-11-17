@@ -19,7 +19,6 @@
 #include "effect.h"
 #include "reticle.h"
 #include"player_condition.h"
-
 class ClientPlayer : public BasePlayer, private ClientPlayerMove
 {
 public:
@@ -116,7 +115,7 @@ public:
     bool EnemiesIsStun(std::vector<BaseEnemy*> enemies)override { return false; };
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time)override {};
-    void ChangePlayerJustificationLength()override {};
+    void ChangePlayerJustificationLength()override;
     void SetReceiveData(PlayerMoveData data) override;
     void SetReceivePositionData(PlayerPositionData data)override;
     void SetPlayerActionData(PlayerActionData data)override;
@@ -655,7 +654,7 @@ private:
     //-----ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ª“ü‚é-----//
     float  player_length{};
 
-    float max_length{ 75.0f };
+    float name_max_length{ 75.0f };
     float min_length{ 30.0f };
 
 public:

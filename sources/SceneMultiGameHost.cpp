@@ -65,8 +65,11 @@ WaveManager::STAGE_IDENTIFIER SceneMultiGameHost::current_stage = WaveManager::S
 //-----クライアントが選択したステージ-----//
 std::vector<WaveManager::STAGE_IDENTIFIER>  SceneMultiGameHost::client_select_stage;
 
-
+//-----再挑戦を選択を受信-----//
 std::vector<int> SceneMultiGameHost::select_trying_again;
+
+//-----イベントが終了したことを受信-----//
+std::vector<int> SceneMultiGameHost::end_event;
 
 SceneMultiGameHost::SceneMultiGameHost()
 {
@@ -319,26 +322,14 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (is_start_game)
 	{
-		{
-			//-----ロックする-----//
-			std::lock_guard<std::mutex> lock(mutex);
-
-			if (client_select_stage.empty() == false)
-			{
-				//-----選択したステージデータを設定-----//
-				for (auto data : client_select_stage)
-				{
-					mWaveManager.SetStageVoting(data);
-				}
-				//-----データを削除-----//
-				client_select_stage.clear();
-			}
-			//-----ステージ中のウェーブの更新処理-----//
-			mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
-
-			//-----敵のデータを削除-----//
-			ClearEnemyReceiveData();
-		}
+		//-----選択したステージを設定-----//
+		SetSelectStage();
+		//-----イベントが終了した人数をカウントする-----//
+		CountEndEvent();
+		//-----ステージ中のウェーブの更新処理-----//
+		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
+		//-----敵のデータを削除-----//
+		ClearEnemyReceiveData();
 	}
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
@@ -931,7 +922,7 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 				//-----再挑戦を選択したプレイヤーをカウント-----//
 				if (select_trying_again.empty() == false)
 				{
-				   trying_again_count += select_trying_again.size();
+				   trying_again_count += static_cast<int>(select_trying_again.size());
 				    select_trying_again.clear();
 				}
 			}
@@ -1507,6 +1498,8 @@ void SceneMultiGameHost::ReceivePlayerHealthData()
 
 void SceneMultiGameHost::ClearEnemyReceiveData()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	//-----敵の出現データを削除する-----//
 	receive_all_enemy_data.enemy_spawn_data.clear();
 
@@ -1570,4 +1563,31 @@ void SceneMultiGameHost::ReturnEnemyControl()
 		mWaveManager.SetHost(true);
 		return_enemy_control = false;
 	}
+}
+
+void SceneMultiGameHost::SetSelectStage()
+{
+	//-----ロックする-----//
+	std::lock_guard<std::mutex> lock(mutex);
+
+	if (client_select_stage.empty() == false)
+	{
+		//-----選択したステージデータを設定-----//
+		for (auto data : client_select_stage)
+		{
+			mWaveManager.SetStageVoting(data);
+		}
+		//-----データを削除-----//
+		client_select_stage.clear();
+	}
+
+}
+
+void SceneMultiGameHost::CountEndEvent()
+{
+	//-----ロックする-----//
+	std::lock_guard<std::mutex> lock(mutex);
+	//-----イベントが終了した人数をカウントする-----//
+	mWaveManager.fGetEnemyManager()->EndEnventCount(static_cast<int>(end_event.size()));
+	end_event.clear();
 }

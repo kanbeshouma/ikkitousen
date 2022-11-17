@@ -9,6 +9,8 @@
 #include "EnemyManager.h"
 #include"Operators.h"
 #include"audio_manager.h"
+#include"Correspondence.h"
+#include"NetWorkInformationStucture.h"
 
 LastBoss::BossParamJson LastBoss::fLoadParam()
 {
@@ -346,6 +348,9 @@ void LastBoss::fChangeShipToHumanInit()
         mDrawSkip = true;
     }
 
+    //-----マルチプレイで使っている値を初期化-----//
+    end_event = false;
+
     //-----ステート設定-----//
     ai_state = AiState::ShipToHuman;
 
@@ -363,6 +368,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
     mTimer += elapsedTime_;
     // SEを鳴らす
+#pragma region SoundSe
     if (mTimer >= 0.9f && mSeArrayShipToHuman[0] == false) // 57
     {
         audio_manager->play_se(SE_INDEX::BOSS_SMALL_ROAR);
@@ -389,10 +395,24 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         mSeArrayShipToHuman[4] = true;
     }
 
-    if (mpModel->end_of_animation(mAnimPara)||mSkipTimer>=1.0f)
+#pragma endregion
+
+        //<マルチプレイの時、イベントが終了していないときしか入らない>//
+    if (CorrespondenceManager::Instance().GetMultiPlay() && end_event == false)
     {
-        ship_to_human_event = true;
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
+        {
+            //-----カウントを増やす-----//
+            mpEnemyManager->EndEnventCount(1);
+            end_event = true;
+            SendEndEvent();
+        }
     }
+    else if(CorrespondenceManager::Instance().GetMultiPlay() == false)
+    {
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)ship_to_human_event = true;
+    }
+
     if (ship_to_human_event)
     {
         PostEffect::clear_post_effect();
@@ -1129,6 +1149,9 @@ void LastBoss::fHumanToDragonInit()
     mIsStun = false;
     mStunEffect->stop(effect_manager->get_effekseer_manager());
     mSkipTimer = 0.0f;
+
+    end_event = false;
+
     //-----ステート設定-----//
     ai_state = AiState::HumanToDragon;
 }
@@ -1144,8 +1167,8 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 
     mTimer += elapsedTime_;
+#pragma region SoundSe
     int i = 0;
-
     if (mTimer >= 9.76f && mSeArrayHumanToDragon[i] == false)
     {
         audio_manager->play_se(SE_INDEX::TEARING);
@@ -1218,10 +1241,23 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         mSeArrayHumanToDragon[i] = true;
     }
 
-    if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
+#pragma endregion
+    //<マルチプレイの時、イベントが終了していないときしか入らない>//
+    if (CorrespondenceManager::Instance().GetMultiPlay() && end_event == false)
     {
-        human_to_dragon_event = true;
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
+        {
+            //-----カウントを増やす-----//
+            mpEnemyManager->EndEnventCount(1);
+            end_event = true;
+            SendEndEvent();
+        }
     }
+    else
+    {
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)human_to_dragon_event = true;
+    }
+
     if (human_to_dragon_event)
     {
         mDrawSkip = false;
@@ -1753,6 +1789,30 @@ void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     }
 }
 
+
+void LastBoss::SendEndEvent()
+{
+    char data = CommandList::EndEvent;
+    if (CorrespondenceManager::Instance().GetHost())CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+    else CorrespondenceManager::Instance().TcpSend(&data, 1);
+}
+
+
+void LastBoss::SetEndEvent(bool arg)
+{
+    switch (ai_state)
+    {
+    case AiState::ShipToHuman:
+        ship_to_human_event = arg;
+        break;
+    case AiState::HumanToDragon:
+        human_to_dragon_event = arg;
+        break;
+    default:
+        break;
+    }
+
+}
 
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {

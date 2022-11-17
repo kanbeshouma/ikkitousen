@@ -358,6 +358,12 @@ private:
 
     ////-----敵のホスト権が帰ってきた時の処理-----//
     void ReturnEnemyControl();
+
+    //-----ステージデータを設定-----//
+    void SetSelectStage();
+
+    //-----イベントが終了した人数をカウントする-----//
+    void CountEndEvent();
 private:
     //-----受信データを入れる-----//
     static PlayerAllDataStruct receive_all_data;
@@ -379,4 +385,7 @@ private:
 
     //-----再挑戦を選択した時に増える-----//
     static std::vector<int> select_trying_again;
+
+    //-----イベント終了した時に増える-----//
+    static std::vector<int> end_event;
 };

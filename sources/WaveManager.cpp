@@ -642,7 +642,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
             }
 
             //-----過半数をこえていたら-----//
-            float persons = CorrespondenceManager::Instance().GetConnectedPersons();
+            float persons = static_cast<float>(CorrespondenceManager::Instance().GetConnectedPersons());
             if (persons * 0.5f <= static_cast<float>(votes_cast))
             {
                 //-----過半数を超えたらタイマーを増やす-----//
@@ -655,7 +655,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
                 }
             }
             //-----同じ数なら-----//
-            else if (CorrespondenceManager::Instance().GetConnectedPersons() == votes_cast) clear_state = CLEAR_STATE::VotingResults;
+            if (CorrespondenceManager::Instance().GetConnectedPersons() == votes_cast) clear_state = CLEAR_STATE::VotingResults;
         }
         break;
     case CLEAR_STATE::VotingResults:
