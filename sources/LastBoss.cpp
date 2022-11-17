@@ -7,6 +7,8 @@
 #include"Operators.h"
 #include"DragonBreath.h"
 #include"enemy_hp_gauge.h"
+#include"DebugConsole.h"
+
 LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_,
@@ -208,7 +210,7 @@ void LastBoss::fSetEnemyState(int state)
     if (ai_state == AiState::ShipStart || ai_state == AiState::ShipToHuman || ai_state == AiState::HumanToDragon) return;
 
     //-----それぞれのステートに遷移-----//
-    switch (ai_state)
+    switch (state)
     {
     case AiState::ShipStart: fChangeState(DivideState::ShipStart); break;
     case AiState::ShipIdle: fChangeState(DivideState::ShipIdle); break;

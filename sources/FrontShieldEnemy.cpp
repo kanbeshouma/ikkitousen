@@ -171,7 +171,7 @@ void ShieldEnemy::fSetEnemyState(int state)
     //-----¡‚ÌAI‚Æ“¯‚¶‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
     if (ai_state == state) return;
 
-    switch (ai_state)
+    switch (state)
     {
     case AiState::Start: fChangeState(DivedState::Start); break;
     case AiState::Move: fChangeState(DivedState::Move); break;

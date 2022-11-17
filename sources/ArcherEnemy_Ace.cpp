@@ -63,7 +63,7 @@ void ArcherEnemy_Ace::fSetEnemyState(int state)
     if (ai_state == state) return;
 
     //-----それぞれのステートに遷移-----//
-    switch (ai_state)
+    switch (state)
     {
     case AiState::Start: fChangeState(DivedeState::Start); break;
     case AiState::Idle: fChangeState(DivedeState::Idle); break;
