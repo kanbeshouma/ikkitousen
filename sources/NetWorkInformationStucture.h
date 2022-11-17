@@ -64,6 +64,9 @@ enum CommandList
     //=====イベント時のコマンド=====//
 #pragma region Event
     //-----イベントシーンを見終わった時------//
+    WatchEndEvent,
+
+    //-----イベントを終了する-----//
     EndEvent,
 
 #pragma endregion
@@ -433,6 +436,7 @@ namespace EnemySendData
 #pragma endregion
 
 }
+
 //-----敵のデータ構造体が全て入っている-----//
 struct EnemyAllDataStruct
 {
@@ -474,4 +478,9 @@ namespace TransferEnemyControl
     {
         char data[2]{};
     };
+}
+
+namespace BossSendData
+{
+
 }

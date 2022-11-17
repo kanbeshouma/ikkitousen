@@ -333,4 +333,7 @@ private:
 
     //-----最終決定したステージ-----//
     static WaveManager::STAGE_IDENTIFIER result_next_stage;
+
+    //-----イベントが終了したかどうか-----//
+    static bool end_event_data;
 };

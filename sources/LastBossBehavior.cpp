@@ -124,7 +124,7 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
     fTurnToPlayer(elapsedTime_, 5.0f);
-   if(mTimer>30.0f)
+   if(mTimer>5.0f)
    {
        fChangeState(DivideState::ShipBeamStart);
    }
@@ -359,7 +359,6 @@ void LastBoss::fChangeShipToHumanInit()
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
-    ship_to_human_event = false;
 
     if (game_pad->get_button() & GamePad::BTN_B)
     {
@@ -405,7 +404,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
             //-----カウントを増やす-----//
             mpEnemyManager->EndEnventCount(1);
             end_event = true;
-            SendEndEvent();
+            SendWatchEndEvent();
         }
     }
     else if(CorrespondenceManager::Instance().GetMultiPlay() == false)
@@ -1158,7 +1157,7 @@ void LastBoss::fHumanToDragonInit()
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    human_to_dragon_event = { false };
+
     if (game_pad->get_button() & GamePad::BTN_B)
     {
         mSkipTimer += elapsedTime_ * 0.3f;
@@ -1250,7 +1249,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
             //-----カウントを増やす-----//
             mpEnemyManager->EndEnventCount(1);
             end_event = true;
-            SendEndEvent();
+            SendWatchEndEvent();
         }
     }
     else
@@ -1790,11 +1789,17 @@ void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 }
 
 
+void LastBoss::SendWatchEndEvent()
+{
+    char data = CommandList::WatchEndEvent;
+    if (CorrespondenceManager::Instance().GetHost())CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+    else CorrespondenceManager::Instance().TcpSend(&data, 1);
+}
+
 void LastBoss::SendEndEvent()
 {
     char data = CommandList::EndEvent;
     if (CorrespondenceManager::Instance().GetHost())CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
-    else CorrespondenceManager::Instance().TcpSend(&data, 1);
 }
 
 
@@ -1804,9 +1809,11 @@ void LastBoss::SetEndEvent(bool arg)
     {
     case AiState::ShipToHuman:
         ship_to_human_event = arg;
+        SendEndEvent();
         break;
     case AiState::HumanToDragon:
         human_to_dragon_event = arg;
+        SendEndEvent();
         break;
     default:
         break;

@@ -105,6 +105,14 @@ void SceneMultiGameClient::ReceiveTcpData()
                 game_retry = true;
                 break;
             }
+            //-----イベント終了-----//
+            case CommandList::EndEvent:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                //-----どのイベントが終わったかを取得-----//
+                end_event_data = true;
+                break;
+            }
             default:
                 std::string text = "コマンド :" + std::to_string(data[ComLocation::ComList]);
                 DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);

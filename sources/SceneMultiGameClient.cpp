@@ -74,6 +74,9 @@ WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::result_next_stage = WaveMana
 //-----ゲームリトライ-----//
 bool SceneMultiGameClient::game_retry = false;
 
+
+bool SceneMultiGameClient::end_event_data = false;
+
 SceneMultiGameClient::SceneMultiGameClient()
 {
 }
@@ -359,6 +362,14 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 			mWaveManager.SetEndResultNextStage(result_next_stage);
 			receive_end_result_next_stage = false;
 		}
+
+		//-----ボスのイベントが終わったかどうか-----//
+		if (end_event_data)
+		{
+			mWaveManager.fGetEnemyManager()->EndEvent();
+			end_event_data = false;
+		}
+
 		//-----ステージ中のウェーブの更新処理-----//
 		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
 

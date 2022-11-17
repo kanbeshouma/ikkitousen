@@ -78,7 +78,7 @@ void SceneMultiGameHost::ReceiveTcpData()
 				break;
 			}
 			//-----イベントが終了した時-----//
-			case CommandList::EndEvent:
+			case CommandList::WatchEndEvent:
 			{
 				std::lock_guard<std::mutex> lock(mutex);
 				end_event.emplace_back(1);

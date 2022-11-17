@@ -205,6 +205,7 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
         return;
     }
 
+
     //-----受信した敵のデータを設定する-----//
     for (const auto& data : receive_data.enemy_die_data)
     {
@@ -355,9 +356,6 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
             fSetReceiveEnemyData(elapsedTime_,all_data.cmd[ComLocation::DataKind] ,e_data);
         }
     }
-
-
-
 
     //-----敵のリーダーのデータを設定-----//
     SetEnemyGropeHostData();
@@ -875,6 +873,7 @@ void EnemyManager::fSetIsTutorial(bool Arg_)
     mIsTutorial = Arg_;
 }
 
+
 void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 {
     int spawnCounts = 0;
@@ -1239,7 +1238,7 @@ void EnemyManager::fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_)
 
 void EnemyManager::fCreateRandomMasterEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_, int grope_id)
 {
-    if (mEnemyVec.size() > 30)
+    if (mEnemyVec.size() > 15)
     {
         return;
     }
@@ -1281,7 +1280,7 @@ void EnemyManager::fCreateRandomEnemy(
     GraphicsPipeline& Graphics_,
     DirectX::XMFLOAT3 SeedPosition_, int grope_id, int transfer_id)
 {
-    if(mEnemyVec.size()>30)
+    if(mEnemyVec.size()>15)
     {
         return;
     }
@@ -1834,8 +1833,7 @@ void EnemyManager::EndEnventCount(int count)
     //-----接続した人数と同じならイベントを進める-----//
     if (end_event_count == CorrespondenceManager::Instance().GetConnectedPersons())
     {
-        //----次に備えてカウントを減らす-----//
-        end_event_count = 0;
+        DebugConsole::Instance().WriteDebugConsole("イベントを終了", TextColor::Blue);
 
         for (auto enemy : mEnemyVec)
         {
@@ -1844,6 +1842,19 @@ void EnemyManager::EndEnventCount(int count)
             enemy->SetEndEvent(true);
             break;
         }
+        //----次に備えてカウントを減らす-----//
+        end_event_count = 0;
 
+    }
+}
+
+void EnemyManager::EndEvent()
+{
+    for (auto enemy : mEnemyVec)
+    {
+        //-----ボスじゃなかったらとばす-----//
+        if (enemy->GetEnemyType() != SendEnemyType::Boss) continue;
+        enemy->SetEndEvent(true);
+        break;
     }
 }

@@ -205,6 +205,7 @@ void LastBoss::fSetEnemyState(int state)
     //-----今のAIと同じなら処理をしない-----//
     if (ai_state == state) return;
 
+    if (ai_state == AiState::ShipStart || ai_state == AiState::ShipToHuman || ai_state == AiState::HumanToDragon) return;
 
     //-----それぞれのステートに遷移-----//
     switch (ai_state)
