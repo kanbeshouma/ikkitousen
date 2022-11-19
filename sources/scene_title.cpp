@@ -307,7 +307,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Begin("host_ip_adress");
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 1.0f);
 	ImGui::InputTextAbove("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
-	ImGui::InputTextAbove("Port", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
+	ImGui::InputTextAbove("UdpPort", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::SliderInt("kind", &CorrespondenceManager::Instance().my_player_color, 0, 8);
 	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
 	ImGui::CheckboxAbove("re_name", &re_name);
@@ -315,6 +315,9 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		ImGui::InputTextAbove("name", CorrespondenceManager::Instance().my_name, sizeof(CorrespondenceManager::Instance().my_name));
 	}
+
+	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
+	ImGui::RadioButton("start_matching", start_matching);
 	ImGui::PopItemWidth();
 	ImGui::End();
 #endif // Telecommunications
@@ -776,6 +779,9 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 		//-----マッチング中は選択処理は行えないようにする-----//
 		if (start_matching)
 		{
+			//-----ブロッキング設定をする-----//
+			std::lock_guard<std::mutex> lock(mutex);
+
 			//-----マッチングタイマーを進める-----//
 			standby_matching_timer += 1.0f * elapsed_time;
 			return;
@@ -953,7 +959,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 						// ステージ番号ボス手前から
-						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::BOSS);
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
 						WaveFile::get_instance().save();
 						have_tutorial_state = 1; // チュートリアルなし
 						audio_manager->play_se(SE_INDEX::DECISION);
@@ -1036,7 +1042,7 @@ void SceneTitle::StandbyMatching()
 	CorrespondenceManager::Instance().Login();
 	for (;;)
 	{
-		if (standby_matching_timer > 10.0f)
+		if (standby_matching_timer > 5.0f)
 		{
 			DebugConsole::Instance().WriteDebugConsole("マッチングに失敗しました", TextColor::Red);
 			//-----ブロッキング設定をする-----//
@@ -1044,6 +1050,8 @@ void SceneTitle::StandbyMatching()
 
 			//-----マッチング開始フラグを解除する-----//
 			start_matching = false;
+
+			standby_matching_timer = 0.0f;
 			break;
 		}
 		if (CorrespondenceManager::Instance().LoginReceive())

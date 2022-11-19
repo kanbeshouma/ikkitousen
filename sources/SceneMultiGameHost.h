@@ -236,7 +236,7 @@ private:
 
 private:
     //-----ゲームを開始するかどうか(敵を出現させてもいいか)-----//
-    bool is_start_game{ false };
+    static bool is_start_game;
 
     //ゲームを開始するときの変数
     float game_start_timer{ 0 };

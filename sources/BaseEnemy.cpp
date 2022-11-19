@@ -66,6 +66,9 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     //-----バーニアエフェクトの位置と回転の設定-----//
     fUpdateVernierEffectPos();
 
+    //-----スタンエフェクトの位置更新-----//
+    if (mIsStun)mStunEffect->set_position(effect_manager->get_effekseer_manager(), mPosition);
+
     //-----タプルに保存された更新処理を呼び出す-----//
     //-----マスターなら自分で行動する-----//
     if (master)std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);

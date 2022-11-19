@@ -71,6 +71,9 @@ std::vector<int> SceneMultiGameHost::select_trying_again;
 //-----イベントが終了したことを受信-----//
 std::vector<int> SceneMultiGameHost::end_event;
 
+//-----ゲームを開始したかどうか-----//
+bool SceneMultiGameHost::is_start_game = false;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -369,6 +372,7 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 				player_manager->TransitionStageMoveEnd();
 				tunnel_alpha = 0.0f;
 				during_clear = false;
+				is_start_game = false;
 			}
 		}
 	}

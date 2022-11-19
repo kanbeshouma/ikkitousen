@@ -17,8 +17,8 @@ void SceneMultiGameHost::ReceiveTcpData()
         }
         char data[256]{};
         int size = sizeof(data);
-        //-----通信相手との接続を確立する-----//
-        CorrespondenceManager::Instance().TcpAccept();
+        //-----通信相手との接続を確立する(ゲームが開始していないときだけ)-----//
+        if(is_start_game == false)CorrespondenceManager::Instance().TcpAccept();
 
         //-----データを受信する-----//
         int client_id = CorrespondenceManager::Instance().TcpHostReceive(data, size);

@@ -308,7 +308,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							lockon_suggests.emplace_back(enemy_suggest);
 
 							enemies.at(i)->fSetIsLockOnOfChain(true);
-							enemies.at(i)->fSetStun(true);
+							//enemies.at(i)->fSetStun(true);
 							// reticleê∂ê¨
 							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
 

@@ -354,7 +354,7 @@ int CommunicationSystem::LoginReceive(char* data, int size)
     memcpy(&client_fd, &instance.tcp_fds, sizeof(fd_set));
 
     int  judg = select(static_cast<int>(instance.tcp_sock + 1), &client_fd, NULL, NULL, &tv);
-    if (judg < 0) return -1;
+    if (judg <= 0) return -1;
 
     int recv_size = recv(instance.tcp_sock, data, size, 0);
     //ƒGƒ‰[‚ÌŽž‚ÍSOCKET_ERROR‚ª“ü‚é
