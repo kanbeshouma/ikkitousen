@@ -613,6 +613,7 @@ private:
     void SendEndEvent();
 
     //-----雑魚的を出現させる時のグループid-----//
+    //1からなのはボスが0番目を持っているから
     int count_grope_id{ 1 };
 public:
     void SetEndEvent(bool arg) override;

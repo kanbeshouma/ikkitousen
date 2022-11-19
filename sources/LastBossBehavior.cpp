@@ -152,7 +152,7 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
     fTurnToPlayer(elapsedTime_, 5.0f);
-   if(mTimer>5.0f)
+   if(mTimer>30.0f)
    {
        fChangeState(DivideState::ShipBeamStart);
    }

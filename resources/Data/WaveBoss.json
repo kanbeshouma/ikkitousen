@@ -11,7 +11,7 @@
       "Type": 8,
       "Host" : true,
       "TransferHost" : 0,
-      "GropeId" : 1
+      "GropeId" : 0
     }
   ]
 }
