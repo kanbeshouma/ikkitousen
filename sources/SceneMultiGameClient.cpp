@@ -436,8 +436,6 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	// camera
 	cameraManager->Update(elapsed_time);
 
-	// カメラのビュー行列計算
-	cameraManager->CalcViewProjection(graphics);
 
 	//-----プレイヤーの位置を設定-----//
 	//enemyManager->fSetPlayerPosition(player_manager->GetPosition());
@@ -634,6 +632,8 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 #ifdef SHADOW_MAP
 	shadow_map->set_shadowmap(graphics);
 #endif // SHADOW_MAP
+	// カメラのビュー行列計算
+	cameraManager->CalcViewProjection(graphics);
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{

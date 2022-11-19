@@ -260,6 +260,8 @@ void SceneMultiGameHost::uninitialize()
 
 	mWaveManager.fFinalize();
 	BulletManager::Instance().fFinalize();
+
+	CorrespondenceManager::Instance().SubConnectedPersons();
 }
 
 void SceneMultiGameHost::effect_liberation(GraphicsPipeline& graphics)
@@ -386,8 +388,6 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	// camera
 	cameraManager->Update(elapsed_time);
 
-	// カメラのビュー行列計算
-	cameraManager->CalcViewProjection(graphics);
 
 
 	//-----プレイヤーの位置を設定-----//
@@ -623,6 +623,8 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 #ifdef SHADOW_MAP
 	shadow_map->set_shadowmap(graphics);
 #endif // SHADOW_MAP
+	// カメラのビュー行列計算
+	cameraManager->CalcViewProjection(graphics);
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
@@ -679,10 +681,14 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 	if (mIsBossCamera == false)
 	{
 		//-----ゲームをクリアしたら自分だけを描画する-----//
-		if (mWaveManager.GetClearFlg() || is_game_clear)player_manager->RenderOperationPlayer(graphics, elapsed_time);
+		if (mWaveManager.GetClearFlg() || is_game_clear)
+		{
+			player_manager->RenderOperationPlayer(graphics, elapsed_time);
+		}
 		//-----それ以外は全員描画する-----//
 		else player_manager->Render(graphics, elapsed_time);
 	}
+
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
@@ -1023,6 +1029,7 @@ void SceneMultiGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& grap
 		const auto enemyManager = mWaveManager.fGetEnemyManager();
 		cameraManager->Update(elapsed_time);
 		player_manager->PlayerClearUpdate(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+
 
 		if (set_joint_camera == false)
 		{

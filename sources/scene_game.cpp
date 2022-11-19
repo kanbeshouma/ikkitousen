@@ -603,15 +603,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 };
 
 
-    // font demo
-#if 0
-	{
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-		fonts->gothic->Begin(graphics.get_dc().Get());
-		fonts->gothic->Draw(L"テスト", { 640, 360 }, { 1,1 }, { 0,0,0,1 }, 0, TEXT_ALIGN::MIDDLE);
-		fonts->gothic->End(graphics.get_dc().Get());
-	}
-#endif // 0
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
