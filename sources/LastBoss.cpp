@@ -123,6 +123,11 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_)
 LastBoss::~LastBoss()
 {
     fSaveParam();
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
+    mpBeamBaseEffect->stop(effect_manager->get_effekseer_manager());
+    mpBeamRightEffect->stop(effect_manager->get_effekseer_manager());
+    mpBeamLeftEffect->stop(effect_manager->get_effekseer_manager());
+    mpDieEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -208,18 +213,27 @@ void LastBoss::fSetEnemyState(int state)
     if (ai_state == state) return;
 
     if (ai_state == AiState::ShipStart || ai_state == AiState::ShipToHuman || ai_state == AiState::HumanToDragon) return;
-
+    std::string text = "ReceiveState : " + std::to_string(state);
+    DebugConsole::Instance().WriteDebugConsole(text,TextColor::SkyBlue);
     //-----それぞれのステートに遷移-----//
     switch (state)
     {
-    case AiState::ShipStart: fChangeState(DivideState::ShipStart); break;
+    case AiState::ShipStart:
+    {
+        if(ship_event == false)fChangeState(DivideState::ShipStart);
+        break;
+    }
     case AiState::ShipIdle: fChangeState(DivideState::ShipIdle); break;
     case AiState::ShipAttack: fChangeState(DivideState::ShipAttack); break;
     case AiState::ShipBeamStart: fChangeState(DivideState::ShipBeamStart); break;
     case AiState::ShipBeamCharge: fChangeState(DivideState::ShipBeamCharge); break;
     case AiState::ShipBeamShoot: fChangeState(DivideState::ShipBeamShoot); break;
     case AiState::ShipBeamEnd: fChangeState(DivideState::ShipBeamEnd); break;
-    case AiState::ShipToHuman: fChangeState(DivideState::ShipToHuman); break;
+    case AiState::ShipToHuman:
+    {
+        if (ship_to_human_event == false)fChangeState(DivideState::ShipToHuman);
+        break;
+    }
     case AiState::HumanIdle: fChangeState(DivideState::HumanIdle); break;
     case AiState::HumanMove: fChangeState(DivideState::HumanMove); break;
     case AiState::HumanAllShot: fChangeState(DivideState::HumanAllShot); break;
@@ -237,7 +251,11 @@ void LastBoss::fSetEnemyState(int state)
     case AiState::HumanRush: fChangeState(DivideState::HumanRush); break;
     case AiState::HumanDieStart: fChangeState(DivideState::HumanDieStart); break;
     case AiState::HumanDieMiddle: fChangeState(DivideState::HumanDieMiddle); break;
-    case AiState::HumanToDragon: fChangeState(DivideState::HumanToDragon); break;
+    case AiState::HumanToDragon:
+    {
+        if(human_to_dragon_event == false)fChangeState(DivideState::HumanToDragon);
+        break;
+    }
     case AiState::DragonIdle: fChangeState(DivideState::DragonIdle); break;
     case AiState::DragonDieStart: fChangeState(DivideState::DragonDieStart); break;
     case AiState::DragonDieEnd: fChangeState(DivideState::DragonDieEnd); break;
@@ -736,6 +754,7 @@ void LastBoss::fGuiMenu()
 {
 #ifdef USE_IMGUI
     ImGui::Begin("LastBoss");
+    ImGui::Text("ID%d", object_id);
     ImGui::DragFloat3("Position", &mPosition.x);
     ImGui::DragFloat3("Scale", &mScale.x);
     ImGui::DragFloat4("Orientation", &mOrientation.x);

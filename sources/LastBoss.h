@@ -597,6 +597,9 @@ private:
     //-----イベントが終わったことを知らせるフラグ(マルチプレイ専用)-----//
     bool end_event{ false };
 
+    //-----船のイベント-----//
+    bool ship_event{ false };
+
     //-----船から人型になるアニメーションのイベントが終わったかどうか-----//
     bool  ship_to_human_event = false;
 

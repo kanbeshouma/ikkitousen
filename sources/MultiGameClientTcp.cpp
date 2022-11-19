@@ -105,6 +105,12 @@ void SceneMultiGameClient::ReceiveTcpData()
                 game_retry = true;
                 break;
             }
+            case CommandList::ReturnTitle:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                stage_situation = StageSituation::GameOverFlg;
+                break;
+            }
             //-----イベント終了-----//
             case CommandList::EndEvent:
             {

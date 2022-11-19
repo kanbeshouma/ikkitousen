@@ -153,6 +153,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
         {
             if (enemy->fGetIsBoss() == false)
             {
+                enemy->fDie(graphics_);
                 mRemoveVec.emplace_back(enemy);
             }
         }
@@ -277,6 +278,7 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
         {
             if (enemy->fGetIsBoss() == false)
             {
+                enemy->fDie(graphics_);
                 mRemoveVec.emplace_back(enemy);
             }
         }
@@ -396,6 +398,7 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
         {
             if (enemy->fGetIsBoss() == false)
             {
+                enemy->fDie(graphics_);
                 mRemoveVec.emplace_back(enemy);
             }
         }
@@ -1092,7 +1095,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
-        break;
+    break;
     case EnemyType::Shield_Ace:
     {
         BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
@@ -1102,7 +1105,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
-        break;
+    break;
     case EnemyType::Sword_Ace:
     {
         BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
@@ -1124,18 +1127,18 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
     }
-        break;
+    break;
     case EnemyType::Boss:
-        {
+    {
         BaseEnemy* enemy = new LastBoss(graphics_,
             data.emitter_point,
-            param,this);
+            param, this);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(SendEnemyType::Boss);
         enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
-        }
-        break;
+    }
+    break;
     case EnemyType::Count: break;
     case EnemyType::Tutorial_NoMove:
     {
@@ -1147,9 +1150,19 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
         enemy->SetEnemyGropeData(master, transfer, grope_id);
     }
     break;
-case EnemyType::Boss_Unit:
+    case EnemyType::Boss_Unit:
+    {
+        BaseEnemy* enemy = new BossUnit(graphics_,
+            data.emitter_point,
+            param,
+            BulletManager::Instance().fGetAddFunction());
+        enemy->fSetMaster(master);
+        enemy->fSetGropeId(grope_id);
+        mEnemyVec.emplace_back(enemy);
+    }
     break;
-    default:;
+    default:
+        break;
     }
 
 }
@@ -1179,10 +1192,10 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
     //-----マスターかどうか-----//
     data.grope_data[EnemySendData::EnemySpawnGropeArray::Master] = Source_.master;
 
-    //-----マスターかどうか-----//
+    //-----グループの番号-----//
     data.grope_data[EnemySendData::EnemySpawnGropeArray::GropeId] = Source_.grope_id;
 
-    //-----マスターかどうか-----//
+    //-----マスターの譲渡順-----//
     data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer] = Source_.transfer_host;
 
 
@@ -1663,6 +1676,9 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     enemy = new SwordEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
 
+    //enemy = new BossUnit(graphics_);
+    //mCashEnemyVec.emplace_back(enemy);
+
 }
 
 void EnemyManager::fDeleteCash()
@@ -1686,13 +1702,31 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
 {
     if (mIsReserveBossUnit == false) return;
 
+    int grope_id{ 1 };
+
     for(const auto unit:mUnitEntryPointVec)
     {
+        //-----マルチプレイの時にデータを送信-----//
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            EnemySource data;
+            data.master = true;
+            data.grope_id = grope_id;
+            data.mEmitterPoint = unit;
+            data.mType = EnemyType::Boss_Unit;
+            fSendSpawnData(data);
+        }
+
         BaseEnemy* enemy = new BossUnit(Graphics_,
             unit,
             mEditor.fGetParam(EnemyType::Boss_Unit),
             BulletManager::Instance().fGetAddFunction());
+        enemy->fSetObjectId(object_count);
+        enemy->fSetMaster(true);
+        enemy->fSetGropeId(grope_id);
         mEnemyVec.emplace_back(enemy);
+        grope_id++;
+        object_count++;
     }
 
     mIsReserveBossUnit = false;

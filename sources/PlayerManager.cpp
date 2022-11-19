@@ -47,6 +47,7 @@ void PlayerManager::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& grap
 {
     for (auto& player : players)
     {
+        if (player->GetObjectId() != private_object_id) continue;
         player->PlayerClearUpdate(elapsed_time, graphics, sky_dome, enemies);
     }
 }

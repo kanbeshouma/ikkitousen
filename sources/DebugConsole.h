@@ -10,7 +10,10 @@ enum class TextColor
     White,
     Red,
     Green,
-    Blue
+    Blue,
+    SkyBlue,
+    Pink,
+    Yellow,
 };
 class DebugConsole
 {

@@ -289,6 +289,12 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		receive_stage_num = false;
 	}
 
+	//-----ホストがタイトルに戻るを押した時-----//
+	//強制的にタイトルに戻る//
+	if (stage_situation & StageSituation::GameOverFlg)
+	{
+		SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+	}
 	//-----ゲームクリア、ゲームオーバーでもないとき-----//
 	if (is_game_clear == false && is_game_over == false)
 	{

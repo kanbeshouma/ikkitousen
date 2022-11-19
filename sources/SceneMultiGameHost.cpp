@@ -679,7 +679,7 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 	if (mIsBossCamera == false)
 	{
 		//-----ゲームをクリアしたら自分だけを描画する-----//
-		if (mWaveManager.GetClearFlg())player_manager->RenderOperationPlayer(graphics, elapsed_time);
+		if (mWaveManager.GetClearFlg() || is_game_clear)player_manager->RenderOperationPlayer(graphics, elapsed_time);
 		//-----それ以外は全員描画する-----//
 		else player_manager->Render(graphics, elapsed_time);
 	}
@@ -1056,14 +1056,34 @@ void SceneMultiGameHost::GameClearAct(float elapsed_time, GraphicsPipeline& grap
 			}
 			if (is_set_black == false) brack_back_pram.color.w += 1.0f * elapsed_time;
 
-			if (is_set_black)
+			if (is_set_black && game_over_select_title == false)
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					audio_manager->play_se(SE_INDEX::DECISION);
-					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+
+					//-----タイトルに戻るを選択したことを知らせる-----//
+					game_over_select_title = true;
+
+					char data = CommandList::ReturnTitle;
+					CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+
 				}
 			}
+
+			if (game_over_select_title)
+			{
+				//-----ログアウトしたプレイヤーを削除する-----//
+				DeletePlayer();
+
+				//-----接続者が自分だけになったらゲームを終了-----//
+				if (CorrespondenceManager::Instance().GetConnectedPersons() == 1)
+				{
+					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				}
+
+			}
+
 		}
 	}
 }

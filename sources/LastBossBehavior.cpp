@@ -80,21 +80,48 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     if(mTimer>14.5f&& mTimer < 18.0f)
     {
         const int t = static_cast<int>(mTimer * 30);
-        if (!mIsSpawnEnemy && t % 10 == 0)
+
+        if (CorrespondenceManager::Instance().GetMultiPlay())
         {
-            // ランダムな敵を出現させる
-            auto vec = Math::GetFront(mOrientation);
-            DirectX::XMFLOAT3 pos = mPosition;
-            pos.y = 0.0f;
-            mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id);
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id,1);
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id,2);
-            mIsSpawnEnemy = true;
-            count_grope_id++;
+            //-----マルチプレイの場合はホストだけ出現-----//
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                if (!mIsSpawnEnemy && t % 10 == 0)
+                {
+                    // ランダムな敵を出現させる
+                    auto vec = Math::GetFront(mOrientation);
+                    DirectX::XMFLOAT3 pos = mPosition;
+                    pos.y = 0.0f;
+                    mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id);
+                    mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 1);
+                    mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 2);
+                    mIsSpawnEnemy = true;
+                    count_grope_id++;
+                }
+                if (mIsSpawnEnemy && t % 10 == 9)
+                {
+                    mIsSpawnEnemy = false;
+                }
+            }
         }
-        if (mIsSpawnEnemy && t % 10 == 9)
+        else
         {
-            mIsSpawnEnemy = false;
+            if (!mIsSpawnEnemy && t % 10 == 0)
+            {
+                // ランダムな敵を出現させる
+                auto vec = Math::GetFront(mOrientation);
+                DirectX::XMFLOAT3 pos = mPosition;
+                pos.y = 0.0f;
+                mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id);
+                mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 1);
+                mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 2);
+                mIsSpawnEnemy = true;
+                count_grope_id++;
+            }
+            if (mIsSpawnEnemy && t % 10 == 9)
+            {
+                mIsSpawnEnemy = false;
+            }
         }
     }
 
@@ -108,6 +135,7 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         mCurrentMode = Mode::Ship;
         fChangeState(DivideState::ShipIdle);
+        ship_event = true;
     }
 }
 
@@ -130,12 +158,25 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
    }
 
     const int t = static_cast<int>(mTimer * 10);
-   if (!mIsSpawnEnemy && t % 10 == 0)
-   {
-       // ランダムな敵を出現させる
-       mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, mPlayerPosition, count_grope_id);
-       count_grope_id++;
-       mIsSpawnEnemy = true;
+    if (!mIsSpawnEnemy && t % 10 == 0)
+    {
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                // ランダムな敵を出現させる
+                mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, mPlayerPosition, count_grope_id);
+                count_grope_id++;
+                mIsSpawnEnemy = true;
+            }
+        }
+        else
+        {
+            // ランダムな敵を出現させる
+            mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, mPlayerPosition, count_grope_id);
+            count_grope_id++;
+            mIsSpawnEnemy = true;
+        }
    }
    if(mIsSpawnEnemy && t % 10 == 9)
    {
@@ -907,10 +948,8 @@ void LastBoss::fHumanSpBeamShootInit()
 
     mRightPointer.fSetAlpha(0.0f);
     mLeftPointer.fSetAlpha(0.0f);
-
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
-
     mpBeamRightEffect->play(effect_manager->get_effekseer_manager(), mpTurretRight->fGetPosition());
     mpBeamRightEffect->set_scale(effect_manager->get_effekseer_manager(), { 5.0f,5.0f,5.0f });
     mpBeamLeftEffect->play(effect_manager->get_effekseer_manager(), mpTurretLeft->fGetPosition());
@@ -979,7 +1018,6 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
 
     mHumanBeamTarget = Math::lerp(mHumanBeamTarget, mPlayerPosition,
         3.0f * elapsedTime_);
-
     mAttackCapsule.mBottom = mPosition;
     mAttackCapsule.mTop = mHumanBeamTarget;
     mAttackCapsule.mRadius = 7.0f;

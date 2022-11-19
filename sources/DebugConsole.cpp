@@ -38,6 +38,9 @@ void DebugConsole::WriteDebugConsole(std::string text, TextColor color)
     case TextColor::Red:code = FOREGROUND_RED; break;
     case TextColor::Green: code = FOREGROUND_GREEN; break;
     case TextColor::Blue: code = FOREGROUND_BLUE; break;
+    case TextColor::SkyBlue: code = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+    case TextColor::Pink: code = FOREGROUND_RED | FOREGROUND_BLUE; break;
+    case TextColor::Yellow: code = FOREGROUND_GREEN | FOREGROUND_RED; break;
     default:
         break;
     }
