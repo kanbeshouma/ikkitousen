@@ -34,6 +34,8 @@ void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDo
     for (auto& player : players)
     {
         player->SetHealth(multiplay_current_health);
+        //-----‚à‚µƒIƒvƒVƒ‡ƒ“’†‚È‚çŽ©•ª‚Ìˆ—‚ð‚Æ‚Î‚·-----//
+        if (player->GetObjectId() == private_object_id && option) continue;
         player->Update(elapsed_time, graphics, sky_dome, enemies);
     }
 #ifdef USE_IMGUI

@@ -94,9 +94,12 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
         //-----ロックオンしている敵の位置を設定-----//
         LockOn();
 
+        //-----位置矯正-----//
         PlayerJustification(elapsed_time, position);
 
+        //-----プレイヤーの方向を設定-----//
         GetPlayerDirections();
+
         //プレイヤーのパラメータの変更
         InflectionParameters(elapsed_time);
 

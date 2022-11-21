@@ -304,7 +304,6 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (option->get_validity())
 	{
 		option->update(graphics, elapsed_time);
-		return;
 	}
 	else
 	{
@@ -314,9 +313,9 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 			audio_manager->play_se(SE_INDEX::SELECT);
 			option->initialize();
 			option->set_validity(true);
-			return;
 		}
 	}
+	player_manager->SetOption(option->get_validity());
 
 	//-----ゲームスタートするかどうかの判定-----//
 	if(is_start_game == false)StartGameUi(elapsed_time);

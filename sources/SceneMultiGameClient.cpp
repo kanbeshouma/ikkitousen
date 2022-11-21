@@ -341,7 +341,6 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	if (option->get_validity())
 	{
 		option->update(graphics, elapsed_time);
-		return;
 	}
 	else
 	{
@@ -351,9 +350,9 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 			audio_manager->play_se(SE_INDEX::SELECT);
 			option->initialize();
 			option->set_validity(true);
-			return;
 		}
 	}
+	player_manager->SetOption(option->get_validity());
 
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();

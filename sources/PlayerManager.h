@@ -203,9 +203,14 @@ private:
     //-----マルチプレイの時のプレイヤー1人分の体力-----//
     const int OnePersonMultiHealth = 100;
 
-
     //-----無敵時間-----//
     float invincible_timer{};
+
+    //-----オプション中かどうか-----//
+    bool option{ false };
+public:
+    void SetOption(bool arg) { option = arg; }
+
 public:
     int GetMultiPlayHealth() { return multiplay_current_health; }
     void SetMultiPlayHealth(int arg) { multiplay_current_health = arg; }
