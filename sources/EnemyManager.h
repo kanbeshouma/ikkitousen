@@ -257,7 +257,7 @@ private:
     std::vector<EnemySource> mReserveVec{};
     //--------------------<ボス関連の変数>--------------------//
     LastBoss::Mode mCurrentMode{ LastBoss::Mode::None };
-    bool mIsBossEvent{};// イベント中
+    //bool mIsBossEvent{};// イベント中
     DirectX::XMFLOAT3 mBossCameraEye{ 0.0f,0.0f,-80.0f };
     DirectX::XMFLOAT3 mBossCameraFocus{0.0f,0.0f,0.0f};
 

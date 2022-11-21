@@ -2,7 +2,7 @@
 
 #include"ClientPlayer.h"
 #include"DebugConsole.h"
-
+//model
 void ClientPlayer::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
     (this->*player_activity)(elapsed_time,sky_dome);
@@ -175,10 +175,10 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                     ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
-                //覚醒状態の時の回避アニメーションの設定
-                if (is_awakening)model->play_animation(anim_parm,AnimationClips::AwakingAvoidance, false, true);
-                //通常状態の時のアニメーションの設定
-                else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
+                ////覚醒状態の時の回避アニメーションの設定
+                //if (is_awakening)model->play_animation(anim_parm,AnimationClips::AwakingAvoidance, false, true);
+                ////通常状態の時のアニメーションの設定
+                //else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
                 avoidance_boost_time = 0.0f;
             }
         }

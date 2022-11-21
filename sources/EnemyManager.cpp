@@ -449,6 +449,9 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
     for (const auto enemy : mEnemyVec)
     {
         if (enemy->fGetMaster() == false) continue;
+
+        if (enemy->GetEnemyType() == SendEnemyType::Boss && fGetIsEventCamera()) continue;
+
         //-----オブジェクト番号設定-----//
         enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
@@ -468,6 +471,10 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
 
         data_set_count++;
     }
+
+    //-----送るデータが無いときはここで終わる-----//
+    if (data_set_count <= 0) return;
+
     //-----データサイズを設定-----//
     data[ComLocation::Other] = data_set_count;
 
