@@ -261,6 +261,10 @@ private:
     DirectX::XMFLOAT3 mBossCameraEye{ 0.0f,0.0f,-80.0f };
     DirectX::XMFLOAT3 mBossCameraFocus{0.0f,0.0f,0.0f};
 
+    bool start_boss_rush{ false };
+public:
+    void SetStartBossRush(bool arg) { start_boss_rush = arg; }
+private:
     // チュートリアルの使用
     bool mIsTutorial{ false };
 

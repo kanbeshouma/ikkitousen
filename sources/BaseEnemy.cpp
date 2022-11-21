@@ -92,7 +92,7 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
 {
-    if(mIsInCamera)
+    if (mIsInCamera)
     {
         return;
     }
@@ -112,8 +112,11 @@ void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
         transform.emplace_back(world);
     }
 
-        const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
-        mpModel->render(Graphics_.get_dc().Get(), mAnimPara, transform.at(0), color, mDissolve);
+    const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
+
+    mpModel->render(Graphics_.get_dc().Get(), mAnimPara, transform.at(0), color, mDissolve);
+    const DirectX::XMFLOAT4X4 u = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+
 }
 
 bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_)

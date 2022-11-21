@@ -1329,6 +1329,8 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
    {
        return;
    }
+   //-----ボスラッシュ攻撃のフラグoff-----//
+   mpEnemyManager->SetStartBossRush(false);
 
     std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
@@ -1545,6 +1547,9 @@ void LastBoss::fDragonRushWaitInit()
     mTimer = mkDragonRushWaitTime;
     //-----ステート設定-----//
     ai_state = AiState::DragonRushWait;
+
+    //-----ボスラッシュ攻撃のフラグon-----//
+    mpEnemyManager->SetStartBossRush(true);
 
 }
 
@@ -1868,9 +1873,10 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mDissolve = (std::max)(0.0f, mDissolve);
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
+
     mpModel->render(graphics.get_dc().Get(), mAnimPara, world, color, mDissolve,0.0f,{1.0f,1.0f,1.0f,1.0f},0.8f,cameraTuple);
 
-
+    //mRushVec
 
     //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
 

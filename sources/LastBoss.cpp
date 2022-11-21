@@ -53,16 +53,20 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
 
 
     // ƒ‰ƒbƒVƒ…‚·‚é“G‚ð“o˜^
+    //-----•`‰æ‚Íƒ}ƒl[ƒWƒƒ[‚Ås‚¤-----//
     DirectX::XMFLOAT3 entryPos{ 0.0f,500.0f,0.0f };
     auto  enemy = new BossRushUnit(Graphics_,entryPos);
+    enemy->SetEnemyType(SendEnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy);
     mRushVec.emplace_back(enemy);
 
     auto  enemy1 = new BossRushUnit(Graphics_,entryPos);
+    enemy1->SetEnemyType(SendEnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy1);
     mRushVec.emplace_back(enemy1);
 
     auto  enemy2 = new BossRushUnit(Graphics_,entryPos);
+    enemy2->SetEnemyType(SendEnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy2);
     mRushVec.emplace_back(enemy2);
 
@@ -755,6 +759,7 @@ void LastBoss::fGuiMenu()
 #ifdef USE_IMGUI
     ImGui::Begin("LastBoss");
     ImGui::Text("ID%d", object_id);
+    ImGui::Text("Type%d", type);
     ImGui::DragFloat3("Position", &mPosition.x);
     ImGui::DragFloat3("Scale", &mScale.x);
     ImGui::DragFloat4("Orientation", &mOrientation.x);

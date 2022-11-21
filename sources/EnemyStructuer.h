@@ -73,6 +73,7 @@ enum SendEnemyType
     Spear,
     Shield,
     Boss,
+    BossRush,
 };
 
 

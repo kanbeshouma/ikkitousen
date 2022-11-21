@@ -36,7 +36,6 @@ public:
     BossRushUnit(GraphicsPipeline& Graphics_,const DirectX::XMFLOAT3& EntryPosition);
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-
     // ƒfƒBƒ]ƒ‹ƒu‚ÅŒ»‚ê‚é
     void fStartAppear(const DirectX::XMFLOAT3& EntryPosition);
 

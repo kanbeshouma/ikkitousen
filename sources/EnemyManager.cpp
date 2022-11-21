@@ -1236,6 +1236,8 @@ void EnemyManager::fEnemiesRender(GraphicsPipeline& graphics_)
 {
     for (const auto enemy : mEnemyVec)
     {
+        //-----ボスラッシュ攻撃のモデルが来た時に攻撃のフラグがtrueじゃなかったらとばす-----//
+        if (enemy->GetEnemyType() == SendEnemyType::BossRush && start_boss_rush == false) continue;
         enemy->fRender(graphics_);
     }
 }

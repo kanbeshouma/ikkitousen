@@ -16,7 +16,7 @@
 #include <unordered_map>
 
 #include "constants.h"
-
+#include"DebugConsole.h"
 namespace DirectX
 {
     template<class T>
@@ -407,6 +407,7 @@ public:
     {
         for (const mesh& mesh : meshes)
         {
+
             for (mesh_tuple tup : std::initializer_list<mesh_tuple>{ mesh_tuples... })
             {
                 if (mesh.name == std::get<0>(tup))
