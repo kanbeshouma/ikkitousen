@@ -330,13 +330,15 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
 
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-
+    //-----死んだ時-----//
     if (condition_state == ConditionState::Die)
     {
         if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
         ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
         return;
     }
+
+    //-----ボスのイベント中-----//
     if (boss_camera)
     {
         player_move_effec_r->stop(effect_manager->get_effekseer_manager());
@@ -347,6 +349,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         is_lock_on = false;
         return;
     }
+
     //チェイン攻撃から戻ってきたときにカメラが戻ってくるまでは止めておく
     change_normal_timer -= 1.0f * elapsed_time;
 
@@ -369,7 +372,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 #endif // USE_IMGUI
 
 #endif // 0
+
+    //-----プレイヤーのアニメーションごとの更新処理-----//
     ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
+
     //クリア演出中
     if (during_clear)
     {
@@ -384,6 +390,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
         player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
 
+        //-----チェイン攻撃の時のビネット-----//
         if (during_chain_attack())
         {
             if (is_chain_attack_aftertaste_timer < CHRONOSTASIS_TIME)
@@ -399,6 +406,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             PostEffect::chronostasis_effect(chronostasis_scope, chronostasis_saturation);
         }
+
         // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
         if (during_chain_attack() && !during_chain_attack_end())
         {
@@ -413,6 +421,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 PostEffect::clear_post_effect();
             }
         }
+
+        //-----回避を押しっぱなしでできないようにする処理-----//
         if (avoidance_buttun)
         {
             if (game_pad->get_trigger_R() < 0.1f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
@@ -420,18 +430,25 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 avoidance_buttun = false;
             }
         }
+
         //回り込み回避のリキャストの音
         if (behaind_avoidance_recharge == true && behaind_avoidance_cool_time < 0.0f)
         {
             audio_manager->play_se(SE_INDEX::BEHAIND_RECHARGE);
             behaind_avoidance_recharge = false;
         }
+
+        //-----周り込み回避の音を止める-----//
         if(behaind_avoidance_recharge == false && behaind_avoidance_cool_time < -1.0f) audio_manager->stop_se(SE_INDEX::BEHAIND_RECHARGE);
+
+
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
+            //周り込み回避をしていない時
             if (is_behind_avoidance == false)
             {
+                //-----チェイン攻撃を始める-----//
                 if (change_normal_timer < 0 && game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
                 {
                     transition_chain_behavior();
@@ -441,11 +458,17 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                         SendTransferHost();
                     }
                 }
+
                 //ロックオン
                 LockOn();
+
                 //カメラリセット
                 CameraReset();
+
+                //-----プレイヤーの位置矯正-----//
                 PlayerJustification(elapsed_time, position);
+
+                //-----ターゲットにしている敵に引っ付かないようにする処理-----//
                 if (target_enemy != nullptr)
                 {
                     PlayerEnemyJustification(elapsed_time, position, 1.6f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
@@ -460,10 +483,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             break;
         }
 
+        //-----プレイヤーの向いている方向を取得-----//
         GetPlayerDirections();
+
         //プレイヤーのパラメータの変更
         InflectionParameters(elapsed_time);
 
+        //-----剣の軌跡の更新-----//
+        //-----覚醒時-----//
         if (is_awakening)
         {
             for (int i = 0; i < 2; ++i)
@@ -472,13 +499,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 mSwordTrail[i].fEraseTrailPoint(elapsed_time);
             }
         }
+        //-----非覚醒時-----//
         else
         {
             mSwordTrail[0].fUpdate(elapsed_time, 10);
             mSwordTrail[0].fEraseTrailPoint(elapsed_time);
         }
 
-
+        //-----死んでいない時-----//
         if (is_dying_update == false)
         {
             //覚醒状態の時は
@@ -494,12 +522,11 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             }
         }
 
-
-
-        LerpCameraTarget(elapsed_time);
+        //-----UIのアップデート-----//
         player_config->update(graphics, elapsed_time);
         player_condition->update(graphics, elapsed_time);
 
+        //-----プレイヤーのデータを送信-----//
         SendPlayerData(elapsed_time);
     }
 
