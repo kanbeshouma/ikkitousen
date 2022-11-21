@@ -1866,6 +1866,10 @@ void LastBoss::SetEndEvent(bool arg)
 
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
+    if (mIsInCamera)
+    {
+        return;
+    }
 
     SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 1);
 

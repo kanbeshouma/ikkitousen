@@ -175,10 +175,10 @@ void ClientPlayer::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                     ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
-                ////覚醒状態の時の回避アニメーションの設定
-                //if (is_awakening)model->play_animation(anim_parm,AnimationClips::AwakingAvoidance, false, true);
-                ////通常状態の時のアニメーションの設定
-                //else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
+                //覚醒状態の時の回避アニメーションの設定
+                if (is_awakening)model->play_animation(anim_parm,AnimationClips::AwakingAvoidance, false, true);
+                //通常状態の時のアニメーションの設定
+                else model->play_animation(anim_parm, AnimationClips::Avoidance, false, true);
                 avoidance_boost_time = 0.0f;
             }
         }
@@ -711,12 +711,10 @@ void ClientPlayer::Awaiking()
     if (behavior_state == Behavior::Normal)
     {
         //ボタン入力
-        if (game_pad->get_button() & GamePad::BTN_A)
+        if (button_down & GamePad::BTN_A)
         {
-            if (combo_count >= MAX_COMBO_COUNT && is_awakening == false)
-            {
-                TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
-            }
+            combo_count = MAX_COMBO_COUNT;
+            TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
         }
         if (is_awakening && combo_count <= 0)
         {

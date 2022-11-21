@@ -706,6 +706,11 @@ void ClientPlayer::InflectionParameters(float elapesd_time)
     invincible_timer -= 1.0f * elapesd_time;
     //回り込み回避のクールタイム
     behaind_avoidance_cool_time -= 1.0f * elapesd_time;
+    if (is_awakening)
+    {
+        combo_count -= elapesd_time * 5.0f;
+    }
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
 }
 
@@ -908,7 +913,7 @@ void ClientPlayer::SetAccelerationVelocity()
         velocity.y = v.y * 100.0f;
         velocity.z = v.z * 100.0f;
 
-        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);combo_count
     }
 }
 

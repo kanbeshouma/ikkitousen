@@ -899,6 +899,8 @@ void Player::Awaiking()
         {
             if (combo_count >= MAX_COMBO_COUNT&& is_awakening == false)
             {
+                //-----データ送信-----//
+                SendPlayerActionData(GamePad::BTN_A, GetInputMoveVec());
                 TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
             }
         }
