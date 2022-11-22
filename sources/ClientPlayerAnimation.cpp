@@ -5,7 +5,19 @@
 //model
 void ClientPlayer::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
+    switch (behavior_state)
+    {
+    case ClientPlayer::Behavior::Normal:
     (this->*player_activity)(elapsed_time,sky_dome);
+        break;
+    case ClientPlayer::Behavior::Chain:
+        if (during_chain_attack() == false)(this->*chain_activity)(elapsed_time, sky_dome);
+        (this->*player_chain_activity)(elapsed_time, enemies, Graphics_);
+        break;
+    default:
+        break;
+    }
+
 }
 
 void ClientPlayer::IdleUpdate(float elapsed_time, SkyDome* sky_dome)

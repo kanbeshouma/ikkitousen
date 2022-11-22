@@ -218,6 +218,8 @@ public:
         };
         std::vector<subset> subsets;
 
+
+
         template<class T>
         void serialize(T& archive)
         {
@@ -229,7 +231,9 @@ public:
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1 };
+
     private:
+        bool is_render_mesh{ true };
         skeleton bind_pose;
         Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer;
         Microsoft::WRL::ComPtr<ID3D11Buffer> index_buffer;
@@ -309,13 +313,13 @@ public:
         const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
         const DirectX::XMFLOAT4& emissive_color, float glow_thickness, A... mesh_tuples)
     {
-        for (const mesh& mesh : meshes)
+        for (mesh& mesh : meshes)
         {
             //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
             //{
             //    continue;
             //}
-
+            //std::tuple<メッシュ名前,ディゾルブの閾値>
             for (mesh_tuple tup : std::initializer_list<mesh_tuple>{ mesh_tuples... })
             {
                 if (mesh.name == std::get<0>(tup))
@@ -328,6 +332,12 @@ public:
                     geometry_constants->data.dissolve_threshold.x = threshold;
                 }
             }
+            //-----メッシュが消えている場合は描画をしないようにする-----//
+            if (geometry_constants->data.dissolve_threshold.x >= 1.0f) mesh.is_render_mesh = false;
+            else mesh.is_render_mesh = true;
+
+            if (mesh.is_render_mesh == false) continue;
+
             geometry_constants->data.dissolve_threshold.y = glow_time;
             geometry_constants->data.emissive_color = emissive_color;
             geometry_constants->data.glow_thickness = glow_thickness;

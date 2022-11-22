@@ -218,6 +218,7 @@
     <ClCompile Include="sources\CannonballBullet.cpp" />
     <ClCompile Include="sources\ClientPlayer.cpp" />
     <ClCompile Include="sources\ClientPlayerAnimation.cpp" />
+    <ClCompile Include="sources\ClientPlayerChain.cpp" />
     <ClCompile Include="sources\ClientPlayerMove.cpp" />
     <ClCompile Include="sources\ClientPlayerTransitionAnimation.cpp" />
     <ClCompile Include="sources\CommunicationSystem.cpp" />

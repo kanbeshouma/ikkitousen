@@ -91,11 +91,31 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     //クリア演出中じゃないとき
     else
     {
-        //-----ロックオンしている敵の位置を設定-----//
-        LockOn();
 
-        //-----位置矯正-----//
-        PlayerJustification(elapsed_time, position);
+        switch (behavior_state)
+        {
+        case ClientPlayer::Behavior::Normal:
+            //-----ロックオンしている敵の位置を設定-----//
+            LockOn();
+            //-----位置矯正-----//
+            PlayerJustification(elapsed_time, position);
+
+            //-----チェイン攻撃に変わる-----//
+            if (button_down & GamePad::BTN_LEFT_SHOULDER)
+            {
+                TransitionChainBehavior();
+                DebugConsole::Instance().WriteDebugConsole("チェイン攻撃開始", TextColor::SkyBlue);
+            }
+
+            break;
+        case ClientPlayer::Behavior::Chain:
+
+            break;
+        default:
+            break;
+        }
+
+
 
         //-----プレイヤーの方向を設定-----//
         GetPlayerDirections();
@@ -488,6 +508,7 @@ void ClientPlayer::ChangePlayerJustificationLength()
 
 void ClientPlayer::SetReceiveData(PlayerMoveData data)
 {
+    if (behavior_state == Behavior::Chain) return;
     //-----入力データ設定する-----//
     SetMoveVecter(data.move_vec);
 
@@ -501,6 +522,8 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
 
 void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
 {
+    if (behavior_state == Behavior::Chain) return;
+
     using namespace DirectX;
 
     //position = data.position;

@@ -648,6 +648,9 @@
     <ClCompile Include="sources\MasterEnemyDataAdmin.cpp">
       <Filter>Sources\Character\enemy\MasterEnemyData</Filter>
     </ClCompile>
+    <ClCompile Include="sources\ClientPlayerChain.cpp">
+      <Filter>Sources\Character\player\ClientPlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">

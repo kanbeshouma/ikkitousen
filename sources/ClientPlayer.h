@@ -663,4 +663,99 @@ public:
     void SetPlayerToClientLength(float l)override { player_length = l; }
 private:
     void LockOn();
+private:
+    //--------< 変数 >--------//
+    struct LockOnSuggest
+    {
+        DirectX::XMFLOAT3 position{};
+        bool detection = false;
+    };
+    static constexpr int STEPS = 3;
+    static constexpr float AddAttackEndCameraTimer = 1.0f;
+
+    static constexpr float CHRONOSTASIS_TIME = 0.3f;
+    float chronostasis_scope = 0.8f;
+    float chronostasis_saturation = 1.0f;
+
+
+    float SEARCH_TIME = 0.5f;
+    bool setup_search_time = false;
+    float search_time = SEARCH_TIME;
+    int transit_index = 0;
+    std::vector<int> chain_lockon_enemy_indexes; // ロックオンされたの敵のインデックス
+    std::vector<LockOnSuggest> lockon_suggests;  // プレイヤーとロックオンされた敵の情報を持つソートするための情報
+    std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
+    std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
+    std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
+    std::map<std::unique_ptr<Reticle>, BaseEnemy*> reticles; // チェイン攻撃のreticles
+    bool is_chain_attack = false; // ロックオン完了から攻撃終了までtrue
+    bool is_chain_attack_aftertaste = false; // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+    float is_chain_attack_aftertaste_timer = 0;
+    static constexpr float ROCKON_FRAME = 0.3f;
+    float frame_time = 0.0f;
+    float frame_scope = 0.5f;
+    float frame_alpha = 0.0f;
+    bool chain_cancel = false;
+    enum class ATTACK_TYPE
+    {
+        FIRST,
+        SECOND,
+        THIRD,
+    };
+    ATTACK_TYPE attack_type = ATTACK_TYPE::FIRST;
+
+
+    //-----チェイン攻撃-----//
+        //関数ポインタ
+    typedef void(ClientPlayer::* PlayerChainActivity)(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
+    //関数ポインタの変数
+    PlayerChainActivity player_chain_activity = &ClientPlayer::ChainSearchUpdate;
+
+    // 索敵
+    void ChainSearchUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies,
+        GraphicsPipeline& graphics_);
+    void TransitionChainSearch();
+    // ロックオン準備
+    void ChainLockonBeginUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
+    void TransitionChainLockonBegin();
+    // ロックオン
+    void ChainLockonUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
+    void TransitionChainLockon();
+    // 移動
+    void ChainMoveUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
+    void TransitionChainMove();
+    // 攻撃
+    void ChainAttackUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies,
+        GraphicsPipeline& Graphics_);
+    void TransitionChainAttack();
+    // 指定したポイント全てを通る関数
+    bool Transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
+        float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f);
+    // 進んでる方向に回転する関数
+    void Rotate(float elapsed_time, int index, const std::vector<DirectX::XMFLOAT3>& points);
+
+    // behaviorの遷移関数
+    void TransitionChainBehavior()
+    {
+        behavior_state = Behavior::Chain;
+        TransitionChainSearch();
+    }
+    void TransitionNormalBehavior()
+    {
+        behavior_state = Behavior::Normal;
+    }
+    void ChainParmReset();
+
+private:
+    //関数ポインタ
+    typedef void(ClientPlayer::* PlayerChainMoveActivity)(float elapsed_time, SkyDome* sky_dome);
+    PlayerChainMoveActivity chain_activity = &ClientPlayer::ChainIdleUpdate;
+    //待機アニメーション中の更新処理
+    void ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //移動アニメーション中の更新処理
+    void ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //待機に遷移
+    void TransitionChainIdle(float blend_second = 0.3f);
+    //移動に遷移
+    void TransitionChainMove(float blend_second = 0.3f);
 };
