@@ -336,4 +336,8 @@ private:
 
     //-----イベントが終了したかどうか-----//
     static bool end_event_data;
+
+    //-----チェイン攻撃の時の敵の番号データ-----//
+    static std::vector<char> chain_rock_on_enemy_id;
+
 };

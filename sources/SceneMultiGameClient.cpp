@@ -74,8 +74,11 @@ WaveManager::STAGE_IDENTIFIER SceneMultiGameClient::result_next_stage = WaveMana
 //-----ゲームリトライ-----//
 bool SceneMultiGameClient::game_retry = false;
 
-
+//-----イベントが終了したかどうか-----//
 bool SceneMultiGameClient::end_event_data = false;
+
+//-----チェイン攻撃の時の敵の番号データ-----//
+std::vector<char> SceneMultiGameClient::chain_rock_on_enemy_id;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {

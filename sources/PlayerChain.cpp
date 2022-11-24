@@ -147,6 +147,8 @@ void Player::chain_parm_reset()
 	return_enemy_control = true;
 	permit_chain_attack = false;
 	chain_cancel = true;
+	//-----敵の番号を削除-----//
+	rock_on_enemy_id.clear();
 	transition_chain_search(); /*リセット*/
 	transition_normal_behavior();
 }
@@ -184,7 +186,7 @@ void Player::transition_chain_search()
 	frame_scope = 0.5f;
 	frame_alpha = 0.0f;
 
-	SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
+	//SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
 
 	player_chain_activity = &Player::chain_search_update;
 }
@@ -312,9 +314,16 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							lockon_suggests.emplace_back(enemy_suggest);
 
 							enemies.at(i)->fSetIsLockOnOfChain(true);
-							//enemies.at(i)->fSetStun(true);
+							enemies.at(i)->fSetStun(true);
 							// reticle生成
 							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
+
+							//-----マルチプレイの時にだけ入る-----//
+							if (CorrespondenceManager::Instance().GetMultiPlay())
+							{
+								//-----敵の番号を保存-----//
+								rock_on_enemy_id.emplace_back(enemies.at(i)->fGetObjectId());
+							}
 
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
@@ -439,6 +448,13 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							// reticle生成
 							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
 
+							//-----マルチプレイの時にだけ入る-----//
+							if (CorrespondenceManager::Instance().GetMultiPlay())
+							{
+								//-----敵の番号を保存-----//
+								rock_on_enemy_id.emplace_back(enemies.at(i)->fGetObjectId());
+							}
+
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
 					}
@@ -501,6 +517,38 @@ void Player::transition_chain_lockon_begin()
 	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
+
+	//-----マルチプレイの時にだけ入る-----//
+	if (CorrespondenceManager::Instance().GetMultiPlay())
+	{
+		//-----敵の番号を送信-----//
+		char data[128]{};
+		data[ComLocation::ComList] = CommandList::Update;
+		data[ComLocation::UpdateCom] = UpdateCommand::ChainAttackLockOnEnemy;
+		//----3番目にデータのサイズを設定-----//
+		data[ComLocation::DataKind] = static_cast<char>(rock_on_enemy_id.size());
+
+		DebugConsole::Instance().WriteDebugConsole("敵番号送信",TextColor::Pink);
+
+		//-----敵の番号データを設定-----//
+		for (int i = 0; i < rock_on_enemy_id.size(); i++)
+		{
+			data[ComLocation::Other + i] = rock_on_enemy_id.at(i);
+			std::string  t = std::to_string(rock_on_enemy_id.at(i));
+			DebugConsole::Instance().WriteDebugConsole(t, TextColor::Pink);
+		}
+
+		//-----データを送る時に絶対に入っているデータサイズ-----//
+		//(コマンドと敵の番号のデータサイズ)
+		const int com_fixed_value = 3;
+
+		int size = com_fixed_value + static_cast<int>(rock_on_enemy_id.size());
+
+		//-----データを送信-----//
+		CorrespondenceManager::Instance().UdpSend((char*)data, size);
+	}
+
+	rock_on_enemy_id.clear();
 
 	// velocityクリア
 	velocity = {};

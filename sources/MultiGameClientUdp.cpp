@@ -81,6 +81,31 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
         receive_all_player_data.player_health_data.emplace_back(*p_data);
         break;
     }
+    //-----チェイン攻撃の敵の番号データ-----//
+    case UpdateCommand::ChainAttackLockOnEnemy:
+    {
+        //-----敵の番号データのサイズを取得-----//
+        int e_data_size = data[ComLocation::DataKind];
+
+        //-----データをずらす-----//
+        data += 3;
+
+        //-----データ分配列を確保する-----//
+        chain_rock_on_enemy_id.resize(e_data_size);
+
+        DebugConsole::Instance().WriteDebugConsole("敵番号受信",TextColor::Pink);
+
+        for (int i = 0; i < e_data_size; i++)
+        {
+            chain_rock_on_enemy_id.at(i) = (char)*data;
+            data += sizeof(char);
+            std::string  t = std::to_string(chain_rock_on_enemy_id.at(i));
+            DebugConsole::Instance().WriteDebugConsole(t, TextColor::Pink);
+        }
+        chain_rock_on_enemy_id.clear();
+
+        break;
+    }
     //-----敵の出現データ-----//
     case UpdateCommand::EnemySpawnCommand:
     {

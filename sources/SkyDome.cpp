@@ -12,7 +12,7 @@ SkyDome::SkyDome(GraphicsPipeline& graphics)
         "sky.fbm\\sky_red.png",
     };
 
-    model = std::make_shared<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\stage\\sky.fbx", sub_colors, true, 0.0f);
+    model = std::make_shared<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\stage\\sky.fbx", sub_colors, false, 0.0f);
 
     field = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\field.fbx", true);
 

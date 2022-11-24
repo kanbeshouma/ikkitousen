@@ -87,6 +87,9 @@ enum UpdateCommand
     //-----プレイヤーの体力データ-----//
     PlayerHealthCommand,
 
+    //-----チェイン攻撃時にロックオンした敵の番号データ-----//
+    ChainAttackLockOnEnemy,
+
     //-----敵の出現データ-----//
     EnemySpawnCommand,
 
