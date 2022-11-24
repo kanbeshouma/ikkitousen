@@ -80,6 +80,21 @@ SceneMultiGameHost::SceneMultiGameHost()
 
 SceneMultiGameHost::~SceneMultiGameHost()
 {
+	char data = CommandList::ReturnTitle;
+	CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
+
+	for (;;)
+	{
+		//-----ログアウトしたプレイヤーを削除する-----//
+		DeletePlayer();
+
+		//-----接続者が自分だけになったらfor文をぬける-----//
+		if (CorrespondenceManager::Instance().GetConnectedPersons() == 1)
+		{
+			break;
+		}
+	}
+
 	end_tcp_thread = true;
 
 	//-----TCPスレッドを終了する-----//

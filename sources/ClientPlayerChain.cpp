@@ -48,7 +48,7 @@ void ClientPlayer::TransitionChainSearch()
 
 void ClientPlayer::ChainLockonBeginUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
-	if (model->end_of_animation())
+	if (model->end_of_animation(anim_parm))
 	{
 		DebugConsole::Instance().WriteDebugConsole("ロックオン開始", TextColor::SkyBlue);
 		TransitionChainLockon();
@@ -61,8 +61,8 @@ void ClientPlayer::TransitionChainLockonBegin()
 	is_chain_attack_aftertaste = true;
 	is_chain_attack_aftertaste_timer = 0;
 
-	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
-	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
+	if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingChargeInit, false, true, 0.1f, 3.0f); }
+	else { model->play_animation(anim_parm, AnimationClips::ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &ClientPlayer::ChainLockonBeginUpdate;
 
 	// velocityクリア
@@ -223,8 +223,8 @@ void ClientPlayer::TransitionChainLockon()
 	curve.interpolate(interpolated_way_points, STEPS);
 
 	transit_index = 0;
-	if (is_awakening) { model->play_animation(AwakingCharge, true); }
-	else { model->play_animation(Charge, true); }
+	if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingCharge, true); }
+	else { model->play_animation(anim_parm, AnimationClips::Charge, true); }
 	player_chain_activity = &ClientPlayer::ChainLockonUpdate;
 
 }
@@ -262,8 +262,8 @@ void ClientPlayer::ChainAttackUpdate(float elapsed_time, std::vector<BaseEnemy*>
 	{
 		player_chain_activity = &ClientPlayer::ChainLockonUpdate;
 		// 初期化通らないのでここでもアニメーション再生
-		if (is_awakening) { model->play_animation(AwakingCharge, true); }
-		else { model->play_animation(Charge, true); }
+		if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingCharge, true); }
+		else { model->play_animation(anim_parm, AnimationClips::Charge, true); }
 	}
 
 }
@@ -273,20 +273,20 @@ void ClientPlayer::TransitionChainAttack()
 	switch (attack_type)
 	{
 	case ATTACK_TYPE::FIRST:
-		if (is_awakening) { model->play_animation(AwakingAttackType1, false, true, 0.1f, 5.0f); }
-		else { model->play_animation(AttackType1, false, true, 0.1f, 5.0f); }
+		if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingAttackType1, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(anim_parm, AnimationClips::AttackType1, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::SECOND;
 		break;
 
 	case ATTACK_TYPE::SECOND:
-		if (is_awakening) { model->play_animation(AwakingAttackType2, false, true, 0.1f, 5.0f); }
-		else { model->play_animation(AttackType2, false, true, 0.1f, 5.0f); }
+		if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingAttackType2, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(anim_parm, AnimationClips::AttackType2, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::THIRD;
 		break;
 
 	case ATTACK_TYPE::THIRD:
-		if (is_awakening) { model->play_animation(AwakingAttackType3, false, true, 0.1f, 5.0f); }
-		else { model->play_animation(AttackType3, false, true, 0.1f, 5.0f); }
+		if (is_awakening) { model->play_animation(anim_parm, AnimationClips::AwakingAttackType3, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(anim_parm, AnimationClips::AttackType3, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::FIRST;
 		break;
 	}
@@ -431,9 +431,9 @@ void ClientPlayer::ChainMoveAnimUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void ClientPlayer::TransitionChainIdle(float blend_second)
 {
-	if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
+	if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingIdle, true, true, blend_second);
 	//通常状態の待機アニメーションにセット
-	else model->play_animation(AnimationClips::Idle, true, true, blend_second);
+	else model->play_animation(anim_parm, AnimationClips::Idle, true, true, blend_second);
 	//攻撃中かどうかの設定
 	is_attack = false;
 	//アニメーション速度
@@ -447,9 +447,9 @@ void ClientPlayer::TransitionChainIdle(float blend_second)
 
 void ClientPlayer::TransitionChainMoveAnim(float blend_second)
 {
-	if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
+	if (is_awakening)model->play_animation(anim_parm, AnimationClips::AwakingMove, true, true, blend_second);
 	//通常状態の時に移動アニメーションの設定
-	else model->play_animation(AnimationClips::Move, true, true, blend_second);
+	else model->play_animation(anim_parm, AnimationClips::Move, true, true, blend_second);
 	//攻撃中かどうかの設定
 	is_attack = false;
 	//アニメーション速度
