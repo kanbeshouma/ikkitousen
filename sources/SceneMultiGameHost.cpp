@@ -1580,6 +1580,8 @@ void SceneMultiGameHost::TransferEnenyControlProcessing()
 				DebugConsole::Instance().WriteDebugConsole("許可送信", TextColor::Green);
 				//-----ホスト権を無くす-----//
 				mWaveManager.SetHost(false);
+				player_manager->SetDoChain(false);
+
 			}
 		}
 		//-----敵のホスト権を持っていなかったら譲渡NG-----//
@@ -1603,6 +1605,7 @@ void SceneMultiGameHost::ReturnEnemyControl()
 {
 	if (return_enemy_control)
 	{
+		player_manager->SetDoChain(true);
 		mWaveManager.SetHost(true);
 		return_enemy_control = false;
 	}

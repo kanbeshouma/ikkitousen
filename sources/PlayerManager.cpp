@@ -275,6 +275,17 @@ void PlayerManager::ProhibitionChainAttack()
     }
 }
 
+void PlayerManager::SetDoChain(bool arg)
+{
+    for (auto& player : players)
+    {
+        //-----操作しないプレイヤーはとばす-----//
+        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        //-----許可フラグを出す-----//
+        player->SetDoChain(arg);
+    }
+}
+
 bool PlayerManager::GetReturnEnemyControl()
 {
     bool return_flg{ false };

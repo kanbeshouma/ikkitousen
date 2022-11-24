@@ -202,7 +202,10 @@ protected:
 public:
     Behavior GetBehaviorState() { return behavior_state; }
 protected:
-
+    //-----チェイン攻撃をしていいかどうか(マルチプレイの時にしか使わない)------//
+    bool do_chain{ true };
+public:
+    void SetDoChain(bool arg) { do_chain = arg; }
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };

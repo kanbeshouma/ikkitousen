@@ -451,11 +451,22 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 //-----チェイン攻撃を始める-----//
                 if (change_normal_timer < 0 && game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
                 {
-                    transition_chain_behavior();
-                    //-----マルチプレイ時かつホストでは無いときにリクエストを送信-----//
-                    if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+                    //マルチプレイの時かつホストの時かつチェイン攻撃をしていいときに遷移//
+                    if (do_chain && CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())
                     {
+                        transition_chain_behavior();
+                    }
+                    //マルチプレイの時かつホストじゃないとき遷移//
+                    else if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
+                    {
+                        transition_chain_behavior();
+                         //-----マルチプレイ時かつホストでは無いときにリクエストを送信-----//
                         SendTransferHost();
+                    }
+                    //1人プレイの時遷移//
+                    else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
+                    {
+                        transition_chain_behavior();
                     }
                 }
 
