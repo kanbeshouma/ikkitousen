@@ -519,15 +519,6 @@ private:
     //カメラリセット
     void CameraReset();
 private:
-    enum class Behavior
-    {
-        //通常状態
-        Normal,
-        //スタンした敵に攻撃する状態
-        Chain
-    };
-    Behavior behavior_state{ Behavior::Normal };
-private:
     typedef void(Player::* PlayerTitleActivity)(float elapsed_time);
     PlayerTitleActivity player_title_activity = &Player::UpdateTitleAnimationReadyIdle;
     void ExecFuncUpdate(float elapsed_time);

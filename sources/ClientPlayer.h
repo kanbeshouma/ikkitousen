@@ -438,15 +438,6 @@ private:
         bool display_scape_imgui;
         float change_normal_timer{ 0.0f };
 private:
-    enum class Behavior
-    {
-        //通常状態
-        Normal,
-        //スタンした敵に攻撃する状態
-        Chain
-    };
-    Behavior behavior_state{ Behavior::Normal };
-private:
     //後ろに回り込むための計算する関数
     void BehindAvoidancePosition();
     //スプライン曲線を使うための途中の点

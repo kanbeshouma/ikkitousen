@@ -124,6 +124,12 @@ public:
 
     ////-----この端末のプレイヤーの回り込み回避ができるかどうかのフラグを取得-----//
     bool GetBehaindCharge();
+
+    ////------この端末のプレイヤーがチェイン攻撃中かどうかを取得-----//
+    //===================================================
+    //戻り値 : true(攻撃中) false(攻撃していない)
+    bool GetDoChainAttack();
+
 public:
     ////-----プレイヤーの位置を設定する-----//
     void SetPlayerPosition(DirectX::XMFLOAT3 pos);

@@ -83,18 +83,6 @@ SceneMultiGameHost::~SceneMultiGameHost()
 	char data = CommandList::ReturnTitle;
 	CorrespondenceManager::Instance().TcpSendAllClient(&data, 1);
 
-	for (;;)
-	{
-		//-----ログアウトしたプレイヤーを削除する-----//
-		DeletePlayer();
-
-		//-----接続者が自分だけになったらfor文をぬける-----//
-		if (CorrespondenceManager::Instance().GetConnectedPersons() == 1)
-		{
-			break;
-		}
-	}
-
 	end_tcp_thread = true;
 
 	//-----TCPスレッドを終了する-----//
@@ -1571,18 +1559,28 @@ void SceneMultiGameHost::TransferEnenyControlProcessing()
 		//-----敵のホスト権を取得していたら譲渡OK-----//
 		if (mWaveManager.GetHost())
 		{
-			char data[2]{};
+			//-----自分がチェイン攻撃中なら無許可にする-----//
+			if (player_manager->GetDoChainAttack())
+			{
+				char data[2]{};
 
-			data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
-			data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Permit;
+				data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
+				data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Prohibition;
 
-			CorrespondenceManager::Instance().TcpSend(transfer_enemy_request_id,data, sizeof(data));
-			DebugConsole::Instance().WriteDebugConsole("許可送信",TextColor::Green);
+				CorrespondenceManager::Instance().TcpSend(transfer_enemy_request_id, data, sizeof(data));
+				DebugConsole::Instance().WriteDebugConsole("禁止送信", TextColor::Red);
+			}
+			else
+			{
 
-			//-----ホスト権を無くす-----//
-			mWaveManager.SetHost(false);
-
-
+				char data[2]{};
+				data[ComLocation::ComList] = CommandList::TransferEnemyControlResult;
+				data[TransferEnemyControl::DataArray::Result] = TransferEnemyControl::Result::Permit;
+				CorrespondenceManager::Instance().TcpSend(transfer_enemy_request_id, data, sizeof(data));
+				DebugConsole::Instance().WriteDebugConsole("許可送信", TextColor::Green);
+				//-----ホスト権を無くす-----//
+				mWaveManager.SetHost(false);
+			}
 		}
 		//-----敵のホスト権を持っていなかったら譲渡NG-----//
 		else

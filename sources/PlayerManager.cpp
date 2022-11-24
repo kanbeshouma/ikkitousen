@@ -637,3 +637,14 @@ bool PlayerManager::GetBehaindCharge()
     }
     return false;
 }
+
+bool PlayerManager::GetDoChainAttack()
+{
+    for (auto& player : players)
+    {
+        if (player->GetObjectId() != private_object_id) continue;
+        if (player->GetBehaviorState() == BasePlayer::Behavior::Chain) return true;
+        else return false;
+    }
+    return false;
+}

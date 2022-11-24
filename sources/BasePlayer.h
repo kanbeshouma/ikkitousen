@@ -189,6 +189,20 @@ protected:
     std::vector<char> receive_chain_lock_on_enemy_id;
 public:
     void SetChainLockOnId(std::vector<char> d) { receive_chain_lock_on_enemy_id = d; }
+
+    enum class Behavior
+    {
+        //’Êíó‘Ô
+        Normal,
+        //ƒXƒ^ƒ“‚µ‚½“G‚ÉUŒ‚‚·‚éó‘Ô
+        Chain
+    };
+protected:
+     Behavior behavior_state{ Behavior::Normal };
+public:
+    Behavior GetBehaviorState() { return behavior_state; }
+protected:
+
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
