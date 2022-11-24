@@ -1502,7 +1502,6 @@ void Player::TransitionNamelessMotionIdle()
     model->play_animation(AnimationClips::NamelessMotionIdle, false, true);
     //更新関数に切り替え
     player_activity = &Player::NamelessMotionIdleUpdate;
-
 }
 
 void Player::TransitionStartMothin()
@@ -1602,7 +1601,7 @@ void Player::TransitionChainIdle(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //待機状態の時の更新関数に切り替える
-    player_activity = &Player::ChainIdleUpdate;
+    chain_activity = &Player::ChainIdleUpdate;
 }
 void Player::TransitionChainMove(float blend_second)
 {
@@ -1616,6 +1615,6 @@ void Player::TransitionChainMove(float blend_second)
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //移動状態の時の更新関数に切り替える
-    player_activity = &Player::ChainMoveUpdate;
+    chain_activity = &Player::ChainMoveUpdate;
 }
 

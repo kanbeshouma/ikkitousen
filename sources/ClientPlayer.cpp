@@ -101,7 +101,8 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
             PlayerJustification(elapsed_time, position);
 
             //-----チェイン攻撃に変わる-----//
-            if (button_down & GamePad::BTN_LEFT_SHOULDER)
+            //-----データがあればチェイン攻撃に入る-----//
+            if (receive_chain_lock_on_enemy_id.empty() == false)
             {
                 TransitionChainBehavior();
                 DebugConsole::Instance().WriteDebugConsole("チェイン攻撃開始", TextColor::SkyBlue);

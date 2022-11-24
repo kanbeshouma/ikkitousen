@@ -228,6 +228,17 @@ void PlayerManager::ReceivePlayerHealthData(PlayerHealthData d)
     else multiplay_current_health = d.health;
 }
 
+void PlayerManager::ReceiveLockOnChain(int id, std::vector<char> enemy_id_data)
+{
+    for (auto& player : players)
+    {
+        if (player->GetObjectId() != id) continue;
+        //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
+        player->SetChainLockOnId(enemy_id_data);
+    }
+
+}
+
 void PlayerManager::AddPlayerMultiHealth()
 {
     //-----現在の体力と最大値を増やす-----//

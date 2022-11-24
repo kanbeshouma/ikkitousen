@@ -78,7 +78,7 @@ bool SceneMultiGameClient::game_retry = false;
 bool SceneMultiGameClient::end_event_data = false;
 
 //-----チェイン攻撃の時の敵の番号データ-----//
-std::vector<char> SceneMultiGameClient::chain_rock_on_enemy_id;
+std::map<int, std::vector<char>> SceneMultiGameClient::chain_rock_on_enemy_id;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
@@ -1375,6 +1375,20 @@ void SceneMultiGameClient::SetReceiveData()
 
 		//-----データを削除する-----//
 		receive_all_player_data.player_action_data.clear();
+	}
+
+	//-----チェイン攻撃のデータ設定-----//
+	if (chain_rock_on_enemy_id.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+
+		for (const auto& data : chain_rock_on_enemy_id)
+		{
+			player_manager->ReceiveLockOnChain(data.first, data.second);
+		}
+
+		//-----データを削除する-----//
+		chain_rock_on_enemy_id.clear();
 	}
 }
 

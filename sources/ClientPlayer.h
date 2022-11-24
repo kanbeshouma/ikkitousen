@@ -418,9 +418,9 @@ public:
     bool GetStartClearMotion()override { return false; };
     void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override {};
 public:
-    bool during_search_time()override { return false; }
-    bool during_chain_attack_end()override { return false; }
-    bool during_chain_attack()override { return false; }
+    bool during_search_time() override { return search_time < SEARCH_TIME&& search_time > 0; }
+    bool during_chain_attack_end() override { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
+    bool during_chain_attack() override { return is_chain_attack_aftertaste; }  // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
     void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func) override {}
 
 private:
@@ -735,15 +735,9 @@ private:
     void Rotate(float elapsed_time, int index, const std::vector<DirectX::XMFLOAT3>& points);
 
     // behaviorの遷移関数
-    void TransitionChainBehavior()
-    {
-        behavior_state = Behavior::Chain;
-        TransitionChainSearch();
-    }
-    void TransitionNormalBehavior()
-    {
-        behavior_state = Behavior::Normal;
-    }
+    void TransitionChainBehavior();
+    void TransitionNormalBehavior();
+
     void ChainParmReset();
 
 private:
@@ -753,9 +747,9 @@ private:
     //待機アニメーション中の更新処理
     void ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理
-    void ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    void ChainMoveAnimUpdate(float elapsed_time, SkyDome* sky_dome);
     //待機に遷移
     void TransitionChainIdle(float blend_second = 0.3f);
     //移動に遷移
-    void TransitionChainMove(float blend_second = 0.3f);
+    void TransitionChainMoveAnim(float blend_second = 0.3f);
 };

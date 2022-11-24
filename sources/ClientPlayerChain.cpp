@@ -8,190 +8,30 @@
 
 void ClientPlayer::ChainSearchUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& graphics_)
 {
-	if (is_awakening) // 覚醒状態
+	for (int i = 0; i < enemies.size(); ++i)
 	{
-		//-----パラメータの初期化(この関数の中で一回しか入らない)-----//
-		if (!setup_search_time)
+		for (const auto& id : receive_chain_lock_on_enemy_id)
 		{
-			SEARCH_TIME = 0.5f;
-			search_time = SEARCH_TIME;
-			setup_search_time = true;
-		}
+			//-----チェイン攻撃のロックオンしたIDでなければとばす-----//
+			if (enemies.at(i)->fGetObjectId() != id) continue;
 
-		// 敵がいなければ通常行動に戻る
-		if (enemies.size() == 0)
-		{
-			for (const auto& enemy : enemies)
-			{
-				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-			}
-			ChainParmReset();
-		}
-		// スタンしてなくてもロックオン
-		// 決められた時間内に敵を索敵しロックオンステートへ
-		else
-		{
-			//-----索敵時間を減らす-----//
-			search_time -= elapsed_time;
-			if (search_time > 0)
-			{
-				/*キャンセルがあれがここへ*/
-				if (button_up & GamePad::BTN_LEFT_SHOULDER)
-				{
-					for (const auto& enemy : enemies)
-					{
-						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-					}
-					ChainParmReset();
-				}
-				else
-				{
-					for (int i = 0; i < enemies.size(); ++i)
-					{
-						if (enemies.at(i)->fIsLockOnOfChain()) continue;
-						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
-						if (enemies.at(i)->fGetInnerCamera()) continue;
-
-						//索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
-						if (enemies.at(i)->fComputeAndGetIntoCamera())
-						{
-							//チェイン攻撃の配列に登録
-							chain_lockon_enemy_indexes.emplace_back(i);
-							//サジェスト登録
-							LockOnSuggest enemy_suggest;
-							enemy_suggest.position = enemies.at(i)->fGetPosition();
-							lockon_suggests.emplace_back(enemy_suggest);
-
-							enemies.at(i)->fSetIsLockOnOfChain(true);
-							// reticle生成
-							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
-
-							audio_manager->play_se(SE_INDEX::ROCK_ON);
-						}
-					}
-				}
-			}
-			else
-			{
-				//-----カメラにスタンした敵が一体も映らなかった場合はキャンセルする-----//
-				if (chain_lockon_enemy_indexes.empty())
-				{
-					for (const auto& enemy : enemies)
-					{
-						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-					}
-					ChainParmReset();
-				}
-				else
-				{
-					TransitionChainLockonBegin();
-				}
-			}
+			//-----必要なデータを設定-----//
+			chain_lockon_enemy_indexes.emplace_back(i); // 登録
+			LockOnSuggest enemy_suggest; // サジェスト登録
+			enemy_suggest.position = enemies.at(i)->fGetPosition();
+			lockon_suggests.emplace_back(enemy_suggest);
+			enemies.at(i)->fSetIsLockOnOfChain(true);
+			DebugConsole::Instance().WriteDebugConsole("データ設定", TextColor::SkyBlue);
 		}
 	}
-    //-----非覚醒状態-----//
-	else
-	{
-		bool is_stun = false;
-		int stun_enemy_count = 0;
-		// スタンされた敵がいなければ通常行動に戻る
-		// スタンした敵に応じてサーチ時間を増やす
-		for (const auto& enemy : enemies)
-		{
-			if (enemy->fGetStun())
-			{
-				is_stun = true;
-				++stun_enemy_count;
-			}
-		}
 
-	    //スタンした敵がいる時だけ計算
-		if (is_stun && !setup_search_time)
-		{
-			const int MAX_FLUCTUATION_COUNT = 6;
-			const float MAX_SEARCH_TIME = 1.5f;
-			const float MIN_SEARCH_TIME = 0.5f;
-
-			stun_enemy_count = (std::min)(stun_enemy_count, MAX_FLUCTUATION_COUNT);
-			// stun_enemy_count が 1 の時に割合0にしたいので-1
-			SEARCH_TIME += (MAX_SEARCH_TIME - MIN_SEARCH_TIME) * ((float)(stun_enemy_count - 1) / (float)(MAX_FLUCTUATION_COUNT - 1));
-			search_time = SEARCH_TIME;
-
-			setup_search_time = true;
-		}
-
-		//-----スタンしている敵がいなかったらキャンセル-----//
-		if (!is_stun)
-		{
-			for (const auto& enemy : enemies)
-			{
-				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-			}
-			ChainParmReset();
-		}
-		else // 決められた時間内に敵を索敵しロックオンステートへ
-		{
-			search_time -= elapsed_time;
-			if (search_time > 0)
-			{
-				/*キャンセルがあれがここへ*/
-				if (button_up & GamePad::BTN_LEFT_SHOULDER)
-				{
-					for (const auto& enemy : enemies)
-					{
-						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-					}
-					ChainParmReset();
-				}
-				else
-				{
-					//-----敵の配列を検索-----//
-					for (int i = 0; i < enemies.size(); ++i)
-					{
-						if (enemies.at(i)->fIsLockOnOfChain()) continue;
-						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
-						if (enemies.at(i)->fGetStun() == false) continue;
-						if (enemies.at(i)->fGetInnerCamera()) continue;
-
-						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
-						{
-							chain_lockon_enemy_indexes.emplace_back(i); // 登録
-							LockOnSuggest enemy_suggest; // サジェスト登録
-							enemy_suggest.position = enemies.at(i)->fGetPosition();
-							lockon_suggests.emplace_back(enemy_suggest);
-						}
-					}
-					// reticleの更新
-					for (const auto& reticle : reticles)
-					{
-						if (reticle.first == nullptr || reticle.second == nullptr) continue;
-						reticle.first->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
-						reticle.first->focus(reticle.second, true);
-					}
-				}
-			}
-			else
-			{
-				/*カメラに敵が一体も映らなかった*/
-				if (chain_lockon_enemy_indexes.empty())
-				{
-					for (const auto& enemy : enemies)
-					{
-						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
-					}
-					ChainParmReset();
-				}
-				else
-				{
-					TransitionChainLockonBegin();
-				}
-			}
-		}
-	}
+	DebugConsole::Instance().WriteDebugConsole("チェイン攻撃索敵完了");
+	TransitionChainLockonBegin();
 }
 
 void ClientPlayer::TransitionChainSearch()
 {
+
 	if (!chain_lockon_enemy_indexes.empty()) chain_lockon_enemy_indexes.clear();
 	if (!lockon_suggests.empty()) lockon_suggests.clear();
 	if (!reticles.empty()) { reticles.clear(); }
@@ -202,24 +42,15 @@ void ClientPlayer::TransitionChainSearch()
 	player_suggest.detection = true; // プレイヤーは検索には入れないので初めからtrue
 	lockon_suggests.emplace_back(player_suggest);
 
-	SEARCH_TIME = 0.5f;
-	search_time = SEARCH_TIME;
-	setup_search_time = false;
-
-
-	frame_time = 0.0f;
-	frame_scope = 0.5f;
-	frame_alpha = 0.0f;
-
 
 	player_chain_activity = &ClientPlayer::ChainSearchUpdate;
-
 }
 
 void ClientPlayer::ChainLockonBeginUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
 	if (model->end_of_animation())
 	{
+		DebugConsole::Instance().WriteDebugConsole("ロックオン開始", TextColor::SkyBlue);
 		TransitionChainLockon();
 	}
 }
@@ -407,6 +238,7 @@ void ClientPlayer::TransitionChainMove()
 	player_chain_activity = &ClientPlayer::ChainMoveUpdate;
 }
 
+
 void ClientPlayer::ChainAttackUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
 	// 分割したポイントの最後なら通常行動へ
@@ -555,6 +387,21 @@ void ClientPlayer::Rotate(float elapsed_time, int index, const std::vector<Direc
 	DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
 
+void ClientPlayer::TransitionChainBehavior()
+{
+	behavior_state = Behavior::Chain;
+	TransitionChainSearch();
+}
+
+void ClientPlayer::TransitionNormalBehavior()
+{
+	behavior_state = Behavior::Normal;
+	//-----チェイン攻撃のデータを削除-----//
+	receive_chain_lock_on_enemy_id.clear();
+
+	DebugConsole::Instance().WriteDebugConsole("チェイン攻撃終了", TextColor::SkyBlue);
+}
+
 void ClientPlayer::ChainParmReset()
 {
 	chain_cancel = true;
@@ -565,16 +412,51 @@ void ClientPlayer::ChainParmReset()
 
 void ClientPlayer::ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+	if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+	{
+		TransitionChainMoveAnim(0.3f);
+	}
+	UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, sky_dome);
 }
 
-void ClientPlayer::ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome)
+void ClientPlayer::ChainMoveAnimUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+	//移動入力がなくなったら待機に遷移
+	if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+	{
+		TransitionChainIdle();
+	}
+	UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, sky_dome);
 }
 
 void ClientPlayer::TransitionChainIdle(float blend_second)
 {
+	if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
+	//通常状態の待機アニメーションにセット
+	else model->play_animation(AnimationClips::Idle, true, true, blend_second);
+	//攻撃中かどうかの設定
+	is_attack = false;
+	//アニメーション速度
+	animation_speed = 1.0f;
+	//アニメーションをしていいかどうか
+	is_update_animation = true;
+	//待機状態の時の更新関数に切り替える
+	chain_activity = &ClientPlayer::ChainIdleUpdate;
+
 }
 
-void ClientPlayer::TransitionChainMove(float blend_second)
+void ClientPlayer::TransitionChainMoveAnim(float blend_second)
 {
+	if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
+	//通常状態の時に移動アニメーションの設定
+	else model->play_animation(AnimationClips::Move, true, true, blend_second);
+	//攻撃中かどうかの設定
+	is_attack = false;
+	//アニメーション速度
+	animation_speed = 1.0f;
+	//アニメーションをしていいかどうか
+	is_update_animation = true;
+	//移動状態の時の更新関数に切り替える
+	chain_activity = &ClientPlayer::ChainMoveAnimUpdate;
+
 }

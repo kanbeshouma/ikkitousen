@@ -28,7 +28,7 @@ void SceneMultiGameClient::ReceiveUdpData()
             {
             case CommandList::Update:
                 //-----データの種類の確認-----//
-                CheckDataCommand(data[ComLocation::UpdateCom], data);
+                CheckDataCommand(data[ComLocation::UpdateCom], data, id);
                 break;
             default:
                 break;
@@ -40,7 +40,7 @@ void SceneMultiGameClient::ReceiveUdpData()
 }
 
 
-void SceneMultiGameClient::CheckDataCommand(char com, char* data)
+void SceneMultiGameClient::CheckDataCommand(char com, char* data, int id)
 {
     std::lock_guard<std::mutex> lock(mutex);
 
@@ -91,18 +91,22 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data)
         data += 3;
 
         //-----データ分配列を確保する-----//
-        chain_rock_on_enemy_id.resize(e_data_size);
+        std::vector<char> d_vec;
+
+        d_vec.resize(e_data_size);
 
         DebugConsole::Instance().WriteDebugConsole("敵番号受信",TextColor::Pink);
 
         for (int i = 0; i < e_data_size; i++)
         {
-            chain_rock_on_enemy_id.at(i) = (char)*data;
+            d_vec.at(i) = (char)*data;
             data += sizeof(char);
-            std::string  t = std::to_string(chain_rock_on_enemy_id.at(i));
+            std::string  t = std::to_string(d_vec.at(i));
             DebugConsole::Instance().WriteDebugConsole(t, TextColor::Pink);
         }
-        chain_rock_on_enemy_id.clear();
+
+        //-----データ設定-----//
+        chain_rock_on_enemy_id.insert(std::make_pair(id, d_vec));
 
         break;
     }

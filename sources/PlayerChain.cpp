@@ -186,8 +186,6 @@ void Player::transition_chain_search()
 	frame_scope = 0.5f;
 	frame_alpha = 0.0f;
 
-	//SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 	player_chain_activity = &Player::chain_search_update;
 }
 
@@ -273,7 +271,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		// 敵がいなければ通常行動に戻る
 		if (enemies.size() == 0)
 		{
-			SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
 			for (const auto& enemy : enemies)
 			{
 				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -290,7 +287,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
-					SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
 
 					for (const auto& enemy : enemies)
 					{
@@ -341,8 +337,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			{
 				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/
 				{
-					SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 					for (const auto& enemy : enemies)
 					{
 						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -360,8 +354,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						//-----許可がもらえなかったら終了-----//
 						else
 						{
-							SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 							for (const auto& enemy : enemies)
 							{
 								if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -405,8 +397,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 		if (!is_stun)
 		{
-			SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 			for (const auto& enemy : enemies)
 			{
 				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -421,7 +411,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
-					SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
 					for (const auto& enemy : enemies)
 					{
 						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -471,8 +460,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			{
 				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/
 				{
-					SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 					for (const auto& enemy : enemies)
 					{
 						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -490,8 +477,6 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						//-----許可がもらえなかったら終了-----//
 						else
 						{
-							SendPlayerActionData(GamePad::BTN_LEFT_SHOULDER, GetInputMoveVec());
-
 							for (const auto& enemy : enemies)
 							{
 								if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
@@ -510,9 +495,11 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 void Player::transition_chain_lockon_begin()
 {
+	//-----チェイン攻撃を開始するフラグをONにして
 	is_chain_attack = true;
 	is_chain_attack_aftertaste = true;
 	is_chain_attack_aftertaste_timer = 0;
+
 
 	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }

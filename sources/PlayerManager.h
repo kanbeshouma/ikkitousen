@@ -164,6 +164,9 @@ public:
     ////-----プレイヤーの体力を設定する-----//
     void ReceivePlayerHealthData(PlayerHealthData d);
 
+    ///-----チェイン攻撃の敵の番号データを設定-----//
+    void ReceiveLockOnChain(int id, std::vector<char> enemy_id_data);
+
     //-----プレイヤーがログインしてたときに体力を増やす-----//
     void AddPlayerMultiHealth();
 

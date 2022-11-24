@@ -185,5 +185,10 @@ public:
     bool GetRetrunEnemyControl() { return return_enemy_control; }
     void SetReturnEnemyControl(bool arg) { return_enemy_control = arg; }
 protected:
+    //-----チェイン攻撃の敵の番号を受信した時に入れる箱-----//
+    std::vector<char> receive_chain_lock_on_enemy_id;
+public:
+    void SetChainLockOnId(std::vector<char> d) { receive_chain_lock_on_enemy_id = d; }
+protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
