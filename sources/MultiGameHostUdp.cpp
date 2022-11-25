@@ -29,7 +29,7 @@ void SceneMultiGameHost::ReceiveUdpData()
             {
             case CommandList::Update:
                 //-----データの種類の確認-----//
-                CheckDataCommand(data[ComLocation::UpdateCom], data);
+                CheckDataCommand(data[ComLocation::UpdateCom], data,id);
                 break;
             default:
                 break;
@@ -40,7 +40,7 @@ void SceneMultiGameHost::ReceiveUdpData()
     CoUninitialize();
 }
 
-void SceneMultiGameHost::CheckDataCommand(char com, char* data)
+void SceneMultiGameHost::CheckDataCommand(char com, char* data,int id)
 {
     std::lock_guard<std::mutex> lock(mutex);
 
@@ -76,6 +76,35 @@ void SceneMultiGameHost::CheckDataCommand(char com, char* data)
         PlayerHealthData* p_data = (PlayerHealthData*)data;
         //-----データを保存-----//
         receive_all_data.player_health_data.emplace_back(*p_data);
+        break;
+    }
+    //-----チェイン攻撃の敵の番号データ-----//
+    case UpdateCommand::ChainAttackLockOnEnemy:
+    {
+        //-----敵の番号データのサイズを取得-----//
+        int e_data_size = data[ComLocation::DataKind];
+
+        //-----データをずらす-----//
+        data += 3;
+
+        //-----データ分配列を確保する-----//
+        std::vector<char> d_vec;
+
+        d_vec.resize(e_data_size);
+
+        DebugConsole::Instance().WriteDebugConsole("敵番号受信", TextColor::Pink);
+
+        for (int i = 0; i < e_data_size; i++)
+        {
+            d_vec.at(i) = (char)*data;
+            data += sizeof(char);
+            std::string  t = std::to_string(d_vec.at(i));
+            DebugConsole::Instance().WriteDebugConsole(t, TextColor::Pink);
+        }
+
+        //-----データ設定-----//
+        chain_rock_on_enemy_id.insert(std::make_pair(id, d_vec));
+
         break;
     }
     //-----敵の基本データ-----//

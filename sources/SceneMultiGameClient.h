@@ -282,6 +282,7 @@ private:
     //=======================
     //第1引数 : コマンド
     //第2引数 : 受信データ
+    //第3引数 : id
     static void CheckDataCommand(char com, char* data,int id);
 
     ////-----データの種類の確認(プレイヤーのアクションデータ用)-----//

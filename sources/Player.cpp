@@ -437,7 +437,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             audio_manager->play_se(SE_INDEX::BEHAIND_RECHARGE);
             behaind_avoidance_recharge = false;
         }
-
         //-----ü‚è‚İ‰ñ”ğ‚Ì‰¹‚ğ~‚ß‚é-----//
         if(behaind_avoidance_recharge == false && behaind_avoidance_cool_time < -1.0f) audio_manager->stop_se(SE_INDEX::BEHAIND_RECHARGE);
 

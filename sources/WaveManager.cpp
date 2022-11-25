@@ -372,7 +372,6 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
             }
         }
     }
-
     switch (mWaveState)
     {
     case WaveState::Start:
@@ -390,7 +389,10 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
         {
             mEnemyManager.fHostUpdate(Graphics_, elapsedTime_, Func_, receive_data);
         }
-        else  mEnemyManager.fClientUpdate(Graphics_,elapsedTime_,Func_,receive_data);
+        else
+        {
+            mEnemyManager.fClientUpdate(Graphics_, elapsedTime_, Func_, receive_data);
+        }
 
         if (CorrespondenceManager::Instance().GetHost())
         {

@@ -321,7 +321,8 @@ private:
     //=======================
     //第1引数 : コマンド
     //第2引数 : 受信データ
-    static void CheckDataCommand(char com, char* data);
+    //第3引数 : id
+    static void CheckDataCommand(char com, char* data,int id);
 
     ////-----データの種類の確認(プレイヤーのアクションデータ用)-----//
     //=======================
@@ -388,4 +389,8 @@ private:
 
     //-----イベント終了した時に増える-----//
     static std::vector<int> end_event;
+
+    //-----チェイン攻撃の時の敵の番号データ-----//
+    //std::map<key : プレイヤーの番号,value:敵の番号データ>
+    static  std::map<int, std::vector<char>> chain_rock_on_enemy_id;
 };

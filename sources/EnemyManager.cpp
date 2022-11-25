@@ -75,6 +75,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
 
+
     mSloeTime -= elapsedTime_;
 
     // ウェーブ開始からの時間を更新
@@ -165,6 +166,11 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
+#ifdef USE_IMGUI
+    ImGui::Begin("mIsPlayerChainTime");
+    ImGui::RadioButton("mIsPlayerChainTime", mIsPlayerChainTime);
+    ImGui::End();
+#endif
 
     mSloeTime -= elapsedTime_;
 
@@ -188,7 +194,7 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
     mCameraShakeTime = (std::max)(0.0f, mCameraShakeTime);
 
     //--------------<プレイヤーがチェイン中はエネミーの行動をすべて停止させる>-------------//
-    if (mIsPlayerChainTime)
+    if (mIsPlayerChainTime)//マルチプレイの時ここの値が更新されずに止まる(クライアントがチェイン攻撃をした時)
     {
         for (const auto enemy : mEnemyVec)
         {
@@ -291,6 +297,11 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
 void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
+#ifdef USE_IMGUI
+    ImGui::Begin("mIsPlayerChainTime");
+    ImGui::RadioButton("mIsPlayerChainTime", mIsPlayerChainTime);
+    ImGui::End();
+#endif
 
     mSloeTime -= elapsedTime_;
 

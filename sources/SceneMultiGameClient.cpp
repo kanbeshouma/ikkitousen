@@ -608,7 +608,9 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		//-----敵のホスト権の返還-----//
 		mWaveManager.ReturnEnemyControl();
 		player_manager->SetReturnEnemyControl(false);
+		mWaveManager.SetHost(false);
 	}
+
 	//****************************************************************
 	//
 	// オブジェクトの削除処理はこの下でやるルール
@@ -1084,7 +1086,6 @@ void SceneMultiGameClient::SetBossTypeGameParam()
 {
 	//-----カメラのインスタンスを取得-----//
 	Camera* c = cameraManager->GetCurrentCamera();
-
 	//-----ボスが人型になる時-----//
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipToHuman)
 	{

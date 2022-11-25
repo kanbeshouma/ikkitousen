@@ -290,7 +290,6 @@ void ClientPlayer::TransitionChainAttack()
 		attack_type = ATTACK_TYPE::FIRST;
 		break;
 	}
-
 	player_chain_activity = &ClientPlayer::ChainAttackUpdate;
 }
 

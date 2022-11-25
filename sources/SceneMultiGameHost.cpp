@@ -74,6 +74,9 @@ std::vector<int> SceneMultiGameHost::end_event;
 //-----ゲームを開始したかどうか-----//
 bool SceneMultiGameHost::is_start_game = false;
 
+//-----チェイン攻撃の時の敵の番号データ-----//
+std::map<int, std::vector<char>> SceneMultiGameHost::chain_rock_on_enemy_id;
+
 SceneMultiGameHost::SceneMultiGameHost()
 {
 }
@@ -326,7 +329,6 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	//-----弾のインスタンスを生成-----//
 	BulletManager& mBulletManager = BulletManager::Instance();
 
-
 	if (is_start_game)
 	{
 		//-----選択したステージを設定-----//
@@ -393,7 +395,6 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	// camera
 	cameraManager->Update(elapsed_time);
-
 
 
 	//-----プレイヤーの位置を設定-----//
@@ -1469,6 +1470,20 @@ void SceneMultiGameHost::SetReceiveData()
 		receive_all_data.player_action_data.clear();
 	}
 
+	//-----チェイン攻撃のデータ設定-----//
+	if (chain_rock_on_enemy_id.empty() == false)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+
+		for (const auto& data : chain_rock_on_enemy_id)
+		{
+			player_manager->ReceiveLockOnChain(data.first, data.second);
+		}
+
+		//-----データを削除する-----//
+		chain_rock_on_enemy_id.clear();
+	}
+
 }
 
 void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
@@ -1554,6 +1569,9 @@ void SceneMultiGameHost::ClearEnemyReceiveData()
 
 void SceneMultiGameHost::TransferEnenyControlProcessing()
 {
+	//-----	排他制御-----//
+	std::lock_guard<std::mutex> lock(mutex);
+
 	if (transfer_enemy_host_request)
 	{
 		//-----敵のホスト権を取得していたら譲渡OK-----//
@@ -1608,6 +1626,7 @@ void SceneMultiGameHost::ReturnEnemyControl()
 		player_manager->SetDoChain(true);
 		mWaveManager.SetHost(true);
 		return_enemy_control = false;
+		DebugConsole::Instance().WriteDebugConsole("ホスト権が帰ってきました",TextColor::SkyBlue);
 	}
 }
 

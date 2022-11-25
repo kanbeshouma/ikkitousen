@@ -136,7 +136,7 @@ void Player::lockon_post_effect(float elapsed_time, std::function<void(float, fl
 
 void Player::ChainLockOn()
 {
-
+	//is_chain_attack_aftertaste
 
 }
 
