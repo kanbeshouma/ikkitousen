@@ -27,6 +27,7 @@ SkyDome::~SkyDome()
 void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("SkyDome");
     ImGui::DragFloat4("emissive_color", &emissive_color.x);
@@ -35,6 +36,8 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
     ImGui::DragFloat("red_threshold", &red_threshold, 0.01f);
     ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 
     graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
 
@@ -46,6 +49,8 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
     static float glow_speed = 1.0f;
     static DirectX::XMFLOAT4 emissive_color = { 1,1,1,5.0f };
     static float glow_thickness = 1.5f;
+
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("SkyDome");
     if (ImGui::TreeNode("field"))
@@ -63,6 +68,8 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
     ImGui::End();
 #endif // USE_IMGUI
 
+
+#endif // 0
     field_glow_time += elapsed_time * glow_speed;
 
 #if 0

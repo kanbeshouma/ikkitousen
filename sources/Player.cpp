@@ -71,7 +71,6 @@ void Player::Initialize()
 
 void Player::UpdateTitle(float elapsed_time)
 {
-
     orientation = { 0.0f,1.0f,0.0f,0.002f };
     ExecFuncUpdate(elapsed_time);
     GetPlayerDirections();

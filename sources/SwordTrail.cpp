@@ -232,11 +232,14 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
     }
 
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("Trail");
     ImGui::SliderFloat("threshold", &mConstantBuffer->data.mThreshold, 0.0f, 1.0f);
     ImGui::End();
 #endif
+
+#endif // 0
 }
 
 void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_,DirectX::XMFLOAT4 color)

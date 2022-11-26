@@ -4,6 +4,7 @@
 #include"Correspondence.h"
 #include"user.h"
 #include"DebugConsole.h"
+#include "BaseCamera.h"
 
 
 ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
@@ -91,6 +92,19 @@ void ClientPlayer::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDom
     //クリア演出中じゃないとき
     else
     {
+        // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+        if (during_chain_attack() && !during_chain_attack_end())
+        {
+            is_chain_attack_aftertaste_timer += elapsed_time;
+            if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
+            {
+                chronostasis_scope = 0.8f;
+                chronostasis_saturation = 1.0f;
+
+                is_chain_attack_aftertaste = false;
+                is_chain_attack_aftertaste_timer = 0;
+            }
+        }
 
         switch (behavior_state)
         {
@@ -378,12 +392,14 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
     auto r_font_render = [&](std::string name, StepFontElement& e)
     {
         static int align = 0;
+
+#if 0
 #ifdef USE_IMGUI
         ImGui::Begin("Font");
         if (ImGui::TreeNode(name.c_str()))
         {
             ImGui::Text("player_length%f", player_length);
-            ImGui::DragFloat("min_length",&min_length);
+            ImGui::DragFloat("min_length", &min_length);
             ImGui::DragFloat2Above("offset_pos", &offset_pos.x, 0.1f);
             ImGui::DragFloat2Above("pos", &e.position.x);
             ImGui::DragFloat2Above("scale", &e.scale.x, 0.1f);
@@ -393,6 +409,8 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
         }
         ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
         fonts->yu_gothic->Draw(e.s, { e.position.x + offset_pos.x,e.position.y + offset_pos.y }, e.scale, e.color, e.angle, static_cast<TEXT_ALIGN>(align), e.length);
     };
 

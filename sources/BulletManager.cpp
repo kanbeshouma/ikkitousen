@@ -108,10 +108,14 @@ void BulletManager::fAllClear()
 
 void BulletManager::fGuiMenu()
 {
+#if 0
     imgui_menu_bar("Game", "BulletManager", mOpenGui);
 #ifdef USE_IMGUI
     ImGui::Begin("BulletManager");
     ImGui::Text("Amount%i", mBulletVec.size());
     ImGui::End();
 #endif
+
+#endif // 0
+
 }

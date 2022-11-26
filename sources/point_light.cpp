@@ -30,6 +30,7 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 	static DirectX::XMFLOAT3  angle = { 0,0,0 };
 	static DirectX::XMFLOAT3  scale = { 0.001f,0.0f,0.006f };
 
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("point light");
 	if (ImGui::TreeNode("transform"))
@@ -40,8 +41,12 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	ImGui::End();
 #endif
+
+#endif // 0
+
 	for (int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
+#if 0
 #ifdef USE_IMGUI
 		ImGui::Begin("point light");
 		std::string s_transform = "light" + std::to_string(i);
@@ -59,6 +64,8 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		ImGui::End();
 #endif
+
+#endif // 0
 		plig_constants->data.unique_id = i;
 		// 定数バッファ
 		plig_constants->bind(graphics.get_dc().Get(), 3);

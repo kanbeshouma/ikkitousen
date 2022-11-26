@@ -522,8 +522,6 @@ void PlayerManager::SetPlayerChainTime(EnemyManager* enemy_manager)
 {
     for (auto& player : players)
     {
-        //-----©•ªˆÈŠO‚Í‚Æ‚Î‚·-----//
-        if (player->GetObjectId() != private_object_id) continue;
         enemy_manager->fSetIsPlayerChainTime(player->during_chain_attack());
     }
 }

@@ -75,6 +75,7 @@ void BaseCamera::AttitudeControl(float elapsedTime)
 
 void BaseCamera::DebugGUI()
 {
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera");
 	ImGui::SliderFloat3("Position", &eye.x, -20.0f, 10.0f);
@@ -93,12 +94,16 @@ void BaseCamera::DebugGUI()
 	ImGui::InputFloat("late", &lerpLate);
 	ImGui::End();
 #endif
+
+#endif // 0
 }
 
 void BaseCamera::calc_view_projection(GraphicsPipeline& graphics)
 {
 	// ビュー・プロジェクション変換行列を計算し、それを定数バッファにセットする
 	using namespace DirectX;
+
+#if 0
 #ifdef USE_IMGUI
 	if (display_camera_imgui)
 	{
@@ -109,6 +114,9 @@ void BaseCamera::calc_view_projection(GraphicsPipeline& graphics)
 		debug_gui();
 	}
 #endif
+
+#endif // 0
+
 	// ビュー行列/プロジェクション行列を作成
 	XMMATRIX V = XMLoadFloat4x4(&view);
 	XMMATRIX P = XMLoadFloat4x4(&projection);
@@ -125,6 +133,8 @@ void BaseCamera::calc_view_projection(GraphicsPipeline& graphics)
 
 void BaseCamera::debug_gui()
 {
+
+#if 0
 #ifdef USE_IMGUI
 	if (display_camera_imgui)
 	{
@@ -136,4 +146,7 @@ void BaseCamera::debug_gui()
 		ImGui::End();
 	}
 #endif
+
+#endif // 0
+
 }

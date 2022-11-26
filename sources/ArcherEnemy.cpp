@@ -64,6 +64,9 @@ void ArcherEnemy::fSetEnemyState(int state)
     //-----今のAIと同じなら処理をしない-----//
     if (ai_state == state) return;
 
+    //-----スタンしてるなら処理をしない-----//
+    if (mIsStun) return;
+
     //-----それぞれのステートに遷移-----//
     switch (state)
     {

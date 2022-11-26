@@ -56,4 +56,8 @@ inline void ModelCashes::Load_PreTitle(ID3D11Device* pDevice_)
         auto model = resource_manager->load_model_resource(pDevice_, ".\\resources\\Models\\stage\\title_stage.fbx");
         mpModelCashVec.emplace_back(std::move(model));
     }
+    {
+        auto model = resource_manager->load_model_resource(pDevice_, "./resources/Models/Enemy/boss_unit.fbx");
+        mpModelCashVec.emplace_back(std::move(model));
+    }
 }

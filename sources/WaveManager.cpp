@@ -176,6 +176,8 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
 
                 int frame_x;
                 frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+
+#if 0
 #ifdef USE_IMGUI
                 ImGui::Begin("ClearProto");
                 ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
@@ -184,6 +186,8 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
                 ImGui::Text("frame_y:%d", clear_parameters.frame_y);
                 ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
                 if (frame_x >= FRAMW_COUNT_X)
                 {
                     // 1行下のアニメーションへ
@@ -204,11 +208,15 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
             {
                 clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
+
+#if 0
 #ifdef USE_IMGUI
                 ImGui::Begin("ClearProto");
                 ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
                 ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
             }
         }
         else // ゲームクリア
@@ -305,6 +313,8 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
 
                 int frame_x;
                 frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+
+#if 0
 #ifdef USE_IMGUI
                 ImGui::Begin("ClearProto");
                 ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
@@ -313,6 +323,8 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
                 ImGui::Text("frame_y:%d", clear_parameters.frame_y);
                 ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
                 if (frame_x >= FRAMW_COUNT_X)
                 {
                     // 1行下のアニメーションへ
@@ -333,11 +345,15 @@ void WaveManager::fMultiPlayUpdate(GraphicsPipeline& Graphics_, float elapsedTim
             if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
             {
                 clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
+
+#if 0
 #ifdef USE_IMGUI
                 ImGui::Begin("ClearProto");
                 ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
                 ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
             }
         }
         else // ゲームクリア
@@ -420,6 +436,8 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
     //----------------------------------
     auto r_dissolve = [&](std::string g_name, SpriteDissolve* dissolve, SpriteArg& arg, float& threshold)
     {
+
+#if 0
 #ifdef USE_IMGUI
         ImGui::Begin(g_name.c_str());
         ImGui::DragFloat2("pos", &arg.pos.x);
@@ -427,6 +445,8 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
         ImGui::DragFloat("threshold", &threshold, 0.01f);
         ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
         dissolve->begin(dc);
         dissolve->render(dc, arg.pos, arg.scale, arg.pivot, arg.color, arg.angle, arg.texpos, arg.texsize, threshold);
         dissolve->end(dc);
@@ -462,6 +482,8 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
         {
             auto r_font_render = [&](std::string name, std::wstring string, DirectX::XMFLOAT2& pos, DirectX::XMFLOAT2& scale)
             {
+
+#if 0
 #ifdef USE_IMGUI
                 ImGui::Begin("WaveManager");
                 if (ImGui::TreeNode(name.c_str()))
@@ -472,6 +494,8 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
                 }
                 ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
                 fonts->yu_gothic->Draw(string, pos, scale, { 1,1,1,1 }, 0, TEXT_ALIGN::MIDDLE);
             };
             fonts->yu_gothic->Begin(dc);
@@ -619,6 +643,8 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         break;
         //-----他の接続者の選択をまつ-----//
     case CLEAR_STATE::SelectIdle:
+
+#if 0
 #ifdef USE_IMGUI
         ImGui::Begin("SelectStage");
         if (ImGui::TreeNode("stage_voting"))
@@ -634,6 +660,8 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         ImGui::Text("change_voting_results_timer%f", change_voting_results_timer);
         ImGui::End();
 #endif
+
+#endif // 0
         //-----投票数を確認(ホストだけ)-----//
         if (CorrespondenceManager::Instance().GetHost())
         {
@@ -703,6 +731,8 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         if (arrows.count(StageDetails::ROUTE::UP))    { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
         if (arrows.count(StageDetails::ROUTE::DOWN))  { arrows.at(StageDetails::ROUTE::DOWN).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(0, offset.y); }
     }
+
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS" };
@@ -721,9 +751,12 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     ImGui::End();
 #endif
 
+#endif // 0
+
     //---ここまで--//
 
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     if (ImGui::Button("NextWave"))
@@ -732,6 +765,9 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
     ImGui::End();
 #endif
+
+#endif // 0
+
 }
 
 //----------------------------------
@@ -936,18 +972,22 @@ void WaveManager::update_selection(float elapsed_time)
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
     player_icon.arg.pos = viewpoint;
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     {
         ImGui::Separator();
         int elem = stage_details[current_stage].journeys.at(route_state);
-        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS"};
+        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS" };
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("candidate stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
         ImGui::Separator();
     }
     ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
+
 }
 
 void WaveManager::transition_move()
@@ -1024,6 +1064,7 @@ void WaveManager::update_move(float elapsed_time)
         map.arg.pos = viewpoint - interpolated_point * map.arg.scale;
     }
 
+#if 0
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     {
@@ -1033,6 +1074,9 @@ void WaveManager::update_move(float elapsed_time)
     }
     ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
+
 }
 
 void WaveManager::transition_enlargement()

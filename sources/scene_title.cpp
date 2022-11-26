@@ -339,6 +339,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	static float speed = 15000.0f;
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("slashing");
 	ImGui::Text("slashing_wait_timer : %f", slashing_wait_timer);
@@ -346,6 +347,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::DragFloat("speed", &speed, 0.1f);
 	ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 
 	// joint camera test
 	// JointCamera にチェンジしたフレームと同じフレームから JointCamera 中ずっとeyeとfocusをジョイントから取り出してセットしてほしい
@@ -358,6 +361,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	static bool validity_joint_camera = false;
 	static DirectX::XMFLOAT3 eye{ 0,1,-30 };
 	static DirectX::XMFLOAT3 focus{};
+
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("joint camera");
 	if (ImGui::Button("change joint camera"))
@@ -379,6 +384,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		cameraManager->GetCurrentCamera()->set_target(focus);
 	}
 #endif // USE_IMGUI
+
+#endif // 0
 
 
 	// SE
@@ -501,6 +508,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e, float glow_horizon = 0, float glow_vertical = 0)
 	{
 		//--sprite_string--//
+#if 0
 #ifdef USE_IMGUI
 		ImGui::Begin("title");
 		if (ImGui::TreeNode(gui_name.c_str()))
@@ -511,12 +519,16 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 		batch->begin(graphics.get_dc().Get());
 		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
 		batch->end(graphics.get_dc().Get());
 	};
 	auto r_font_render = [&](std::string name, StepFontElement& e)
 	{
+
+#if 0
 #ifdef USE_IMGUI
 		ImGui::Begin("title");
 		if (ImGui::TreeNode(name.c_str()))
@@ -528,6 +540,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
 	};
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
@@ -552,6 +566,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		// 定数バッファにフェッチする
 		static bool display_bloom_imgui = false;
+
+#if 0
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "bloom", display_bloom_imgui);
 		if (display_bloom_imgui)
@@ -562,6 +578,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 			ImGui::End();
 		}
 #endif // USE_IMGUI
+
+#endif // 0
 		bloom_constants->bind(graphics.get_dc().Get(), 8);
 
 		graphics.set_pipeline_preset(BLEND_STATE::NO_PROCESS, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
@@ -701,6 +719,8 @@ void SceneTitle::LogoAnimation(float elapsed_time)
 
 	if (!logo_parameters.start_anim) frame_x = 0;
 	else frame_x = static_cast<int>(logo_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("title");
 	if (ImGui::TreeNode("logo animation"))
@@ -719,6 +739,8 @@ void SceneTitle::LogoAnimation(float elapsed_time)
 	}
 	ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 	if (frame_x >= FRAMW_COUNT_X)
 	{
 		// 1行下のアニメーションへ
@@ -959,7 +981,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 						// ステージ番号ボス手前から
-						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::BOSS);
 						WaveFile::get_instance().save();
 						have_tutorial_state = 1; // チュートリアルなし
 						audio_manager->play_se(SE_INDEX::DECISION);

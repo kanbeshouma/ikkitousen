@@ -321,12 +321,15 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	if (is_game_clear) return;
 
 
+#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("StageSituation");
 	ImGui::RadioButton("StageClear", stage_situation & StageSituation::StageClearFlg);
 	ImGui::RadioButton("GameOver", stage_situation & StageSituation::GameOverFlg);
 	ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 
 	//-----	ステージかゲームをクリア-----//
 	if (stage_situation & StageSituation::StageClearFlg)
@@ -508,6 +511,8 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		static int value{};
 		static bool is_display_imgui = false;
 		imgui_menu_bar("UI", "wave", is_display_imgui);
+
+#if 0
 #ifdef USE_IMGUI
 		if (is_display_imgui)
 		{
@@ -586,6 +591,8 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		}
 		ImGui::End();
 #endif
+
+#endif // 0
 		wave->set_positoin(pos); wave->set_offset(offset); wave->set_scale(scale); wave->set_value(value); wave->set_color(color);
 		wave->update(graphics, elapsed_time);
 	}
@@ -642,11 +649,15 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
+
+#if 0
 #ifdef USE_IMGUI
 		ImGui::Begin("sky");
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
 #endif
+
+#endif // 0
 		sky_dome->Render(graphics, elapsed_time);
 
 
@@ -670,6 +681,8 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 	{
 		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 		//--sprite_string--//
+
+#if 0
 #ifdef USE_IMGUI
 		ImGui::Begin("title");
 		if (ImGui::TreeNode(gui_name.c_str()))
@@ -681,6 +694,8 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 		}
 		ImGui::End();
 #endif // USE_IMGUI
+
+#endif // 0
 		batch->begin(graphics.get_dc().Get());
 		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
 		batch->end(graphics.get_dc().Get());
@@ -738,6 +753,8 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 	{
 		// 定数バッファにフェッチする
 		static bool display_bloom_imgui = false;
+
+#if 0
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "bloom", display_bloom_imgui);
 		if (display_bloom_imgui)
@@ -748,6 +765,8 @@ void SceneMultiGameClient::render(GraphicsPipeline& graphics, float elapsed_time
 			ImGui::End();
 		}
 #endif // USE_IMGUI
+
+#endif // 0
 		bloom_constants->bind(graphics.get_dc().Get(), 8);
 
 		graphics.set_pipeline_preset(BLEND_STATE::NO_PROCESS, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);

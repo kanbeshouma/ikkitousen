@@ -503,7 +503,7 @@ private:
 
     void fHumanSpAttackCancelInit(); // 全敵を倒されたらイベント
     void fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
+    
     void fHumanSpAttackTimeOverInit(); // 制限時間を超えたら攻撃
     void fHumanSpAttackTimeOverUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);

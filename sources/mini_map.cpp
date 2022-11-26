@@ -38,11 +38,15 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 	mini_map_icon->end(graphics.get_dc().Get());
 
 	player_icon_param.position = { center_pos.x,center_pos.y   };
+
+#if 0
 #if USE_IMGUI
 	ImGui::Begin("minimapp");
 	ImGui::DragFloat2("minimap", &player_icon_param.position.x);
 	ImGui::End();
 #endif
+
+#endif // 0
 	{
 		//プレイヤーのアイコンの向きを回転（カメラの前を正面とする）
 		DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(XMLoadFloat2(&player_forward), XMLoadFloat2(&camera_forward));

@@ -171,6 +171,8 @@ void ShieldEnemy_Ace::fSetEnemyState(int state)
 {
     //-----¡‚ÌAI‚Æ“¯‚¶‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
     if (ai_state == state) return;
+    //-----ƒXƒ^ƒ“‚µ‚Ä‚é‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
+    if (mIsStun) return;
 
     switch (state)
     {

@@ -215,6 +215,8 @@ void LastBoss::fSetEnemyState(int state)
 {
     //-----¡‚ÌAI‚Æ“¯‚¶‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
     if (ai_state == state) return;
+    //-----ƒXƒ^ƒ“‚µ‚Ä‚é‚È‚çˆ—‚ğ‚µ‚È‚¢-----//
+    if (mIsStun) return;
 
     if (ai_state == AiState::ShipStart || ai_state == AiState::ShipToHuman || ai_state == AiState::HumanToDragon) return;
     std::string text = "ReceiveState : " + std::to_string(state);
