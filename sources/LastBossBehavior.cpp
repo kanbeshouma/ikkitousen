@@ -147,7 +147,14 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     fTurnToPlayer(elapsedTime_, 5.0f);
    if(mTimer>30.0f)
    {
-       fChangeState(DivideState::ShipBeamStart);
+       //<マルチプレイ時はホストしか遷移しないようにした>//
+       if (CorrespondenceManager::Instance().GetMultiPlay())
+       {
+           if (CorrespondenceManager::Instance().GetHost()) fChangeState(DivideState::ShipBeamStart);;
+       }
+       //<シングルプレイの時はそのまま遷移>//
+       else fChangeState(DivideState::ShipBeamStart);
+
    }
 
     const int t = static_cast<int>(mTimer * 10);
