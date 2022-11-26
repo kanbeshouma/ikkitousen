@@ -449,6 +449,8 @@ float BaseEnemy::fGetCurrentHitPoint() const
 
 void BaseEnemy::fSetCurrentHitPoint(int hp)
 {
+    //<今の体力よりも大きい値が来たら反映しない>//
+    if (mCurrentHitPoint < hp) return;
     mCurrentHitPoint = hp;
 }
 
