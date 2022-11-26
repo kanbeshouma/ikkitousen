@@ -81,30 +81,7 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         const int t = static_cast<int>(mTimer * 30);
 
-        if (CorrespondenceManager::Instance().GetMultiPlay())
-        {
-            //-----マルチプレイの場合はホストだけ出現-----//
-            if (CorrespondenceManager::Instance().GetHost())
-            {
-                if (!mIsSpawnEnemy && t % 10 == 0)
-                {
-                    // ランダムな敵を出現させる
-                    auto vec = Math::GetFront(mOrientation);
-                    DirectX::XMFLOAT3 pos = mPosition;
-                    pos.y = 0.0f;
-                    mpEnemyManager->fCreateRandomMasterEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id);
-                    mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 1);
-                    mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f), count_grope_id, 2);
-                    mIsSpawnEnemy = true;
-                    count_grope_id++;
-                }
-                if (mIsSpawnEnemy && t % 10 == 9)
-                {
-                    mIsSpawnEnemy = false;
-                }
-            }
-        }
-        else
+        if (CorrespondenceManager::Instance().GetMultiPlay() == false)
         {
             if (!mIsSpawnEnemy && t % 10 == 0)
             {
@@ -131,11 +108,27 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         mShipRoar = true;
     }
 
-    if (mpModel->end_of_animation(mAnimPara))
+
+    //<マルチプレイの時、イベントが終了していないときしか入らない>//
+    if (CorrespondenceManager::Instance().GetMultiPlay() && end_event == false)
+    {
+        if (mpModel->end_of_animation(mAnimPara))
+        {
+            //-----カウントを増やす-----//
+            mpEnemyManager->EndEnventCount(1);
+            end_event = true;
+            SendWatchEndEvent();
+        }
+    }
+    else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
+    {
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)ship_event = true;
+    }
+
+    if (ship_event)
     {
         mCurrentMode = Mode::Ship;
         fChangeState(DivideState::ShipIdle);
-        ship_event = true;
     }
 }
 
@@ -1849,6 +1842,10 @@ void LastBoss::SetEndEvent(bool arg)
 {
     switch (ai_state)
     {
+    case AiState::ShipStart:
+        ship_event = arg;
+        SendEndEvent();
+        break;
     case AiState::ShipToHuman:
         ship_to_human_event = arg;
         SendEndEvent();
