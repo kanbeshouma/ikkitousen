@@ -376,8 +376,6 @@ void EnemyManager::fClientUpdate(GraphicsPipeline& graphics_, float elapsedTime_
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 
-    //--------------------<ボスが敵を召喚する>--------------------//
-    fCreateBossUnit(graphics_);
 
     bool isCreate{};
     for (const auto& source : mReserveVec)
@@ -1162,9 +1160,11 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
             data.emitter_point,
             param,
             BulletManager::Instance().fGetAddFunction());
-        enemy->fSetMaster(master);
-        enemy->fSetGropeId(grope_id);
+        enemy->fSetObjectId(id);
+        enemy->SetEnemyGropeData(master, transfer, grope_id);
         mEnemyVec.emplace_back(enemy);
+        std::string text = "敵ユニット生成" + std::to_string(id);
+        DebugConsole::Instance().WriteDebugConsole(text,TextColor::Pink);
     }
     break;
     default:
@@ -1730,8 +1730,7 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
             mEditor.fGetParam(EnemyType::Boss_Unit),
             BulletManager::Instance().fGetAddFunction());
         enemy->fSetObjectId(object_count);
-        enemy->fSetMaster(true);
-        enemy->fSetGropeId(grope_id);
+        enemy->SetEnemyGropeData(true, 0, grope_id);
         mEnemyVec.emplace_back(enemy);
         grope_id++;
         object_count++;

@@ -719,7 +719,6 @@ void LastBoss::fMoveAwayInit()
     mMoveThreshold = 0.0f;
     //-----ステート設定-----//
     ai_state = AiState::HumanMove;
-
 }
 
 void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

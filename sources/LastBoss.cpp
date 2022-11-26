@@ -200,7 +200,7 @@ void LastBoss::fSetStun(bool Arg_, bool IsJust_)
     {
         return;
     }
-
+    
     if(IsJust_)
     {
         mIsStun = true;
