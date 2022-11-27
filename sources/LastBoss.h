@@ -96,7 +96,7 @@ private:
         inline static const char* Stun = "Stun";     // ƒXƒ^ƒ“
 
     };
-
+public:
     enum AiState
     {
         ShipStart,
@@ -142,6 +142,7 @@ private:
         DragonBeamEnd,
         Stun,
     };
+private:
 
     enum  AnimationName {
         ship_idle,

@@ -56,17 +56,17 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     //-----描画はマネージャーで行う-----//
     DirectX::XMFLOAT3 entryPos{ 0.0f,500.0f,0.0f };
     auto  enemy = new BossRushUnit(Graphics_,entryPos);
-    enemy->SetEnemyType(SendEnemyType::BossRush);
+    enemy->SetEnemyType(EnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy);
     mRushVec.emplace_back(enemy);
 
     auto  enemy1 = new BossRushUnit(Graphics_,entryPos);
-    enemy1->SetEnemyType(SendEnemyType::BossRush);
+    enemy1->SetEnemyType(EnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy1);
     mRushVec.emplace_back(enemy1);
 
     auto  enemy2 = new BossRushUnit(Graphics_,entryPos);
-    enemy2->SetEnemyType(SendEnemyType::BossRush);
+    enemy2->SetEnemyType(EnemyType::BossRush);
     pEnemyManager_->fAddRushBoss(enemy2);
     mRushVec.emplace_back(enemy2);
 

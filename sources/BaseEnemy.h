@@ -121,10 +121,10 @@ protected:
     float mDissolve{};
 
     //-----“G‚Ìí—Ş‚ğİ’è-----//
-    SendEnemyType type;
+    EnemyType type;
 public:
-    void SetEnemyType(SendEnemyType t) { type = t; }
-    SendEnemyType GetEnemyType() { return type; }
+    void SetEnemyType(EnemyType t) { type = t; }
+    EnemyType GetEnemyType() { return type; }
 protected:
     int ai_state{};
 public:

@@ -346,6 +346,7 @@ namespace EnemySendData
         ObjectId,
         AiState,
         TargetId,
+        EnemyTypeId
     };
 
     //-----敵の基本データ-----//
@@ -356,6 +357,7 @@ namespace EnemySendData
         //[0] : object_id
         //[1] : state(AI)
         //[2] : target_id
+        //[3] : enemy_type
         char enemy_data[4];
 
         //-----体力-----//

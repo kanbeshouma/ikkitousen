@@ -60,22 +60,10 @@ enum class EnemyType
     Boss,//8
     Tutorial_NoMove,//9
     Boss_Unit,//10
+    BossRush,
     // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
     Count, // 種類の総量
 };
-
-
-//-----どのタイプの敵のデータを送信するか-----//
-enum SendEnemyType
-{
-    Sword,
-    Archer,
-    Spear,
-    Shield,
-    Boss,
-    BossRush,
-};
-
 
 
 struct EnemySource

@@ -54,9 +54,6 @@ public:
 
     bool fGetSlow()const;
 private:
-
-    SendEnemyType send_enemy_type;
-
     //-----敵のデータを送信する-----//
     void fCheckSendEnemyData(float elapsedTime_);
 
@@ -67,8 +64,10 @@ private:
     void fSendEnemyDamage(int obj_id,int damage);
 
     //-----受信した敵のデータを設定-----//
-    void fSetReceiveEnemyData(float elapsedTime_,char type,EnemySendData::EnemyData data);
+    void fSetReceiveEnemyData(float elapsedTime_, EnemySendData::EnemyData data, GraphicsPipeline& graphics_);
 
+    //<ボスの再出現>//
+    void BossExistence(GraphicsPipeline& graphics_);
 public:
     //--------------------<当たり判定>--------------------//
 
@@ -281,6 +280,12 @@ private:
     //-----イベントを終了した人数-----//
     int end_event_count{ 0 };
 
+    //<ボスの存在確認のデータ送信タイマー>//
+    float check_boss_existence_timer{ 0.0f };
+
+    //<ボスの存在確認のデータ送信フラグ>//
+    bool check_boss_existence_flg{ false };
+
     //****************************************************************
     //
     // 定数
@@ -312,4 +317,8 @@ private:
 
     //-----敵がダメージを受けたときの無敵時間-----//
     const float EnemyInvincibleTime = 0.1f;
+
+    //<ボスの出現チェックのデータ送信頻度>//
+    const float CheckBossExistenceTime = 1.5f;
+
 };
