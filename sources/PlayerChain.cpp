@@ -5,7 +5,7 @@
 #include "SwordTrail.h"
 #include "Player.h"
 #include"Correspondence.h"
-
+#include"LastBoss.h"
 #include "BaseCamera.h"
 
 bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
@@ -301,6 +301,15 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						if (enemies.at(i)->fIsLockOnOfChain()) continue;
 						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
 						if (enemies.at(i)->fGetInnerCamera()) continue;
+
+						if (enemies.at(i)->GetEnemyType() == EnemyType::Boss)
+						{
+							//<船状態のビーム攻撃中はチェイン攻撃の範囲外にする>//
+							if (enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamCharge ||
+								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamStart ||
+								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamShoot ||
+								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamEnd) continue;
+						}
 
 						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
 						{
