@@ -200,7 +200,7 @@ void LastBoss::fSetStun(bool Arg_, bool IsJust_)
     {
         return;
     }
-    
+
     if(IsJust_)
     {
         mIsStun = true;
@@ -758,145 +758,152 @@ void LastBoss::fRegisterFunctions()
 
 void LastBoss::fGuiMenu()
 {
+    imgui_menu_bar("Enemy", "LastBoss", display_scape_imgui);
+
+
 #ifdef USE_IMGUI
-    ImGui::Begin("LastBoss");
-    ImGui::Text("ID%d", object_id);
-    ImGui::Text("Type%d", type);
-    ImGui::DragFloat3("Position", &mPosition.x);
-    ImGui::DragFloat3("Scale", &mScale.x);
-    ImGui::DragFloat4("Orientation", &mOrientation.x);
-
-    if (ImGui::Button("Beam"))
+    if (display_scape_imgui)
     {
-        fChangeState(DivideState::ShipBeamStart);
+        ImGui::Begin("LastBoss");
+        ImGui::Text("ID%d", object_id);
+        ImGui::Text("Type%d", type);
+        ImGui::DragFloat3("Position", &mPosition.x);
+        ImGui::DragFloat3("Scale", &mScale.x);
+        ImGui::DragFloat4("Orientation", &mOrientation.x);
+
+        if (ImGui::Button("Beam"))
+        {
+            fChangeState(DivideState::ShipBeamStart);
+        }
+
+        // 現在のModeを表記
+        switch (mCurrentMode) {
+        case Mode::Ship:
+            ImGui::Text("Mode::Ship");
+            break;
+        case Mode::Human:
+            ImGui::Text("Mode::Human");
+            break;
+        case Mode::Dragon:
+            ImGui::Text("Mode::Dragon");
+            break;
+        case Mode::HumanToDragon:
+            ImGui::Text("Mode::HumanToDragon");
+            break;
+        case Mode::None: break;
+        case Mode::ShipToHuman: break;
+        case Mode::DragonDie: break;
+        default:;
+        }
+
+        if (ImGui::TreeNode("Hp"))
+        {
+            ImGui::InputInt("CurrentHp", &mCurrentHitPoint);
+            float p = fComputePercentHp();
+            ImGui::SliderFloat("Percent", &p, 0.0f, 1.0f);
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("State"))
+        {
+            if (ImGui::Button("HumanAllShot"))
+            {
+                fChangeState(DivideState::HumanAllShot);
+            }
+            if (ImGui::Button("HumanBlow"))
+            {
+                fChangeState(DivideState::HumanBlowAttack);
+            }
+            if (ImGui::Button("HumanAway"))
+            {
+                fChangeState(DivideState::HumanSpAway);
+            }
+            if (ImGui::Button("Rush"))
+            {
+                fChangeState(DivideState::HumanRush);
+            }
+            if (ImGui::Button("DragonHide"))
+            {
+                fChangeState(DivideState::DragonHideStart);
+            }
+            if (ImGui::Button("DragonRush"))
+            {
+                fChangeState(DivideState::DragonRushHide);
+            }
+            if (ImGui::Button("DragonBeam"))
+            {
+                fChangeState(DivideState::DragonMoveStart);
+            }
+            ImGui::TreePop();
+        }
+
+
+        if (ImGui::TreeNode("Area"))
+        {
+            int areaSeed{};
+            if (mPosition.x > 0.0f)
+            {
+                areaSeed++;
+            }
+            if (mPosition.z < 0.0f)
+            {
+                areaSeed += 2;
+            }
+            ImGui::DragInt("areaSeed", &areaSeed);
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::Button("RushUnit"))
+        {
+            for (auto rush : mRushVec)
+            {
+                rush->fStartAppear({ 0.0f,0.0f,0.0f });
+            }
+        }
+
+        ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
+        float v = Math::Length(mPosition);
+        ImGui::DragFloat("Length", &v);
+
+        ImGui::RadioButton("FarRand", Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer);
+
+        // カメラ
+        DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
+            mOrientation, mPosition);
+        DirectX::XMFLOAT3 eyePosition{};
+        DirectX::XMFLOAT3 focusPosition{};
+        DirectX::XMFLOAT3 dummyUp{};
+        // Eyeを取得
+        mpModel->fech_by_bone(mAnimPara, world, mCameraEyeBone, eyePosition, dummyUp);
+        mpModel->fech_by_bone(mAnimPara, world, mCameraFocusBone, focusPosition, dummyUp);
+
+        ImGui::DragFloat3("CameraEye", &eyePosition.x);
+        ImGui::DragFloat3("CameraFocus", &focusPosition.x);
+
+        int hp = mMaxHp;
+        ImGui::DragInt("MaxHp", &hp);
+
+        static DirectX::XMFLOAT3 pos{};
+        ImGui::DragFloat3("pp", &pos.x);
+        if (ImGui::Button("Effect"))
+        {
+            mpBeamEffect->play(effect_manager->get_effekseer_manager(), pos);
+            mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
+        }
+
+        ImGui::RadioButton("IsAttack", mIsAttack);
+        ImGui::Checkbox("Stun", &mIsStun);
+        ImGui::DragFloat("Timer", &mTimer);
+
+        ImGui::InputInt("AttackPower", &mAttackPower);
+
+        ImGui::DragFloat("Dissolve", &mDissolve, 0.0f, 1.0f);
+
+        ImGui::End();
     }
-
-    // 現在のModeを表記
-    switch (mCurrentMode) {
-    case Mode::Ship:
-        ImGui::Text("Mode::Ship");
-        break;
-    case Mode::Human:
-        ImGui::Text("Mode::Human");
-        break;
-    case Mode::Dragon:
-        ImGui::Text("Mode::Dragon");
-        break;
-    case Mode::HumanToDragon:
-        ImGui::Text("Mode::HumanToDragon");
-        break;
-    case Mode::None: break;
-    case Mode::ShipToHuman: break;
-    case Mode::DragonDie: break;
-    default: ;
-    }
-
-    if (ImGui::TreeNode("Hp"))
-    {
-        ImGui::InputInt("CurrentHp", &mCurrentHitPoint);
-        float p = fComputePercentHp();
-        ImGui::SliderFloat("Percent",&p,0.0f,1.0f);
-        ImGui::TreePop();
-    }
-
-    if (ImGui::TreeNode("State"))
-    {
-        if (ImGui::Button("HumanAllShot"))
-        {
-            fChangeState(DivideState::HumanAllShot);
-        }
-        if (ImGui::Button("HumanBlow"))
-        {
-            fChangeState(DivideState::HumanBlowAttack);
-        }
-        if (ImGui::Button("HumanAway"))
-        {
-            fChangeState(DivideState::HumanSpAway);
-        }
-        if(ImGui::Button("Rush"))
-        {
-            fChangeState(DivideState::HumanRush);
-        }
-        if (ImGui::Button("DragonHide"))
-        {
-            fChangeState(DivideState::DragonHideStart);
-        }
-        if (ImGui::Button("DragonRush"))
-        {
-            fChangeState(DivideState::DragonRushHide);
-        }
-        if (ImGui::Button("DragonBeam"))
-        {
-            fChangeState(DivideState::DragonMoveStart);
-        }
-        ImGui::TreePop();
-    }
-
-
-    if(ImGui::TreeNode("Area"))
-    {
-        int areaSeed{};
-        if (mPosition.x > 0.0f)
-        {
-            areaSeed++;
-        }
-        if (mPosition.z < 0.0f)
-        {
-            areaSeed += 2;
-        }
-        ImGui::DragInt("areaSeed", &areaSeed);
-
-        ImGui::TreePop();
-    }
-
-    if(ImGui::Button("RushUnit"))
-    {
-        for (auto rush : mRushVec)
-        {
-            rush->fStartAppear({ 0.0f,0.0f,0.0f });
-        }
-    }
-
-    ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
-    float v = Math::Length(mPosition);
-    ImGui::DragFloat("Length", &v);
-
-    ImGui::RadioButton("FarRand", Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer);
-
-    // カメラ
-    DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
-        mOrientation, mPosition);
-    DirectX::XMFLOAT3 eyePosition{};
-    DirectX::XMFLOAT3 focusPosition{};
-    DirectX::XMFLOAT3 dummyUp{};
-    // Eyeを取得
-    mpModel->fech_by_bone(mAnimPara,world, mCameraEyeBone, eyePosition, dummyUp);
-    mpModel->fech_by_bone(mAnimPara,world, mCameraFocusBone, focusPosition, dummyUp);
-
-    ImGui::DragFloat3("CameraEye", &eyePosition.x);
-    ImGui::DragFloat3("CameraFocus", &focusPosition.x);
-
-    int hp = mMaxHp;
-    ImGui::DragInt("MaxHp", &hp);
-
-    static DirectX::XMFLOAT3 pos{};
-    ImGui::DragFloat3("pp", &pos.x);
-    if(ImGui::Button("Effect"))
-    {
-        mpBeamEffect->play(effect_manager->get_effekseer_manager(), pos);
-        mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
-    }
-
-    ImGui::RadioButton("IsAttack", mIsAttack);
-    ImGui::Checkbox("Stun", &mIsStun);
-    ImGui::DragFloat("Timer", &mTimer);
-
-    ImGui::InputInt("AttackPower", &mAttackPower);
-
-    ImGui::DragFloat("Dissolve", &mDissolve, 0.0f, 1.0f);
-
-    ImGui::End();
 #endif
+
 }
 
 

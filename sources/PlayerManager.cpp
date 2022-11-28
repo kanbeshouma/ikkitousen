@@ -452,10 +452,10 @@ void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
     for (auto& player : players)
     {
         //-----操作キャラクターじゃなかったらとばす-----//
-        if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
 
         if (CorrespondenceManager::Instance().GetMultiPlay())
         {
+            if (player->GetObjectId() != CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
             //-----プレイヤーの体力をマルチ用のデータに設定(同期をとる)-----//
             player->SetHealth(multiplay_current_health);
 
