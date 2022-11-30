@@ -629,7 +629,8 @@ void EnemyManager::SetReciveDamageData(int obj_id, int damage, GraphicsPipeline&
         if (enemy->fGetObjectId() != obj_id) continue;
 
         //----ƒ_ƒ[ƒW‚ðÝ’è‚·‚é-----//
-        enemy->fReceiveDamaged(damage,graphics_);
+        enemy->fDamaged(damage,0.0f,graphics_,0.0f);
+
     }
 }
 

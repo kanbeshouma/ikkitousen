@@ -321,11 +321,13 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	if (is_game_clear) return;
 
 
-#if 0
+#if 1
 #ifdef USE_IMGUI
-	ImGui::Begin("StageSituation");
-	ImGui::RadioButton("StageClear", stage_situation & StageSituation::StageClearFlg);
-	ImGui::RadioButton("GameOver", stage_situation & StageSituation::GameOverFlg);
+	ImGui::Begin("StageNum");
+
+	int a =  mWaveManager.get_current_stage();
+	ImGui::Text("stage_num%d", a);
+
 	ImGui::End();
 #endif // USE_IMGUI
 

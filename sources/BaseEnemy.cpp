@@ -130,10 +130,10 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
         ret = true;
     }
     ////HP���Ȃ��Ȃ��������S������
-    //if (mCurrentHitPoint <= 0)
-    //{
-    //    fDie(Graphics_);
-    //}
+    if (mCurrentHitPoint <= 0)
+    {
+        fDie(Graphics_);
+    }
     return ret;
 }
 
@@ -168,7 +168,6 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
 void BaseEnemy::fReceiveDamaged(int damage, GraphicsPipeline& graphics_)
 {
     mCurrentHitPoint -= damage;
-
 }
 
 void BaseEnemy::fUpdateVernierEffectPos()

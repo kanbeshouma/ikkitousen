@@ -302,6 +302,17 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	//-----ゲームオーバー,ゲームクリアの時は止める-----//
 	if (is_game_over) return;
 	if (is_game_clear) return;
+#if 1
+#ifdef USE_IMGUI
+	ImGui::Begin("StageNum");
+
+	int a = mWaveManager.get_current_stage();
+	ImGui::Text("stage_num%d", a);
+
+	ImGui::End();
+#endif // USE_IMGUI
+
+#endif // 0
 
 	//-----ゲームクリア-----//
 	if (mWaveManager.get_game_clear()) { is_game_clear = true; }
@@ -331,14 +342,19 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (is_start_game)
 	{
+		SetEnemyDamageData(graphics);
+
 		//-----選択したステージを設定-----//
 		SetSelectStage();
 		//-----イベントが終了した人数をカウントする-----//
 		CountEndEvent();
-		//-----ステージ中のウェーブの更新処理-----//
-		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
-		//-----敵のデータを削除-----//
-		ClearEnemyReceiveData();
+		{
+			std::lock_guard<std::mutex> lock(mutex);
+			//-----ステージ中のウェーブの更新処理-----//
+			mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);
+		}
+			//-----敵のデータを削除-----//
+			ClearEnemyReceiveData();
 	}
 	//-----クリア演出-----//
 	if (mWaveManager.during_clear_performance())
