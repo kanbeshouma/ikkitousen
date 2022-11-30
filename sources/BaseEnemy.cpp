@@ -56,6 +56,17 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         elapsedTime_ *= 0.8f;
     }
 
+    if (is_appears == false)
+    {
+        mDissolve -= elapsedTime_;
+        if (mDissolve <= 0.0f)
+        {
+            //-----出現フラグをtrueにする-----//
+            is_appears = true;
+        }
+    }
+
+
     //-----位置の補間-----//
     if (mStartlerp)LerpPosition(elapsedTime_);
 

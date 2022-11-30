@@ -803,11 +803,13 @@ void ClientPlayer::LockOn()
 {
     //-----Ž€‚ñ‚Å‚¢‚½‚çˆ—‚ð‚Æ‚Î‚·-----//
     if (condition_state == ConditionState::Die) return;
-
-    //-----“G‚ÌˆÊ’u‚ðÝ’è‚·‚é-----//
-    if (target_enemy != nullptr)
+    if (is_lock_on)
     {
-        target = target_enemy->fGetPosition();
+        //-----“G‚ÌˆÊ’u‚ðÝ’è‚·‚é-----//
+        if (target_enemy != nullptr)
+        {
+            target = target_enemy->fGetPosition();
+        }
     }
 }
 

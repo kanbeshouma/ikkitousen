@@ -1289,13 +1289,14 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
             SendWatchEndEvent();
         }
     }
-    else
+    else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
         if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)human_to_dragon_event = true;
     }
 
     if (human_to_dragon_event)
     {
+        DebugConsole::Instance().WriteDebugConsole("遷移", TextColor::Pink);
         mDrawSkip = false;
         fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
@@ -1752,7 +1753,7 @@ void LastBoss::fDragonDieStartInit()
     mDissolve = 0.0f;
     //-----ステート設定-----//
     ai_state = AiState::DragonDieStart;
-
+    is_dragon_die = true;
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1933,7 +1934,7 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
     }
 
     bool ret{ false };
-    if (mInvincibleTime <= 0.0f)
+    if (mInvincibleTime <= 0.0f && mCurrentHitPoint > 0)
     {
         if (mIsLockOnOfChain)
         {
@@ -1948,7 +1949,7 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
 
 
 
-    if (mCurrentHitPoint <= 0)
+    if (mCurrentHitPoint <= 0 && is_dragon_die == false)
     {
         effect_manager->finalize();
         effect_manager->initialize(Graphics_);

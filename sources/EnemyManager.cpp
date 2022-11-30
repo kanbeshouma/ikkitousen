@@ -628,9 +628,8 @@ void EnemyManager::SetReciveDamageData(int obj_id, int damage, GraphicsPipeline&
         //-----IDが違うならとばす-----//
         if (enemy->fGetObjectId() != obj_id) continue;
 
-        //----ダメージを設定する-----//
-        enemy->fDamaged(damage,0.0f,graphics_,0.0f);
-
+            //----ダメージを設定する-----//
+        enemy->fDamaged(damage, 0.0f, graphics_, 0.0f);
     }
 }
 
@@ -1960,17 +1959,17 @@ void EnemyManager::EndEnventCount(int count)
     //-----接続した人数と同じならイベントを進める-----//
     if (end_event_count == CorrespondenceManager::Instance().GetConnectedPersons())
     {
-        DebugConsole::Instance().WriteDebugConsole("イベントを終了", TextColor::Blue);
 
         for (auto enemy : mEnemyVec)
         {
             //-----ボスじゃなかったらとばす-----//
             if (enemy->GetEnemyType() != EnemyType::Boss) continue;
             enemy->SetEndEvent(true);
+            //----次に備えてカウントを減らす-----//
+            end_event_count = 0;
+            DebugConsole::Instance().WriteDebugConsole("イベントを終了", TextColor::Blue);
             break;
         }
-        //----次に備えてカウントを減らす-----//
-        end_event_count = 0;
 
     }
 }

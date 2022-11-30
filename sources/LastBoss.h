@@ -622,4 +622,7 @@ public:
     void fRender(GraphicsPipeline& Graphics_) override;
     bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fDie(GraphicsPipeline& Graphics_) override;
+private:
+    //-----ドラゴンの死亡アニメーションを始めたかどうか-----//
+    bool is_dragon_die = false;
 };

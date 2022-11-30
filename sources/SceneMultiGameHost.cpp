@@ -1527,9 +1527,10 @@ void SceneMultiGameHost::SetEnemyDamageData(GraphicsPipeline& graphics_)
 		std::lock_guard<std::mutex> lock(mutex);
 
 		//-----データを設定する-----//
-		for (const auto& data : receive_all_enemy_data.enemy_damage_data)
+		for (auto& data : receive_all_enemy_data.enemy_damage_data)
 		{
 			mWaveManager.fSetReceiveEnemyDamageData(data,graphics_);
+			data.data[EnemySendData::EnemyDamageCmdArray::DamageComDamage] = 0;
 		}
 
 		//-----データを削除する-----//

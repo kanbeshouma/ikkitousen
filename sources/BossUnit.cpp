@@ -71,7 +71,7 @@ void BossUnit::fSetEnemyState(int state)
     if (mIsStun) return;
 
     //-----それぞれのステートに遷移-----//
-    switch (ai_state)
+    switch (state)
     {
     case AiState::Start: fChangeState(DivideState::Start); break;
     case AiState::Idle: fChangeState(DivideState::Idle); break;
@@ -387,6 +387,7 @@ void BossUnit::fAttackBeamInit()
     mTimer = 0.0f;
     mIsAttack = true;
     mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_START);
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mpBeamEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 
 
