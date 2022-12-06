@@ -981,7 +981,7 @@ void SceneTitle::TitleSelectEntry(float elapsed_time)
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 						// ステージ番号ボス手前から
-						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::BOSS);
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
 						WaveFile::get_instance().save();
 						have_tutorial_state = 1; // チュートリアルなし
 						audio_manager->play_se(SE_INDEX::DECISION);

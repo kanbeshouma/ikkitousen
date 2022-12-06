@@ -82,6 +82,26 @@ std::map<int, std::vector<char>> SceneMultiGameClient::chain_rock_on_enemy_id;
 
 SceneMultiGameClient::SceneMultiGameClient()
 {
+	//<マルチスレッドで使用する変数を初期化>//
+	end_tcp_thread = false;
+	end_udp_thread = false;
+	register_player = false;
+	register_player_id = -1;
+	register_player_color = 0;
+	logout_id.clear();
+	ResetPlayerAllData();
+	ResetEnemyAllData();
+	transfer_enemy_host_result = false;
+	transfer_enemy_host_request = false;
+	transfer_enemy_result.data[0] = transfer_enemy_result.data[1] = TransferEnemyControl::Result::None;
+	stage_situation = StageSituation::NoneFlg;
+	current_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
+	receive_stage_num = false;
+	receive_end_result_next_stage = false;
+	result_next_stage = WaveManager::STAGE_IDENTIFIER::S_1_1;
+	game_retry = false;
+	end_event_data = false;
+	chain_rock_on_enemy_id.clear();
 }
 
 SceneMultiGameClient::~SceneMultiGameClient()
@@ -1477,4 +1497,21 @@ void SceneMultiGameClient::CheckTransferEnemyControl()
 		//-----処理をしたらフラグを戻す-----//
 		transfer_enemy_host_result = false;
 	}
+}
+
+void SceneMultiGameClient::ResetPlayerAllData()
+{
+	receive_all_player_data.player_action_data.clear();
+	receive_all_player_data.player_health_data.clear();
+	receive_all_player_data.player_move_data.clear();
+	receive_all_player_data.player_position_data.clear();
+}
+
+void SceneMultiGameClient::ResetEnemyAllData()
+{
+	receive_all_enemy_data.enemy_condition_data.clear();
+	receive_all_enemy_data.enemy_damage_data.clear();
+	receive_all_enemy_data.enemy_die_data.clear();
+	receive_all_enemy_data.enemy_move_data.clear();
+	receive_all_enemy_data.enemy_spawn_data.clear();
 }

@@ -313,9 +313,11 @@ private:
 private:
     //-----プレイヤーの受信データを入れる-----//
     static PlayerAllDataStruct receive_all_player_data;
+    void ResetPlayerAllData();
 
     //-----敵の受信データを入れる-----//
     static EnemyAllDataStruct receive_all_enemy_data;
+    void ResetEnemyAllData();
 
     //-----敵のホスト権の譲渡リクエストを受けたかどうか-----//
     static bool transfer_enemy_host_request;

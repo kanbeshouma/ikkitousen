@@ -110,16 +110,6 @@ void SceneMultiGameClient::CheckDataCommand(char com, char* data, int id)
 
         break;
     }
-    //-----敵の出現データ-----//
-    case UpdateCommand::EnemySpawnCommand:
-    {
-        //-----データをキャスト-----//
-        EnemySendData::EnemySpawnData* s = (EnemySendData::EnemySpawnData*)data;
-        //-----データを保存-----//
-        receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
-
-        break;
-    }
     //-----敵の基本データ-----//
     case UpdateCommand::EnemiesMoveCommand:
     {

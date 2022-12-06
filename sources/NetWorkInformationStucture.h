@@ -26,6 +26,8 @@ enum CommandList
     //IPアドレス取得
     IpAddress,
 
+    //=====敵の出現コマンド=====//
+    EnemySpawnCommand,
     //======ステージ番号の通信コマンド=====//
 #pragma region StageNumber
     //-----ステージ番号を送信-----//
@@ -89,9 +91,6 @@ enum UpdateCommand
 
     //-----チェイン攻撃時にロックオンした敵の番号データ-----//
     ChainAttackLockOnEnemy,
-
-    //-----敵の出現データ-----//
-    EnemySpawnCommand,
 
     //-----敵の基本データ-----//
     EnemiesMoveCommand,

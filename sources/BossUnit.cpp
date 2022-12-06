@@ -242,6 +242,7 @@ void BossUnit::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void BossUnit::fIdleInit()
 {
+
     mpModel->play_animation(mAnimPara, AnimationName::IDLE);
     mTimer = 0.0f;
     ai_state = AiState::Idle;

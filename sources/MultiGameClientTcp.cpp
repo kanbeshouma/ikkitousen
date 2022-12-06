@@ -63,6 +63,17 @@ void SceneMultiGameClient::ReceiveTcpData()
                 }
                 break;
             }
+            //-----敵の出現-----//
+            case CommandList::EnemySpawnCommand:
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                //-----データをキャスト-----//
+                EnemySendData::EnemySpawnData* s = (EnemySendData::EnemySpawnData*)data;
+                //-----データを保存-----//
+                receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
+
+                break;
+            }
             //-----敵のホスト権の譲渡も結果-----//
             case CommandList::TransferEnemyControlResult:
             {

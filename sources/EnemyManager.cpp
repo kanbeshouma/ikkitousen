@@ -1265,9 +1265,7 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
     EnemySendData::EnemySpawnData data;
 
     //-----ÉRÉ}ÉìÉhÇê›íË-----//
-    data.cmd[ComLocation::ComList] = CommandList::Update;
-
-    data.cmd[ComLocation::UpdateCom] = UpdateCommand::EnemySpawnCommand;
+    data.cmd[ComLocation::ComList] = CommandList::EnemySpawnCommand;
 
     //-----ìGÇÃID-----//
     data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyId] = object_count;
@@ -1290,7 +1288,7 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
     data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer] = Source_.transfer_host;
 
 
-    CorrespondenceManager::Instance().UdpSend((char*)&data, sizeof(EnemySendData::EnemySpawnData));
+    CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, sizeof(EnemySendData::EnemySpawnData));
 }
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
