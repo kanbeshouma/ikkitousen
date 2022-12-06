@@ -459,9 +459,6 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
 
         if (enemy->GetEnemyType() == EnemyType::Boss && fGetIsEventCamera())
         {
-            //-----船のイベントの時にデータを送信する(存在チェック用)
-            if (enemy->fGetEnemyAiState() == LastBoss::AiState::ShipStart)
-            {
                 //-----オブジェクト番号設定-----//
                 enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
@@ -485,8 +482,6 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
                 data_set_count++;
 
                 check_boss_existence_flg = true;
-            }
-            else continue;
         }
 
         //-----オブジェクト番号設定-----//

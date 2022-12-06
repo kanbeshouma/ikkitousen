@@ -319,6 +319,6 @@ private:
     const float EnemyInvincibleTime = 0.1f;
 
     //<ボスの出現チェックのデータ送信頻度>//
-    const float CheckBossExistenceTime = 1.5f;
+    const float CheckBossExistenceTime = 2.0f;
 
 };

@@ -8,6 +8,7 @@
 #include"DragonBreath.h"
 #include"enemy_hp_gauge.h"
 #include"DebugConsole.h"
+#include"Correspondence.h"
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
@@ -151,8 +152,16 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     case Mode::Ship:
         break;
     case Mode::Human:
-        // 体力が特定の割合を下回ったら
-        fChangeHumanToDragon();
+        if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())
+        {
+            //体力が特定の割合を下回ったら
+            fChangeHumanToDragon();
+
+        }
+        else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
+        {
+            fChangeHumanToDragon();
+        }
         break;
     case Mode::Dragon:
         break;
@@ -255,11 +264,17 @@ void LastBoss::fSetEnemyState(int state)
     case AiState::HumanSpShoot: fChangeState(DivideState::HumanSpShoot); break;
     case AiState::HumanSpDamage: fChangeState(DivideState::HumanSpDamage); break;
     case AiState::HumanRush: fChangeState(DivideState::HumanRush); break;
-    case AiState::HumanDieStart: fChangeState(DivideState::HumanDieStart); break;
-    case AiState::HumanDieMiddle: fChangeState(DivideState::HumanDieMiddle); break;
+    case AiState::HumanDieStart:
+    case AiState::HumanDieMiddle:
     case AiState::HumanToDragon:
     {
-        if(human_to_dragon_event == false)fChangeState(DivideState::HumanToDragon);
+        //-----イベント中じゃないときにしか入らない-----//
+        if (human_to_dragon_event == false && mCurrentMode != Mode::HumanToDragon)
+        {
+            fChangeState(DivideState::HumanDieStart);
+            // 変形中モードに遷移（ダメージは受けない）
+            mCurrentMode = Mode::HumanToDragon;
+        }
         break;
     }
     case AiState::DragonIdle: fChangeState(DivideState::DragonIdle); break;
