@@ -145,7 +145,7 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
     fTurnToPlayer(elapsedTime_, 5.0f);
-   if(mTimer>30.0f)
+   if(mTimer>3.0f)
    {
        //<マルチプレイ時はホストしか遷移しないようにした>//
        if (CorrespondenceManager::Instance().GetMultiPlay())

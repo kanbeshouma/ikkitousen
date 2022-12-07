@@ -408,6 +408,7 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
 {
     if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
 
+    //------ボスの出現確認とAIの調整でのデータ送信-----//
     if (check_boss_existence_flg)
     {
         check_boss_existence_timer += elapsedTime_ * 1.0f;

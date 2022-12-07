@@ -156,7 +156,6 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
         {
             //‘Ì—Í‚ª“Á’è‚ÌŠ„‡‚ğ‰º‰ñ‚Á‚½‚ç
             fChangeHumanToDragon();
-
         }
         else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
         {

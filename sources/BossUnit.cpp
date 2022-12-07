@@ -27,6 +27,12 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_)
     :BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_unit.fbx")
 {}
 
+BossUnit::~BossUnit()
+{
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
+    mStunEffect->stop(effect_manager->get_effekseer_manager());
+}
+
 void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
@@ -205,20 +211,25 @@ void BossUnit::fResetLaser()
 void BossUnit::fGuiMenu()
 {
 #ifdef USE_IMGUI
-    ImGui::Begin("BossUnit");
-    ImGui::Text("IsAttack:");
-    ImGui::SameLine();
-    ImGui::Text(mIsAttack ? "true" : "false");
+    std::string name = "BossUnit" + std::to_string(object_id);
+    imgui_menu_bar("Enemy", name, display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        ImGui::Begin(name.c_str());
+        ImGui::Text("IsAttack:");
+        ImGui::SameLine();
+        ImGui::Text(mIsAttack ? "true" : "false");
 
-    ImGui::Text("OnPlayer:");
-    ImGui::SameLine();
-    ImGui::Text(mOnPlayer ? "true" : "false");
+        ImGui::Text("OnPlayer:");
+        ImGui::SameLine();
+        ImGui::Text(mOnPlayer ? "true" : "false");
 
-    ImGui::Checkbox("PlayerSearch", &mIsPlayerSearch);
-    ImGui::Checkbox("Stun", &mIsStun);
-    ImGui::DragFloat("LifeTime", &mLifeTimer);
+        ImGui::Checkbox("PlayerSearch", &mIsPlayerSearch);
+        ImGui::Checkbox("Stun", &mIsStun);
+        ImGui::DragFloat("LifeTime", &mLifeTimer);
 
-    ImGui::End();
+        ImGui::End();
+    }
 #endif
 }
 

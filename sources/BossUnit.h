@@ -46,10 +46,7 @@ public:
         const EnemyParamPack& ParamPack_,
         AddBulletFunc fAddBullet_);
     BossUnit(GraphicsPipeline& Graphics_);
-    ~BossUnit()
-    {
-        mpBeamEffect->stop(effect_manager->get_effekseer_manager());
-    }
+    ~BossUnit();
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
 
