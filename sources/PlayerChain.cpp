@@ -310,6 +310,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamShoot ||
 								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamEnd) continue;
 						}
+						if (enemies.at(i)->GetEnemyType() == EnemyType::BossRush) continue;
+
 
 						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
 						{

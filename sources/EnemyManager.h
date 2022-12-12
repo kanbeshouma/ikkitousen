@@ -66,8 +66,6 @@ private:
     //-----受信した敵のデータを設定-----//
     void fSetReceiveEnemyData(float elapsedTime_, EnemySendData::EnemyData data, GraphicsPipeline& graphics_);
 
-    //<ボスの再出現>//
-    void BossExistence(GraphicsPipeline& graphics_);
 public:
     //--------------------<当たり判定>--------------------//
 
@@ -280,11 +278,9 @@ private:
     //-----イベントを終了した人数-----//
     int end_event_count{ 0 };
 
-    //<ボスの存在確認のデータ送信タイマー>//
-    float check_boss_existence_timer{ 0.0f };
+    //<ボスのAIのデータ送信タイマー>//
+    float check_boss_ai_timer{ 0.0f };
 
-    //<ボスの存在確認のデータ送信フラグ>//
-    bool check_boss_existence_flg{ false };
 
     //****************************************************************
     //
@@ -319,6 +315,6 @@ private:
     const float EnemyInvincibleTime = 0.1f;
 
     //<ボスの出現チェックのデータ送信頻度>//
-    const float CheckBossExistenceTime = 2.0f;
+    const float CheckBossAiTime = 3.0f;
 
 };

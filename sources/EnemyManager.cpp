@@ -408,15 +408,10 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
 {
     if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
 
-    //------ボスの出現確認とAIの調整でのデータ送信-----//
-    if (check_boss_existence_flg)
+    //------AIの調整でのデータ送信-----//
+    if (fGetIsEventCamera())
     {
-        check_boss_existence_timer += elapsedTime_ * 1.0f;
-        if (check_boss_existence_timer > CheckBossExistenceTime)
-        {
-            check_boss_existence_flg = false;
-            check_boss_existence_timer = 0.0f;
-        }
+        check_boss_ai_timer += elapsedTime_ * 1.0f;
     }
 
     //-----時間を取得-----//
@@ -444,6 +439,16 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
 {
     using namespace EnemySendData;
 
+    if (fGetIsEventCamera())
+    {
+        if (check_boss_ai_timer < CheckBossAiTime) return;
+        else
+        {
+            check_boss_ai_timer = 0.0f;
+        }
+    }
+
+
     char data[512]{};
     //-----コマンドを設定する-----//
     data[ComLocation::ComList] = CommandList::Update;
@@ -458,32 +463,36 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
     {
         if (enemy->fGetMaster() == false) continue;
 
-        if (enemy->GetEnemyType() == EnemyType::Boss && fGetIsEventCamera())
+#if 0
+        if (enemy->GetEnemyType() == EnemyType::Boss && fGetIsEventCamera() && check_boss_ai_timer > CheckBossAiTime)
         {
-                //-----オブジェクト番号設定-----//
-                enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
+            //-----オブジェクト番号設定-----//
+            enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 
-                //-----AIのステート設定-----//
-                enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
+            //-----AIのステート設定-----//
+            enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
 
-                //-----ターゲットしているプレイヤーのId-----//
-                enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
+            //-----ターゲットしているプレイヤーのId-----//
+            enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
 
-                //-----敵のタイプ-----//
-                enemy_d.enemy_data[EnemyDataArray::EnemyTypeId] = static_cast<char>(enemy->GetEnemyType());
+            //-----敵のタイプ-----//
+            enemy_d.enemy_data[EnemyDataArray::EnemyTypeId] = static_cast<char>(enemy->GetEnemyType());
 
-                //-----体力-----//
-                enemy_d.hp = static_cast<int>(enemy->fGetCurrentHitPoint());
+            //-----体力-----//
+            enemy_d.hp = static_cast<int>(enemy->fGetCurrentHitPoint());
 
-                //-----自分の位置を設定-----//
-                enemy_d.pos = enemy->fGetPosition();
+            //-----自分の位置を設定-----//
+            enemy_d.pos = enemy->fGetPosition();
 
-                std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d, sizeof(EnemyData));
+            std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d, sizeof(EnemyData));
 
-                data_set_count++;
+            data_set_count++;
 
-                check_boss_existence_flg = true;
+            check_boss_ai_timer = 0.0f;
+            break;
         }
+
+#endif // 0
 
         //-----オブジェクト番号設定-----//
         enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
@@ -534,10 +543,6 @@ void EnemyManager::fSendEnemyDamage(int obj_id, int damage)
 
 void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, EnemySendData::EnemyData data, GraphicsPipeline& graphics_)
 {
-    //-----敵が存在していたかどうか-----//
-    bool existence_enemy{ false };
-
-    EnemyType t = static_cast<EnemyType>(data.enemy_data[EnemySendData::EnemyDataArray::EnemyTypeId]);
 
     for (const auto& enemy : mEnemyVec)
     {
@@ -555,46 +560,11 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, EnemySendData::Enemy
 
         //-----体力設定------//
         enemy->fSetCurrentHitPoint(data.hp);
-        existence_enemy = true;
         break;
     }
 
-    if (existence_enemy == false && t == EnemyType::Boss)
-    {
-        BossExistence(graphics_);
-    }
-
 }
 
-void EnemyManager::BossExistence(GraphicsPipeline& graphics_)
-{
-    //<ボスのデータをロードする>//
-    fLoad(mWaveFileNameArray[WaveManager::STAGE_IDENTIFIER::BOSS]);
-    //<スポーンデータからボスのデータを取得して出現させる>//
-    for (const auto data : mCurrentWaveVec)
-    {
-        if (data.mType == EnemyType::Boss)
-        {
-
-            //<受信側で敵が存在していないので敵を生成>//
-            BaseEnemy* enemy = nullptr;
-            EnemyParamPack  e_param = mEditor.fGetParam(EnemyType::Boss);
-
-            enemy = new LastBoss(graphics_,
-                data.mEmitterPoint, e_param, this);
-            enemy->fSetObjectId(object_count);
-            enemy->SetEnemyType(EnemyType::Boss);
-            enemy->SetEnemyGropeData(data.master, data.transfer_host, data.grope_id);
-            mEnemyVec.emplace_back(enemy);
-            object_count++;
-            DebugConsole::Instance().WriteDebugConsole("ボスが出現していなかったので生成します",TextColor::Yellow);
-            //<出現データを初期化しておく>//
-            mCurrentWaveVec.clear();
-            break;
-        }
-    }
-
-}
 
 void EnemyManager::fSetReceiveConditionData(EnemySendData::EnemyConditionData data)
 {

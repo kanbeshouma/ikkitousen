@@ -108,11 +108,11 @@ SceneMultiGameHost::~SceneMultiGameHost()
 	end_tcp_thread = true;
 
 	//-----TCPスレッドを終了する-----//
-	tcp_thread.join();
+	if(tcp_thread.joinable())tcp_thread.join();
 	end_udp_thread = true;
 
 	//-----UDPスレッドを終了する-----//
-	udp_thread.join();
+	if(udp_thread.joinable())udp_thread.join();
 }
 
 void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)

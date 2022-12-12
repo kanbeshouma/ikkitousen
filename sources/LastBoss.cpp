@@ -295,6 +295,7 @@ void LastBoss::fSetEnemyState(int state)
         break;
     }
 
+
 }
 
 void LastBoss::fRegisterFunctions()

@@ -824,7 +824,14 @@ void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Gr
     if(mAwayLerp>=1.0f)
     {
         fChangeState(DivideState::HumanSpWait);
-        fSpawnChildUnit(Graphics_, 6);
+        //------マルチプレイの場合はホストしか出現処理をしない-----//
+        if (CorrespondenceManager::Instance().GetMultiPlay() &&
+            CorrespondenceManager::Instance().GetHost())
+        {
+            fSpawnChildUnit(Graphics_, 6);
+        }
+        else if (CorrespondenceManager::Instance().GetMultiPlay() == false) fSpawnChildUnit(Graphics_, 6);
+
     }
 }
 

@@ -576,9 +576,8 @@ void ClientPlayer::SetPlayerActionData(PlayerActionData data)
 {
 
     //-----位置データを設定-----//
-    //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
     //そこに向かって補完していく
-    position = data.position;
+    SetLerpPosition(data.position);
 
     //-----チャージ位置設定-----//
     charge_point = data.charge_point;
