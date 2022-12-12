@@ -1378,6 +1378,8 @@ void SceneMultiGameHost::StartGameUi(float elapsed_time)
 
 			char data[2]{};
 			data[0] = CommandList::CurrentStageNum;
+			//-----今のステージを保存しておく-----//
+			current_stage = mWaveManager.get_current_stage();
 			data[1] = current_stage;
 			//-----ステージクリアを送信-----//
 			CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, 2);

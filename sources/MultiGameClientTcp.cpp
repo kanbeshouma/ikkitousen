@@ -72,6 +72,7 @@ void SceneMultiGameClient::ReceiveTcpData()
                 //-----データを保存-----//
                 receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
 
+                DebugConsole::Instance().WriteDebugConsole("敵の出現",TextColor::Green);
                 break;
             }
             //-----敵のホスト権の譲渡も結果-----//
