@@ -1761,14 +1761,35 @@ void LastBoss::fDragonDieStartInit()
     //-----ステート設定-----//
     ai_state = AiState::DragonDieStart;
     is_dragon_die = true;
+    end_event = false;
+
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    if(mpModel->end_of_animation(mAnimPara))
+        //<マルチプレイの時、イベントが終了していないときしか入らない>//
+    if (CorrespondenceManager::Instance().GetMultiPlay() && end_event == false)
     {
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
+        {
+            //-----カウントを増やす-----//
+            mpEnemyManager->EndEnventCount(1);
+            end_event = true;
+            SendWatchEndEvent();
+        }
+    }
+    else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
+    {
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)dragon_die_event = true;
+    }
+
+    if (dragon_die_event)
+    {
+        DebugConsole::Instance().WriteDebugConsole("遷移", TextColor::Pink);
         fChangeState(DivideState::DragonDieEnd);
     }
+
+
 }
 
 void LastBoss::fDragonDieMiddleInit()
@@ -1868,6 +1889,8 @@ void LastBoss::SetEndEvent(bool arg)
     case AiState::HumanToDragon:
         human_to_dragon_event = arg;
         SendEndEvent();
+    case AiState::DragonDieStart:
+            dragon_die_event = arg;
         break;
     default:
         break;

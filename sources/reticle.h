@@ -3,7 +3,7 @@
 #include "UI.h"
 #include "BaseEnemy.h"
 
-class Reticle : public UI
+class Reticle : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//

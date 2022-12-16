@@ -3,7 +3,7 @@
 #include "UI.h"
 #include "number.h"
 
-class Counter : public UI
+class Counter : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//

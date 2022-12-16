@@ -2,7 +2,7 @@
 
 #include "UI.h"
 
-class PlayerConfig : public UI
+class PlayerConfig : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//

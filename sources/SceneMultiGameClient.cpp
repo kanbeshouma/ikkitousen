@@ -336,22 +336,24 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
-	//-----ゲームオーバー,ゲームクリアの時は止める-----//
-	if (is_game_over) return;
-	if (is_game_clear) return;
-
-
 #if 1
 #ifdef USE_IMGUI
 	ImGui::Begin("StageNum");
 
 	int a =  mWaveManager.get_current_stage();
 	ImGui::Text("stage_num%d", a);
+	bool cl = mWaveManager.GetClearFlg();
+	ImGui::RadioButton("clear",cl);
 
 	ImGui::End();
 #endif // USE_IMGUI
 
 #endif // 0
+	//-----ゲームオーバー,ゲームクリアの時は止める-----//
+	if (is_game_over) return;
+	if (is_game_clear) return;
+
+
 
 	//-----	ステージかゲームをクリア-----//
 	if (stage_situation & StageSituation::StageClearFlg)

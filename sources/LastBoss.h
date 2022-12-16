@@ -607,6 +607,9 @@ private:
     //-----人型からドラゴン形態になるイベントが終わったかどうか-----//
     bool human_to_dragon_event = false;
 
+    //-----ドラゴン死亡-----//
+    bool dragon_die_event = false;
+
     //-----イベントが見終わったことを送信-----//
     void SendWatchEndEvent();
 

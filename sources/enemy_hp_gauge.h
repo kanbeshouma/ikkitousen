@@ -3,7 +3,7 @@
 #include "UI.h"
 #include "BaseEnemy.h"
 
-class EnemyHpGauge : public UI
+class EnemyHpGauge : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//
@@ -29,7 +29,7 @@ private:
     float length_player_to_enemy = 0;
 };
 
-class BossHpGauge : public UI
+class BossHpGauge : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//

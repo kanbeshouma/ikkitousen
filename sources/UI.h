@@ -4,12 +4,12 @@
 #include "sprite_batch.h"
 #include "graphics_pipeline.h"
 
-class UI
+class UserInterface
 {
 public:
     //--------<constructor/destructor>--------//
-    UI() {}
-    virtual ~UI() {}
+    UserInterface() {}
+    virtual ~UserInterface() {}
     //--------< ŠÖ” >--------//
     virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
     virtual void render(ID3D11DeviceContext* dc) = 0;

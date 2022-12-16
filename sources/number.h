@@ -2,7 +2,7 @@
 
 #include "UI.h"
 
-class Number : public UI
+class Number : public UserInterface
 {
 public:
     //--------<constructor/destructor>--------//
