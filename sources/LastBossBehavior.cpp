@@ -497,9 +497,21 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
      // 体力が９割を下回ったら以下きめの必殺技
     if (!mFirstSp && fComputePercentHp() < 0.7f)
     {
-        fChangeState(DivideState::HumanSpAway);
-        mFirstSp = true;
-        mAnimationSpeed = 1.0f;
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                mAnimationSpeed = 1.0f;
+                mFirstSp = true;
+                fChangeState(DivideState::HumanSpAway);
+            }
+        }
+        else
+        {
+            mAnimationSpeed = 1.0f;
+            mFirstSp = true;
+            fChangeState(DivideState::HumanSpAway);
+        }
         return;
     }
 
@@ -518,8 +530,19 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         // さらに距離が遠かったら
         if (randNumber <= 3)
         {
-            fChangeState(DivideState::HumanRush);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanRush);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanRush);
+                mAnimationSpeed = 1.0f;
+            }
             return;
         }
     }
@@ -528,26 +551,76 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     {
         if(randNumber>=8)
         {
-            fChangeState(DivideState::HumanBlowAttack);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanBlowAttack);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanBlowAttack);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
         else  if(randNumber>=6)
         {
-            fChangeState(DivideState::HumanAllShot);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanAllShot);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanAllShot);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
         else if(randNumber>=1)
         {
-            fChangeState(DivideState::HumanRush);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanRush);
+                    mAnimationSpeed = 1.0f;
+
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanRush);
+                mAnimationSpeed = 1.0f;
+
+            }
+
             return;
         }
         else
         {
-            fChangeState(DivideState::HumanRush);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanRush);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanRush);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
     }
@@ -555,20 +628,56 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     {
         if (randNumber > 6)
         {
-            fChangeState(DivideState::HumanBlowAttack);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanBlowAttack);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanBlowAttack);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
         else if(randNumber>2)
         {
-            fChangeState(DivideState::HumanAllShot);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanAllShot);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanAllShot);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
         else
         {
-            fChangeState(DivideState::HumanMove);
-            mAnimationSpeed = 1.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanMove);
+                    mAnimationSpeed = 1.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanMove);
+                mAnimationSpeed = 1.0f;
+            }
+
             return;
         }
     }
@@ -659,8 +768,18 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
 
     if(mpModel->end_of_animation(mAnimPara))
     {
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
 
-        fChangeState(DivideState::HumanIdle);
     }
 }
 
@@ -698,15 +817,41 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
         std::uniform_int_distribution<int> RandTargetAdd(0, 9);
         if (const auto num = RandTargetAdd(mt); num < 4)
         {
-            fChangeState(DivideState::HumanMove);
-            mIsAttack = false;
-            mAttackCapsule.mRadius = 0.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanMove);
+                    mIsAttack = false;
+                    mAttackCapsule.mRadius = 0.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanMove);
+                mIsAttack = false;
+                mAttackCapsule.mRadius = 0.0f;
+            }
+
         }
         else
         {
-            fChangeState(DivideState::HumanIdle);
-            mIsAttack = false;
-            mAttackCapsule.mRadius = 0.0f;
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::HumanIdle);
+                    mIsAttack = false;
+                    mAttackCapsule.mRadius = 0.0f;
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::HumanIdle);
+                mIsAttack = false;
+                mAttackCapsule.mRadius = 0.0f;
+            }
+
         }
     }
 }
@@ -728,7 +873,18 @@ void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     if(mMoveThreshold>=1.0f|| Math::Length(mPosition) > mkLimitStage)
     {
-        fChangeState(DivideState::HumanIdle);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
+
     }
 }
 
@@ -753,8 +909,18 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 終了条件
     if (currentLength > limitLength * 1.2f)
     {
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
 
-        fChangeState(DivideState::HumanIdle);
         return;
     }
 
@@ -786,8 +952,20 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     if(mMoveThreshold>=1.0f)
     {
-        audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
-        fChangeState(DivideState::HumanBlowAttack);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
+                fChangeState(DivideState::HumanBlowAttack);
+            }
+        }
+        else
+        {
+            audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
+            fChangeState(DivideState::HumanBlowAttack);
+        }
+
     }
 }
 
@@ -860,12 +1038,34 @@ void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_,
     mTimer += elapsedTime_;
     if(mTimer>=mkHumanSpWaitTime)
     {
-        fChangeState(DivideState::HumanSpOver);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanSpOver);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanSpOver);
+        }
+
     }
 
     if(mpEnemyManager->fGetEnemyCounts()<=4)
     {
-        fChangeState(DivideState::HumanSpDamage);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanSpDamage);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanSpDamage);
+        }
+
     }
 }
 
@@ -891,7 +1091,17 @@ void LastBoss::fHumanSpAttackTimeOverUpdate(float elapsedTime_,
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::HumanSpCharge);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanSpCharge);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanSpCharge);
+        }
     }
 }
 
@@ -941,9 +1151,22 @@ void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_,
 
     if (mTimer <= 0.0f)
     {
-        audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
-        fChangeState(DivideState::HumanSpShoot);
-        mAnimationSpeed = 1.0f;
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
+                fChangeState(DivideState::HumanSpShoot);
+                mAnimationSpeed = 1.0f;
+            }
+        }
+        else
+        {
+            audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
+            fChangeState(DivideState::HumanSpShoot);
+            mAnimationSpeed = 1.0f;
+        }
+
     }
 }
 
@@ -1047,8 +1270,18 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
     }
     if (mAwayLerp > 1.0f)
     {
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
 
-        fChangeState(DivideState::HumanIdle);
     }
 }
 
@@ -1075,7 +1308,19 @@ void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
     {
         // ダメージを与える
         mCurrentHitPoint -= static_cast<int>(static_cast<float>(mMaxHp) * 0.1f);
-        fChangeState(DivideState::HumanIdle);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::HumanIdle);
+
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
+
     }
 }
 
@@ -1344,19 +1589,61 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
     if(randNumber>8)
     {
-        fChangeState(DivideState::DragonIdle);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonIdle);
+        }
     }
     else if (randNumber > 6)
     {
-        fChangeState(DivideState::DragonRushHide);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonRushHide);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonRushHide);
+        }
+
     }
     else if(randNumber>2)
     {
-        fChangeState(DivideState::DragonBeamStart);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonBeamStart);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonBeamStart);
+        }
     }
     else
     {
-        fChangeState(DivideState::DragonHideStart);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonHideStart);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonHideStart);
+        }
+
     }
     mAnimationSpeed = 1.0f;
 }
@@ -1463,7 +1750,17 @@ void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& G
     mDissolve -= elapsedTime_ * 1.3f;
     if(mDissolve<0.0f)
     {
-        fChangeState(DivideState::DragonBreathCharge);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonBreathCharge);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonBreathCharge);
+        }
     }
 }
 
@@ -1481,7 +1778,18 @@ void LastBoss::fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& G
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::DragonBreathShot);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonBreathShot);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonBreathShot);
+        }
+
     }
 }
 
@@ -1514,11 +1822,33 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
         const int randNumber = RandTargetAdd(mt);
         if (std::pow(mDragonBreathCount, 2) < randNumber)
         {
-            fChangeState(DivideState::DragonHideStart);
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::DragonHideStart);
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::DragonHideStart);
+            }
+
         }
         else
         {
-            fChangeState(DivideState::DragonIdle);
+            if (CorrespondenceManager::Instance().GetMultiPlay())
+            {
+                if (CorrespondenceManager::Instance().GetHost())
+                {
+                    fChangeState(DivideState::DragonIdle);
+                }
+            }
+            else
+            {
+                fChangeState(DivideState::DragonIdle);
+            }
+
         }
     }
 }
@@ -1542,7 +1872,18 @@ void LastBoss::fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::DragonRushWait);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonRushWait);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonRushWait);
+        }
+
         // ロックオンされないように遠くに移動させる
         mPosition = { 0.0f,500.0f,0.0f };
     }
@@ -1595,7 +1936,17 @@ void LastBoss::fDragonRushWaitUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
     if(mTimer<-2.0f)
     {
-        fChangeState(DivideState::DragonRushAppear);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonRushAppear);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonRushAppear);
+        }
     }
 }
 
@@ -1621,7 +1972,17 @@ void LastBoss::fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Gra
     mPosition = { 0.0f,0.0f,0.0f };
     if(mDissolve<0.0f)
     {
-        fChangeState(DivideState::DragonIdle);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonIdle);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonIdle);
+        }
     }
 }
 
@@ -1643,7 +2004,18 @@ void LastBoss::fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
     if(mDragonMoveThreshold >=1.0f)
     {
-        fChangeState(DivideState::DragonBeamStart);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonBeamStart);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonBeamStart);
+        }
+
     }
 }
 
@@ -1661,7 +2033,18 @@ void LastBoss::fDragonBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Grap
     fTurnToPlayer(elapsedTime_, 10.0f);
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::DragonBeamCharge);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                fChangeState(DivideState::DragonBeamCharge);
+            }
+        }
+        else
+        {
+            fChangeState(DivideState::DragonBeamCharge);
+        }
+
     }
 }
 
@@ -1681,8 +2064,20 @@ void LastBoss::fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Gra
     mTimer -= elapsedTime_;
     if (mTimer < 0.0f)
     {
-        audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
-        fChangeState(DivideState::DragonBeamShoot);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
+                fChangeState(DivideState::DragonBeamShoot);
+            }
+        }
+        else
+        {
+            audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
+            fChangeState(DivideState::DragonBeamShoot);
+        }
+
     }
 }
 void LastBoss::fDragonBeamShotInit()
@@ -1730,10 +2125,24 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
 
     if (mAddRadian >= DirectX::XMConvertToRadians(rotMax))
     {
-        mIsAttack = false;
-        audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
-        mpBeamEffect->stop(effect_manager->get_effekseer_manager());
-        fChangeState(DivideState::DragonIdle);
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                mIsAttack = false;
+                audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
+                mpBeamEffect->stop(effect_manager->get_effekseer_manager());
+                fChangeState(DivideState::DragonIdle);
+            }
+        }
+        else
+        {
+            mIsAttack = false;
+            audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
+            mpBeamEffect->stop(effect_manager->get_effekseer_manager());
+            fChangeState(DivideState::DragonIdle);
+        }
+
     }
 }
 
@@ -1762,7 +2171,9 @@ void LastBoss::fDragonDieStartInit()
     ai_state = AiState::DragonDieStart;
     is_dragon_die = true;
     end_event = false;
-
+    mSkipTimer = 0.0f;
+    dragon_die_event = false;
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1834,28 +2245,58 @@ void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mTimer -= elapsedTime_;
     if (mTimer < 0.0f)
     {
+        if (CorrespondenceManager::Instance().GetMultiPlay())
+        {
+            if (CorrespondenceManager::Instance().GetHost())
+            {
+                mIsStun = false;
+                mpModel->progress_animation(mAnimPara);
+                mStunEffect->stop(effect_manager->get_effekseer_manager());
 
-        mIsStun = false;
-        mpModel->progress_animation(mAnimPara);
-        mStunEffect->stop(effect_manager->get_effekseer_manager());
-
-        switch (mCurrentMode) {
-            case Mode::None: break;
-        case Mode::Ship:
-            fChangeState(DivideState::ShipIdle);
-            break;
-        case Mode::ShipToHuman:
-            break;
-        case Mode::Human:
-            fChangeState(DivideState::HumanIdle);
-            break;
-        case Mode::HumanToDragon: break;
-        case Mode::Dragon:
-            fChangeState(DivideState::DragonIdle);
-            break;
-        case Mode::DragonDie: break;
-        default: ;
+                switch (mCurrentMode) {
+                case Mode::None: break;
+                case Mode::Ship:
+                    fChangeState(DivideState::ShipIdle);
+                    break;
+                case Mode::ShipToHuman:
+                    break;
+                case Mode::Human:
+                    fChangeState(DivideState::HumanIdle);
+                    break;
+                case Mode::HumanToDragon: break;
+                case Mode::Dragon:
+                    fChangeState(DivideState::DragonIdle);
+                    break;
+                case Mode::DragonDie: break;
+                default:;
+                }
+            }
         }
+        else
+        {
+            mIsStun = false;
+            mpModel->progress_animation(mAnimPara);
+            mStunEffect->stop(effect_manager->get_effekseer_manager());
+
+            switch (mCurrentMode) {
+            case Mode::None: break;
+            case Mode::Ship:
+                fChangeState(DivideState::ShipIdle);
+                break;
+            case Mode::ShipToHuman:
+                break;
+            case Mode::Human:
+                fChangeState(DivideState::HumanIdle);
+                break;
+            case Mode::HumanToDragon: break;
+            case Mode::Dragon:
+                fChangeState(DivideState::DragonIdle);
+                break;
+            case Mode::DragonDie: break;
+            default:;
+            }
+        }
+
     }
 }
 

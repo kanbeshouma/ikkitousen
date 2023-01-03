@@ -651,6 +651,9 @@
     <ClCompile Include="sources\ClientPlayerChain.cpp">
       <Filter>Sources\Character\player\ClientPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="sources\EnemiesEditor.cpp">
+      <Filter>Sources\Character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">

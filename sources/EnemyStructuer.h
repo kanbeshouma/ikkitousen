@@ -10,6 +10,7 @@ struct Capsule
 };
 
 
+
 struct EnemyParamPack
 {
     int MaxHp{};
@@ -19,31 +20,65 @@ struct EnemyParamPack
     float AttackCapsuleRad{};
     float StunTime{}; // ƒXƒ^ƒ“‚Ì‚È‚ª‚³
     template<class Archive>
-    void serialize(Archive& archive, std::uint32_t const version)
+    void serialize(Archive& archive)
     {
-        if(version<=1)
-        {
-            archive(
+        //if(version<=1)
+        //{
+        //    archive(
+        //        cereal::make_nvp("MaxHp", MaxHp),
+        //        cereal::make_nvp("AttackPower", AttackPower),
+        //        cereal::make_nvp("InvincibleTime", InvincibleTime),
+        //        cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
+        //        cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+        //        cereal::make_nvp("StunTime", StunTime));
+        //}
+        //else
+        //{
+        //    archive(
+        //        cereal::make_nvp("MaxHp", MaxHp),
+        //        cereal::make_nvp("AttackPower", AttackPower),
+        //        cereal::make_nvp("InvincibleTime", InvincibleTime),
+        //        cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
+        //        cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+        //        cereal::make_nvp("StunTime",StunTime));
+        //}
+        archive(
             cereal::make_nvp("MaxHp", MaxHp),
             cereal::make_nvp("AttackPower", AttackPower),
             cereal::make_nvp("InvincibleTime", InvincibleTime),
             cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
-            cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad));
-        }
-        else
-        {
-            archive(
-                cereal::make_nvp("MaxHp", MaxHp),
-                cereal::make_nvp("AttackPower", AttackPower),
-                cereal::make_nvp("InvincibleTime", InvincibleTime),
-                cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
-                cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
-                cereal::make_nvp("StunTime",StunTime));
-        }
+            cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+            cereal::make_nvp("StunTime", StunTime));
+
     }
 };
 
-CEREAL_CLASS_VERSION(EnemyParamPack, 2);
+struct WebEnemyParamPack
+{
+    std::string enemy_name{};
+    int MaxHp{};
+    int AttackPower{};
+    float InvincibleTime{}; // UŒ‚‚µ‚½‘ŠŽè‚Ì–³“GŽžŠÔ
+    float BodyCapsuleRad{};
+    float AttackCapsuleRad{};
+    float StunTime{}; // ƒXƒ^ƒ“‚Ì‚È‚ª‚³
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(
+            cereal::make_nvp("EnemyName", enemy_name),
+            cereal::make_nvp("MaxHp", MaxHp),
+            cereal::make_nvp("AttackPower", AttackPower),
+            cereal::make_nvp("InvincibleTime", InvincibleTime),
+            cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
+            cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+            cereal::make_nvp("StunTime", StunTime));
+
+    }
+};
+
+
+//CEREAL_CLASS_VERSION(EnemyParamPack, 2);
 
 // “G‚ÌŽí—Þ
 enum class EnemyType

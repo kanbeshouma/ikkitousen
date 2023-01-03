@@ -1,18 +1,103 @@
 {
-    "value0": [
-        {
-            "Timer": 5.0,
-            "Emitter": 0,
-            "Type": 0
-        },
-        {
-            "Timer": 10.0,
-            "Emitter": 0,
-            "Type": 0
-        },
-        {
-            "Timer": 20.0,
-            "Emitter": 0,
-            "Type": 0
-        }]
+  "value0": [
+    {
+      "EnemyName": "Archer",
+      "MaxHp": 10,
+      "AttackPower": 10,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Archer_Ace",
+      "MaxHp": 15,
+      "AttackPower": 10,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Boss",
+      "MaxHp": 400,
+      "AttackPower": 4,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 40.0,
+      "AttackCapsuleRad": 0.0,
+      "StunTime": 0.0
+    },
+    {
+      "EnemyName": "BossUnit",
+      "MaxHp": 15,
+      "AttackPower": 2,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 150.0
+    },
+    {
+      "EnemyName": "Shield",
+      "MaxHp": 10,
+      "AttackPower": 1,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 3.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Shield_Ace",
+      "MaxHp": 15,
+      "AttackPower": 1,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 3.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Spear",
+      "MaxHp": 10,
+      "AttackPower": 10,
+      "InvincibleTime": 2,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Spear_Ace",
+      "MaxHp": 15,
+      "AttackPower": 10,
+      "InvincibleTime": 2,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Sword",
+      "MaxHp": 10,
+      "AttackPower": 10,
+      "InvincibleTime": 2,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "Sword_Ace",
+      "MaxHp": 15,
+      "AttackPower": 7,
+      "InvincibleTime": 2,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 5.0,
+      "StunTime": 20.0
+    },
+    {
+      "EnemyName": "TutorialNoMove",
+      "MaxHp": 10,
+      "AttackPower": 1,
+      "InvincibleTime": 1,
+      "BodyCapsuleRad": 5.0,
+      "AttackCapsuleRad": 3.0,
+      "StunTime": 20.0
+    }
+  ]
 }

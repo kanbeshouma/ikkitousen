@@ -43,6 +43,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	//-----ƒvƒŒƒCƒ„[‚ð“o˜^-----//
 	Player* player = new Player(graphics,0);
+	char n[12] = "player";
+	player->SetName(n);
 	player_manager->RegisterPlayer(player);
 	player_manager->SetPrivateObjectId(0);
 

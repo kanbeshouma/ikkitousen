@@ -934,6 +934,7 @@ void EnemyManager::fSetIsTutorial(bool Arg_)
 
 void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 {
+
     int spawnCounts = 0;
 
     // “G‚ğƒXƒ|[ƒ“‚·‚éŠÖ”

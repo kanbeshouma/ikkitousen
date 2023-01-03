@@ -353,6 +353,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 #endif // 0
 
+#if 0
 	// joint camera test
 	// JointCamera にチェンジしたフレームと同じフレームから JointCamera 中ずっとeyeとfocusをジョイントから取り出してセットしてほしい
 	// cameraManager->GetCurrentCamera()->set_eye(eye);　cameraManager->GetCurrentCamera()->set_target(focus);　をするのは
@@ -365,7 +366,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	static DirectX::XMFLOAT3 eye{ 0,1,-30 };
 	static DirectX::XMFLOAT3 focus{};
 
-#if 0
 #ifdef USE_IMGUI
 	ImGui::Begin("joint camera");
 	if (ImGui::Button("change joint camera"))

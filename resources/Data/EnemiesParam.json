@@ -3,7 +3,6 @@
         {
             "key": "Archer",
             "value": {
-                "cereal_class_version": 2,
                 "MaxHp": 10,
                 "AttackPower": 10,
                 "InvincibleTime": 1.0,

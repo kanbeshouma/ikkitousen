@@ -225,6 +225,7 @@
     <ClCompile Include="sources\Correspondence.cpp" />
     <ClCompile Include="sources\DebugConsole.cpp" />
     <ClCompile Include="sources\DragonBreath.cpp" />
+    <ClCompile Include="sources\EnemiesEditor.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\MasterEnemyDataAdmin.cpp" />
     <ClCompile Include="sources\MultiGameClientTcp.cpp" />
