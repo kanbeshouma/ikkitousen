@@ -32,6 +32,21 @@ void CorrespondenceManager::AcquisitionMyIpAddress()
     communication_system->AcquisitionMyIpAddress();
 }
 
+bool CorrespondenceManager::HttpRequest()
+{
+    if (communication_system->HttpRequest() > 0)
+    {
+        DebugConsole::Instance().WriteDebugConsole("HTTPリクエスト成功",TextColor::Green);
+        return true;
+    }
+    else
+    {
+        DebugConsole::Instance().WriteDebugConsole("HTTPリクエスト失敗",TextColor::Red);
+        return false;
+    }
+    return false;
+}
+
 bool CorrespondenceManager::InitializeServer()
 {
     //----------今あるソケットの情報などを一旦リセットする----------//

@@ -18,6 +18,9 @@ public:
     //===========================
     void AcquisitionMyIpAddress();
 
+    //<HTTPリクエスト>//
+    bool HttpRequest();
+
     bool InitializeServer();
 
     ////------UDPの受信関数------//

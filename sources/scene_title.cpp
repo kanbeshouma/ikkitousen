@@ -281,6 +281,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	LastBoss::fResetLoadRaram();
 	LastBoss::fSaveParam();
 
+	CorrespondenceManager::Instance().HttpRequest();
 }
 
 void SceneTitle::uninitialize()

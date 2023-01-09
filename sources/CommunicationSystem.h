@@ -25,13 +25,14 @@ public:
     ////-----自分のIPアドレスを取得-------//
     void AcquisitionMyIpAddress();
 
+#pragma region HostInitialize
     ////------ホストの場合の初期化------//
-    //===========================
-    //戻り値   : 成功したかどうか
-    //第1引数 : TCPポート番号
-    //第2引数 : UDPポート番号
-    //第3引数 : 自分の番号
-    bool InitializeHost(char* tco_port ,char* udp_port, int private_id);
+//===========================
+//戻り値   : 成功したかどうか
+//第1引数 : TCPポート番号
+//第2引数 : UDPポート番号
+//第3引数 : 自分の番号
+    bool InitializeHost(char* tco_port, char* udp_port, int private_id);
 private:
     ////------ホストの場合の受信用UDPソケットの初期化------//
     //===========================
@@ -47,11 +48,15 @@ private:
     //第2引数 : 自分の番号
     bool InitializeHostTcp(char* port, int private_id);
 
+#pragma endregion
+
 public:
+
+#pragma region ClientInitialize
     ////------クライアントの場合の初期化------//
-    //===========================
-    //戻り値   : 成功したかどうか
-    //第1引数 : ポート番号
+//===========================
+//戻り値   : 成功したかどうか
+//第1引数 : ポート番号
     bool InitializeClient(char* tco_port, char* udp_port);
 private:
     ////------クライアントの場合のTCPの初期化------//
@@ -66,6 +71,11 @@ private:
     //第1引数 : ポート番号
     bool InitializeClientUdpSocket(char* port);
 
+#pragma endregion
+
+public:
+    //<HTTPリクエスト>//
+    int HttpRequest();
 public:
     //--------------------------ログイン関係------------------------//
 
@@ -178,5 +188,8 @@ private:
 private:
     int tcp_error_num{ -1 };
     int udp_error_num{ -1 };
+    const char* hostname = "localhost";
+    const char* path = "/";
+    const char* http_port = "5001";
 
 };

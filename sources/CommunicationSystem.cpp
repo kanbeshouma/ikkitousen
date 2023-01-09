@@ -1,5 +1,10 @@
 #include "CommunicationSystem.h"
 #include"Correspondence.h"
+#include <openssl/crypto.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
 CommunicationSystem::CommunicationSystem()
 {
 }
@@ -339,6 +344,164 @@ bool CommunicationSystem::InitializeClientUdpSocket(char* port)
     FD_SET(instance.udp_sock, &instance.udp_fds);
 
     return true;
+}
+
+int CommunicationSystem::HttpRequest()
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
+    //<OpenSSL変数>//
+    SSL* ssl;
+    SSL_CTX* ctx;
+
+    addrinfo hints;
+    addrinfo* addrInfo = nullptr;
+    ZeroMemory(&hints, sizeof(addrinfo));
+    sockaddr_in addr;
+    // 取得する情報を設定
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    //<HTTPサーバーのアドレスを取得>//
+    int err = getaddrinfo(hostname, http_port, &hints, &addrInfo);
+    if (err != 0) {
+        DebugConsole::Instance().WriteDebugConsole("ドメインからアドレス取得に失敗しました", TextColor::Red);
+        return -1;
+    }
+    addr = *((sockaddr_in*)addrInfo->ai_addr);
+
+    //<ソケットの生成>//
+    instance.http_sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (instance.http_sock < 0) {
+        DebugConsole::Instance().WriteDebugConsole("ソケットの生成に失敗しました。", TextColor::Red);
+        return -1;
+    }
+    //<サーバーに接続>//
+    if (connect(instance.http_sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+        DebugConsole::Instance().WriteDebugConsole("connectに失敗しました。", TextColor::Red);
+        return -1;
+    }
+
+    //<エラーが数値で管理されているからそれの詳細が分かるようにする>//
+    SSL_load_error_strings();
+    //<SSLの初期化をする>//
+    //これを実行することにより、暗号化方式やメッセージダイジェスト関数などが登録される
+    SSL_library_init();
+    //<SSL_CTX構造体の生成>//
+    //TLSv1,SSLv2,SSLv3の種類がある
+    //SSLv23_client_method<-いずれかを使う場合はこれでまとめて設定できる
+    ctx = SSL_CTX_new(SSLv23_client_method());
+
+    //==============================================//
+    //
+    //SSL_CTXはSSLにおける暗号化や認証方法などを管理する
+    //
+    //==============================================//
+    if (ctx == NULL) {
+        ERR_print_errors_fp(stderr);
+        DebugConsole::Instance().WriteDebugConsole("ssl_ctxの生成に失敗しました。", TextColor::Red);
+        return -1;
+    }
+
+    //<SSL構造体の生成>//
+    //SSL_CTX構造体にセットしたプロトコルや暗号化方式を元に
+    //コネクションを管理するSSL構造体を生成する
+    ssl = SSL_new(ctx);
+    if (ssl == NULL) {
+        ERR_print_errors_fp(stderr);
+        DebugConsole::Instance().WriteDebugConsole("sslの生成に失敗しました。", TextColor::Red);
+        return -1;
+    }
+
+    //==============================================//
+    //
+    //SSLはサーバーのコネクション管理
+    //
+    //==============================================//
+    //<コネクション済みのソケットとSSL構造体を結びつける>//
+    int ret;
+
+    ret = SSL_set_fd(ssl, static_cast<int>(instance.http_sock));
+    if (ret == 0) {
+        ERR_print_errors_fp(stderr);
+        DebugConsole::Instance().WriteDebugConsole("socketとsslの関連付けに失敗しました", TextColor::Red);
+        return -1;
+    }
+
+    /* PRNG 初期化 */
+    RAND_poll();
+    while (RAND_status() == 0) {
+        unsigned short rand_ret = rand() % 65536;
+        RAND_seed(&rand_ret, sizeof(rand_ret));
+    }
+
+    /* SSL で接続 */
+    //<自動的にサーバとハンドシェイクが行われる>//
+    //使用するプロトコル(SSLv2 / SSLv3 / TLSv1)
+    //使用する暗号化方式・鍵交換方式・ハッシュ方式
+    //サーバ証明書の取得
+    //使用する共通鍵
+    //これらが決定される
+    ret = SSL_connect(ssl);
+    if (ret != 1) {
+        ERR_print_errors_fp(stderr);
+        DebugConsole::Instance().WriteDebugConsole("サーバ接続に失敗しました。", TextColor::Red);
+        return -1;
+
+    }
+    /* リクエスト送信 */
+    char request[256];
+    sprintf_s(request, "GET %s HTTP/1.1\r\nHost: %s\r\n\r\n", path, hostname);
+    ret = SSL_write(ssl, request, static_cast<int>(strlen(request)));
+    if (ret < 1) {
+        ERR_print_errors_fp(stderr);
+        DebugConsole::Instance().WriteDebugConsole("送信に失敗しました。", TextColor::Red);
+        return -1;
+    }
+
+    bool check{ false };
+
+     //分割して受信した場合結合用の配列
+    while (1) {
+        char buf[255] = {};
+        int read_size;
+        read_size = SSL_read(ssl, buf, sizeof(buf) - 1);
+
+        //<ヘッダ部分を抜き取る>//
+
+        //<文字数部分を抜き取る>//
+
+        //<終了部分の改行を判定する>//
+
+            //<一番最初で文字数を取得>//
+            if (read_size > 0) {
+                std::cout << buf;
+            }
+            else if (read_size <= 0) {
+                /* FIN 受信 */
+                break;
+            }
+            else {
+                ERR_print_errors_fp(stderr);
+                exit(1);
+            }
+     }
+
+    ret = SSL_shutdown(ssl);
+    if (ret != 1) {
+        ERR_print_errors_fp(stderr);
+        exit(1);
+    }
+    closesocket(instance.http_sock);
+
+    //<SSLの終了処理>//
+
+    SSL_free(ssl);
+    SSL_CTX_free(ctx);
+    ERR_free_strings();
+    WSACleanup();
+    return 1;
+
 }
 
 int CommunicationSystem::LoginReceive(char* data, int size)
