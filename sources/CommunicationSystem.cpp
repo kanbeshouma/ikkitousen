@@ -459,7 +459,16 @@ int CommunicationSystem::HttpRequest()
         return -1;
     }
 
-    bool check{ false };
+    //<ヘッダ部分を取り除いたかどうか>//
+    bool header_check = false;
+    //<文字数を取得してその分を取り除いたかどうか>//
+    bool char_num_check = false;
+    //<文字数を入れる>//
+    int char_count{};
+    //分割して受信した場合結合用の配列
+    char ret_source[20480] = { "" };
+    //合計サイズ
+    int all_size = 0;
 
      //分割して受信した場合結合用の配列
     while (1) {
@@ -467,25 +476,92 @@ int CommunicationSystem::HttpRequest()
         int read_size;
         read_size = SSL_read(ssl, buf, sizeof(buf) - 1);
 
-        //<ヘッダ部分を抜き取る>//
-
-        //<文字数部分を抜き取る>//
-
-        //<終了部分の改行を判定する>//
-
-            //<一番最初で文字数を取得>//
-            if (read_size > 0) {
-                std::cout << buf;
+            //<ヘッダ部分を抜き取る>//
+            if (header_check == false)
+            {
+                char body[1024] = { "" };
+                int idx = 0;
+                while (1)
+                {
+                    //文字列を確認し改行コードが連続している箇所を検索
+                    if (memcmp((buf + idx), "\r\n\r\n", 4) == 0)
+                    {
+                        //改行コードが連続している所から最後までを取得
+                        memcpy(body, &buf[idx + 4], strlen(&buf[idx + 4]));
+                        //取得したデータを確認する為に画面へ表示
+                        std::cout << body;
+                        //<ヘッダ部分を取り除いたデータを保存>//
+                        std::memcpy(ret_source + all_size, body, strlen(body));
+                        all_size += strlen(body);
+                        //<ヘッダ部分を取り除いた>//
+                        header_check = true;
+                        break;
+                    }
+                    idx++;
+                }
             }
-            else if (read_size <= 0) {
-                /* FIN 受信 */
+            //<データの文字数を抜き取る>//
+            else
+            {
+                if (read_size > 0) {
+                    std::cout << buf;
+                    std::memcpy(ret_source + all_size, buf, read_size);
+                    all_size += read_size;
+                }
+            }
+
+            //<文字数を取得する>//
+            if(char_num_check == false)
+            {
+                int idx = 0;
+                while (1)
+                {
+                    //文字列を確認し改行コードが連続している箇所を検索
+                    if (memcmp((ret_source + idx), "\r\n", 2) == 0)
+                    {
+                        //<文字数を受け取る>//
+                        char num[10] = {};
+                        //<文字数が書いてある部分を取得>//
+                        memcpy(num, &ret_source, idx);
+                        //<16進数に変換>//
+                        std::string number = "0x";
+                        number += num;
+                        //<10進数に変換>//
+                        char_count = std::stod(number.c_str());
+
+                        //改行コードが連続している所から最後までを取得
+                        memcpy(ret_source, &ret_source[idx + 2], strlen(&ret_source[idx + 2]));
+                        char_num_check = true;
+                        all_size -= 5;
+                        break;
+                    }
+                    idx++;
+                 }
+            }
+
+            //<データの文字数よりも大きかったら後ろの部分をきる取る>//
+            if (all_size >= char_count)
+            {
+                memcpy(ret_source, &ret_source, char_count);
                 break;
             }
-            else {
-                ERR_print_errors_fp(stderr);
-                exit(1);
-            }
-     }
+
+#if 0
+                            //<一番最初で文字数を取得>//
+        if (read_size > 0) {
+            std::cout << buf;
+        }
+        else if (read_size <= 0) {
+            /* FIN 受信 */
+            break;
+        }
+        else {
+            ERR_print_errors_fp(stderr);
+            exit(1);
+        }
+
+#endif // 0
+    }
 
     ret = SSL_shutdown(ssl);
     if (ret != 1) {
