@@ -36,6 +36,7 @@ std::mutex SceneTitle::mutex;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
+
 	//--タイトル前ロード--//
 	ModelCashes::Load_PreTitle(graphics.get_device().Get());
 

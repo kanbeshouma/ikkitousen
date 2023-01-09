@@ -463,37 +463,6 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
     {
         if (enemy->fGetMaster() == false) continue;
 
-#if 0
-        if (enemy->GetEnemyType() == EnemyType::Boss && fGetIsEventCamera() && check_boss_ai_timer > CheckBossAiTime)
-        {
-            //-----オブジェクト番号設定-----//
-            enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
-
-            //-----AIのステート設定-----//
-            enemy_d.enemy_data[EnemyDataArray::AiState] = enemy->fGetEnemyAiState();
-
-            //-----ターゲットしているプレイヤーのId-----//
-            enemy_d.enemy_data[EnemyDataArray::TargetId] = enemy->fGetTargetPlayerId();
-
-            //-----敵のタイプ-----//
-            enemy_d.enemy_data[EnemyDataArray::EnemyTypeId] = static_cast<char>(enemy->GetEnemyType());
-
-            //-----体力-----//
-            enemy_d.hp = static_cast<int>(enemy->fGetCurrentHitPoint());
-
-            //-----自分の位置を設定-----//
-            enemy_d.pos = enemy->fGetPosition();
-
-            std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d, sizeof(EnemyData));
-
-            data_set_count++;
-
-            check_boss_ai_timer = 0.0f;
-            break;
-        }
-
-#endif // 0
-
         //-----オブジェクト番号設定-----//
         enemy_d.enemy_data[EnemyDataArray::ObjectId] = enemy->fGetObjectId();
 

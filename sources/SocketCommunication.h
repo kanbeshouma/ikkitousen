@@ -29,6 +29,9 @@ public:
     //-----TCP通信のソケット-----//
     SOCKET tcp_sock{ INVALID_SOCKET };
 
+    //<HTTPリクエスト用TCPソケット>//
+    SOCKET http_sock{ INVALID_SOCKET };
+
     //-----ログインで使うクライアントのソケット-----//
     SOCKET login_client_sock[MAX_CLIENT];
 

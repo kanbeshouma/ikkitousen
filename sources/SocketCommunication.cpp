@@ -9,6 +9,7 @@ SocketCommunicationManager::SocketCommunicationManager()
         login_client_sock[i] = INVALID_SOCKET;
         //send_udp_sock[i] = INVALID_SOCKET;
     }
+    http_sock = INVALID_SOCKET;
     login_tcp_server_addr.sin_addr.S_un.S_addr = 0;
     FD_ZERO(&client_tcp_fds);
     FD_ZERO(&udp_fds);
@@ -17,14 +18,13 @@ SocketCommunicationManager::SocketCommunicationManager()
 }
 SocketCommunicationManager::~SocketCommunicationManager()
 {
-    //if (receive_udp_sock != INVALID_SOCKET) closesocket(receive_udp_sock);
     if (udp_sock != INVALID_SOCKET) closesocket(udp_sock);
     if (tcp_sock != INVALID_SOCKET) closesocket(tcp_sock);
+    if (http_sock != INVALID_SOCKET) closesocket(http_sock);
     for (int i = 0; i < MAX_CLIENT; i++)
     {
         game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
         if (login_client_sock[i] != INVALID_SOCKET) closesocket(login_client_sock[i]);
-        //if (send_udp_sock[i] != INVALID_SOCKET) closesocket(send_udp_sock[i]);
     }
 
     login_tcp_server_addr.sin_addr.S_un.S_addr = 0;
@@ -49,6 +49,11 @@ void SocketCommunicationManager::ClearData()
     {
         closesocket(tcp_sock);
         tcp_sock = INVALID_SOCKET;
+    }
+    if (http_sock != INVALID_SOCKET)
+    {
+        closesocket(http_sock);
+        http_sock = INVALID_SOCKET;
     }
     for (int i = 0; i < MAX_CLIENT; ++i)
     {

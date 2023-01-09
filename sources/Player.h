@@ -132,7 +132,7 @@ private:
     float send_position_timer{};
 
     //-----データ送信頻度(ミリ秒)-----//
-    const float PlayerMoveDataFrequency = 200.0f;
+    const float PlayerMoveDataFrequency = 150.0f;
 
     //-----データ送信頻度(秒)-----//
     const float PlayerPositionDataFrequency = 2.0f;

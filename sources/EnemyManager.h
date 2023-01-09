@@ -309,7 +309,7 @@ private:
     const int SendEnemyDataComSize = 4;
 
     //-----データの送信頻度(ミリ秒)-----//
-    const float EnemyDataFrequency = 300.0f;
+    const float EnemyDataFrequency = 200.0f;
 
     //-----敵がダメージを受けたときの無敵時間-----//
     const float EnemyInvincibleTime = 0.1f;
