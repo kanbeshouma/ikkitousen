@@ -5,7 +5,7 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-#include"EnemyStructuer.h"
+
 #include <cereal/archives/json.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/vector.hpp>
@@ -357,10 +357,6 @@ bool CommunicationSystem::InitializeClientUdpSocket(char* port)
 
 int CommunicationSystem::HttpRequest()
 {
-    //TO_INT(test, 5);
-    //TO_INT("test", 1);
-
-
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 
     //<OpenSSL変数>//
@@ -576,18 +572,19 @@ int CommunicationSystem::HttpRequest()
     }
     using namespace nlohmann;
 
+    //<取得したデータをjson文字列にパースする>//
     auto j = nlohmann::json::parse(json_data);
 
-    std::vector<WebEnemy::WebEnemyParamPack> web_enemy_data;
+    //<敵のデータを入れる配列を初期化>//
+    web_enemy_data.clear();
 
+    //<json文字列を構造体に変換する>//
     for (json::iterator it = j.begin(); it != j.end(); ++it)
     {
         auto j_data = it.value();
         WebEnemy::WebEnemyParamPack e_data = j_data.get<WebEnemy::WebEnemyParamPack>();
         web_enemy_data.emplace_back(e_data);
     }
-    web_enemy_data;
-
     ret = SSL_shutdown(ssl);
     if (ret < 0) {
         ERR_print_errors_fp(stderr);

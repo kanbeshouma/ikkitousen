@@ -1,10 +1,31 @@
 #include"EnemiesEditor.h"
-
+#include"Correspondence.h"
  EnemyEditor::EnemyEditor()
 {
     //TestSave();
     //TestLoad();
-    fLoad();
+     //<Httpリクエストに成功した時>//
+     if (CorrespondenceManager::Instance().HttpRequest())
+     {
+         //<成功した場合はデータをMAPに登録する>//
+         for (auto& data : CorrespondenceManager::Instance().GetWebEnemyParamPack())
+         {
+             EnemyParamPack param;
+             param.MaxHp = data.MaxHp;
+             param.AttackPower = data.AttackPower;
+             param.InvincibleTime = data.InvincibleTime;
+             param.BodyCapsuleRad = data.BodyCapsuleRad;
+             param.AttackCapsuleRad = data.AttackCapsuleRad;
+             param.StunTime = data.StunTime;
+
+             mEnemyParamMap.insert(std::make_pair(data.enemy_name, param));
+         }
+     }
+     //<失敗した時>//
+     else
+     {
+         fLoad();
+     }
 }
 
  EnemyEditor::~EnemyEditor()

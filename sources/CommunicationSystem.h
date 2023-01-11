@@ -6,7 +6,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #include"SocketCommunication.h"
 #include"DebugConsole.h"
-
+#include"EnemyStructuer.h"
 //-----------------------------------------------------------------------------------------------------------
 //
 //              データを送受信するための機能の初期化及び
@@ -199,5 +199,9 @@ private:
     int char_count{};
     //合計サイズ
     int all_size = 0;
-
+    //Webサーバーから受け取った敵のパラメータデータ
+    std::vector<WebEnemy::WebEnemyParamPack> web_enemy_data;
+public:
+    //<Webサーバーから取得したデータのゲッター>//
+    std::vector<WebEnemy::WebEnemyParamPack> GetWebEnemyParamPack() { return web_enemy_data; }
 };

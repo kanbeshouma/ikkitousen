@@ -188,4 +188,7 @@ public:
     void SubConnectedPersons() { connected_persons--; }
 
     int GetConnectedPersons() { return connected_persons; }
+
+    //<Webサーバーから取得したデータのゲッター>//
+    std::vector<WebEnemy::WebEnemyParamPack> GetWebEnemyParamPack() { return communication_system->GetWebEnemyParamPack(); }
 };
