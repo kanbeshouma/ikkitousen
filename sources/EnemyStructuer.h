@@ -1,14 +1,13 @@
 #pragma once
 #include<DirectXMath.h>
 #include <cereal/cereal.hpp>
-
+#include"json.hpp"
 struct Capsule
 {
     DirectX::XMFLOAT3 mTop{};
     DirectX::XMFLOAT3 mBottom{};
     float mRadius{};
 };
-
 
 
 struct EnemyParamPack
@@ -53,31 +52,57 @@ struct EnemyParamPack
     }
 };
 
-struct WebEnemyParamPack
+namespace WebEnemy
 {
-    std::string enemy_name{};
-    int MaxHp{};
-    int AttackPower{};
-    float InvincibleTime{}; // çUåÇÇµÇΩëäéËÇÃñ≥ìGéûä‘
-    float BodyCapsuleRad{};
-    float AttackCapsuleRad{};
-    float StunTime{}; // ÉXÉ^ÉìÇÃÇ»Ç™Ç≥
-    template<class Archive>
-    void serialize(Archive& archive)
+    struct WebEnemyParamPack
     {
-        archive(
-            cereal::make_nvp("EnemyName", enemy_name),
-            cereal::make_nvp("MaxHp", MaxHp),
-            cereal::make_nvp("AttackPower", AttackPower),
-            cereal::make_nvp("InvincibleTime", InvincibleTime),
-            cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
-            cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
-            cereal::make_nvp("StunTime", StunTime));
+        std::string enemy_name{};
+        int MaxHp{};
+        int AttackPower{};
+        float InvincibleTime{}; // çUåÇÇµÇΩëäéËÇÃñ≥ìGéûä‘
+        float BodyCapsuleRad{};
+        float AttackCapsuleRad{};
+        float StunTime{}; // ÉXÉ^ÉìÇÃÇ»Ç™Ç≥
+        template<class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(
+                cereal::make_nvp("EnemyName", enemy_name),
+                cereal::make_nvp("MaxHp", MaxHp),
+                cereal::make_nvp("AttackPower", AttackPower),
+                cereal::make_nvp("InvincibleTime", InvincibleTime),
+                cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
+                cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+                cereal::make_nvp("StunTime", StunTime));
 
+        }
+
+    };
+
+    inline void to_json(nlohmann::json& j, const WebEnemyParamPack& p)
+    {
+        j = nlohmann::json{
+            {"EnemyName", p.enemy_name},
+            {"MaxHp", p.MaxHp},
+            {"AttackPower", p.AttackPower},
+            {"InvincibleTime", p.InvincibleTime},
+            {"BodyCapsuleRad", p.BodyCapsuleRad},
+            {"AttackCapsuleRad", p.AttackCapsuleRad},
+            {"StunTime", p.StunTime},
+        };
     }
+    inline void from_json(const nlohmann::json& j, WebEnemyParamPack& p)
+    {
+       j.at("enemyName").get_to(p.enemy_name);
+       j.at("maxHp").get_to(p.MaxHp);
+       j.at("attackPower").get_to(p.AttackPower);
+       j.at("invincibleTime").get_to(p.InvincibleTime);
+       j.at("bodyCapsuleRad").get_to(p.BodyCapsuleRad);
+       j.at("attackCapsuleRad").get_to(p.AttackCapsuleRad);
+       j.at("stunTime").get_to(p.StunTime);
+    }
+
 };
-
-
 //CEREAL_CLASS_VERSION(EnemyParamPack, 2);
 
 // ìGÇÃéÌóﬁ

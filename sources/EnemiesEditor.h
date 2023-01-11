@@ -31,7 +31,7 @@ private:
     std::map<std::string, EnemyParamPack> mEnemyParamMap{};
     const char* mFilePath = "./resources/Data/EnemiesParam.json";
     const char* mTestFilePath = "./resources/Data/Test.json";
-    std::vector<WebEnemyParamPack> web_enemy_param{};
+    std::vector<WebEnemy::WebEnemyParamPack> web_enemy_param{};
 
 };
 

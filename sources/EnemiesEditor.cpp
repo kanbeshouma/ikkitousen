@@ -114,12 +114,12 @@
  void EnemyEditor::TestSave()
 {
     {
-        WebEnemyParamPack data;
+        WebEnemy::WebEnemyParamPack data;
         data.enemy_name = "Archer";
         web_enemy_param.emplace_back(data);
     }
     {
-        WebEnemyParamPack data;
+        WebEnemy::WebEnemyParamPack data;
         data.enemy_name = "Archer_Ace";
         web_enemy_param.emplace_back(data);
     }

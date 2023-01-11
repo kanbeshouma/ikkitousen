@@ -5,6 +5,15 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
+#include"EnemyStructuer.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/string.hpp>
+#include"json.hpp"
+#include <filesystem>
+#include <fstream>
+
 CommunicationSystem::CommunicationSystem()
 {
 }
@@ -348,6 +357,10 @@ bool CommunicationSystem::InitializeClientUdpSocket(char* port)
 
 int CommunicationSystem::HttpRequest()
 {
+    //TO_INT(test, 5);
+    //TO_INT("test", 1);
+
+
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 
     //<OpenSSL変数>//
@@ -460,15 +473,16 @@ int CommunicationSystem::HttpRequest()
     }
 
     //<ヘッダ部分を取り除いたかどうか>//
-    bool header_check = false;
+    header_check = false;
     //<文字数を取得してその分を取り除いたかどうか>//
-    bool char_num_check = false;
+    char_num_check = false;
     //<文字数を入れる>//
-    int char_count{};
+    char_count = {};
     //分割して受信した場合結合用の配列
-    char ret_source[20480] = { "" };
+    char ret_source[1500] = { "" };
     //合計サイズ
-    int all_size = 0;
+    all_size = 0;
+    std::string json_data{};
 
      //分割して受信した場合結合用の配列
     while (1) {
@@ -488,11 +502,9 @@ int CommunicationSystem::HttpRequest()
                     {
                         //改行コードが連続している所から最後までを取得
                         memcpy(body, &buf[idx + 4], strlen(&buf[idx + 4]));
-                        //取得したデータを確認する為に画面へ表示
-                        std::cout << body;
                         //<ヘッダ部分を取り除いたデータを保存>//
                         std::memcpy(ret_source + all_size, body, strlen(body));
-                        all_size += strlen(body);
+                        all_size += static_cast<int>(strlen(body));
                         //<ヘッダ部分を取り除いた>//
                         header_check = true;
                         break;
@@ -504,7 +516,6 @@ int CommunicationSystem::HttpRequest()
             else
             {
                 if (read_size > 0) {
-                    std::cout << buf;
                     std::memcpy(ret_source + all_size, buf, read_size);
                     all_size += read_size;
                 }
@@ -527,7 +538,7 @@ int CommunicationSystem::HttpRequest()
                         std::string number = "0x";
                         number += num;
                         //<10進数に変換>//
-                        char_count = std::stod(number.c_str());
+                        char_count = static_cast<int>(std::stod(number.c_str()));
 
                         //改行コードが連続している所から最後までを取得
                         memcpy(ret_source, &ret_source[idx + 2], strlen(&ret_source[idx + 2]));
@@ -542,7 +553,8 @@ int CommunicationSystem::HttpRequest()
             //<データの文字数よりも大きかったら後ろの部分をきる取る>//
             if (all_size >= char_count)
             {
-                memcpy(ret_source, &ret_source, char_count);
+                json_data = ret_source;
+                json_data.erase(json_data.find("\r\n"));
                 break;
             }
 
@@ -562,19 +574,42 @@ int CommunicationSystem::HttpRequest()
 
 #endif // 0
     }
+    using namespace nlohmann;
+
+    auto j = nlohmann::json::parse(json_data);
+
+    std::vector<WebEnemy::WebEnemyParamPack> web_enemy_data;
+
+    for (json::iterator it = j.begin(); it != j.end(); ++it)
+    {
+        auto j_data = it.value();
+        WebEnemy::WebEnemyParamPack e_data = j_data.get<WebEnemy::WebEnemyParamPack>();
+        web_enemy_data.emplace_back(e_data);
+    }
+    web_enemy_data;
 
     ret = SSL_shutdown(ssl);
-    if (ret != 1) {
+    if (ret < 0) {
         ERR_print_errors_fp(stderr);
         exit(1);
     }
-    closesocket(instance.http_sock);
+    else if (ret == 0)
+    {
+        ret = SSL_shutdown(ssl);
+        if (ret < 0)
+        {
+            int e = SSL_get_error(ssl, ret);//ここのエラーコードが1だった
+            std::string msg = std::to_string(e);
+            DebugConsole::Instance().WriteDebugConsole(msg,TextColor::Red);
+        }
+    }
 
     //<SSLの終了処理>//
 
     SSL_free(ssl);
     SSL_CTX_free(ctx);
     ERR_free_strings();
+    closesocket(instance.http_sock);
     WSACleanup();
     return 1;
 

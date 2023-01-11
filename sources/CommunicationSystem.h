@@ -189,7 +189,15 @@ private:
     int tcp_error_num{ -1 };
     int udp_error_num{ -1 };
     const char* hostname = "localhost";
-    const char* path = "/";
+    const char* path = "/ConversionJson/Registration";
     const char* http_port = "5001";
+    //<ヘッダ部分を取り除いたかどうか>//
+    bool header_check = false;
+    //<文字数を取得してその分を取り除いたかどうか>//
+    bool char_num_check = false;
+    //<文字数を入れる>//
+    int char_count{};
+    //合計サイズ
+    int all_size = 0;
 
 };
