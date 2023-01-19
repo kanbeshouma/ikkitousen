@@ -6,6 +6,7 @@
 #include "volume_icon.h"
 #include "game_icon.h"
 #include "scene_loading.h"
+#include"imgui_include.h"
 
 framework::framework(HWND hwnd)
 	: hwnd(hwnd) {}
@@ -44,6 +45,15 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 #endif
+
+#ifdef USE_IMGUI
+	static ImGui::ValuePlotter plotter = ImGui::ValuePlotter(0.2f);
+	float value = elapsed_time * 1000.0f;
+	plotter.record(elapsed_time, "frame", value, 0.0f, 20.0f,
+		"now: %d fps  %.3f ms", static_cast<int>(1000.0f / value), value);
+#endif
+
+
 	// device
 	mouse->update(hwnd);
 	game_pad->update(elapsed_time);

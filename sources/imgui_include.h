@@ -54,5 +54,62 @@ namespace ImGui
         return ImGui::Checkbox(hidden_name.c_str(), v);
     }
 
+
+
+    //任意の値をグラフに記録する
+    struct ValuePlotter final
+    {
+    public:
+        ValuePlotter(float interval = 0.2f) : interval(interval) {}
+
+        //<グラフ生成関数>//
+        //第一引数 : elapsed_time
+        //第二引数 : グラフの名前
+        //第三引数 : 実際に記録する値
+        //第四引数 : グラフの最低値
+        //第五引数 : グラフの最高値
+        //第六引数 : グラフの中の名前(printfみたいな書き方)
+        void record(float elapsed_time, const char* plot_label, float value,
+            float scale_min, float scale_max, char const* overlay_label, ...)
+        {
+            refresh_time += elapsed_time;
+            if (static_cast<int>(refresh_time / interval) >= 1)
+            {
+                values_offset = values_offset >= IM_ARRAYSIZE(values) ? 0 : values_offset;
+                values[values_offset] = value;
+
+                va_list arg_list;
+                va_start(arg_list, overlay_label);
+                vsprintf_s(overlay, overlay_label, arg_list);
+                va_end(arg_list);
+
+                ++values_offset;
+                refresh_time = 0;
+            }
+
+            ImGui::Begin("plots");
+
+            ImGui::Text(plot_label);
+            std::string hidden_name = "##" + std::string(plot_label);
+            ImGui::PlotLines(hidden_name.c_str(), values, IM_ARRAYSIZE(values), values_offset, overlay,
+                scale_min, scale_max, ImVec2(ImGui::GetWindowSize().x * 0.9f, 90.0f));
+
+            ImGui::End();
+        }
+
+    private:
+        float values[90] = {};
+        char overlay[32] = {};
+        int values_offset = 0;
+        float refresh_time = 0.0f;
+        float interval = 0.0f;
+    };
+
+
 };
+
+
+
+
+
 #endif

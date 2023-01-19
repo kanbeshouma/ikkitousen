@@ -20,6 +20,7 @@
 
              mEnemyParamMap.insert(std::make_pair(data.enemy_name, param));
          }
+             fSave();
      }
      //<Ž¸”s‚µ‚½Žž>//
      else
@@ -30,7 +31,6 @@
 
  EnemyEditor::~EnemyEditor()
 {
-    fSave();
 }
 
  const EnemyParamPack EnemyEditor::fGetParam(EnemyType Type_)

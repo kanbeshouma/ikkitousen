@@ -425,14 +425,27 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
     milliseconds = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 
 
+    float value{};
     if (milliseconds > EnemyDataFrequency)
     {
+        auto grah_start = std::chrono::system_clock::now();
         //-----データを送る-----//
         fSendEnemyData(elapsedTime_);
 
         //-----タイマーを初期化-----//
         start = std::chrono::system_clock::now();
+        auto grah_end = std::chrono::system_clock::now();
+        auto grah_dur = grah_end - grah_start;
+        value = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(grah_dur).count());
     }
+#ifdef USE_IMGUI
+    static float max = 0;
+    if (max < value) max = value;
+    static ImGui::ValuePlotter plotter = ImGui::ValuePlotter(0.01f);
+    //plotter.record(elapsedTime_, "EnemyDataSend", value, 0.0f, 3000.0f,"");
+    plotter.record(elapsedTime_, "EnemyDataSend", milliseconds, 0.0f, 3000.0f,"");
+#endif
+
 }
 
 void EnemyManager::fSendEnemyData(float elapsedTime_)
@@ -493,6 +506,14 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
     data[ComLocation::Other] = data_set_count;
 
     int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
+#ifdef USE_IMGUI
+    static float max = 0;
+    if (max < size) max = size;
+    ImGui::Begin("size");
+    ImGui::DragFloat("max_size", &max);
+    if (ImGui::Button("reset")) max = 0;
+    ImGui::End();
+#endif
 
     CorrespondenceManager::Instance().UdpSend(data, size);
 

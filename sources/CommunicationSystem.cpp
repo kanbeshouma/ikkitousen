@@ -551,6 +551,8 @@ int CommunicationSystem::HttpRequest()
             {
                 json_data = ret_source;
                 json_data.erase(json_data.find("\r\n"));
+                DebugConsole::Instance().WriteDebugConsole(json_data, TextColor::Green);
+
                 break;
             }
 

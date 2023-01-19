@@ -351,7 +351,7 @@ namespace EnemySendData
     //-----敵の基本データ-----//
     struct EnemyData
     {
-        //-----敵の番号-----//
+        //-----敵の番号-----//4
         //==============
         //[0] : object_id
         //[1] : state(AI)
@@ -359,10 +359,10 @@ namespace EnemySendData
         //[3] : enemy_type
         char enemy_data[4];
 
-        //-----体力-----//
+        //-----体力-----//4
         int hp;
 
-        //-----自分の位置-----//
+        //-----自分の位置-----//12
         DirectX::XMFLOAT3 pos;
     };
 
@@ -374,7 +374,7 @@ namespace EnemySendData
         //[0] : CommandList
         //[1] : UpdateCommand
         //[2] : DataKind(送る敵の種類) :※今は使用してない
-        //[3] : vector型のサイズ
+        //[3] : vector型のサイズ4
         char cmd[4]{};
 
         //-----敵のデータ-----//
