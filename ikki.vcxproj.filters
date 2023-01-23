@@ -259,6 +259,9 @@
     <Filter Include="Sources\Character\enemy\MasterEnemyData">
       <UniqueIdentifier>{209bea42-d824-44fc-aea4-50afff46a322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Scene\SceneParamCheck">
+      <UniqueIdentifier>{423fe763-b760-4127-bfa5-8050395ee83c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sources\sprite.cpp">
@@ -654,6 +657,9 @@
     <ClCompile Include="sources\EnemiesEditor.cpp">
       <Filter>Sources\Character\enemy</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SceneParamCheck.cpp">
+      <Filter>Sources\Scene\SceneParamCheck</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">
@@ -1033,6 +1039,9 @@
     </ClInclude>
     <ClInclude Include="sources\magic_enum_include.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SceneParamCheck.h">
+      <Filter>Sources\Scene\SceneParamCheck</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

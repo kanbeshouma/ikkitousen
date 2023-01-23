@@ -172,6 +172,7 @@ bool CommunicationSystem::InitializeHostTcp(char* port, int private_id)
     addr = *((sockaddr_in*)addr_info->ai_addr);
     //ソケット生成
     instance.tcp_sock = socket(addr_info->ai_family, addr_info->ai_socktype, addr_info->ai_protocol);
+
     if (instance.tcp_sock == INVALID_SOCKET)
     {
         //ソケットの生成に失敗
@@ -609,7 +610,6 @@ int CommunicationSystem::HttpRequest()
     SSL_CTX_free(ctx);
     ERR_free_strings();
     closesocket(instance.http_sock);
-    WSACleanup();
     return 1;
 
 }

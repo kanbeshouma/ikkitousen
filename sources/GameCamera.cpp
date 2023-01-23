@@ -35,6 +35,7 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	}
 
     using namespace DirectX;
+	//<プレイヤーの位置と方向を取得>//
 	const DirectX::XMFLOAT3 playerPosition = player->GetPosition();
 	const DirectX::XMFLOAT3 playerForward = player->GetForward();
 	const DirectX::XMFLOAT3 playerUp = player->GetUp();
@@ -43,17 +44,21 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 
+	//<カメラの位置の真ん中をプレイヤーの位置から上方向に設定>//
     const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
+	//<カメラ位置の方向をプレイヤーの後ろ方向の少し上に設定>//
     DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 1;
 	radius = 20;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
+	//<カメラターゲットをプレイヤーの位置に上方向に設定>//
 	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 12;
 	DirectX::XMStoreFloat3(&target, Target);
 
+	//<ターゲット位置からカメラ位置の方向ベクトルに半径をかけた値に設定>//
 	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
 	DirectX::XMStoreFloat3(&eye, Eye);
 

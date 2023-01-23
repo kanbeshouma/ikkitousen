@@ -92,7 +92,7 @@
             "key": "Sword",
             "value": {
                 "MaxHp": 10,
-                "AttackPower": 10,
+                "AttackPower": 7,
                 "InvincibleTime": 2.0,
                 "BodyCapsuleRad": 5.0,
                 "AttackCapsuleRad": 5.0,
@@ -103,7 +103,7 @@
             "key": "Sword_Ace",
             "value": {
                 "MaxHp": 15,
-                "AttackPower": 7,
+                "AttackPower": 15,
                 "InvincibleTime": 2.0,
                 "BodyCapsuleRad": 5.0,
                 "AttackCapsuleRad": 5.0,

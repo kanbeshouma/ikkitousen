@@ -522,3 +522,40 @@
 //	DirectX::XMStoreFloat3(&rockOnEyeVector, RockOnEyeVector);
 //}
 //
+
+void DebugCamera::Initialize(GraphicsPipeline& graphics)
+{
+	HRESULT hr{ S_OK };
+	//----定数バッファ----//
+	// カメラ関連
+	scene_constants = std::make_unique<Constants<SceneConstants>>(graphics.get_device().Get());
+	// orientationの初期化
+	{
+		DirectX::XMFLOAT3 n(0, 1, 0); // 軸（正規化）
+		constexpr float angle = DirectX::XMConvertToRadians(0); //角度（ラジアン）
+		orientation = {
+			sinf(angle / 2) * n.x,
+			sinf(angle / 2) * n.y,
+			sinf(angle / 2) * n.z,
+			cosf(angle / 2)
+		};
+	}
+
+
+}
+
+void DebugCamera::Update(float elapsedTime)
+{
+
+}
+
+void DebugCamera::RotateCamera(float elapsed_time)
+{
+	float ax = game_pad->get_axis_RX();
+	float ay = game_pad->get_axis_RY();
+	horizonDegree = 180 * ax * elapsed_time;
+}
+
+void DebugCamera::MoveCameraTarget(float elapsed_time)
+{
+}

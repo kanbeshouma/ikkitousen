@@ -159,7 +159,20 @@ private:
     bool cameraReset{ true };
 };
 
+class DebugCamera : public Camera
+{
+public:
+    DebugCamera(GraphicsPipeline& Graphics_) : Camera(nullptr){}
+    ~DebugCamera() {}
+    void Initialize(GraphicsPipeline& graphics);
+    void Update(float elapsedTime);
+private:
+    //カメラの回転
+    void RotateCamera(float elapsed_time);
+    //-----カメラのターゲットを動かす-----//
+    void MoveCameraTarget(float elapsed_time);
 
+};
 
 class JointCamera : public Camera
 {

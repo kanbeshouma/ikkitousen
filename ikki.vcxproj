@@ -236,6 +236,7 @@
     <ClCompile Include="sources\player_condition.cpp" />
     <ClCompile Include="sources\SceneMultiGameClient.cpp" />
     <ClCompile Include="sources\SceneMultiGameHost.cpp" />
+    <ClCompile Include="sources\SceneParamCheck.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
@@ -363,6 +364,7 @@
     <ClInclude Include="sources\resource\resource.h" />
     <ClInclude Include="sources\SceneMultiGameClient.h" />
     <ClInclude Include="sources\SceneMultiGameHost.h" />
+    <ClInclude Include="sources\SceneParamCheck.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />
