@@ -5,6 +5,7 @@
 #include"game_pad.h"
 #include"SocketCommunication.h"
 #include"EnemyStructuer.h"
+#include"Short3.h"
 //---------------------------------------------------------------
 //
 //通信で必要なコマンド，構造体を宣言する
@@ -359,11 +360,11 @@ namespace EnemySendData
         //[3] : enemy_type
         char enemy_data[4];
 
-        //-----体力-----//4
-        int hp;
+        //-----体力-----//2
+        uint16_t hp;
 
         //-----自分の位置-----//12
-        DirectX::XMFLOAT3 pos;
+        Short3 pos;
     };
 
     //-----敵の基本データが入っている構造体-----//

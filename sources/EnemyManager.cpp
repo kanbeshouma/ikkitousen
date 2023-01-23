@@ -492,7 +492,9 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
         enemy_d.hp = static_cast<int>(enemy->fGetCurrentHitPoint());
 
         //-----自分の位置を設定-----//
-        enemy_d.pos = enemy->fGetPosition();
+        enemy_d.pos.x = static_cast<int16_t>(enemy->fGetPosition().x);
+        enemy_d.pos.y = static_cast<int16_t>(enemy->fGetPosition().y);
+        enemy_d.pos.z = static_cast<int16_t>(enemy->fGetPosition().z);
 
         std::memcpy(data + SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d,sizeof(EnemyData));
 
@@ -539,8 +541,12 @@ void EnemyManager::fSetReceiveEnemyData(float elapsedTime_, EnemySendData::Enemy
         //-----自分のオブジェクト番号とデータの番号が違うならとばす-----//
         if (enemy->fGetObjectId() != data.enemy_data[EnemySendData::EnemyDataArray::ObjectId]) continue;
 
+        DirectX::XMFLOAT3 pos{};
+        pos.x = static_cast<int16_t>(data.pos.x);
+        pos.y = static_cast<int16_t>(data.pos.y);
+        pos.z = static_cast<int16_t>(data.pos.z);
         //-----自分の位置を設定-----//
-        enemy->fSetReceivePosition(data.pos);
+        enemy->fSetReceivePosition(pos);
 
         //-----AIステート設定-----//
         enemy->fSetEnemyState(data.enemy_data[EnemySendData::EnemyDataArray::AiState]);
