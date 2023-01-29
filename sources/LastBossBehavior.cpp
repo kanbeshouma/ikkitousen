@@ -401,7 +401,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
 
-    if (game_pad->get_button() & GamePad::BTN_B)
+    if (game_pad->get_button() & GamePad::BTN_B && CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
         mSkipTimer += elapsedTime_ * 0.3f;
     }
@@ -1344,7 +1344,7 @@ void LastBoss::fHumanDieStartInit()
 void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     bool end{ false };
-    if (game_pad->get_button() & GamePad::BTN_B)
+    if (game_pad->get_button() & GamePad::BTN_B && CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
         end = true;
     }
@@ -1447,7 +1447,7 @@ void LastBoss::fHumanToDragonInit()
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 
-    if (game_pad->get_button() & GamePad::BTN_B)
+    if (game_pad->get_button() & GamePad::BTN_B && CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
         mSkipTimer += elapsedTime_ * 0.3f;
     }
@@ -2387,7 +2387,7 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mRightPointer.fRender(graphics);
     mLeftPointer.fRender(graphics);
 
-    if (mDrawSkip)
+    if (mDrawSkip && CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
         graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
         fonts->yu_gothic->Begin(graphics.get_dc().Get());

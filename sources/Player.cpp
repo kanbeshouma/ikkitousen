@@ -58,6 +58,9 @@ Player::Player(GraphicsPipeline& graphics, int object_id)
 
     //-----ƒtƒHƒ“ƒgÝ’è-----//
     object_id_font.s = std::to_wstring(this->object_id);
+
+    player_icon = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap_player.png", 1);
+
 }
 
 Player::~Player()

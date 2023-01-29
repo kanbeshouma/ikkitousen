@@ -821,7 +821,7 @@ void SceneMultiGameHost::render(GraphicsPipeline& graphics, float elapsed_time)
 	if (mIsBossCamera == false)player_manager->ConfigRender(graphics, elapsed_time);
 	if (mIsBossCamera == false && during_clear == false && is_game_clear == false)
 	{
-		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies(),player_manager->GetPlayerVector(),player_manager->GetPrivatePlayerId());
 	}
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 

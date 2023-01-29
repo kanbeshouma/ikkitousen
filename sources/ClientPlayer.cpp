@@ -12,6 +12,9 @@ ClientPlayer::ClientPlayer(GraphicsPipeline& graphics, int object_id)
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx", false, 60.0f);
 
+    //<味方の位置をミニマップで見せる為>//
+    player_icon = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L"./resources/Sprites/ui/minimap/minimap_boss.png", 1);
+
     TransitionIdle();
 
     is_update_animation = true;

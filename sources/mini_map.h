@@ -13,6 +13,7 @@ public:
 	MiniMap(GraphicsPipeline& graphics);
 	~MiniMap() {}
 
+	void render(GraphicsPipeline& graphics, const DirectX::XMFLOAT2& player_pos, const DirectX::XMFLOAT2& player_forward, const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list , std::vector<std::shared_ptr<BasePlayer>> player_list, int private_object_id);
 	void render(GraphicsPipeline& graphics, const DirectX::XMFLOAT2& player_pos, const DirectX::XMFLOAT2& player_forward, const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list);
 	std::unique_ptr<SpriteBatch> mini_map_icon;
 	std::unique_ptr<SpriteBatch> player_icon;

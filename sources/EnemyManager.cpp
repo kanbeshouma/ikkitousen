@@ -508,14 +508,6 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
     data[ComLocation::Other] = data_set_count;
 
     int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
-#ifdef USE_IMGUI
-    static float max = 0;
-    if (max < size) max = size;
-    ImGui::Begin("size");
-    ImGui::DragFloat("max_size", &max);
-    if (ImGui::Button("reset")) max = 0;
-    ImGui::End();
-#endif
 
     CorrespondenceManager::Instance().UdpSend(data, size);
 

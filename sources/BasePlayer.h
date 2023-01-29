@@ -211,4 +211,7 @@ public:
     void SetDoChain(bool arg) { do_chain = arg; }
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
+public:
+    std::unique_ptr<SpriteBatch> player_icon;
+
 };
