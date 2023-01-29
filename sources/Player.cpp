@@ -1000,11 +1000,12 @@ void Player::SendPositionData()
 
     //-----位置設定-----//
     data.position.x = static_cast<int16_t>(position.x);
-    data.position.y = static_cast<int16_t>(position.y);
-    data.position.z = static_cast<int16_t>(position.z);
+    data.position.y = static_cast<int16_t>(position.z);
 
     //-----入力情報-----//
-    data.move_vec = GetInputMoveVec();
+    //送信用のデータに変換する
+    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * 100);
+    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * 100);
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();

@@ -229,11 +229,11 @@ struct PlayerPositionData
     //3:
     char cmd[4]{};
 
-    //-----ˆÊ’u-----//6
-    Short3 position{};
+    //-----ˆÊ’u-----//4
+    Short2 position{};
 
-    //-----“ü—Í•ûŒü-----//12
-    DirectX::XMFLOAT3 move_vec{};
+    //-----“ü—Í•ûŒü-----/4
+    Short2 move_vec{};
 
 };
 enum class PlayerPositionDataCmd

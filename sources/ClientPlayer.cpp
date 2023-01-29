@@ -555,8 +555,8 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     //position = data.position;
     DirectX::XMFLOAT3 p{};
     p.x = static_cast<float>(data.position.x);
-    p.y = static_cast<float>(data.position.y);
-    p.z = static_cast<float>(data.position.z);
+    p.y = static_cast<float>(position.y);
+    p.z = static_cast<float>(data.position.y);
 
     XMVECTOR p1{ XMLoadFloat3(&position) };
     XMVECTOR p2{ XMLoadFloat3(&p) };
@@ -579,8 +579,13 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
         position = p;
     }
 
+    //元の入力値に変換する
+    DirectX::XMFLOAT3 input_d{};
+    input_d.x = static_cast<float>(data.move_vec.x) / 100.0f;
+    input_d.z = static_cast<float>(data.move_vec.y) / 100.0f;
+
     //-----入力データ設定する-----//
-    SetMoveVecter(data.move_vec);
+    SetMoveVecter(input_d);
 }
 
 void ClientPlayer::SetPlayerActionData(PlayerActionData data)
