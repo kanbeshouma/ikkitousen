@@ -10,10 +10,13 @@ SocketCommunicationManager::SocketCommunicationManager()
         //send_udp_sock[i] = INVALID_SOCKET;
     }
     http_sock = INVALID_SOCKET;
+    multicast_sock = INVALID_SOCKET;
     login_tcp_server_addr.sin_addr.S_un.S_addr = 0;
+    multicast_addr.sin_addr.S_un.S_addr = 0;
     FD_ZERO(&client_tcp_fds);
     FD_ZERO(&udp_fds);
     FD_ZERO(&tcp_fds);
+    FD_ZERO(&multicast_fds);
     client_tcp_fds_count = 0;
 }
 SocketCommunicationManager::~SocketCommunicationManager()
@@ -21,6 +24,7 @@ SocketCommunicationManager::~SocketCommunicationManager()
     if (udp_sock != INVALID_SOCKET) closesocket(udp_sock);
     if (tcp_sock != INVALID_SOCKET) closesocket(tcp_sock);
     if (http_sock != INVALID_SOCKET) closesocket(http_sock);
+    if (multicast_sock != INVALID_SOCKET) closesocket(multicast_sock);
     for (int i = 0; i < MAX_CLIENT; i++)
     {
         game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
@@ -28,9 +32,11 @@ SocketCommunicationManager::~SocketCommunicationManager()
     }
 
     login_tcp_server_addr.sin_addr.S_un.S_addr = 0;
+    multicast_addr.sin_addr.S_un.S_addr = 0;
     FD_ZERO(&client_tcp_fds);
     FD_ZERO(&udp_fds);
     FD_ZERO(&tcp_fds);
+    FD_ZERO(&multicast_fds);
     client_tcp_fds_count = 0;
 }
 
@@ -55,6 +61,11 @@ void SocketCommunicationManager::ClearData()
         closesocket(http_sock);
         http_sock = INVALID_SOCKET;
     }
+    if (multicast_sock != INVALID_SOCKET)
+    {
+        closesocket(multicast_sock);
+        multicast_sock = INVALID_SOCKET;
+    }
     for (int i = 0; i < MAX_CLIENT; ++i)
     {
         game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
@@ -65,9 +76,11 @@ void SocketCommunicationManager::ClearData()
         }
     }
     login_tcp_server_addr.sin_addr.S_un.S_addr = 0;
+    multicast_addr.sin_addr.S_un.S_addr = 0;
     FD_ZERO(&client_tcp_fds);
     FD_ZERO(&udp_fds);
     FD_ZERO(&tcp_fds);
+    FD_ZERO(&multicast_fds);
     client_tcp_fds_count = 0;
 
     WSADATA was_data;

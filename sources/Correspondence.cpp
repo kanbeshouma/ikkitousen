@@ -55,6 +55,47 @@ bool CorrespondenceManager::InitializeServer()
     return communication_system->InitializeHost(tcp_port,udp_port, operation_private_id);
 }
 
+bool CorrespondenceManager::InitializeMultiCastSend()
+{
+    if (communication_system->InitializeMultiCastSend())
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信初期化成功", TextColor::Green);
+        return true;
+    }
+    else
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信初期化失敗", TextColor::Red);
+        return false;
+    }
+
+    return false;
+}
+
+bool CorrespondenceManager::InitializeMultiCastReceive()
+{
+    if (communication_system->InitializeMultiCastReceive())
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信初期化成功", TextColor::Green);
+        return true;
+    }
+    else
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信初期化失敗", TextColor::Red);
+        return false;
+    }
+    return false;
+}
+
+void CorrespondenceManager::MultiCastSend(char* data, int size)
+{
+    communication_system->MultiCastSend(data, size);
+}
+
+void CorrespondenceManager::MultiCastReceive(char* data, int size)
+{
+    communication_system->MultiCastReceive(data, size);
+}
+
 int CorrespondenceManager::UdpReceive(char* data, int size)
 {
     //-----マルチプレイでなかったら処理を止める-----//

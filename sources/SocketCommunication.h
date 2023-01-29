@@ -26,6 +26,12 @@ public:
     //-----UDP通信受信用のソケット-----//
     SOCKET udp_sock{ INVALID_SOCKET };
 
+    //<マルチキャスト用のソケット>//
+    SOCKET multicast_sock{ INVALID_SOCKET };
+
+    //<マルチキャストアドレス>//
+    sockaddr_in multicast_addr;
+
     //-----TCP通信のソケット-----//
     SOCKET tcp_sock{ INVALID_SOCKET };
 
@@ -44,6 +50,9 @@ public:
     //-----UDP読み込み監視用-----//
     fd_set udp_fds;
 
+    //-----マルチキャスト読み込み監視用-----//
+    fd_set multicast_fds;
+
     //-----TCP読み込み監視用-----//
     fd_set tcp_fds;
 
@@ -57,6 +66,8 @@ public:
     char host_ip[32]{ "127.0.0.1" };
     char my_ip[32]{ "127.0.0.1" };
 
+    char multicast_ip[32]{ "224.10.1.1" };
+    int multicast_port = 8000;
 public:
     std::mutex& GetMutex() { return mutex; }
 

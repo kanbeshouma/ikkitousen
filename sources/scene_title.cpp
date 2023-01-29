@@ -322,6 +322,43 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::RadioButton("start_matching", start_matching);
+
+	static bool multi_send = false;
+	static bool multi_receive = false;
+
+	if (ImGui::Button("InitializeMultiCastSend"))
+	{
+		//----------今あるソケットの情報などを一旦リセットする----------//
+		SocketCommunicationManager::Instance().ClearData();
+		CorrespondenceManager::Instance().InitializeMultiCastSend();
+		multi_send = true;
+		multi_receive = false;
+	}
+	if (ImGui::Button("InitializeMultiCastReceive"))
+	{
+		//----------今あるソケットの情報などを一旦リセットする----------//
+		SocketCommunicationManager::Instance().ClearData();
+		CorrespondenceManager::Instance().InitializeMultiCastReceive();
+		multi_send = false;
+		multi_receive = true;
+	}
+
+	if (multi_send)
+	{
+		if (ImGui::Button("multi_send"))
+		{
+			char data[10] = "Hello";
+			CorrespondenceManager::Instance().MultiCastSend(data,sizeof(data));
+		}
+	}
+	if (multi_receive)
+	{
+		char data[10];
+		int size{};
+		CorrespondenceManager::Instance().MultiCastReceive(data, size);
+	}
+
+
 	ImGui::PopItemWidth();
 	ImGui::End();
 #endif // Telecommunications

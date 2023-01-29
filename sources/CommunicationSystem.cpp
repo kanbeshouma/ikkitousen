@@ -1085,6 +1085,150 @@ void CommunicationSystem::UdpSend(char* data, int size)
     }
 }
 
+bool CommunicationSystem::InitializeMultiCastSend()
+{
+    SocketCommunicationManager& instance =  SocketCommunicationManager::Instance();
+
+    // マルチキャスト接続設定
+    instance.multicast_sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    // IPv4設定
+    instance.multicast_addr.sin_family = AF_INET;
+    // マルチキャストポート
+    instance.multicast_addr.sin_port = htons(instance.multicast_port);
+
+    //マルチキャストアドレスを設定
+    inet_pton(AF_INET,instance.multicast_ip, &instance.multicast_addr.sin_addr);
+
+
+    // ローカルIP設定(第2引数に指定)
+    ULONG localAddress = 0;
+    // ローカルIPは各自の端末用に変えてください
+    inet_pton(AF_INET, instance.my_ip, &localAddress);
+
+
+    // マルチキャストオプションの設定(送信側)
+    // 第1引数,socket
+    // 第2引数,optionの種類
+    // 第3引数,ローカルIPアドレスの指定
+    // 第4引数,ローカルIPアドレスのサイズ
+    //<ここではどのインターフェイス(どのアドレスから)から送信するのかを設定している>//
+    if (setsockopt(instance.multicast_sock, IPPROTO_IP, IP_MULTICAST_IF, reinterpret_cast<const char*>(&localAddress), sizeof(localAddress)) != 0) {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信初期化: マルチキャストオプションの設定に失敗しました。", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        return false;
+    }
+
+    // TTLのオプション設定(Time To Live 有効時間)
+    int ttl = 10;
+    if (setsockopt(instance.multicast_sock, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&ttl, sizeof(ttl)) != 0) {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信初期化:     TTLオプションの設定に失敗しました。", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        return false;
+    }
+
+    return true;
+}
+
+bool CommunicationSystem::InitializeMultiCastReceive()
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
+    instance.multicast_sock = socket(AF_INET, SOCK_DGRAM, 0);
+
+    sockaddr_in multicastAddress;
+
+    multicastAddress.sin_family = AF_INET;
+    multicastAddress.sin_port = htons(instance.multicast_port);
+    //<サーバーのIPアドレスを設定>//
+    inet_pton(AF_INET,instance.host_ip, &multicastAddress.sin_addr);
+
+
+    bind(instance.multicast_sock, (struct sockaddr*)&multicastAddress, sizeof(multicastAddress));
+
+
+    // マルチキャストグループへ登録( join )する
+    ip_mreq mr;
+    if (inet_pton(AF_INET, instance.multicast_ip, &mr.imr_multiaddr.s_addr) != 1) {
+        // error
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信 : マルチキャストアドレスの設定失敗", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        return  false;
+    }
+
+    if (inet_pton(AF_INET, instance.host_ip, &mr.imr_interface.s_addr) != 1)
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信 : インターフェイスアドレスの設定失敗", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        return false;
+    }
+
+    if (setsockopt(instance.multicast_sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mr, sizeof(mr)) < 0) {
+        // error
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信: マルチキャストグループへの参加に失敗", TextColor::Red);
+        int error = WSAGetLastError();
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+        return false;
+    }
+
+    // sockをfdsにセット
+    FD_SET(instance.multicast_sock, &instance.multicast_fds);
+
+    return true;
+}
+
+void CommunicationSystem::MultiCastSend(char* data, int size)
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+
+    int send_size = sendto(instance.multicast_sock, data, strlen(data) + 1, 0, (struct sockaddr*)&instance.multicast_addr, sizeof(instance.multicast_addr));
+
+    //エラーの時はSOCKET_ERRORが入る
+    if (send_size == SOCKET_ERROR)
+    {
+        //コンソール画面に出力
+        int error = WSAGetLastError();
+        DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+        std::string text = "error number:" + std::to_string(error);
+        DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+    }
+
+}
+
+void CommunicationSystem::MultiCastReceive(char* data, int size)
+{
+    SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+    timeval tv;
+    //----------秒-----------//
+    tv.tv_sec = 0;
+    //----------ミリ秒----------//
+    tv.tv_usec = 0;
+    //----------読み込み監視変数----------//
+    fd_set fd_work;
+    //----------fd_workにコピーする----------//
+    memcpy(&fd_work, &instance.multicast_fds, sizeof(fd_set));
+    //-----fdsに設定されたソケットが読み込み可能になるまで待つ-----//
+    int n = select(0, &fd_work, NULL, NULL, &tv);
+    //----------タイムアウトの場合selectは0を返す----------//
+    if (n <= 0)
+    {
+        return;
+    }
+
+    recv(instance.multicast_sock, data, size, 0);
+
+    DebugConsole::Instance().WriteDebugConsole(data, TextColor::Pink);
+}
+
 void CommunicationSystem::LogoutClient(int client_id)
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
