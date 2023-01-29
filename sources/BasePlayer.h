@@ -29,6 +29,9 @@ protected:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 100;
 
+    //<送信データ変換の倍率>//
+    static constexpr int SEND_SCALE_FACTOR = 100;
+
     //プレイヤーの体力
     int player_health = MAX_HEALTH;
 

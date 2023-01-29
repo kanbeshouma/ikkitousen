@@ -973,8 +973,8 @@ void Player::SendMoveData()
 
     //-----入力情報-----//
     //送信用のデータに変換する
-    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * 100);
-    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * 100);
+    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * SEND_SCALE_FACTOR);
+    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * SEND_SCALE_FACTOR);
 
     //-----ロックオンしてるかどうか-----//
     data.lock_on = is_lock_on;
@@ -1004,8 +1004,8 @@ void Player::SendPositionData()
 
     //-----入力情報-----//
     //送信用のデータに変換する
-    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * 100);
-    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * 100);
+    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * SEND_SCALE_FACTOR);
+    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * SEND_SCALE_FACTOR);
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
@@ -1023,30 +1023,38 @@ void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
     //-----誰のどのデータかを設定-----//
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerActionCommand;
 
+    //-----プレイヤーのID設定-----//
+    data.cmd[static_cast<int>(PlayerActionDataCmd::PlayerId)] = object_id;
+
+
     //-----どのボタンを押したかを設定-----//
     data.new_button_state = button;
 
-    //-----プレイヤーのID設定-----//
-    data.player_id = object_id;
 
     //-----位置設定-----//
-    data.position = position;
+    data.position.x = static_cast<int16_t>(position.x);
+    data.position.y = static_cast<int16_t>(position.z);
 
     //-----チャージ位置設定-----//
-    data.charge_point = charge_point;
+    data.charge_point.x = static_cast<int16_t>(charge_point.x);
+    data.charge_point.y = static_cast<int16_t>(charge_point.z);
 
     //-----速力設定-----//
-    data.velocity = velocity;
+    //送信用のデータに変換する
+    //data.velocity.x = static_cast<int16_t>(velocity.x);
+    //data.velocity.y = static_cast<int16_t>(velocity.z);
 
-    //-----入力方向を設定-----//
-    data.move_vec = vec;
+    //-----入力情報-----//
+    //送信用のデータに変換する
+    data.move_vec.x = static_cast<int16_t>(vec.x * SEND_SCALE_FACTOR);
+    data.move_vec.y = static_cast<int16_t>(vec.z * SEND_SCALE_FACTOR);
 
-    //DebugConsole::Instance().WriteDebugConsole(std::to_string(sizeof(PlayerActionData)));
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();
     instance.UdpSend((char*)&data, sizeof(PlayerActionData));
 
+    //DebugConsole::Instance().WriteDebugConsole(std::to_string(sizeof(PlayerActionData)));
 
 }
 

@@ -531,8 +531,8 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
 
     //元の入力値に変換する
     DirectX::XMFLOAT3 input_d{};
-    input_d.x = static_cast<float>(data.move_vec.x) / 100.0f;
-    input_d.z = static_cast<float>(data.move_vec.y) / 100.0f;
+    input_d.x = static_cast<float>(data.move_vec.x) / static_cast<float>(SEND_SCALE_FACTOR);
+    input_d.z = static_cast<float>(data.move_vec.y) / static_cast<float>(SEND_SCALE_FACTOR);
 
 
     //-----入力データ設定する-----//
@@ -581,8 +581,8 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
 
     //元の入力値に変換する
     DirectX::XMFLOAT3 input_d{};
-    input_d.x = static_cast<float>(data.move_vec.x) / 100.0f;
-    input_d.z = static_cast<float>(data.move_vec.y) / 100.0f;
+    input_d.x = static_cast<float>(data.move_vec.x) / static_cast<float>(SEND_SCALE_FACTOR);
+    input_d.z = static_cast<float>(data.move_vec.y) / static_cast<float>(SEND_SCALE_FACTOR);
 
     //-----入力データ設定する-----//
     SetMoveVecter(input_d);
@@ -591,21 +591,44 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
 void ClientPlayer::SetPlayerActionData(PlayerActionData data)
 {
 
+
+    DirectX::XMFLOAT3 p{};
+    p.x = static_cast<float>(data.position.x);
+    p.y = static_cast<float>(position.y);
+    p.z = static_cast<float>(data.position.y);
+
     //-----位置データを設定-----//
     //そこに向かって補完していく
-    SetLerpPosition(data.position);
+    SetLerpPosition(p);
 
     //-----チャージ位置設定-----//
-    charge_point = data.charge_point;
+    //元の入力値に変換する
+    DirectX::XMFLOAT3 c{};
+    c.x = static_cast<float>(data.charge_point.x);
+    c.z = static_cast<float>(data.charge_point.y);
+
+    charge_point = c;
 
     //-----速力データを設定-----//
-    velocity = data.velocity;
+    //元の入力値に変換する
+    DirectX::XMFLOAT3 input_d{};
+    input_d.x = static_cast<float>(data.move_vec.x) / static_cast<float>(SEND_SCALE_FACTOR);
+    input_d.z = static_cast<float>(data.move_vec.y) / static_cast<float>(SEND_SCALE_FACTOR);
 
-    //-----入力方向データを設定-----//
-    receive_action_vec = data.move_vec;
+
+    receive_action_vec = input_d;
 
     //-----入力データ設定する-----//
-    SetMoveVecter(data.move_vec);
+    SetMoveVecter(input_d);
+
+
+    //-----入力方向データを設定-----//
+    //元の入力値に変換する
+    //DirectX::XMFLOAT3 v{};
+    //v.x = static_cast<float>(data.velocity.x) / static_cast<float>(SEND_SCALE_FACTOR);
+    //v.z = static_cast<float>(data.velocity.y) / static_cast<float>(SEND_SCALE_FACTOR);
+    //velocity = v;
+
 
     //-----ボタンデータを設定-----//
     SetSendButton(data.new_button_state);

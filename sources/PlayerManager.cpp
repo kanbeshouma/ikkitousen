@@ -193,7 +193,7 @@ void PlayerManager::SetPlayerActionData(PlayerActionData data)
     for (auto& player : players)
     {
         //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
-        if (player->GetObjectId() == data.player_id)
+        if (player->GetObjectId() == data.cmd[static_cast<int>(PlayerActionDataCmd::PlayerId)])
         {
             player->SetPlayerActionData(data);
         }

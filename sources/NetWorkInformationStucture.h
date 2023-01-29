@@ -245,26 +245,34 @@ enum class PlayerPositionDataCmd
 struct PlayerActionData
 {
     //通信コマンド
+    //0:CommandList
+    //1:UpdateCommand
+    //2:player_id
+    //3:
     char cmd[4]{};
 
-    //-----プレイヤーの番号-----//
-    int player_id{ -1 };
 
-    //-----位置-----//
-    DirectX::XMFLOAT3 position{};
+    //-----位置-----//4
+    Short2 position{};
 
-    //-----チャージポイント-----//
-    DirectX::XMFLOAT3 charge_point{};
+    //-----チャージポイント-----//4
+    Short2 charge_point{};
 
-    //-----入力値-----//
-    DirectX::XMFLOAT3 move_vec{};
+    //-----入力値-----//4
+    Short2 move_vec{};
 
-    //-----速力-----//
-    DirectX::XMFLOAT3 velocity{};
+    ////-----速力-----//4
+    //Short2 velocity{};
 
     //-----ボタンの入力-----//4
     GamePadButton new_button_state;
 };
+
+enum class PlayerActionDataCmd
+{
+    PlayerId = 2,
+};
+
 
 enum PlayerHealthEnum
 {
@@ -373,7 +381,7 @@ namespace EnemySendData
         //-----体力-----//2
         uint16_t hp;
 
-        //-----自分の位置-----//12
+        //-----自分の位置-----//6
         Short3 pos;
     };
 
