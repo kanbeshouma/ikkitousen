@@ -528,8 +528,15 @@ void ClientPlayer::ChangePlayerJustificationLength()
 void ClientPlayer::SetReceiveData(PlayerMoveData data)
 {
     if (behavior_state == Behavior::Chain) return;
+
+    //元の入力値に変換する
+    DirectX::XMFLOAT3 input_d{};
+    input_d.x = static_cast<float>(data.move_vec.x) / 100.0f;
+    input_d.z = static_cast<float>(data.move_vec.y) / 100.0f;
+
+
     //-----入力データ設定する-----//
-    SetMoveVecter(data.move_vec);
+    SetMoveVecter(input_d);
 
     //-----ロックオンしてるかどうか-----//
     is_lock_on = data.lock_on;

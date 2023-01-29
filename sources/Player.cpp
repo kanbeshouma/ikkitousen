@@ -573,9 +573,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat3("input", &input.x);
 
                 Short3 short_input;
-                short_input.x = input.x * 100;
-                short_input.y = input.y * 100;
-                short_input.z = input.z * 100;
+                short_input.x = static_cast<int16_t>(input.x * 100);
+                short_input.y = static_cast<int16_t>(input.y * 100);
+                short_input.z = static_cast<int16_t>(input.z * 100);
 
                 int x = static_cast<int>(short_input.x);
                 int z = static_cast<int>(short_input.z);
@@ -972,7 +972,9 @@ void Player::SendMoveData()
     else data.cmd[static_cast<int>(PlayerMoveDataCmd::LockOnEnemyId)] = -1;
 
     //-----入力情報-----//
-    data.move_vec = GetInputMoveVec();
+    //送信用のデータに変換する
+    data.move_vec.x = static_cast<int16_t>(GetInputMoveVec().x * 100);
+    data.move_vec.y = static_cast<int16_t>(GetInputMoveVec().z * 100);
 
     //-----ロックオンしてるかどうか-----//
     data.lock_on = is_lock_on;

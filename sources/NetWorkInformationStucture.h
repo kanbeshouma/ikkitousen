@@ -199,15 +199,15 @@ struct MachingEndData
 //-----プレイヤーが送る動きとターゲットのデータ-----//
 struct PlayerMoveData
 {
-    //通信コマンド
+    //通信コマンド 4
     //0:CommandList
     //1:UpdateCommand
     //2:player_id
     //3:lock_on_enemy_id
     char cmd[4]{};
 
-    //-----入力方向-----//
-    DirectX::XMFLOAT3 move_vec{};
+    //-----入力方向-----// 4
+    Short2 move_vec{};
 
     //-----ロックオンしてるかどうか-----//
     bool lock_on{ false };
