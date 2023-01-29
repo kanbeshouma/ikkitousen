@@ -535,7 +535,7 @@ void ClientPlayer::SetReceiveData(PlayerMoveData data)
     is_lock_on = data.lock_on;
 
     //-----ロックオンしている敵の番号-----//
-    lock_on_enemy_id = data.lock_on_enemy_id;
+    lock_on_enemy_id = data.cmd[static_cast<int>(PlayerMoveDataCmd::LockOnEnemyId)];
 
 }
 
@@ -546,9 +546,13 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     using namespace DirectX;
 
     //position = data.position;
+    DirectX::XMFLOAT3 p{};
+    p.x = static_cast<float>(data.position.x);
+    p.y = static_cast<float>(data.position.y);
+    p.z = static_cast<float>(data.position.z);
 
     XMVECTOR p1{ XMLoadFloat3(&position) };
-    XMVECTOR p2{ XMLoadFloat3(&data.position) };
+    XMVECTOR p2{ XMLoadFloat3(&p) };
 
     XMVECTOR dir{ p2 - p1 };
 
@@ -560,12 +564,12 @@ void ClientPlayer::SetReceivePositionData(PlayerPositionData data)
     {
         //ここで許容値を超えていたらその位置からの移動速度を考慮した位置をだして
         //そこに向かって補完していく
-        SetLerpPosition(data.position);
+        SetLerpPosition(p);
     }
     else
     {
         //-----許容範囲より内側なら位置をそのまま代入する-----//
-        position = data.position;
+        position = p;
     }
 
     //-----入力データ設定する-----//

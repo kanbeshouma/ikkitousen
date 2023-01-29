@@ -169,7 +169,7 @@ void PlayerManager::SetPlayerMoveData(PlayerMoveData data)
     for (auto& player : players)
     {
         //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
-        if (player->GetObjectId() == data.player_id)
+        if (player->GetObjectId() == data.cmd[static_cast<int>(PlayerMoveDataCmd::PlayerId)])
         {
             player->SetReceiveData(data);
         }
@@ -180,7 +180,7 @@ void PlayerManager::SetPlayerPositionData(PlayerPositionData data)
     for (auto& player : players)
     {
         //-----プレイヤーIDと受信データのIDが同じならデータ設定-----//
-        if (player->GetObjectId() == data.player_id)
+        if (player->GetObjectId() == data.cmd[static_cast<int>(PlayerPositionDataCmd::PlayerId)])
         {
             player->SetReceivePositionData(data);
         }

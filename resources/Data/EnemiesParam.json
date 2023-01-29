@@ -3,7 +3,7 @@
         {
             "key": "Archer",
             "value": {
-                "MaxHp": 10,
+                "MaxHp": 20,
                 "AttackPower": 10,
                 "InvincibleTime": 1.0,
                 "BodyCapsuleRad": 5.0,

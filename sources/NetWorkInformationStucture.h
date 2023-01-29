@@ -6,6 +6,7 @@
 #include"SocketCommunication.h"
 #include"EnemyStructuer.h"
 #include"Short3.h"
+#include"Short2.h"
 //---------------------------------------------------------------
 //
 //通信で必要なコマンド，構造体を宣言する
@@ -199,36 +200,45 @@ struct MachingEndData
 struct PlayerMoveData
 {
     //通信コマンド
+    //0:CommandList
+    //1:UpdateCommand
+    //2:player_id
+    //3:lock_on_enemy_id
     char cmd[4]{};
-
-    //-----プレイヤーの番号-----//
-    int player_id{ -1 };
 
     //-----入力方向-----//
     DirectX::XMFLOAT3 move_vec{};
-
-    //-----ロックオンしている敵の番号-----//
-    int lock_on_enemy_id{ -1 };
 
     //-----ロックオンしてるかどうか-----//
     bool lock_on{ false };
 };
 
+enum class PlayerMoveDataCmd
+{
+    PlayerId = 2,
+    LockOnEnemyId = 3
+};
+
 //-----プレイヤーの位置データ-----//
 struct PlayerPositionData
 {
-    //通信コマンド
+    //通信コマンド4
+    //0:CommandList
+    //1:UpdateCommand
+    //2:player_id
+    //3:
     char cmd[4]{};
 
-    //-----プレイヤーの番号-----//
-    int player_id{ -1 };
+    //-----位置-----//6
+    Short3 position{};
 
-    //-----位置-----//
-    DirectX::XMFLOAT3 position{};
-
-    //-----入力方向-----//
+    //-----入力方向-----//12
     DirectX::XMFLOAT3 move_vec{};
 
+};
+enum class PlayerPositionDataCmd
+{
+    PlayerId = 2,
 };
 
 //-----プレイヤーのアクションデータ(ボタン入力と位置、回転など)-----//
@@ -252,7 +262,7 @@ struct PlayerActionData
     //-----速力-----//
     DirectX::XMFLOAT3 velocity{};
 
-    //-----ボタンの入力-----//
+    //-----ボタンの入力-----//4
     GamePadButton new_button_state;
 };
 

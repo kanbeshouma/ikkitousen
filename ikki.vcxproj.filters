@@ -1044,6 +1044,7 @@
       <Filter>Sources\Scene\SceneParamCheck</Filter>
     </ClInclude>
     <ClInclude Include="sources\Short3.h" />
+    <ClInclude Include="sources\Short2.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">

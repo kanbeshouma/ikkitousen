@@ -571,6 +571,23 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat3("position", &position.x);
                 DirectX::XMFLOAT3 input = GetInputMoveVec();
                 ImGui::DragFloat3("input", &input.x);
+
+                Short3 short_input;
+                short_input.x = input.x * 100;
+                short_input.y = input.y * 100;
+                short_input.z = input.z * 100;
+
+                int x = static_cast<int>(short_input.x);
+                int z = static_cast<int>(short_input.z);
+                ImGui::DragInt("x", &x);
+                ImGui::DragInt("z", &z);
+
+                DirectX::XMFLOAT2 in_f{};
+                in_f.x = static_cast<float>(short_input.x) / 100.0f;
+                in_f.y = static_cast<float>(short_input.z) / 100.0f;
+
+                ImGui::DragFloat2("i", &in_f.x);
+
                 ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::ColorEdit4Above("color", &color.x);
@@ -948,14 +965,14 @@ void Player::SendMoveData()
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerMoveCommand;
 
     //-----プレイヤーのID設定-----//
-    data.player_id = object_id;
+    data.cmd[static_cast<int>(PlayerMoveDataCmd::PlayerId)] = object_id;
+
+    //-----ロックオンしている敵の番号-----//
+    if (is_lock_on)data.cmd[static_cast<int>(PlayerMoveDataCmd::LockOnEnemyId)] = lock_on_enemy_id;
+    else data.cmd[static_cast<int>(PlayerMoveDataCmd::LockOnEnemyId)] = -1;
 
     //-----入力情報-----//
     data.move_vec = GetInputMoveVec();
-
-    //-----ロックオンしている敵の番号-----//
-    if (is_lock_on)data.lock_on_enemy_id = lock_on_enemy_id;
-    else data.lock_on_enemy_id = -1;
 
     //-----ロックオンしてるかどうか-----//
     data.lock_on = is_lock_on;
@@ -977,10 +994,12 @@ void Player::SendPositionData()
     data.cmd[ComLocation::UpdateCom] = UpdateCommand::PlayerPositionCommand;
 
     //-----プレイヤーのID設定-----//
-    data.player_id = object_id;
+    data.cmd[static_cast<int>(PlayerPositionDataCmd::PlayerId)] = object_id;
 
     //-----位置設定-----//
-    data.position = position;
+    data.position.x = static_cast<int16_t>(position.x);
+    data.position.y = static_cast<int16_t>(position.y);
+    data.position.z = static_cast<int16_t>(position.z);
 
     //-----入力情報-----//
     data.move_vec = GetInputMoveVec();
@@ -1018,6 +1037,8 @@ void Player::SendPlayerActionData(GamePadButton button, DirectX::XMFLOAT3 vec)
 
     //-----入力方向を設定-----//
     data.move_vec = vec;
+
+    //DebugConsole::Instance().WriteDebugConsole(std::to_string(sizeof(PlayerActionData)));
 
     //-----データ送信-----//
     CorrespondenceManager& instance = CorrespondenceManager::Instance();

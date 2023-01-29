@@ -373,12 +373,13 @@ int CommunicationSystem::HttpRequest()
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     //<HTTPサーバーのアドレスを取得>//
-    int err = getaddrinfo(hostname, http_port, &hints, &addrInfo);
+    int err = getaddrinfo(hostname,  http_port, &hints, &addrInfo);
     if (err != 0) {
         DebugConsole::Instance().WriteDebugConsole("ドメインからアドレス取得に失敗しました", TextColor::Red);
         return -1;
     }
     addr = *((sockaddr_in*)addrInfo->ai_addr);
+
 
     //<ソケットの生成>//
     instance.http_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -454,8 +455,9 @@ int CommunicationSystem::HttpRequest()
     //これらが決定される
     ret = SSL_connect(ssl);
     if (ret != 1) {
+        int e = SSL_get_error(ssl, ret);//ここのエラーコードが1だった
         ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("サーバ接続に失敗しました。", TextColor::Red);
+        DebugConsole::Instance().WriteDebugConsole("ErrorNum:" + std::to_string(e) +" :サーバ接続に失敗しました。", TextColor::Red);
         return -1;
 
     }
@@ -464,6 +466,7 @@ int CommunicationSystem::HttpRequest()
     sprintf_s(request, "GET %s HTTP/1.1\r\nHost: %s\r\n\r\n", path, hostname);
     ret = SSL_write(ssl, request, static_cast<int>(strlen(request)));
     if (ret < 1) {
+
         ERR_print_errors_fp(stderr);
         DebugConsole::Instance().WriteDebugConsole("送信に失敗しました。", TextColor::Red);
         return -1;
@@ -476,14 +479,14 @@ int CommunicationSystem::HttpRequest()
     //<文字数を入れる>//
     char_count = {};
     //分割して受信した場合結合用の配列
-    char ret_source[1500] = { "" };
+    char ret_source[3500] = { "" };
     //合計サイズ
     all_size = 0;
     std::string json_data{};
 
      //分割して受信した場合結合用の配列
     while (1) {
-        char buf[255] = {};
+        char buf[800] = {};
         int read_size;
         read_size = SSL_read(ssl, buf, sizeof(buf) - 1);
 

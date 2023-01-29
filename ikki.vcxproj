@@ -443,6 +443,7 @@
     <ClInclude Include="sources\shader.h" />
     <ClInclude Include="sources\shadow_map.h" />
     <ClInclude Include="sources\ShieldEnemy.h" />
+    <ClInclude Include="sources\Short2.h" />
     <ClInclude Include="sources\Short3.h" />
     <ClInclude Include="sources\skinned_mesh.h" />
     <ClInclude Include="sources\SkyDome.h" />

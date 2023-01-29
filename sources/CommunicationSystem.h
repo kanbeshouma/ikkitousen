@@ -189,8 +189,11 @@ private:
     int tcp_error_num{ -1 };
     int udp_error_num{ -1 };
     const char* hostname = "localhost";
-    const char* path = "/ConversionJson/Registration";
-    const char* http_port = "5001";
+    const char* path = "//IkkiWebApplication/ConversionJson/Registration";
+    const char* http_port = "7000";
+    //const char* hostname = "localhost";
+    //const char* path = "/ConversionJson/Registration";
+    //const char* http_port = "5001";
     //<ƒwƒbƒ_•”•ª‚ðŽæ‚èœ‚¢‚½‚©‚Ç‚¤‚©>//
     bool header_check = false;
     //<•¶Žš”‚ðŽæ“¾‚µ‚Ä‚»‚Ì•ª‚ðŽæ‚èœ‚¢‚½‚©‚Ç‚¤‚©>//
