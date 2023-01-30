@@ -353,8 +353,9 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	if (multi_receive)
 	{
+		ImGui::Text("Now_Reveive");
 		char data[10];
-		int size{};
+		int size{10};
 		CorrespondenceManager::Instance().MultiCastReceive(data, size);
 	}
 

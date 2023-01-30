@@ -66,7 +66,7 @@ public:
     char host_ip[32]{ "127.0.0.1" };
     char my_ip[32]{ "127.0.0.1" };
 
-    char multicast_ip[32]{ "224.10.1.1" };
+    const char* multicast_ip = { "224.10.1.1" };
     int multicast_port = 8000;
 public:
     std::mutex& GetMutex() { return mutex; }

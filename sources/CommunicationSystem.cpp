@@ -1145,7 +1145,8 @@ bool CommunicationSystem::InitializeMultiCastReceive()
     multicastAddress.sin_family = AF_INET;
     multicastAddress.sin_port = htons(instance.multicast_port);
     //<サーバーのIPアドレスを設定>//
-    inet_pton(AF_INET,instance.host_ip, &multicastAddress.sin_addr);
+    inet_pton(AF_INET,instance.my_ip, &multicastAddress.sin_addr);
+    //multicastAddress.sin_addr.S_un.S_addr = INADDR_ANY;  // サーバ側で割り当てられているIPを自動で設定
 
 
     bind(instance.multicast_sock, (struct sockaddr*)&multicastAddress, sizeof(multicastAddress));
@@ -1162,7 +1163,10 @@ bool CommunicationSystem::InitializeMultiCastReceive()
         return  false;
     }
 
-    if (inet_pton(AF_INET, instance.host_ip, &mr.imr_interface.s_addr) != 1)
+    //mr.imr_interface.s_addr = INADDR_ANY;
+
+
+    if (inet_pton(AF_INET, instance.my_ip, &mr.imr_interface.s_addr) != 1)
     {
         DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信 : インターフェイスアドレスの設定失敗", TextColor::Red);
         int error = WSAGetLastError();
@@ -1200,6 +1204,10 @@ void CommunicationSystem::MultiCastSend(char* data, int size)
         DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
         std::string text = "error number:" + std::to_string(error);
         DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
+    }
+    else
+    {
+        DebugConsole::Instance().WriteDebugConsole("送信");
     }
 
 }

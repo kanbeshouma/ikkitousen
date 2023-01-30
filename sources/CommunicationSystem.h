@@ -221,7 +221,7 @@ private:
     int tcp_error_num{ -1 };
     int udp_error_num{ -1 };
     const char* hostname = "localhost";
-    const char* path = "//IkkiWebApplication/ConversionJson/Registration";
+    const char* path = "/ikkiwebsite/ConversionJson/Registration";
     const char* http_port = "7000";
     //const char* hostname = "localhost";
     //const char* path = "/ConversionJson/Registration";
