@@ -149,9 +149,11 @@ void CorrespondenceManager::Login()
 {
     SendHostLoginData login;
     login.cmd[ComLocation::ComList] = CommandList::Login;
+
+    login.cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)] = CorrespondenceManager::Instance().my_player_color;
+
     snprintf(login.port, 8, CorrespondenceManager::Instance().udp_port);
     login.name = CorrespondenceManager::Instance().my_name;
-    login.player_color = CorrespondenceManager::Instance().my_player_color;
     int size = sizeof(SendHostLoginData);
     communication_system->LoginSend((char*)&login, size);
 }
@@ -221,10 +223,10 @@ bool CorrespondenceManager::LoginReceive()
     {
         LoginData* login = (LoginData*)data;
         //------自分の番号を保存-----//
-        operation_private_id = login->operation_private_id;
+        operation_private_id = login->cmd[static_cast<int>(LoginDataCmd::OperationPrivateId)];
 
         //-----ホストの番号を保存-----//
-        host_id = login->host_id;
+        host_id = login->cmd[static_cast<int>(LoginDataCmd::HostId)];
 
         //-----自分以外のプレイヤーの番号を保存----//
         for (int i = 0; i < MAX_CLIENT; i++)

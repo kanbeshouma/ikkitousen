@@ -113,10 +113,10 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	login.cmd[0] = CommandList::Login;
 
 	//-------通信相手の番号を保存---------//
-	login.operation_private_id = client_id;
+	login.cmd[static_cast<int>(LoginDataCmd::OperationPrivateId)] = client_id;
 
 	//----------自分の番号を保存する----------//
-	login.host_id = CorrespondenceManager::Instance().GetOperationPrivateId();
+	login.cmd[static_cast<int>(LoginDataCmd::HostId)] = CorrespondenceManager::Instance().GetOperationPrivateId();
 
 
 	//------------通信相手以外のプレイヤーの番号を保存----------------//
@@ -151,7 +151,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	instance.game_udp_server_addr[client_id] = create;
 	//-----名前を保存-----//
 	CorrespondenceManager::Instance().names[client_id] = receive_data->name;
-	CorrespondenceManager::Instance().player_colors[client_id] = receive_data->player_color;
+	CorrespondenceManager::Instance().player_colors[client_id] = receive_data->cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)];
 
 	//-----------ホストの管理するIDの中に今接続して来たプレイヤーの番号を保存-------------//
 	CorrespondenceManager::Instance().SetOpponentPlayerId(client_id);
@@ -172,10 +172,10 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	//-----データを設定-----//
 	SendClientLoginData client_send{};
 	client_send.cmd[0] = CommandList::Login;
-	client_send.new_client_id = client_id;
+	client_send.cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)] = client_id;
 	client_send.addr = create;
 	client_send.name = receive_data->name;
-	client_send.player_color = receive_data->player_color;
+	client_send.cmd[static_cast<int>(SendClientLoginDataCmd::PlayerColor)] = receive_data->cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)];
 
 	for (int i = 0; i < MAX_CLIENT; i++)
 	{
@@ -193,7 +193,7 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	//-----プレイヤーの追加フラグとIDを設定-----//
 	register_player = true;
 	register_player_id = client_id;
-	register_player_color = receive_data->player_color;
+	register_player_color = receive_data->cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)];
 
 	DebugConsole::Instance().WriteDebugConsole("プレイヤーがログインしてきました", TextColor::Green);
 

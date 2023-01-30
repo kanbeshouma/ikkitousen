@@ -31,15 +31,15 @@ void SceneMultiGameClient::ReceiveTcpData()
                 SendClientLoginData* login_data = (SendClientLoginData*)data;
                 //-----プレイヤーの追加フラグとIDを設定-----//
                 register_player = true;
-                register_player_id = login_data->new_client_id;
-                register_player_color = login_data->player_color;
+                register_player_id = login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)];
+                register_player_color = login_data->cmd[static_cast<int>(SendClientLoginDataCmd::PlayerColor)];
                 CorrespondenceManager::Instance().names[register_player_id] = login_data->name;
 
                 //-----新しく追加したプレイヤーのID登録する-----//
-                if (CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->new_client_id) < 0)
+                if (CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]) < 0)
                 {
-                    CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->new_client_id) = login_data->new_client_id;
-                    SocketCommunicationManager::Instance().game_udp_server_addr[login_data->new_client_id] = login_data->addr;
+                    CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]) = login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)];
+                    SocketCommunicationManager::Instance().game_udp_server_addr[login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]] = login_data->addr;
                 }
                 break;
             }

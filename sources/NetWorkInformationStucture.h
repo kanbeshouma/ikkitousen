@@ -130,34 +130,48 @@ enum ComLocation
 struct LoginData
 {
     //通信コマンド
+    //0 : CommandList
+    //1 : 自分の番号(何番目に保存されているか)
+    //2 : ホストの番号
+    //3 :
     char cmd[4]{};
-    //自分のID(何番目に保存されているか)
-    int operation_private_id{ -1 };
-    //この配列は接続しているプレイヤー(自分は含めない)のIDが入る
-    int opponent_player_id[MAX_CLIENT];
-    //今接続している(自分も含める)クライアントのアドレスを取得
+
+    //この配列は接続しているプレイヤー(自分は含めない)のIDが入る 8
+    char opponent_player_id[MAX_CLIENT];
+
+    //今接続している(自分も含める)クライアントのアドレスを取得16*MAX_CLIENT
     sockaddr_in game_udp_server_addr[MAX_CLIENT];
 
-    //名前
+    //名前32*MAX_CLIENT
     std::string name[MAX_CLIENT];
-    //-----色-----//
-    int p_color[MAX_CLIENT];
 
-    //ホストの番号
-    int host_id{ -1 };
+    //-----色-----//
+    char p_color[MAX_CLIENT];
 };
+
+enum class LoginDataCmd
+{
+    OperationPrivateId = 1,
+    HostId = 2
+};
+
 
 ////-----ホストに送るログインデータ-----//
 struct SendHostLoginData
 {
     //通信コマンド
+    //0 : CommandList
+    //1 : player_color
     char cmd[4]{};
     ////クライアントの受信用のポート番号
     char port[8] = { "7000" };
     //-----名前-----//
     std::string name;
-    //-----プレイヤーの色-----//
-    int player_color{};
+};
+
+enum class SendHostLoginDataCmd
+{
+    PlayerColor = 1
 };
 
 
@@ -165,16 +179,23 @@ struct SendHostLoginData
 struct SendClientLoginData
 {
     //通信コマンド
+    //0 : CommandList
+    //1 : new_client_id
+    //2 : player_color
+    //3 :
     char cmd[4]{};
-    //接続してきたクライアント番号
-    int new_client_id{ -1 };
     //今接続している(自分も含める)クライアントのアドレスを取得
     sockaddr_in addr;
     //-----名前-----//
     std::string name{};
-    //-----プレイヤーの色-----//
-    int player_color{};
 };
+
+enum class SendClientLoginDataCmd
+{
+    NewClientId = 1,
+    PlayerColor = 2,
+};
+
 
 ////-----ログアウト時に送るデータ-----//
 struct LogoutData
@@ -346,8 +367,8 @@ namespace EnemySendData
         //[3] : enemy_type
         char cmd[4]{};
 
-        //出現位置の番号
-        DirectX::XMFLOAT3 emitter_point{};
+        //出現位置の番号6
+        Short3 emitter_point{};
 
         //[0] : リーダーかどうか
         //[1] : グループ番号

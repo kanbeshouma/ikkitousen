@@ -1086,12 +1086,17 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     //-----ホスト譲渡優先度-----//
     int transfer = static_cast<int>(data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer]);
 
+    DirectX::XMFLOAT3 emit_pos{};
+    emit_pos.x = static_cast<float>(data.emitter_point.x);
+    emit_pos.y = static_cast<float>(data.emitter_point.y);
+    emit_pos.z = static_cast<float>(data.emitter_point.z);
+
     switch (type)
     {
     case EnemyType::Archer:
     {
         BaseEnemy* enemy = new ArcherEnemy(graphics_,
-            data.emitter_point, param);
+            emit_pos, param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Archer);
         enemy->SetEnemyGropeData(master, transfer, grope_id);
@@ -1101,7 +1106,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Shield:
     {
         BaseEnemy* enemy = new ShieldEnemy(graphics_,
-            data.emitter_point, param);
+            emit_pos, param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Shield);
         enemy->SetEnemyGropeData(master, transfer, grope_id);
@@ -1111,7 +1116,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Sword:
     {
         BaseEnemy* enemy = new SwordEnemy(graphics_,
-            data.emitter_point, param);
+            emit_pos, param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Sword);
         enemy->SetEnemyGropeData(master, transfer, grope_id);
@@ -1121,7 +1126,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Spear:
     {
         BaseEnemy* enemy = new SpearEnemy(graphics_,
-            data.emitter_point,
+            emit_pos,
             param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Spear);
@@ -1132,7 +1137,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Archer_Ace:
     {
         BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
-            data.emitter_point,
+            emit_pos,
             param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Archer_Ace);
@@ -1143,7 +1148,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Shield_Ace:
     {
         BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
-            data.emitter_point, param);
+            emit_pos, param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Shield_Ace);
         enemy->SetEnemyGropeData(master, transfer, grope_id);
@@ -1153,7 +1158,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Sword_Ace:
     {
         BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
-            data.emitter_point,
+            emit_pos,
             param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Sword_Ace);
@@ -1164,7 +1169,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Spear_Ace:
     {
         BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
-            data.emitter_point,
+            emit_pos,
             param);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Spear_Ace);
@@ -1175,7 +1180,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Boss:
     {
         BaseEnemy* enemy = new LastBoss(graphics_,
-            data.emitter_point,
+            emit_pos,
             param, this);
         enemy->fSetObjectId(id);
         enemy->SetEnemyType(EnemyType::Boss);
@@ -1187,7 +1192,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Tutorial_NoMove:
     {
         BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
-            data.emitter_point,
+            emit_pos,
             param);
         enemy->fSetObjectId(id);
         mEnemyVec.emplace_back(enemy);
@@ -1197,7 +1202,7 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     case EnemyType::Boss_Unit:
     {
         BaseEnemy* enemy = new BossUnit(graphics_,
-            data.emitter_point,
+            emit_pos,
             param,
             BulletManager::Instance().fGetAddFunction());
         enemy->fSetObjectId(id);
@@ -1229,7 +1234,9 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
     data.cmd[EnemySendData::EnemySpawnCmdArray::EnemyType] = static_cast<int>(Source_.mType);
 
     //-----出現位置-----//
-    data.emitter_point = Source_.mEmitterPoint;
+    data.emitter_point.x = static_cast<int16_t>(Source_.mEmitterPoint.x);
+    data.emitter_point.y = static_cast<int16_t>(Source_.mEmitterPoint.y);
+    data.emitter_point.z = static_cast<int16_t>(Source_.mEmitterPoint.z);
 
     //-----グループデータを設定-----//
 
