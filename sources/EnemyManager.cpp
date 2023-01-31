@@ -438,13 +438,6 @@ void EnemyManager::fCheckSendEnemyData(float elapsedTime_)
         auto grah_dur = grah_end - grah_start;
         value = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(grah_dur).count());
     }
-#ifdef USE_IMGUI
-    static float max = 0;
-    if (max < value) max = value;
-    static ImGui::ValuePlotter plotter = ImGui::ValuePlotter(0.01f);
-    //plotter.record(elapsedTime_, "EnemyDataSend", value, 0.0f, 3000.0f,"");
-    plotter.record(elapsedTime_, "EnemyDataSend", milliseconds, 0.0f, 3000.0f,"");
-#endif
 
 }
 
@@ -925,7 +918,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 
     int spawnCounts = 0;
 
-    // 敵をスポーンする関数 
+    // 敵をスポーンする関数
     for (const auto data : mCurrentWaveVec)
     {
         // 出現条件を満たしていたら出す
@@ -933,8 +926,10 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
         {
             fSpawn(data, graphics);
             spawnCounts++;
+
         }
     }
+
     // 追加したら先頭のデータを消す
     for (int i = 0; i < spawnCounts; i++)
     {
@@ -947,7 +942,6 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     // 送られてきたデータをもとに敵を出現させる
     const auto param = mEditor.fGetParam(Source_.mType);
 
-    //-----マルチプレイの時にデータを送信-----//
     fSendSpawnData(Source_);
 
     BaseEnemy* enemy = nullptr;
