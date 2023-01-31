@@ -280,8 +280,6 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	LastBoss::fLoadParam();
 	LastBoss::fResetLoadRaram();
 	LastBoss::fSaveParam();
-
-
 }
 
 void SceneTitle::uninitialize()

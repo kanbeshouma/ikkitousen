@@ -1078,7 +1078,7 @@ void CommunicationSystem::UdpSend(char* data, int size)
             memcpy_s(da,sizeof(da),data,sizeof(da));
 
             std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4) + "ポート番号" + std::to_string(instance.game_udp_server_addr[i].sin_port);
-            std::string text = ip + "のアドレス :" +std::to_string(i) + "番目にコマンド : "+ std::to_string(da[1])+"で" +std::to_string(send_size) + "バイト送信しました";
+            std::string text = ip + "のアドレス :" +std::to_string(i) + "番目にコマンド : "+ std::to_string(da[0])+"の :" + std::to_string(da[1])+ "で" +std::to_string(send_size) + "バイトUDP通信で送信しました";
 
             DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
         }

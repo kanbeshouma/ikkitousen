@@ -304,13 +304,13 @@ enum PlayerHealthEnum
 struct PlayerHealthData
 {
 
-    //-----データ-----//
+    //-----データ-----//4
     //[0] : ComList
     //[1] : UpdateCom
     //[2] : damage(ここの値はホストが使用する)
     char data[4]{};
 
-    int health{};
+    uint16_t health{};
 };
 
 //-----プレイヤーのデータ構造体が全て入っている-----//
@@ -340,10 +340,6 @@ namespace EnemySendData
     //-----敵の出現データの中のグループ用の配列の中身-----//
     enum EnemySpawnGropeArray
     {
-        //-----マスターかどうか-----//
-        Master,
-        //-----グループ番号-----//
-        GropeId,
         //-----ホスト譲渡優先度-----//
         Transfer,
     };
@@ -351,29 +347,41 @@ namespace EnemySendData
     //-----敵の出現データの中の配列の内容-----//
     enum EnemySpawnCmdArray
     {
-        //-----cmdの中-----//
+        //-----マスターかどうか-----//
+        Master = 0,
+        //-----グループ番号-----//
+        GropeId = 1,
         EnemyId = 2,
         EnemyType = 3,
-        //============//
+    };
+
+    //-----通信コマンド-----//
+    //=================
+    //[0] : CommandList
+    //[1] :  vector型のサイズ4
+    //[2] :
+    //[3] :
+
+    enum class SendEnemySpawnData
+    {
+        SpawnNum = 1,
     };
 
     //-----敵のスポーンデータ-----//
     struct EnemySpawnData
     {
-        //通信コマンド
-        //[0] : コマンド
-        //[1] : スポーンデータ
+        //通信コマンド4
+        //[0] :リーダーかどうか
+        //[1] :グループ番号
         //[2] : enemy_id
         //[3] : enemy_type
         char cmd[4]{};
 
         //出現位置の番号6
-        Short3 emitter_point{};
+        Short2 emitter_point{};
 
-        //[0] : リーダーかどうか
-        //[1] : グループ番号
-        //[2] : 譲渡番号
-        char grope_data[3]{};
+        //[0] :譲渡番号
+        char grope_data{};
     };
 
 #pragma endregion

@@ -185,7 +185,8 @@ private:
     void fCreateBossUnit(GraphicsPipeline& Graphics_);
 
     //-----敵の出現データを送信-----//
-    void fSendSpawnData(EnemySource Source_);
+    //<map : key-> objectid , value ->EnemySource>//
+    void fSendSpawnData(std::map<int, EnemySource> spawn_data);
 
 
     //--------------------<敵をソートする>--------------------//
@@ -308,6 +309,11 @@ private:
     //-----敵の位置データを送信する時のコマンドのサイズ-----//
     const int SendEnemyDataComSize = 4;
 
+public:
+    //-----敵の出現データデータを送信する時のコマンドのサイズ-----//
+    static constexpr int SendSpawnEnemyDataComSize = 4;
+
+private:
     //-----データの送信頻度(ミリ秒)-----//
     const float EnemyDataFrequency = 200.0f;
 

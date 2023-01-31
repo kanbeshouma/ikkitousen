@@ -206,7 +206,7 @@ void SceneMultiGameHost::Logout(char* data)
 	std::lock_guard<std::mutex> lock(CorrespondenceManager::Instance().GetMutex());
 	std::lock_guard<std::mutex> lock2(mutex);
 
-	DebugConsole::Instance().WriteDebugConsole("ホスト : ログアウトデータを受信");
+	DebugConsole::Instance().WriteDebugConsole("ホスト : ログアウトデータを受信",TextColor::Yellow);
 
 	LogoutData* logout_data = (LogoutData*)data;
 

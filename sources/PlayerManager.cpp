@@ -218,6 +218,7 @@ void PlayerManager::SendPlayerHealthData()
 
         //-----全員に送信する-----//
         CorrespondenceManager::Instance().UdpSend((char*)&d, sizeof(PlayerHealthData));
+        DebugConsole::Instance().WriteDebugConsole("体力送信",TextColor::Yellow);
     }
 
 }
@@ -468,9 +469,13 @@ void PlayerManager::EnemyAttackVsPlayer(EnemyManager* enemy_manager)
                 //-----ホストが今の体力の総量を送信する-----//
                 if (CorrespondenceManager::Instance().GetHost())
                 {
-                    multiplay_current_health = player->GetHealth();
-                    //=====プレイヤーの体力のデータを送信する=====//
-                    SendPlayerHealthData();
+                    //<ダメージを受ける前の体力よりも少なかったらダメージを受けている>//
+                    if (multiplay_current_health > player->GetHealth())
+                    {
+                        multiplay_current_health = player->GetHealth();
+                        //=====プレイヤーの体力のデータを送信する=====//
+                        SendPlayerHealthData();
+                    }
                 }
             }
         }

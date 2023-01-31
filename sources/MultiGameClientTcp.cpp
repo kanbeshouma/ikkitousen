@@ -4,6 +4,7 @@
 #include"Correspondence.h"
 #include"SocketCommunication.h"
 #include"NetWorkInformationStucture.h"
+#include"EnemyManager.h"
 
 void SceneMultiGameClient::ReceiveTcpData()
 {
@@ -16,7 +17,7 @@ void SceneMultiGameClient::ReceiveTcpData()
             DebugConsole::Instance().WriteDebugConsole("TCPスレッドを終了");
             break;
         }
-        char data[256]{};
+        char data[512]{};
         int size = sizeof(data);
 
         if (CorrespondenceManager::Instance().TcpClientReceive(data, size) > 0)
@@ -67,10 +68,15 @@ void SceneMultiGameClient::ReceiveTcpData()
             case CommandList::EnemySpawnCommand:
             {
                 std::lock_guard<std::mutex> lock(mutex);
+
+#if 0
                 //-----データをキャスト-----//
                 EnemySendData::EnemySpawnData* s = (EnemySendData::EnemySpawnData*)data;
                 //-----データを保存-----//
                 receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
+
+#endif // 0
+                SetEnemySpawnData(data);
 
                 DebugConsole::Instance().WriteDebugConsole("敵の出現",TextColor::Green);
                 break;
@@ -143,3 +149,26 @@ void SceneMultiGameClient::ReceiveTcpData()
 
 }
 
+void SceneMultiGameClient::SetEnemySpawnData(char* data)
+{
+    using namespace EnemySendData;
+
+    //配列のサイズを取得
+    int size = data[static_cast<int>(SendEnemySpawnData::SpawnNum)];
+
+    //----データをコマンド分ずらす-----//
+    data += EnemyManager::SendSpawnEnemyDataComSize;
+
+    for (int i = 0; i < size; i++)
+    {
+        receive_all_enemy_data.enemy_spawn_data.emplace_back(*(EnemySpawnData*)data);
+        //-----キャストした構造体分メモリをずらす-----//
+        data += sizeof(EnemySpawnData);
+
+    }
+    ////-----データをキャスト-----//
+    //EnemySendData::EnemySpawnData* s = (EnemySendData::EnemySpawnData*)data;
+    ////-----データを保存-----//
+    //receive_all_enemy_data.enemy_spawn_data.emplace_back(*s);
+
+}

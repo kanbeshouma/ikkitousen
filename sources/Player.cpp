@@ -1483,20 +1483,23 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
+#if 1
     //-----マルチプレイのときはデータを送信する-----//
-    if (CorrespondenceManager::Instance().GetMultiPlay())
+    if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
     {
-            PlayerHealthData d;
-            d.data[ComLocation::ComList] = CommandList::Update;
-            d.data[ComLocation::UpdateCom] = UpdateCommand::PlayerHealthCommand;
-            //-----ダメージを送信する-----//
-            d.data[PlayerHealthEnum::Damage] = damage;
-            //-----今の体力を設定する-----//
-            d.health = player_health;
+        PlayerHealthData d;
+        d.data[ComLocation::ComList] = CommandList::Update;
+        d.data[ComLocation::UpdateCom] = UpdateCommand::PlayerHealthCommand;
+        //-----ダメージを送信する-----//
+        d.data[PlayerHealthEnum::Damage] = damage;
+        //-----今の体力を設定する-----//
+        d.health = player_health;
 
-            //-----クライアント側はホストだけに送信する(ここではホスト以外しか送信しない)-----//
-            if(CorrespondenceManager::Instance().GetHost() == false)CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(),(char*)&d, sizeof(PlayerHealthData));
+        //-----クライアント側はホストだけに送信する(ここではホスト以外しか送信しない)-----//
+        if (CorrespondenceManager::Instance().GetHost() == false)CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(), (char*)&d, sizeof(PlayerHealthData));
     }
+
+#endif // 1
 
 }
 

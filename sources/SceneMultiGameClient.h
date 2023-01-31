@@ -290,6 +290,9 @@ private:
     //第1引数 : コマンド
     //第2引数 : 受信データ
     static void CheckPlayerActionCommand(char com, char* data);
+
+    static void SetEnemySpawnData(char* data);
+
 private:
     //----------通信関係----------//
 

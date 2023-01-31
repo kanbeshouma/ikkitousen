@@ -918,17 +918,25 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 
     int spawnCounts = 0;
 
+    std::map<int, EnemySource> s_data;
     // 敵をスポーンする関数
     for (const auto data : mCurrentWaveVec)
     {
         // 出現条件を満たしていたら出す
         if (data.mSpawnTimer <= mWaveTimer)
         {
+            s_data.insert(std::make_pair(object_count,data));
             fSpawn(data, graphics);
             spawnCounts++;
-
         }
     }
+
+    if (s_data.empty() == false)
+    {
+        fSendSpawnData(s_data);
+    }
+
+
 
     // 追加したら先頭のデータを消す
     for (int i = 0; i < spawnCounts; i++)
@@ -942,7 +950,6 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     // 送られてきたデータをもとに敵を出現させる
     const auto param = mEditor.fGetParam(Source_.mType);
 
-    fSendSpawnData(Source_);
 
     BaseEnemy* enemy = nullptr;
 
@@ -1072,18 +1079,17 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
     const auto param = mEditor.fGetParam(type);
 
     //-----マスターかどうか-----//
-    bool master = static_cast<bool>(data.grope_data[EnemySendData::EnemySpawnGropeArray::Master]);
+    bool master = static_cast<bool>(data.cmd[EnemySendData::EnemySpawnCmdArray::Master]);
 
     //-----グループ番号-----//
-    int grope_id = static_cast<int>(data.grope_data[EnemySendData::EnemySpawnGropeArray::GropeId]);
+    int grope_id = static_cast<int>(data.cmd[EnemySendData::EnemySpawnCmdArray::GropeId]);
 
     //-----ホスト譲渡優先度-----//
-    int transfer = static_cast<int>(data.grope_data[EnemySendData::EnemySpawnGropeArray::Transfer]);
+    int transfer = static_cast<int>(data.grope_data);
 
     DirectX::XMFLOAT3 emit_pos{};
     emit_pos.x = static_cast<float>(data.emitter_point.x);
-    emit_pos.y = static_cast<float>(data.emitter_point.y);
-    emit_pos.z = static_cast<float>(data.emitter_point.z);
+    emit_pos.z = static_cast<float>(data.emitter_point.y);
 
     switch (type)
     {
@@ -1213,11 +1219,53 @@ void EnemyManager::fSpawn(EnemySendData::EnemySpawnData data, GraphicsPipeline& 
 }
 
 
-void EnemyManager::fSendSpawnData(EnemySource Source_)
+void EnemyManager::fSendSpawnData(std::map<int, EnemySource> spawn_data)
 {
     if (CorrespondenceManager::Instance().GetMultiPlay() == false) return;
-    EnemySendData::EnemySpawnData data;
 
+    using namespace EnemySendData;
+
+    int data_set_count = 0;
+
+    char data[512]{};
+    //-----コマンドを設定する-----//
+    data[ComLocation::ComList] = CommandList::EnemySpawnCommand;
+
+
+    EnemySpawnData d;
+
+    for (const auto s_data : spawn_data)
+    {
+        //-----コマンドを設定-----//
+        d.cmd[EnemySpawnCmdArray::Master] = s_data.second.master;
+        d.cmd[EnemySpawnCmdArray::GropeId] = s_data.second.grope_id;
+        d.cmd[EnemySpawnCmdArray::EnemyId] = s_data.first;
+        d.cmd[EnemySpawnCmdArray::EnemyType] = static_cast<int>(s_data.second.mType);
+
+        //-----出現位置-----//
+        d.emitter_point.x = static_cast<int16_t>(s_data.second.mEmitterPoint.x);
+        d.emitter_point.y = static_cast<int16_t>(s_data.second.mEmitterPoint.z);
+
+        //-----マスターの譲渡順-----//
+        d.grope_data = s_data.second.transfer_host;
+
+        std::memcpy(data + SendSpawnEnemyDataComSize + (sizeof(EnemySpawnData) * data_set_count), (char*)&d, sizeof(EnemySpawnData));
+
+        data_set_count++;
+    }
+
+    //-----送るデータが無いときはここで終わる-----//
+    if (data_set_count <= 0) return;
+
+    //-----データサイズを設定-----//
+    data[static_cast<int>(SendEnemySpawnData::SpawnNum)] = data_set_count;
+
+    int size = SendSpawnEnemyDataComSize + (sizeof(EnemySpawnData) * data_set_count);
+
+
+    CorrespondenceManager::Instance().TcpSendAllClient(data,size);
+
+#if 0
     //-----コマンドを設定-----//
     data.cmd[ComLocation::ComList] = CommandList::EnemySpawnCommand;
 
@@ -1246,7 +1294,9 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
 
     CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, sizeof(EnemySendData::EnemySpawnData));
 
-    DebugConsole::Instance().WriteDebugConsole("敵出現データ送信", TextColor::Pink);
+#endif // 0
+
+    DebugConsole::Instance().WriteDebugConsole("敵出現データ送信 : " +std::to_string(size) + "バイト" , TextColor::Pink);
 }
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
@@ -1757,6 +1807,8 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
 
     int grope_id{ 1 };
 
+    std::map<int, EnemySource> s_data;
+
     for(const auto unit:mUnitEntryPointVec)
     {
         //-----マルチプレイの時にデータを送信-----//
@@ -1767,7 +1819,8 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
             data.grope_id = grope_id;
             data.mEmitterPoint = unit;
             data.mType = EnemyType::Boss_Unit;
-            fSendSpawnData(data);
+
+            s_data.insert(std::make_pair(object_count, data));
         }
 
         BaseEnemy* enemy = new BossUnit(Graphics_,
@@ -1779,6 +1832,11 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
         mEnemyVec.emplace_back(enemy);
         grope_id++;
         object_count++;
+    }
+
+    if (s_data.empty() == false)
+    {
+        fSendSpawnData(s_data);
     }
 
     mIsReserveBossUnit = false;
