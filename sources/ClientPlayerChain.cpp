@@ -16,7 +16,7 @@ void ClientPlayer::ChainSearchUpdate(float elapsed_time, std::vector<BaseEnemy*>
 			if (enemy->fGetObjectId() != id) continue;
 
 			//-----•K—v‚Èƒf[ƒ^‚ðÝ’è-----//
-			chain_lockon_enemy_indexes.emplace_back(i); // “o˜^
+			chain_lockon_enemy_indexes.emplace_back(enemy->fGetObjectId()); // “o˜^
 			LockOnSuggest enemy_suggest; // ƒTƒWƒFƒXƒg“o˜^
 			enemy_suggest.position = enemy->fGetPosition();
 			lockon_suggests.emplace_back(enemy_suggest);
