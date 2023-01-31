@@ -223,6 +223,8 @@ public:
 
     int GetConnectedPersons() { return connected_persons; }
 
+    void ClearConnectedPersons() { connected_persons = 0; }
+
     //<Webサーバーから取得したデータのゲッター>//
     std::vector<WebEnemy::WebEnemyParamPack> GetWebEnemyParamPack() { return communication_system->GetWebEnemyParamPack(); }
 };

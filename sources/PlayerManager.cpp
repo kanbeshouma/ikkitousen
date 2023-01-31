@@ -18,8 +18,10 @@ void PlayerManager::RestartInitialize()
     //-----ƒvƒŒƒCƒ„[‚ð•œŠˆ-----//
     for (auto& player : players)
     {
-        player->RestartInitialize(multiplay_current_health);
+        player->RestartInitialize(multiplay_max_health);
     }
+
+    DebugConsole::Instance().WriteDebugConsole("PlayerHealth" + std::to_string(multiplay_max_health));
 }
 
 void PlayerManager::Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)

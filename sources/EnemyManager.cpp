@@ -925,7 +925,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 
     int spawnCounts = 0;
 
-    // 敵をスポーンする関数
+    // 敵をスポーンする関数 
     for (const auto data : mCurrentWaveVec)
     {
         // 出現条件を満たしていたら出す
@@ -1251,6 +1251,8 @@ void EnemyManager::fSendSpawnData(EnemySource Source_)
 
 
     CorrespondenceManager::Instance().TcpSendAllClient((char*)&data, sizeof(EnemySendData::EnemySpawnData));
+
+    DebugConsole::Instance().WriteDebugConsole("敵出現データ送信", TextColor::Pink);
 }
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
@@ -1553,6 +1555,10 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
     if (mOpenGuiMenu)
     {
         ImGui::Begin("EnemyManager");
+
+        int size = static_cast<int>(mEnemyVec.size());
+
+        ImGui::Text("EnemyNum%d", size);
 
         ImGui::Text("WaveNumber");
         ImGui::SameLine();

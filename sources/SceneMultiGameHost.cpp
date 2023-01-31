@@ -108,11 +108,14 @@ SceneMultiGameHost::~SceneMultiGameHost()
 	end_tcp_thread = true;
 
 	//-----TCPスレッドを終了する-----//
-	if(tcp_thread.joinable())tcp_thread.join();
+	if (tcp_thread.joinable())tcp_thread.join();
 	end_udp_thread = true;
 
 	//-----UDPスレッドを終了する-----//
-	if(udp_thread.joinable())udp_thread.join();
+	if (udp_thread.joinable())udp_thread.join();
+
+
+	CorrespondenceManager::Instance().GetConnectedPersons();
 }
 
 void SceneMultiGameHost::initialize(GraphicsPipeline& graphics)
@@ -905,6 +908,17 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 {
 	if (is_game_over)
 	{
+#ifdef USE_IMGUI
+		ImGui::Begin("try_count");
+		ImGui::Text("trying_again_count%d", trying_again_count);
+		int core = CorrespondenceManager::Instance().GetConnectedPersons();
+		ImGui::Text("ConnectedPersons%d", core);
+
+		ImGui::End();
+#endif
+
+
+
 		//ここでタイトルに戻るの位置を決めているのは
 		//ゲームクリアの時にも同じものを使うから
 		back_title.position = { 365.6f,236.7f };
@@ -1062,12 +1076,16 @@ void SceneMultiGameHost::GameOverAct(float elapsed_time)
 
 void SceneMultiGameHost::RestartInitialize()
 {
+	std::lock_guard<std::mutex> lock(mutex);
+
 	//-----ゲームオーバーの時に使っていたフラグを初期化-----//
 	is_game_over = false;
 	game_over_trying_again = false;
 	is_set_black = false;
 	is_game_over_sprite = false;
 	brack_back_pram.color.w = 0.0f;
+	trying_again_count = 0;
+	select_trying_again.clear();
 
 	//-----ゲームの初期化-----//
 	player_manager->RestartInitialize();
