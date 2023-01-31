@@ -1234,7 +1234,7 @@ void CommunicationSystem::MultiCastReceive(char* data, int size)
 
     recv(instance.multicast_sock, data, size, 0);
 
-    DebugConsole::Instance().WriteDebugConsole(data, TextColor::Pink);
+    DebugConsole::Instance().WriteDebugConsole(std::to_string(data[0]), TextColor::Pink);
 }
 
 void CommunicationSystem::LogoutClient(int client_id)

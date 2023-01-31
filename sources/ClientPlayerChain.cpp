@@ -8,19 +8,19 @@
 
 void ClientPlayer::ChainSearchUpdate(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& graphics_)
 {
-	for (int i = 0; i < enemies.size(); ++i)
+	for (const auto& enemy : enemies)
 	{
 		for (const auto& id : receive_chain_lock_on_enemy_id)
 		{
 			//-----チェイン攻撃のロックオンしたIDでなければとばす-----//
-			if (enemies.at(i)->fGetObjectId() != id) continue;
+			if (enemy->fGetObjectId() != id) continue;
 
 			//-----必要なデータを設定-----//
 			chain_lockon_enemy_indexes.emplace_back(i); // 登録
 			LockOnSuggest enemy_suggest; // サジェスト登録
-			enemy_suggest.position = enemies.at(i)->fGetPosition();
+			enemy_suggest.position = enemy->fGetPosition();
 			lockon_suggests.emplace_back(enemy_suggest);
-			enemies.at(i)->fSetIsLockOnOfChain(true);
+			enemy->fSetIsLockOnOfChain(true);
 			DebugConsole::Instance().WriteDebugConsole("データ設定", TextColor::SkyBlue);
 		}
 	}

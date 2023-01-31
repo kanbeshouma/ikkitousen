@@ -296,40 +296,40 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				}
 				else
 				{
-					for (int i = 0; i < enemies.size(); ++i)
+					for (const auto& enemy : enemies)
 					{
-						if (enemies.at(i)->fIsLockOnOfChain()) continue;
-						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
-						if (enemies.at(i)->fGetInnerCamera()) continue;
+						if (enemy->fIsLockOnOfChain()) continue;
+						if (enemy->fGetPosition().y > 5.0f) continue;
+						if (enemy->fGetInnerCamera()) continue;
 
-						if (enemies.at(i)->GetEnemyType() == EnemyType::Boss)
+						if (enemy->GetEnemyType() == EnemyType::Boss)
 						{
 							//<ëDèÛë‘ÇÃÉrÅ[ÉÄçUåÇíÜÇÕÉ`ÉFÉCÉìçUåÇÇÃîÕàÕäOÇ…Ç∑ÇÈ>//
-							if (enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamCharge ||
-								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamStart ||
-								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamShoot ||
-								enemies.at(i)->fGetEnemyAiState() == LastBoss::AiState::ShipBeamEnd) continue;
+							if (enemy->fGetEnemyAiState() == LastBoss::AiState::ShipBeamCharge ||
+								enemy->fGetEnemyAiState() == LastBoss::AiState::ShipBeamStart ||
+								enemy->fGetEnemyAiState() == LastBoss::AiState::ShipBeamShoot ||
+								enemy->fGetEnemyAiState() == LastBoss::AiState::ShipBeamEnd) continue;
 						}
-						if (enemies.at(i)->GetEnemyType() == EnemyType::BossRush) continue;
+						if (enemy->GetEnemyType() == EnemyType::BossRush) continue;
 
 
-						if (enemies.at(i)->fComputeAndGetIntoCamera()) // çıìGéûä‘ì‡Ç…àÍìxÇ≈Ç‡éãêçë‰Ç…âfÇÍÇŒÉçÉbÉNÉIÉì(ÉXÉ^Éìä÷åWÇ»Çµ)
+						if (enemy->fComputeAndGetIntoCamera()) // çıìGéûä‘ì‡Ç…àÍìxÇ≈Ç‡éãêçë‰Ç…âfÇÍÇŒÉçÉbÉNÉIÉì(ÉXÉ^Éìä÷åWÇ»Çµ)
 						{
-							chain_lockon_enemy_indexes.emplace_back(i); // ìoò^
+							chain_lockon_enemy_indexes.emplace_back(enemy->fGetObjectId()); // ìoò^
 							LockOnSuggest enemy_suggest; // ÉTÉWÉFÉXÉgìoò^
-							enemy_suggest.position = enemies.at(i)->fGetPosition();
+							enemy_suggest.position = enemy->fGetPosition();
 							lockon_suggests.emplace_back(enemy_suggest);
 
-							enemies.at(i)->fSetIsLockOnOfChain(true);
-							enemies.at(i)->fSetStun(true);
+							enemy->fSetIsLockOnOfChain(true);
+							enemy->fSetStun(true);
 							// reticleê∂ê¨
-							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
+							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemy));
 
 							//-----É}ÉãÉ`ÉvÉåÉCÇÃéûÇ…ÇæÇØì¸ÇÈ-----//
 							if (CorrespondenceManager::Instance().GetMultiPlay())
 							{
 								//-----ìGÇÃî‘çÜÇï€ë∂-----//
-								rock_on_enemy_id.emplace_back(enemies.at(i)->fGetObjectId());
+								rock_on_enemy_id.emplace_back(enemy->fGetObjectId());
 							}
 
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
@@ -430,29 +430,29 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				}
 				else
 				{
-					for (int i = 0; i < enemies.size(); ++i)
+					for (const auto& enemy : enemies)
 					{
-						if (enemies.at(i)->fIsLockOnOfChain()) continue;
-						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
-						if (enemies.at(i)->fGetStun() == false) continue;
-						if (enemies.at(i)->fGetInnerCamera()) continue;
+						if (enemy->fIsLockOnOfChain()) continue;
+						if (enemy->fGetPosition().y > 5.0f) continue;
+						if (enemy->fGetStun() == false) continue;
+						if (enemy->fGetInnerCamera()) continue;
 
-						if (enemies.at(i)->fComputeAndGetIntoCamera()) // çıìGéûä‘ì‡Ç…àÍìxÇ≈Ç‡éãêçë‰Ç…âfÇÍÇŒÉçÉbÉNÉIÉì
+						if (enemy->fComputeAndGetIntoCamera()) // çıìGéûä‘ì‡Ç…àÍìxÇ≈Ç‡éãêçë‰Ç…âfÇÍÇŒÉçÉbÉNÉIÉì
 						{
-							chain_lockon_enemy_indexes.emplace_back(i); // ìoò^
+							chain_lockon_enemy_indexes.emplace_back(enemy->fGetObjectId()); // ìoò^
 							LockOnSuggest enemy_suggest; // ÉTÉWÉFÉXÉgìoò^
-							enemy_suggest.position = enemies.at(i)->fGetPosition();
+							enemy_suggest.position = enemy->fGetPosition();
 							lockon_suggests.emplace_back(enemy_suggest);
 
-							enemies.at(i)->fSetIsLockOnOfChain(true);
+							enemy->fSetIsLockOnOfChain(true);
 							// reticleê∂ê¨
-							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
+							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemy));
 
 							//-----É}ÉãÉ`ÉvÉåÉCÇÃéûÇ…ÇæÇØì¸ÇÈ-----//
 							if (CorrespondenceManager::Instance().GetMultiPlay())
 							{
 								//-----ìGÇÃî‘çÜÇï€ë∂-----//
-								rock_on_enemy_id.emplace_back(enemies.at(i)->fGetObjectId());
+								rock_on_enemy_id.emplace_back(enemy->fGetObjectId());
 							}
 
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
