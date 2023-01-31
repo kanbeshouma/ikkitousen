@@ -1483,7 +1483,6 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
-#if 1
     //-----マルチプレイのときはデータを送信する-----//
     if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost() == false)
     {
@@ -1498,9 +1497,6 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
         //-----クライアント側はホストだけに送信する(ここではホスト以外しか送信しない)-----//
         if (CorrespondenceManager::Instance().GetHost() == false)CorrespondenceManager::Instance().UdpSend(CorrespondenceManager::Instance().GetHostId(), (char*)&d, sizeof(PlayerHealthData));
     }
-
-#endif // 1
-
 }
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)

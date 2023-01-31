@@ -310,7 +310,7 @@ struct PlayerHealthData
     //[2] : damage(ここの値はホストが使用する)
     char data[4]{};
 
-    uint16_t health{};
+    int16_t health{};
 };
 
 //-----プレイヤーのデータ構造体が全て入っている-----//
@@ -408,7 +408,7 @@ namespace EnemySendData
         char enemy_data[4];
 
         //-----体力-----//2
-        uint16_t hp;
+        int16_t hp;
 
         //-----自分の位置-----//6
         Short3 pos;

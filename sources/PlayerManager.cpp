@@ -226,9 +226,18 @@ void PlayerManager::SendPlayerHealthData()
 void PlayerManager::ReceivePlayerHealthData(PlayerHealthData d)
 {
     //-----ホストはダメージの値を使用して体力を減らす-----//
-    if(CorrespondenceManager::Instance().GetHost()) multiplay_current_health -= d.data[PlayerHealthEnum::Damage];
+    if (CorrespondenceManager::Instance().GetHost())
+    {
+        multiplay_current_health -= d.data[PlayerHealthEnum::Damage];
+        DebugConsole::Instance().WriteDebugConsole("ダメージ受信 :"  + std::to_string(d.data[PlayerHealthEnum::Damage]),TextColor::Pink);
+    }
     //-----クライアント側は体力の総量を使用して同期をとる-----//
-    else multiplay_current_health = d.health;
+    else
+    {
+        multiplay_current_health = d.health;
+        DebugConsole::Instance().WriteDebugConsole("体力受信 :"  + std::to_string(d.health),TextColor::Pink);
+    }
+
 }
 
 void PlayerManager::ReceiveLockOnChain(int id, std::vector<char> enemy_id_data)
