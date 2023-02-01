@@ -91,12 +91,17 @@ bool CorrespondenceManager::InitializeMultiCastReceive()
 
 void CorrespondenceManager::MultiCastSend(char* data, int size)
 {
-    communication_system->MultiCastSend(data, size);
+    //<接続者が二人以上ならデータを送信する>//
+    //※接続者数は自分も含んで数えているから
+    if (connected_persons > 1)
+    {
+        communication_system->MultiCastSend(data, size);
+    }
 }
 
-void CorrespondenceManager::MultiCastReceive(char* data, int size)
+bool CorrespondenceManager::MultiCastReceive(char* data, int size)
 {
-    communication_system->MultiCastReceive(data, size);
+    return communication_system->MultiCastReceive(data, size);
 }
 
 int CorrespondenceManager::UdpReceive(char* data, int size)

@@ -48,7 +48,7 @@ public:
     //===========================
     //第1引数 : 受信したデータの保存変数
     //第2引数 : 保存変数の大きさ
-    void MultiCastReceive(char* data, int size);
+    bool MultiCastReceive(char* data, int size);
 
 #pragma region UDP
     ////------UDPの受信関数------//
@@ -218,7 +218,7 @@ public:
     bool GetHost() { return is_host; }
     void SetHost(bool arg) { is_host = arg; }
 private:
-    //-----接続者数-----//
+    //-----接続者数(自分も含める)-----//
     int connected_persons{ 0 };
 public:
     //-----接続者数増加-----//

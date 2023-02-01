@@ -1212,7 +1212,7 @@ void CommunicationSystem::MultiCastSend(char* data, int size)
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 
-    int send_size = sendto(instance.multicast_sock, data, strlen(data) + 1, 0, (struct sockaddr*)&instance.multicast_addr, sizeof(instance.multicast_addr));
+    int send_size = sendto(instance.multicast_sock, data, size, 0, (struct sockaddr*)&instance.multicast_addr, sizeof(instance.multicast_addr));
 
     //エラーの時はSOCKET_ERRORが入る
     if (send_size == SOCKET_ERROR)
@@ -1225,12 +1225,12 @@ void CommunicationSystem::MultiCastSend(char* data, int size)
     }
     else
     {
-        DebugConsole::Instance().WriteDebugConsole("送信");
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信",TextColor::SkyBlue);
     }
 
 }
 
-void CommunicationSystem::MultiCastReceive(char* data, int size)
+bool CommunicationSystem::MultiCastReceive(char* data, int size)
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
     timeval tv;
@@ -1247,12 +1247,19 @@ void CommunicationSystem::MultiCastReceive(char* data, int size)
     //----------タイムアウトの場合selectは0を返す----------//
     if (n <= 0)
     {
-        return;
+        return false;
     }
 
-    recv(instance.multicast_sock, data, size, 0);
+    int receive_size = recv(instance.multicast_sock, data, size, 0);
 
-    DebugConsole::Instance().WriteDebugConsole(data, TextColor::Pink);
+
+    char da[2]{};
+    memcpy_s(da, sizeof(da), data, sizeof(da));
+
+    std::string text = "コマンド : " + std::to_string(da[0]) + "の :" + std::to_string(da[1]) + "で" + std::to_string(receive_size) + "バイトマルチキャスト通信で受信しました";
+
+    DebugConsole::Instance().WriteDebugConsole(text, TextColor::Pink);
+    return true;
 }
 
 void CommunicationSystem::LogoutClient(int client_id)

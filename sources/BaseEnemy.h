@@ -98,7 +98,7 @@ protected:
     DirectX::XMFLOAT3 mReceivePositiom{};
 
     //-----受信データの位置の許容値-----//
-    const float AllowableLimitPosition{ 2.0f };
+    const float AllowableLimitPosition{ 0.5f };
 
     //-----位置の補間をするフラグ-----//
     bool mStartlerp{ false };

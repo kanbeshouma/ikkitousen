@@ -347,11 +347,14 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 
 	ImGui::End();
 
+#if 0
 	ImGui::Begin("MultiReceive");
 	char data[10];
 	int size{ 10 };
 	CorrespondenceManager::Instance().MultiCastReceive(data, size);
 	ImGui::End();
+
+#endif // 0
 
 #endif // USE_IMGUI
 

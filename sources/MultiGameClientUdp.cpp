@@ -8,6 +8,9 @@ void SceneMultiGameClient::ReceiveUdpData()
 {
     CoInitializeEx(NULL, NULL);
     DebugConsole::Instance().WriteDebugConsole("UDPスレッド開始");
+
+    char data[512]{};
+
     for (;;)
     {
         if (end_udp_thread)
@@ -15,9 +18,9 @@ void SceneMultiGameClient::ReceiveUdpData()
             DebugConsole::Instance().WriteDebugConsole("UDPスレッドを終了");
             break;
         }
-        char data[512]{};
         int size = sizeof(data);
 
+        memset(data, 0, sizeof(data));
         //-----データを受信-----//
         int id = CorrespondenceManager::Instance().UdpReceive(data, size);
 
@@ -35,6 +38,23 @@ void SceneMultiGameClient::ReceiveUdpData()
             }
 
         }
+
+        memset(data, 0, sizeof(data));
+        //<マルチキャスト受信>//
+        if (CorrespondenceManager::Instance().MultiCastReceive(data,size))
+        {
+            //-----コマンドの確認-----//
+            switch (data[ComLocation::ComList])
+            {
+            case CommandList::Update:
+                //-----データの種類の確認-----//
+                CheckDataCommand(data[ComLocation::UpdateCom], data, id);
+                break;
+            default:
+                break;
+            }
+        }
+
     }
     CoUninitialize();
 }

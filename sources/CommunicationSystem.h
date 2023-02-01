@@ -194,7 +194,7 @@ public:
     //===========================
     //第1引数 : 受信したデータの保存変数
     //第2引数 : 保存変数の大きさ
-    void MultiCastReceive(char* data, int size);
+    bool MultiCastReceive(char* data, int size);
 #pragma endregion
 
 

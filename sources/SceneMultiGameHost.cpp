@@ -292,7 +292,7 @@ void SceneMultiGameHost::uninitialize()
 	mWaveManager.fFinalize();
 	BulletManager::Instance().fFinalize();
 
-	CorrespondenceManager::Instance().SubConnectedPersons();
+	CorrespondenceManager::Instance().ClearConnectedPersons();
 }
 
 void SceneMultiGameHost::effect_liberation(GraphicsPipeline& graphics)
@@ -333,12 +333,9 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	ImGui::End();
 
-	ImGui::Begin("MultiSend");
-	if (ImGui::Button("multi_send"))
-	{
-		char data[10] = "Hello";
-		CorrespondenceManager::Instance().MultiCastSend(data, sizeof(data));
-	}
+	ImGui::Begin("ConectNum");
+	int n = CorrespondenceManager::Instance().GetConnectedPersons();
+	ImGui::Text("ConnectedPersons : %d",n);
 	ImGui::End();
 #endif // USE_IMGUI
 

@@ -502,7 +502,7 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
 
     int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
 
-    CorrespondenceManager::Instance().UdpSend(data, size);
+    CorrespondenceManager::Instance().MultiCastSend(data,size);
 
 }
 
