@@ -346,6 +346,13 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 	ImGui::RadioButton("clear",cl);
 
 	ImGui::End();
+
+	ImGui::Begin("MultiReceive");
+	char data[10];
+	int size{ 10 };
+	CorrespondenceManager::Instance().MultiCastReceive(data, size);
+	ImGui::End();
+
 #endif // USE_IMGUI
 
 #endif // 0

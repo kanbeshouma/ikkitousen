@@ -4,6 +4,7 @@
 #include<DirectXMath.h>
 #include"game_pad.h"
 #include"SocketCommunication.h"
+#include"Correspondence.h"
 #include"EnemyStructuer.h"
 #include"Short3.h"
 #include"Short2.h"
@@ -142,8 +143,8 @@ struct LoginData
     //今接続している(自分も含める)クライアントのアドレスを取得16*MAX_CLIENT
     sockaddr_in game_udp_server_addr[MAX_CLIENT];
 
-    //名前32*MAX_CLIENT
-    std::string name[MAX_CLIENT];
+    //名前NAME_LENGTH*MAX_CLIENT
+    char name[MAX_CLIENT][CorrespondenceManager::NAME_LENGTH];
 
     //-----色-----//
     char p_color[MAX_CLIENT];
@@ -166,7 +167,7 @@ struct SendHostLoginData
     ////クライアントの受信用のポート番号
     char port[8] = { "7000" };
     //-----名前-----//
-    std::string name;
+    char name[CorrespondenceManager::NAME_LENGTH];
 };
 
 enum class SendHostLoginDataCmd

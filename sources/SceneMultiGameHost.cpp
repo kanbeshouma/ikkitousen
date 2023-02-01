@@ -332,6 +332,14 @@ void SceneMultiGameHost::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Text("stage_num%d", a);
 
 	ImGui::End();
+
+	ImGui::Begin("MultiSend");
+	if (ImGui::Button("multi_send"))
+	{
+		char data[10] = "Hello";
+		CorrespondenceManager::Instance().MultiCastSend(data, sizeof(data));
+	}
+	ImGui::End();
 #endif // USE_IMGUI
 
 #endif // 0

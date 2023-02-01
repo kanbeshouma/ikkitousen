@@ -78,6 +78,14 @@ bool CommunicationSystem::InitializeHost(char* tco_port, char* udp_port, int pri
         WSACleanup();
         return false;
     }
+
+    if (InitializeMultiCastSend() == false)
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト送信初期化に失敗しました", TextColor::Red);
+        WSACleanup();
+        return false;
+    }
+
     return true;
 }
 
@@ -230,6 +238,16 @@ bool CommunicationSystem::InitializeClient(char* tcp_port, char* udp_port)
         WSACleanup();
         return false;
     }
+
+    if (InitializeMultiCastReceive() == false)
+    {
+        DebugConsole::Instance().WriteDebugConsole("マルチキャスト受信初期化に失敗しました", TextColor::Red);
+        WSACleanup();
+        return false;
+    }
+
+
+
     return true;
 }
 
@@ -1234,7 +1252,7 @@ void CommunicationSystem::MultiCastReceive(char* data, int size)
 
     recv(instance.multicast_sock, data, size, 0);
 
-    DebugConsole::Instance().WriteDebugConsole(std::to_string(data[0]), TextColor::Pink);
+    DebugConsole::Instance().WriteDebugConsole(data, TextColor::Pink);
 }
 
 void CommunicationSystem::LogoutClient(int client_id)

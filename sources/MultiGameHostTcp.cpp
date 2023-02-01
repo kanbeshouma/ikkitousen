@@ -130,7 +130,10 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 		DebugConsole::Instance().WriteDebugConsole(txt, TextColor::Green);
 
 		//-----名前設定-----//
-		login.name[i] = CorrespondenceManager::Instance().names[i];
+		//login.name[i] = CorrespondenceManager::Instance().names[i];
+
+		std::memcpy(login.name[i], CorrespondenceManager::Instance().names[i].c_str(), sizeof(CorrespondenceManager::NAME_LENGTH));
+
 		login.p_color[i] = CorrespondenceManager::Instance().player_colors[i];
 
 		//Ipアドレスも保存
@@ -160,7 +163,10 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	//-----------通信相手以外のプレイヤーに自分を入れる-------------//
 	//基本的に自分の操作しているプレイヤー番号番目に値が入る
 	login.opponent_player_id[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().GetOperationPrivateId();
-	login.name[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().my_name;
+
+	std::memcpy(login.name[CorrespondenceManager::Instance().GetOperationPrivateId()], CorrespondenceManager::Instance().my_name, sizeof(CorrespondenceManager::Instance().my_name));
+
+	//login.name[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().my_name;
 	login.p_color[CorrespondenceManager::Instance().GetOperationPrivateId()] = CorrespondenceManager::Instance().my_player_color;
 
 	//--------新しくログインして来た相手にデータを送信---------//

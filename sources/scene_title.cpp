@@ -322,6 +322,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);
 	ImGui::RadioButton("start_matching", start_matching);
 
+	//<マルチキャストテスト>//
+#if 0
 	static bool multi_send = false;
 	static bool multi_receive = false;
 
@@ -347,16 +349,18 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		if (ImGui::Button("multi_send"))
 		{
 			char data[10] = "Hello";
-			CorrespondenceManager::Instance().MultiCastSend(data,sizeof(data));
+			CorrespondenceManager::Instance().MultiCastSend(data, sizeof(data));
 		}
 	}
 	if (multi_receive)
 	{
 		ImGui::Text("Now_Reveive");
 		char data[10];
-		int size{10};
+		int size{ 10 };
 		CorrespondenceManager::Instance().MultiCastReceive(data, size);
 	}
+
+#endif // 0
 
 
 	ImGui::PopItemWidth();

@@ -55,6 +55,7 @@ bool CorrespondenceManager::InitializeServer()
     return communication_system->InitializeHost(tcp_port,udp_port, operation_private_id);
 }
 
+#if 0
 bool CorrespondenceManager::InitializeMultiCastSend()
 {
     if (communication_system->InitializeMultiCastSend())
@@ -85,6 +86,8 @@ bool CorrespondenceManager::InitializeMultiCastReceive()
     }
     return false;
 }
+
+#endif // 0
 
 void CorrespondenceManager::MultiCastSend(char* data, int size)
 {
@@ -153,7 +156,9 @@ void CorrespondenceManager::Login()
     login.cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)] = CorrespondenceManager::Instance().my_player_color;
 
     snprintf(login.port, 8, CorrespondenceManager::Instance().udp_port);
-    login.name = CorrespondenceManager::Instance().my_name;
+
+    std::memcpy(login.name, CorrespondenceManager::Instance().my_name,sizeof(login.name));
+    //login.name = CorrespondenceManager::Instance().my_name;
     int size = sizeof(SendHostLoginData);
     communication_system->LoginSend((char*)&login, size);
 }
