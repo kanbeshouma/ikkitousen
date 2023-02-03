@@ -242,8 +242,13 @@ bool CorrespondenceManager::LoginReceive()
         for (int i = 0; i < MAX_CLIENT; i++)
         {
             opponent_player_id.at(i) = login->opponent_player_id[i];
+
+
+            //<タプルでデータを保存>//
+            std::tuple<bool, sockaddr_in> d(true, login->game_udp_server_addr[i]);
+
             //Ipアドレスを保存
-            SocketCommunicationManager::Instance().game_udp_server_addr[i] = login->game_udp_server_addr[i];
+            SocketCommunicationManager::Instance().game_udp_server_addr[i] = d;
             std::string ip = std::to_string(opponent_player_id.at(i)) + "番目 :" +  std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(login->game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
             DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
 

@@ -74,7 +74,9 @@ private:
 #pragma endregion
 
 public:
-    //<HTTPリクエスト>//
+    /// <summary>
+    ///HTTPリクエスト
+    /// </summary>
     int HttpRequest();
 public:
     //--------------------------ログイン関係------------------------//
@@ -222,7 +224,7 @@ private:
     int udp_error_num{ -1 };
     const char* hostname = "localhost";
     const char* path = "/ikkiwebsite/ConversionJson/Registration";
-    const char* http_port = "7000";
+    const char* http_port = "80";
     //const char* hostname = "localhost";
     //const char* path = "/ConversionJson/Registration";
     //const char* http_port = "5001";

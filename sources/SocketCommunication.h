@@ -11,6 +11,8 @@
 //                今回の通信に必要な情報を持っている管理クラス
 //
 //==========================================================
+
+
 class SocketCommunicationManager
 {
 private:
@@ -45,7 +47,8 @@ public:
     sockaddr_in login_tcp_server_addr;
 
     //-----ゲーム側で使うUDPのサーバーアドレス(クライアントの数分いる)-----//
-    sockaddr_in game_udp_server_addr[MAX_CLIENT];
+    //tuple<データを送信していいか,アドレス>
+    std::tuple<bool, sockaddr_in>  game_udp_server_addr[MAX_CLIENT];
 
     //-----UDP読み込み監視用-----//
     fd_set udp_fds;
@@ -64,6 +67,7 @@ public:
 
     //ホストのIPアドレス
     char host_ip[32]{ "127.0.0.1" };
+    char http_ip[32]{ "127.0.0.1" };
     char my_ip[32]{ "127.0.0.1" };
 
     const char* multicast_ip = { "224.10.1.1" };

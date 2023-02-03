@@ -310,6 +310,24 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Begin("host_ip_adress");
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 1.0f);
 	ImGui::InputTextAbove("IP Adress", SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().host_ip), ImGuiInputTextFlags_CharsDecimal);
+	if (ImGui::Button("Copy HostIP -> HTTP IP"))
+	{
+		std::memcpy(SocketCommunicationManager::Instance().http_ip, SocketCommunicationManager::Instance().host_ip, sizeof(SocketCommunicationManager::Instance().http_ip));
+	}
+
+
+	ImGui::InputTextAbove("HTTP IP Adress", SocketCommunicationManager::Instance().http_ip, sizeof(SocketCommunicationManager::Instance().http_ip), ImGuiInputTextFlags_CharsDecimal);
+	if (ImGui::Button("Copy HTTP IP -> HostIP"))
+	{
+		std::memcpy(SocketCommunicationManager::Instance().host_ip, SocketCommunicationManager::Instance().http_ip,sizeof(SocketCommunicationManager::Instance().http_ip));
+	}
+
+	if (ImGui::Button("IPAdress Reload"))
+	{
+		CorrespondenceManager::Instance().AcquisitionMyIpAddress();
+	}
+
+
 	ImGui::InputTextAbove("UdpPort", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::SliderInt("kind", &CorrespondenceManager::Instance().my_player_color, 0, 8);
 	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
@@ -317,6 +335,11 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (re_name)
 	{
 		ImGui::InputTextAbove("name", CorrespondenceManager::Instance().my_name, sizeof(CorrespondenceManager::Instance().my_name));
+	}
+
+	if (ImGui::Button("HTTP"))
+	{
+		CorrespondenceManager::Instance().HttpRequest();
 	}
 
 	ImGui::Text("standby_matching_timer%f", standby_matching_timer);

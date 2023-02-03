@@ -40,7 +40,8 @@ void SceneMultiGameClient::ReceiveTcpData()
                 if (CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]) < 0)
                 {
                     CorrespondenceManager::Instance().GetOpponentPlayerId().at(login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]) = login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)];
-                    SocketCommunicationManager::Instance().game_udp_server_addr[login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]] = login_data->addr;
+                    std::tuple<bool, sockaddr_in> d(false, login_data->addr);
+                    SocketCommunicationManager::Instance().game_udp_server_addr[login_data->cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)]] = d;
                 }
                 break;
             }
@@ -62,6 +63,14 @@ void SceneMultiGameClient::ReceiveTcpData()
                     //-----ログアウトするプレイヤーのIDを保存-----//
                     logout_id.emplace_back(logout_data->id);
                 }
+                break;
+            }
+            case CommandList::StartSendData:
+            {
+                std::lock_guard<std::mutex> lock(SocketCommunicationManager::Instance().GetMutex());
+                auto& [check, ad] = SocketCommunicationManager::Instance().game_udp_server_addr[data[1]];
+                check = true;
+
                 break;
             }
             //-----敵の出現-----//

@@ -36,6 +36,39 @@ void SceneMultiGameHost::ReceiveTcpData()
 				//-----ログアウト処理-----//
 				Logout(data);
 				break;
+			case CommandList::StartSendData:
+			{
+				std::lock_guard<std::mutex> lock(SocketCommunicationManager::Instance().GetMutex());
+
+				auto [check, ad] = SocketCommunicationManager::Instance().game_udp_server_addr[client_id];
+
+				std::tuple<bool, sockaddr_in> d(true,ad);
+
+				SocketCommunicationManager::Instance().game_udp_server_addr[client_id] = d;
+
+				//他のプレイヤーにデータを送信許可を出す
+				for (int i = 0; i < MAX_CLIENT; i++)
+				{
+					//-----今接続している相手のIDを取得-----//
+					int id = CorrespondenceManager::Instance().GetOpponentPlayerId().at(i);
+
+					//-----IDが0未満か今接続してきた者と同じならとばす-----//
+					if (id < 0 || id == client_id) continue;
+
+					char d[2]{};
+					//0番目にコマンド
+					//1番目に変更するクライアント番号
+					d[0] = CommandList::StartSendData;
+					d[1] = client_id;
+
+					//--------新しくログインして来た相手にデータを送信---------//
+					CorrespondenceManager::Instance().TcpSend(id, d, sizeof(d));
+				}
+
+
+
+				break;
+			}
 				//-----他のクライアントが送信したデータ-----//
 			case CommandList::SelectNextStage:
 			{
@@ -132,26 +165,34 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 		//-----名前設定-----//
 		//login.name[i] = CorrespondenceManager::Instance().names[i];
 
-		std::memcpy(login.name[i], CorrespondenceManager::Instance().names[i].c_str(), sizeof(CorrespondenceManager::NAME_LENGTH));
+		std::memcpy(login.name[i], CorrespondenceManager::Instance().names[i].c_str(), sizeof(login.name[i]));
 
 		login.p_color[i] = CorrespondenceManager::Instance().player_colors[i];
 
+		auto [check, ad] = instance.game_udp_server_addr[i];
+
 		//Ipアドレスも保存
-		login.game_udp_server_addr[i] = instance.game_udp_server_addr[i];
-		std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4);
+		login.game_udp_server_addr[i] = ad;
+		std::string ip = std::to_string(ad.sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b4);
 		DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
 
 	}
 	sockaddr_in create;
 
+	//<構造化束縛で値を取得>//
+	auto [check, ad] = instance.game_udp_server_addr[client_id];
+
 
 	//-----受信したIPアドレスとポート番号で送信用アドレスを作成する-----//
-	create = CorrespondenceManager::Instance().SetSendPortAddress(instance.game_udp_server_addr[client_id], receive_data->port);
+	create = CorrespondenceManager::Instance().SetSendPortAddress(ad, receive_data->port);
 	if (create.sin_addr.S_un.S_addr == 0)
 	{
 		DebugConsole::Instance().WriteDebugConsole("送信用アドレスが設定できていません", TextColor::Green);
 	}
-	instance.game_udp_server_addr[client_id] = create;
+	//<タプルでデータを保存>//
+	std::tuple<bool, sockaddr_in> d(false, create);
+
+	instance.game_udp_server_addr[client_id] = d;
 	//-----名前を保存-----//
 	CorrespondenceManager::Instance().names[client_id] = receive_data->name;
 	CorrespondenceManager::Instance().player_colors[client_id] = receive_data->cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)];

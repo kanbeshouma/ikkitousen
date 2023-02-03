@@ -1469,8 +1469,13 @@ void SceneMultiGameHost::DeletePlayer()
 		//-----接続者の番号をリセット-----//
 		CorrespondenceManager::Instance().SetOpponentPlayerId(id, -1);
 
+		sockaddr_in add_d{};
+		add_d.sin_addr.S_un.S_addr = 0;
+		//<タプルでデータを保存>//
+		std::tuple<bool, sockaddr_in> d(false, add_d);
+
 		//-----アドレスを削除-----//
-	    instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
+	    instance.game_udp_server_addr[id] = d;
 
 		//-----FDから削除する-----//
 		FD_CLR(instance.login_client_sock[id], &instance.client_tcp_fds);

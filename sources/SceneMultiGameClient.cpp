@@ -256,6 +256,8 @@ void SceneMultiGameClient::initialize(GraphicsPipeline& graphics)
 	game_over_select_idle.position = { 325.7f,212.9f };
 	game_over_select_idle.scale = { 1.0f,1.0f };
 
+	char data = CommandList::StartSendData;
+	CorrespondenceManager::Instance().TcpSend(&data,sizeof(data));
 }
 
 void SceneMultiGameClient::RestartInitialize()
@@ -1367,8 +1369,13 @@ void SceneMultiGameClient::DeletePlayer()
 		//-----接続者の番号をリセット-----//
 		CorrespondenceManager::Instance().SetOpponentPlayerId(id, -1);
 
+		sockaddr_in add_d{};
+		add_d.sin_addr.S_un.S_addr = 0;
+		//<タプルでデータを保存>//
+		std::tuple<bool, sockaddr_in> d(false, add_d);
+
 		//-----アドレスを削除-----//
-		instance.game_udp_server_addr[id].sin_addr.S_un.S_addr = 0;
+		instance.game_udp_server_addr[id] = d;
 
 		//-----プレイヤーの削除-----//
 		player_manager->DeletePlayer(id);

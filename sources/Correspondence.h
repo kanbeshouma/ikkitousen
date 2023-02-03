@@ -18,7 +18,9 @@ public:
     //===========================
     void AcquisitionMyIpAddress();
 
-    //<HTTPリクエスト>//
+    /// <summary>
+    ///HTTPリクエスト
+    /// </summary>
     bool HttpRequest();
 
     bool InitializeServer();

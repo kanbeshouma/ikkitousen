@@ -5,7 +5,11 @@ SocketCommunicationManager::SocketCommunicationManager()
     //自分が
     for (int i = 0; i < MAX_CLIENT; ++i)
     {
-        game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
+        sockaddr_in add_d{};
+        add_d.sin_addr.S_un.S_addr = 0;
+        //<タプルでデータを保存>//
+        std::tuple<bool, sockaddr_in> d(false, add_d);
+        game_udp_server_addr[i] = d;
         login_client_sock[i] = INVALID_SOCKET;
         //send_udp_sock[i] = INVALID_SOCKET;
     }
@@ -27,7 +31,11 @@ SocketCommunicationManager::~SocketCommunicationManager()
     if (multicast_sock != INVALID_SOCKET) closesocket(multicast_sock);
     for (int i = 0; i < MAX_CLIENT; i++)
     {
-        game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
+        sockaddr_in add_d{};
+        add_d.sin_addr.S_un.S_addr = 0;
+        //<タプルでデータを保存>//
+        std::tuple<bool, sockaddr_in> d(false, add_d);
+        game_udp_server_addr[i] = d;
         if (login_client_sock[i] != INVALID_SOCKET) closesocket(login_client_sock[i]);
     }
 
@@ -68,7 +76,11 @@ void SocketCommunicationManager::ClearData()
     }
     for (int i = 0; i < MAX_CLIENT; ++i)
     {
-        game_udp_server_addr[i].sin_addr.S_un.S_addr = 0;
+        sockaddr_in add_d{};
+        add_d.sin_addr.S_un.S_addr = 0;
+        //<タプルでデータを保存>//
+        std::tuple<bool, sockaddr_in> d(false, add_d);
+        game_udp_server_addr[i] = d;
         if (login_client_sock[i] != INVALID_SOCKET)
         {
             closesocket(login_client_sock[i]);

@@ -22,6 +22,8 @@ enum CommandList
     Login = 1,
     //マッチング終了
     MachingEnd,
+    //<データ送信開始してもよい>
+    StartSendData,
     //ログアウト
     Logout,
     //更新

@@ -118,7 +118,11 @@ bool CommunicationSystem::InitializeHostUdpSocket(char* port, int private_id)
     addr = *((sockaddr_in*)addr_info->ai_addr);
 
     //----------自分のアドレスを保存----------//
-    instance.game_udp_server_addr[private_id] = addr;
+    //<タプルでデータを保存>//
+    std::tuple<bool, sockaddr_in> d(true, addr);
+    instance.game_udp_server_addr[private_id] = d;
+
+
     std::string ip = std::to_string(addr.sin_addr.S_un.S_un_b.s_b1) + std::to_string(addr.sin_addr.S_un.S_un_b.s_b2) + std::to_string(addr.sin_addr.S_un.S_un_b.s_b3) + std::to_string(addr.sin_addr.S_un.S_un_b.s_b4) + "ポート番号" + std::to_string(addr.sin_port);
     DebugConsole::Instance().WriteDebugConsole(ip, TextColor::Green);
 
@@ -378,135 +382,59 @@ int CommunicationSystem::HttpRequest()
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 
-    //<OpenSSL変数>//
-    SSL* ssl;
-    SSL_CTX* ctx;
-
-    addrinfo hints;
-    addrinfo* addrInfo = nullptr;
-    ZeroMemory(&hints, sizeof(addrinfo));
-    sockaddr_in addr;
-    // 取得する情報を設定
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    //<HTTPサーバーのアドレスを取得>//
-    int err = getaddrinfo(hostname,  http_port, &hints, &addrInfo);
-    if (err != 0) {
-        DebugConsole::Instance().WriteDebugConsole("ドメインからアドレス取得に失敗しました", TextColor::Red);
-        return -1;
-    }
-    addr = *((sockaddr_in*)addrInfo->ai_addr);
+    {
+        addrinfo hints;
+        addrinfo* addrInfo = nullptr;
+        ZeroMemory(&hints, sizeof(addrinfo));
+        sockaddr_in addr;
+        // 取得する情報を設定
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+        //<HTTPサーバーのアドレスを取得>//
+        int err = getaddrinfo(instance.http_ip, http_port, &hints, &addrInfo);
+        if (err != 0) {
+            DebugConsole::Instance().WriteDebugConsole("ドメインからアドレス取得に失敗しました", TextColor::Red);
+            return -1;
+        }
+        addr = *((sockaddr_in*)addrInfo->ai_addr);
 
 
-    //<ソケットの生成>//
-    instance.http_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (instance.http_sock < 0) {
-        DebugConsole::Instance().WriteDebugConsole("ソケットの生成に失敗しました。", TextColor::Red);
-        return -1;
-    }
-    //<サーバーに接続>//
-    if (connect(instance.http_sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-        DebugConsole::Instance().WriteDebugConsole("connectに失敗しました。", TextColor::Red);
-        return -1;
-    }
+        //<ソケットの生成>//
+        instance.http_sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (instance.http_sock < 0) {
+            DebugConsole::Instance().WriteDebugConsole("ソケットの生成に失敗しました。", TextColor::Red);
+            return -1;
+        }
+        //<サーバーに接続>//
+        if (connect(instance.http_sock, (struct sockaddr*)&addr, sizeof(addr)) != 0) {
+            DebugConsole::Instance().WriteDebugConsole("connectに失敗しました。", TextColor::Red);
+            return -1;
+        }
 
-    //<エラーが数値で管理されているからそれの詳細が分かるようにする>//
-    SSL_load_error_strings();
-    //<SSLの初期化をする>//
-    //これを実行することにより、暗号化方式やメッセージダイジェスト関数などが登録される
-    SSL_library_init();
-    //<SSL_CTX構造体の生成>//
-    //TLSv1,SSLv2,SSLv3の種類がある
-    //SSLv23_client_method<-いずれかを使う場合はこれでまとめて設定できる
-    ctx = SSL_CTX_new(SSLv23_client_method());
+        char request[256];
+        sprintf_s(request, "GET %s HTTP/1.1\r\nHost: %s\r\n\r\n", path, instance.host_ip);
 
-    //==============================================//
-    //
-    //SSL_CTXはSSLにおける暗号化や認証方法などを管理する
-    //
-    //==============================================//
-    if (ctx == NULL) {
-        ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("ssl_ctxの生成に失敗しました。", TextColor::Red);
-        return -1;
-    }
 
-    //<SSL構造体の生成>//
-    //SSL_CTX構造体にセットしたプロトコルや暗号化方式を元に
-    //コネクションを管理するSSL構造体を生成する
-    ssl = SSL_new(ctx);
-    if (ssl == NULL) {
-        ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("sslの生成に失敗しました。", TextColor::Red);
-        return -1;
-    }
+        send(instance.http_sock, request, strlen(request) + 1, 0);
 
-    //==============================================//
-    //
-    //SSLはサーバーのコネクション管理
-    //
-    //==============================================//
-    //<コネクション済みのソケットとSSL構造体を結びつける>//
-    int ret;
+        //<ヘッダ部分を取り除いたかどうか>//
+        header_check = false;
+        //<文字数を取得してその分を取り除いたかどうか>//
+        char_num_check = false;
+        //<文字数を入れる>//
+        char_count = {};
+        //分割して受信した場合結合用の配列
+        char ret_source[3500] = { "" };
+        //合計サイズ
+        all_size = 0;
+        std::string json_data{};
 
-    ret = SSL_set_fd(ssl, static_cast<int>(instance.http_sock));
-    if (ret == 0) {
-        ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("socketとsslの関連付けに失敗しました", TextColor::Red);
-        return -1;
-    }
-
-    /* PRNG 初期化 */
-    RAND_poll();
-    while (RAND_status() == 0) {
-        unsigned short rand_ret = rand() % 65536;
-        RAND_seed(&rand_ret, sizeof(rand_ret));
-    }
-
-    /* SSL で接続 */
-    //<自動的にサーバとハンドシェイクが行われる>//
-    //使用するプロトコル(SSLv2 / SSLv3 / TLSv1)
-    //使用する暗号化方式・鍵交換方式・ハッシュ方式
-    //サーバ証明書の取得
-    //使用する共通鍵
-    //これらが決定される
-    ret = SSL_connect(ssl);
-    if (ret != 1) {
-        int e = SSL_get_error(ssl, ret);//ここのエラーコードが1だった
-        ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("ErrorNum:" + std::to_string(e) +" :サーバ接続に失敗しました。", TextColor::Red);
-        return -1;
-
-    }
-    /* リクエスト送信 */
-    char request[256];
-    sprintf_s(request, "GET %s HTTP/1.1\r\nHost: %s\r\n\r\n", path, hostname);
-    ret = SSL_write(ssl, request, static_cast<int>(strlen(request)));
-    if (ret < 1) {
-
-        ERR_print_errors_fp(stderr);
-        DebugConsole::Instance().WriteDebugConsole("送信に失敗しました。", TextColor::Red);
-        return -1;
-    }
-
-    //<ヘッダ部分を取り除いたかどうか>//
-    header_check = false;
-    //<文字数を取得してその分を取り除いたかどうか>//
-    char_num_check = false;
-    //<文字数を入れる>//
-    char_count = {};
-    //分割して受信した場合結合用の配列
-    char ret_source[3500] = { "" };
-    //合計サイズ
-    all_size = 0;
-    std::string json_data{};
-
-     //分割して受信した場合結合用の配列
-    while (1) {
-        char buf[800] = {};
-        int read_size;
-        read_size = SSL_read(ssl, buf, sizeof(buf) - 1);
+        //分割して受信した場合結合用の配列
+        while (1) {
+            char buf[800] = {};
+            int read_size;
+            read_size = recv(instance.http_sock, buf, sizeof(buf),0);
 
             //<ヘッダ部分を抜き取る>//
             if (header_check == false)
@@ -540,7 +468,7 @@ int CommunicationSystem::HttpRequest()
             }
 
             //<文字数を取得する>//
-            if(char_num_check == false)
+            if (char_num_check == false)
             {
                 int idx = 0;
                 while (1)
@@ -565,7 +493,7 @@ int CommunicationSystem::HttpRequest()
                         break;
                     }
                     idx++;
-                 }
+                }
             }
 
             //<データの文字数よりも大きかったら後ろの部分をきる取る>//
@@ -579,58 +507,39 @@ int CommunicationSystem::HttpRequest()
             }
 
 #if 0
-                            //<一番最初で文字数を取得>//
-        if (read_size > 0) {
-            std::cout << buf;
-        }
-        else if (read_size <= 0) {
-            /* FIN 受信 */
-            break;
-        }
-        else {
-            ERR_print_errors_fp(stderr);
-            exit(1);
-        }
+            //<一番最初で文字数を取得>//
+            if (read_size > 0) {
+                std::cout << buf;
+            }
+            else if (read_size <= 0) {
+                /* FIN 受信 */
+                break;
+            }
+            else {
+                ERR_print_errors_fp(stderr);
+                exit(1);
+            }
 
 #endif // 0
-    }
-    using namespace nlohmann;
-
-    //<取得したデータをjson文字列にパースする>//
-    auto j = nlohmann::json::parse(json_data);
-
-    //<敵のデータを入れる配列を初期化>//
-    web_enemy_data.clear();
-
-    //<json文字列を構造体に変換する>//
-    for (json::iterator it = j.begin(); it != j.end(); ++it)
-    {
-        auto j_data = it.value();
-        WebEnemy::WebEnemyParamPack e_data = j_data.get<WebEnemy::WebEnemyParamPack>();
-        web_enemy_data.emplace_back(e_data);
-    }
-    ret = SSL_shutdown(ssl);
-    if (ret < 0) {
-        ERR_print_errors_fp(stderr);
-        exit(1);
-    }
-    else if (ret == 0)
-    {
-        ret = SSL_shutdown(ssl);
-        if (ret < 0)
-        {
-            int e = SSL_get_error(ssl, ret);//ここのエラーコードが1だった
-            std::string msg = std::to_string(e);
-            DebugConsole::Instance().WriteDebugConsole(msg,TextColor::Red);
         }
+        using namespace nlohmann;
+
+        //<取得したデータをjson文字列にパースする>//
+        auto j = nlohmann::json::parse(json_data);
+
+        //<敵のデータを入れる配列を初期化>//
+        web_enemy_data.clear();
+
+        //<json文字列を構造体に変換する>//
+        for (json::iterator it = j.begin(); it != j.end(); ++it)
+        {
+            auto j_data = it.value();
+            WebEnemy::WebEnemyParamPack e_data = j_data.get<WebEnemy::WebEnemyParamPack>();
+            web_enemy_data.emplace_back(e_data);
+        }
+
     }
 
-    //<SSLの終了処理>//
-
-    SSL_free(ssl);
-    SSL_CTX_free(ctx);
-    ERR_free_strings();
-    closesocket(instance.http_sock);
     return 1;
 
 }
@@ -751,11 +660,16 @@ void CommunicationSystem::TcpAccept(char* port)
         //----------クライアント受け入れ----------//
         for (int i = 0; i < MAX_CLIENT; i++)
         {
+            auto [check, ad] = instance.game_udp_server_addr[i];
             //----------アドレスが初期化状態ならとばす----------//
-            if (instance.game_udp_server_addr[i].sin_addr.S_un.S_addr != 0 &&
+            if (ad.sin_addr.S_un.S_addr != 0 &&
                 instance.login_client_sock[i] != INVALID_SOCKET) continue;
 
-            instance.game_udp_server_addr[i] = addr;
+            //<タプルでデータを保存>//
+            std::tuple<bool, sockaddr_in> d(false, addr);
+            instance.game_udp_server_addr[i] = d;
+
+
             instance.login_client_sock[i] = sock;
             //-----sockをfdsにセット-----//
             FD_SET(instance.login_client_sock[i], &instance.client_tcp_fds);
@@ -1028,12 +942,13 @@ int CommunicationSystem::UdpReceive(char* data, int size)
     //----------クライアント検索----------//
     for (int i = 0; i < MAX_CLIENT; i++)
     {
+        auto [check, ad] = instance.game_udp_server_addr[i];
         //----------アドレスが初期化状態か自分の番号と同じだったら----------//
-        if (instance.game_udp_server_addr[i].sin_addr.S_un.S_addr == 0 || i == CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
+        if (ad.sin_addr.S_un.S_addr == 0 || i == CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
         //------保存してあるアドレスと受信したアドレスが同じなら何番目かを返す------//
-        if (addr.sin_addr.S_un.S_addr == instance.game_udp_server_addr[i].sin_addr.S_un.S_addr)
+        if (addr.sin_addr.S_un.S_addr == ad.sin_addr.S_un.S_addr)
         {
-            std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4) + "受信ポート番号" + std::to_string(addr.sin_port) + "   :  保存ポート" + std::to_string(instance.game_udp_server_addr[i].sin_port);
+            std::string ip = std::to_string(ad.sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b4) + "受信ポート番号" + std::to_string(addr.sin_port) + "   :  保存ポート" + std::to_string(ad.sin_port);
             std::string text =ip + "アドレス" +  std::to_string(i) + "番目のアドレスで受信しました";
             DebugConsole::Instance().WriteDebugConsole(text, TextColor::Blue);
 
@@ -1050,7 +965,14 @@ void CommunicationSystem::UdpSend(int id, char* data, int size)
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
 
     //データを送る(ここで使うソケットはそれぞれのポート番号に合わせて作ったソケット)
-    int send_size = sendto(instance.udp_sock, data, size, 0, (sockaddr*)&instance.game_udp_server_addr[id], sizeof(instance.game_udp_server_addr[id]));
+    auto [check, ad] = instance.game_udp_server_addr[id];
+
+    if (check == false)
+    {
+        DebugConsole::Instance().WriteDebugConsole("送信許可がありません",TextColor::Yellow);
+    }
+
+    int send_size = sendto(instance.udp_sock, data, size, 0, (sockaddr*)&ad, sizeof(ad));
 
     //エラーの時はSOCKET_ERRORが入る
     if (send_size == SOCKET_ERROR)
@@ -1074,12 +996,20 @@ void CommunicationSystem::UdpSend(char* data, int size)
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
     for (int i = 0; i < MAX_CLIENT; i++)
     {
+        auto [check, ad] = instance.game_udp_server_addr[i];
+
         //-----もしアドレスが保存されていない時か自分の番号と同じなら飛ばす-----//
-        if (instance.game_udp_server_addr[i].sin_addr.S_un.S_addr == 0 ||
+        if (ad.sin_addr.S_un.S_addr == 0 ||
             i == CorrespondenceManager::Instance().GetOperationPrivateId()) continue;
 
+        if (check == false)
+        {
+            DebugConsole::Instance().WriteDebugConsole("送信許可がありません", TextColor::Yellow);
+            continue;
+        }
+
         //-----データを送信する-----//
-        int send_size = sendto(instance.udp_sock, data, size, 0, (sockaddr*)&instance.game_udp_server_addr[i], sizeof(instance.game_udp_server_addr[i]));
+        int send_size = sendto(instance.udp_sock, data, size, 0, (sockaddr*)&ad, sizeof(ad));
 
         //エラーの時はSOCKET_ERRORが入る
         if (send_size == SOCKET_ERROR)
@@ -1095,7 +1025,7 @@ void CommunicationSystem::UdpSend(char* data, int size)
             char da[2]{};
             memcpy_s(da,sizeof(da),data,sizeof(da));
 
-            std::string ip = std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(instance.game_udp_server_addr[i].sin_addr.S_un.S_un_b.s_b4) + "ポート番号" + std::to_string(instance.game_udp_server_addr[i].sin_port);
+            std::string ip = std::to_string(ad.sin_addr.S_un.S_un_b.s_b1) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b2) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b3) + "." + std::to_string(ad.sin_addr.S_un.S_un_b.s_b4) + "ポート番号" + std::to_string(ad.sin_port);
             std::string text = ip + "のアドレス :" +std::to_string(i) + "番目にコマンド : "+ std::to_string(da[0])+"の :" + std::to_string(da[1])+ "で" +std::to_string(send_size) + "バイトUDP通信で送信しました";
 
             DebugConsole::Instance().WriteDebugConsole(text, TextColor::White);
@@ -1265,12 +1195,18 @@ bool CommunicationSystem::MultiCastReceive(char* data, int size)
 void CommunicationSystem::LogoutClient(int client_id)
 {
     SocketCommunicationManager& instance = SocketCommunicationManager::Instance();
+    auto [check, ad] = instance.game_udp_server_addr[client_id];
+
     //----------アドレスの初期化----------//
-    if (instance.game_udp_server_addr[client_id].sin_addr.S_un.S_addr != 0)
+    if (ad.sin_addr.S_un.S_addr != 0)
     {
         std::string text = std::to_string(client_id) + "番目のクライアントがログアウトしました";
         DebugConsole::Instance().WriteDebugConsole(text,TextColor::Red);
-        instance.game_udp_server_addr[client_id].sin_addr.S_un.S_addr = 0;
+        //<タプルでデータを保存>//
+        sockaddr_in re_ad{};
+        re_ad.sin_addr.S_un.S_addr = 0;
+        std::tuple<bool, sockaddr_in> d(false, ad);
+        instance.game_udp_server_addr[client_id] = d;
     }
 
 }
