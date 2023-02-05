@@ -115,6 +115,8 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
 
    //-----出現フラグをtrueにする-----//
    is_appears = true;
+
+
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
@@ -192,6 +194,25 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     {
         throw std::logic_error("EnemyManager Not Find");
     }
+
+    //<マルチプレイのときにイベントシーンで待機していることを知らせる文字の更新>//
+    if (end_event && CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        switch (ai_state)
+        {
+        case AiState::ShipStart:
+            if (ship_event == false)StepString(elapsedTime_, wait_text, true);
+            break;
+        case AiState::ShipToHuman:
+            if (ship_to_human_event == false)StepString(elapsedTime_, wait_text, true);
+            break;
+        case AiState::HumanToDragon:
+            if (human_to_dragon_event == false)StepString(elapsedTime_, wait_text, true);
+        default:
+            break;
+        }
+    }
+
 
 }
 

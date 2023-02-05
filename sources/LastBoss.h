@@ -420,6 +420,9 @@ private:
 
     const float mkPercentToDragon{ 0.5f }; // ドラゴン形態に遷移する体力の割合
 
+    //<船状態の時のビームを発射するまでの時間>/
+    static constexpr float START_BEAM_CHARGE = 20.0f;
+
     const float mkWaitHeartEffect = 0.5f;
     const float mkHumanAllShotDelay{ 0.1f };
     const float mkHumanAllShotEnd{ 1.3f };
@@ -504,7 +507,7 @@ private:
 
     void fHumanSpAttackCancelInit(); // 全敵を倒されたらイベント
     void fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-    
+
     void fHumanSpAttackTimeOverInit(); // 制限時間を超えたら攻撃
     void fHumanSpAttackTimeOverUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
@@ -625,6 +628,29 @@ public:
     void fRender(GraphicsPipeline& Graphics_) override;
     bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fDie(GraphicsPipeline& Graphics_) override;
+private:
+    struct StepFontElement
+    {
+        std::wstring s = L"";
+        DirectX::XMFLOAT2 position{980.0f,645.0f};
+        DirectX::XMFLOAT2 scale{ 1.0f, 1.0f };
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+        float angle{};
+        DirectX::XMFLOAT2 length{};
+        //説明文のテキスト
+        std::wstring text = L"待機中・・・・";
+
+        // step string
+        float timer = 0;
+        int step = 0;
+        int index = 0;
+        //スピード
+        float speed{ 5.0f };
+    };
+
+    StepFontElement wait_text;
+
+    bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
 private:
     //-----ドラゴンの死亡アニメーションを始めたかどうか-----//
     bool is_dragon_die = false;

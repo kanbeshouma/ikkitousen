@@ -145,12 +145,12 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
     fTurnToPlayer(elapsedTime_, 5.0f);
-   if(mTimer>3.0f)
+   if(mTimer> START_BEAM_CHARGE)
    {
        //<マルチプレイ時はホストしか遷移しないようにした>//
        if (CorrespondenceManager::Instance().GetMultiPlay())
        {
-           if (CorrespondenceManager::Instance().GetHost()) fChangeState(DivideState::ShipBeamStart);;
+           if (CorrespondenceManager::Instance().GetHost()) fChangeState(DivideState::ShipBeamStart);
        }
        //<シングルプレイの時はそのまま遷移>//
        else fChangeState(DivideState::ShipBeamStart);
@@ -2395,6 +2395,62 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
         fonts->yu_gothic->End(graphics.get_dc().Get());
         graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE,DEPTH_STENCIL::DEON_DWON);
     }
+
+#ifdef USE_IMGUI
+    //<マルチプレイのときにイベントシーンで待機していることを知らせる描画>//
+    if (end_event && CorrespondenceManager::Instance().GetMultiPlay())
+    {
+        graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+
+        auto r_font_render = [&](std::string name, StepFontElement& e)
+        {
+#ifdef USE_IMGUI
+            ImGui::Begin(name.c_str());
+            if (ImGui::TreeNode(name.c_str()))
+            {
+                ImGui::DragFloat2("pos", &e.position.x);
+                ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+                ImGui::ColorEdit4("color", &e.color.x);
+                ImGui::TreePop();
+            }
+            ImGui::End();
+#endif // USE_IMGUI
+            fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+        };
+
+        switch (ai_state)
+        {
+        case AiState::ShipStart:
+            if (ship_event == false)
+            {
+                fonts->yu_gothic->Begin(graphics.get_dc().Get());
+                r_font_render("ShipWait", wait_text);
+                fonts->yu_gothic->End(graphics.get_dc().Get());
+            }
+            break;
+        case AiState::ShipToHuman:
+            if (ship_to_human_event == false)
+            {
+                fonts->yu_gothic->Begin(graphics.get_dc().Get());
+                r_font_render("ShipToHumanWait", wait_text);
+                fonts->yu_gothic->End(graphics.get_dc().Get());
+            }
+            break;
+        case AiState::HumanToDragon:
+            if (human_to_dragon_event)
+            {
+                fonts->yu_gothic->Begin(graphics.get_dc().Get());
+                r_font_render("HumanToDragonWait", wait_text);
+                fonts->yu_gothic->End(graphics.get_dc().Get());
+
+            }
+        default:
+            break;
+        }
+        graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON);
+    }
+
+#endif // USE_IMGUI
 }
 
 bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsed_time)
@@ -2432,4 +2488,38 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
 void LastBoss::fDie(GraphicsPipeline& graphics)
 {
 
+}
+
+bool LastBoss::StepString(float elapsed_time, StepFontElement& step_font_element, bool loop)
+{
+    step_font_element.timer += elapsed_time * step_font_element.speed;
+    step_font_element.step = static_cast<int>(step_font_element.timer);
+    size_t size = step_font_element.text.size();
+    if (step_font_element.index >= size + 1) // 一文字分時間を置く
+    {
+        if (!loop)
+        {
+            return true;
+        }
+        else
+        {
+            step_font_element.timer = 0.0f;
+            step_font_element.step = 0;
+            step_font_element.index = 0;
+            step_font_element.s = L"";
+        }
+    }
+
+    if (step_font_element.step % 2 == 0)
+    {
+        if (step_font_element.index < size)
+        {
+            step_font_element.s += step_font_element.text[step_font_element.index];
+            step_font_element.step = 1;
+            step_font_element.timer = 1.0f;
+        }
+        ++step_font_element.index;
+    }
+
+    return false;
 }
