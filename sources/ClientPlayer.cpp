@@ -396,7 +396,7 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
     {
         static int align = 0;
 
-#if 0
+#if 1
 #ifdef USE_IMGUI
         ImGui::Begin("Font");
         if (ImGui::TreeNode(name.c_str()))
@@ -414,7 +414,7 @@ void ClientPlayer::RenderObjectId(GraphicsPipeline& graphics)
 #endif // USE_IMGUI
 
 #endif // 0
-        fonts->yu_gothic->Draw(e.s, { e.position.x + offset_pos.x,e.position.y + offset_pos.y }, e.scale, e.color, e.angle, static_cast<TEXT_ALIGN>(align), e.length);
+        fonts->yu_gothic->draw(e.s, { e.position.x + offset_pos.x,e.position.y + offset_pos.y }, e.scale, e.color, e.angle, static_cast<TEXT_ALIGN>(align));
     };
 
     if (player_length < min_length)

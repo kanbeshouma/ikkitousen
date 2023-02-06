@@ -81,7 +81,6 @@
  void EnemyEditor::HttpLoad()
  {
      mEnemyParamMap.clear();
-     //<¬Œ÷‚µ‚½ê‡‚Íƒf[ƒ^‚ðMAP‚É“o˜^‚·‚é>//
      for (auto& data : CorrespondenceManager::Instance().GetWebEnemyParamPack())
      {
          EnemyParamPack param;

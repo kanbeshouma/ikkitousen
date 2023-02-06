@@ -221,7 +221,8 @@ void SceneMultiGameHost::Login(int client_id, char* data)
 	client_send.cmd[0] = CommandList::Login;
 	client_send.cmd[static_cast<int>(SendClientLoginDataCmd::NewClientId)] = client_id;
 	client_send.addr = create;
-	client_send.name = receive_data->name;
+	std::memcpy(client_send.name, receive_data->name, sizeof(client_send.name));
+
 	client_send.cmd[static_cast<int>(SendClientLoginDataCmd::PlayerColor)] = receive_data->cmd[static_cast<int>(SendHostLoginDataCmd::PlayerColor)];
 
 	for (int i = 0; i < MAX_CLIENT; i++)

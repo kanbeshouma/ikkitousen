@@ -550,6 +550,173 @@ void Font::End(ID3D11DeviceContext* context)
 	}
 }
 
+DirectX::XMFLOAT2 Font::draw(std::wstring text, DirectX::XMFLOAT2 pos, const DirectX::XMFLOAT2 scale, const DirectX::XMFLOAT4 color, float angle, TEXT_ALIGN align)
+{
+	uint16_t char_count = static_cast<uint16_t>(wcslen(text.c_str()));
+	uint16_t rows_count = 1; // 行数
+	float row_length = 0;    // 今の行の文字の長さ
+
+	DirectX::XMFLOAT2 str_length = {}; // テキストの長さ
+
+	// 予め行数、改行された文字列の最大文字数を計算しておく
+	for (uint16_t i = 0; i < char_count; ++i)
+	{
+		WORD word = static_cast<WORD>(text[i]);
+		WORD code = characterIndices.at(word);
+
+		// 特殊制御用コードの処理
+		if (code == CharacterInfo::ReturnCode)
+		{
+			if (str_length.x < row_length) { str_length.x = row_length; }
+			row_length = 0; // リセット
+			rows_count++;
+
+			continue;
+		}
+		else if (code == CharacterInfo::EndCode) { break; }
+		else if (code == CharacterInfo::TabCode) { continue; }
+		else if (code == CharacterInfo::SpaceCode) { continue; }
+
+		const CharacterInfo& info = characterInfos.at(code);
+		row_length += info.xadvance * scale.x + info.xoffset;
+
+		if (i == char_count - 1) // 文字の終端
+		{
+			if (str_length.x < row_length) { str_length.x = row_length; }
+		}
+	}
+
+	float start_x = pos.x;
+	fontWidth = abs(fontWidth);
+	fontWidth *= scale.x;
+	float space = fontWidth;
+
+	for (size_t i = 0; i < char_count; ++i)
+	{
+		// 文字値から文字情報が格納されているコードを取得
+		WORD word = static_cast<WORD>(text[i]);
+		WORD code = characterIndices.at(word);
+
+		// 特殊制御用コードの処理
+		if (code == CharacterInfo::EndCode)
+		{
+			break;
+		}
+		else if (code == CharacterInfo::ReturnCode)
+		{
+			pos.x = start_x;
+			pos.y += fontHeight * scale.y;
+			continue;
+		}
+		else if (code == CharacterInfo::TabCode)
+		{
+			pos.x += space * 4;
+			continue;
+		}
+		else if (code == CharacterInfo::SpaceCode)
+		{
+			pos.x += space;
+			continue;
+		}
+
+		// 文字情報を取得し、頂点データを編集
+		const CharacterInfo& info = characterInfos.at(code);
+
+		// 各種パラメーター
+		float positionX = pos.x + info.xoffset;// + 0.5f;
+		float positionY = pos.y + info.yoffset;// + 0.5f;
+
+		// 文字列の高さ保存
+		str_length.y = { rows_count * fontHeight * scale.y };
+
+		// 原点変更
+		DirectX::XMFLOAT2 align_pos = adjust_text_origin(align, { positionX, positionY }, str_length.x, str_length.y);
+
+		// 0---1
+		// |   |
+		// 2---3
+		{
+			currentVertex[0].position.x = align_pos.x;
+			currentVertex[0].position.y = align_pos.y;
+			currentVertex[0].position.z = 0.0f;
+			currentVertex[0].texcoord.x = info.left;
+			currentVertex[0].texcoord.y = info.top;
+			currentVertex[0].color.x = color.x;
+			currentVertex[0].color.y = color.y;
+			currentVertex[0].color.z = color.z;
+			currentVertex[0].color.w = color.w;
+
+			currentVertex[1].position.x = align_pos.x + info.width * scale.x;
+			currentVertex[1].position.y = align_pos.y;
+			currentVertex[1].position.z = 0.0f;
+			currentVertex[1].texcoord.x = info.right;
+			currentVertex[1].texcoord.y = info.top;
+			currentVertex[1].color.x = color.x;
+			currentVertex[1].color.y = color.y;
+			currentVertex[1].color.z = color.z;
+			currentVertex[1].color.w = color.w;
+
+			currentVertex[2].position.x = align_pos.x;
+			currentVertex[2].position.y = align_pos.y + info.height * scale.y;
+			currentVertex[2].position.z = 0.0f;
+			currentVertex[2].texcoord.x = info.left;
+			currentVertex[2].texcoord.y = info.bottom;
+			currentVertex[2].color.x = color.x;
+			currentVertex[2].color.y = color.y;
+			currentVertex[2].color.z = color.z;
+			currentVertex[2].color.w = color.w;
+
+			currentVertex[3].position.x = align_pos.x + info.width * scale.x;
+			currentVertex[3].position.y = align_pos.y + info.height * scale.y;
+			currentVertex[3].position.z = 0.0f;
+			currentVertex[3].texcoord.x = info.right;
+			currentVertex[3].texcoord.y = info.bottom;
+			currentVertex[3].color.x = color.x;
+			currentVertex[3].color.y = color.y;
+			currentVertex[3].color.z = color.z;
+			currentVertex[3].color.w = color.w;
+		}
+
+		// 回転
+		float cx = align_pos.x + info.width * 0.5f * scale.x;
+		float cy = align_pos.y + info.height * 0.5f * scale.y;
+
+		Math::rotate(currentVertex[0].position.x, currentVertex[0].position.y, cx, cy, angle);
+		Math::rotate(currentVertex[1].position.x, currentVertex[1].position.y, cx, cy, angle);
+		Math::rotate(currentVertex[2].position.x, currentVertex[2].position.y, cx, cy, angle);
+		Math::rotate(currentVertex[3].position.x, currentVertex[3].position.y, cx, cy, angle);
+
+		// NDC座標変換
+		for (int j = 0; j < 4; ++j)
+		{
+			currentVertex[j].position.x = 2.0f * currentVertex[j].position.x / screenWidth - 1.0f;
+			currentVertex[j].position.y = 1.0f - 2.0f * currentVertex[j].position.y / screenHeight;
+		}
+		currentVertex += 4;
+
+		// 位置を1文字分ずらす
+		{
+			pos.x += info.xadvance * cosf(DirectX::XMConvertToRadians(angle)) * scale.x;
+			pos.y += info.xadvance * sinf(DirectX::XMConvertToRadians(angle)) * scale.y;
+		}
+
+		// テクスチャが切り替わる度に描画する情報を設定
+		if (currentPage != info.page)
+		{
+			currentPage = info.page;
+
+			Subset subset;
+			subset.shaderResourceView = shaderResourceViews.at(info.page).Get();
+			subset.startIndex = currentIndexCount;
+			subset.indexCount = 0;
+			subsets.emplace_back(subset);
+		}
+		currentIndexCount += 6;
+	}
+
+	return str_length;
+}
+
 DirectX::XMFLOAT2 Font::adjust_text_origin(TEXT_ALIGN align, const DirectX::XMFLOAT2& v, float w, float h)
 {
 	DirectX::XMFLOAT2 pos = v;

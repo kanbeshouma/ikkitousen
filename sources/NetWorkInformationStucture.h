@@ -142,13 +142,13 @@ struct LoginData
     //この配列は接続しているプレイヤー(自分は含めない)のIDが入る 8
     char opponent_player_id[MAX_CLIENT];
 
-    //今接続している(自分も含める)クライアントのアドレスを取得16*MAX_CLIENT
+    //今接続している(自分も含める)クライアントのアドレスを取得16*MAX_CLIENT 128
     sockaddr_in game_udp_server_addr[MAX_CLIENT];
 
-    //名前NAME_LENGTH*MAX_CLIENT
+    //名前NAME_LENGTH*MAX_CLIENT 64
     char name[MAX_CLIENT][CorrespondenceManager::NAME_LENGTH];
 
-    //-----色-----//
+    //-----色-----//8
     char p_color[MAX_CLIENT];
 };
 
@@ -162,13 +162,13 @@ enum class LoginDataCmd
 ////-----ホストに送るログインデータ-----//
 struct SendHostLoginData
 {
-    //通信コマンド
+    //通信コマンド4
     //0 : CommandList
     //1 : player_color
     char cmd[4]{};
-    ////クライアントの受信用のポート番号
+    ////クライアントの受信用のポート番号8
     char port[8] = { "7000" };
-    //-----名前-----//
+    //-----名前-----//8
     char name[CorrespondenceManager::NAME_LENGTH];
 };
 
@@ -190,7 +190,7 @@ struct SendClientLoginData
     //今接続している(自分も含める)クライアントのアドレスを取得
     sockaddr_in addr;
     //-----名前-----//
-    std::string name{};
+    char name[CorrespondenceManager::NAME_LENGTH];
 };
 
 enum class SendClientLoginDataCmd

@@ -33,6 +33,16 @@ public:
 	void Draw(std::wstring string, DirectX::XMFLOAT2 pos, const DirectX::XMFLOAT2 scale, const DirectX::XMFLOAT4 color,
 		float angle = 0, TEXT_ALIGN align = TEXT_ALIGN::MIDDLE_LEFT, DirectX::XMFLOAT2 Length = {});
 	void End(ID3D11DeviceContext* context);
+
+
+	/// <summary>
+	/// テキスト描画関数
+	/// </summary>
+	/// <param name="string">　本文</param>
+	/// <param name="align">　テキストの重心</param>
+	/// <returns>　テキストの長さ</returns>
+	DirectX::XMFLOAT2 draw(std::wstring text, DirectX::XMFLOAT2 pos, const DirectX::XMFLOAT2 scale, const DirectX::XMFLOAT4 color,
+		float angle = 0, TEXT_ALIGN align = TEXT_ALIGN::MIDDLE_LEFT);
 private:
 	//--------< 関数 >--------//
 	DirectX::XMFLOAT2 adjust_text_origin(TEXT_ALIGN align, const DirectX::XMFLOAT2& v, float w, float h);
