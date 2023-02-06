@@ -115,7 +115,7 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         if (mpModel->end_of_animation(mAnimPara))
         {
             //-----カウントを増やす-----//
-            mpEnemyManager->EndEnventCount(1);
+            if (CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
             end_event = true;
             SendWatchEndEvent();
         }
@@ -443,7 +443,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
         {
             //-----カウントを増やす-----//
-            mpEnemyManager->EndEnventCount(1);
+            if(CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
             end_event = true;
             SendWatchEndEvent();
         }
@@ -455,6 +455,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
     if (ship_to_human_event)
     {
+        DebugConsole::Instance().WriteDebugConsole("船から人型イベントシーン終了",TextColor::Pink);
         PostEffect::clear_post_effect();
         fChangeState(DivideState::HumanIdle);
 
@@ -1536,7 +1537,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
         {
             //-----カウントを増やす-----//
-            mpEnemyManager->EndEnventCount(1);
+            if (CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
             end_event = true;
             SendWatchEndEvent();
         }
@@ -2184,7 +2185,7 @@ void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graph
         if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
         {
             //-----カウントを増やす-----//
-            mpEnemyManager->EndEnventCount(1);
+            if (CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
             end_event = true;
             SendWatchEndEvent();
         }
@@ -2330,6 +2331,7 @@ void LastBoss::SetEndEvent(bool arg)
     case AiState::HumanToDragon:
         human_to_dragon_event = arg;
         SendEndEvent();
+        break;
     case AiState::DragonDieStart:
             dragon_die_event = arg;
         break;
@@ -2437,13 +2439,14 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
             }
             break;
         case AiState::HumanToDragon:
-            if (human_to_dragon_event)
+            if (human_to_dragon_event == false)
             {
                 fonts->yu_gothic->Begin(graphics.get_dc().Get());
                 r_font_render("HumanToDragonWait", wait_text);
                 fonts->yu_gothic->End(graphics.get_dc().Get());
 
             }
+            break;
         default:
             break;
         }

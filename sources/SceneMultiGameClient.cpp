@@ -413,9 +413,16 @@ void SceneMultiGameClient::update(GraphicsPipeline& graphics, float elapsed_time
 		//-----ボスのイベントが終わったかどうか-----//
 		if (end_event_data)
 		{
+
 			mWaveManager.fGetEnemyManager()->EndEvent();
 			end_event_data = false;
+			DebugConsole::Instance().WriteDebugConsole("イベントシーン終了",TextColor::Yellow);
 		}
+#ifdef USE_IMGUI
+		ImGui::Begin("end_event_data");
+		ImGui::RadioButton("end_event_data", end_event_data);
+		ImGui::End();
+#endif
 
 		//-----ステージ中のウェーブの更新処理-----//
 		mWaveManager.fMultiPlayUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction(), receive_all_enemy_data);

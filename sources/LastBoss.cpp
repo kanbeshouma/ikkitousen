@@ -208,6 +208,7 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
             break;
         case AiState::HumanToDragon:
             if (human_to_dragon_event == false)StepString(elapsedTime_, wait_text, true);
+            break;
         default:
             break;
         }
