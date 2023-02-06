@@ -3,7 +3,7 @@
 #include "framework.h"
 #include "camera.h"
 #include "user.h"
-
+#include"imgui_include.h"
 
 #include "CameraManager.h"
 
@@ -540,13 +540,24 @@ void DebugCamera::Initialize(GraphicsPipeline& graphics)
 			cosf(angle / 2)
 		};
 	}
-
+	eye = { 100.0f,10.0f,10.0f };
 
 }
 
 void DebugCamera::Update(float elapsedTime)
 {
-
+#ifdef USE_IMGUI
+	static bool display_scape_imgui = false;
+	imgui_menu_bar("Camera", "DebugCamera", display_scape_imgui);
+	if (display_scape_imgui)
+	{
+		ImGui::Begin("DebugCamera");
+		ImGui::DragFloat3("eye",&eye.x);
+		ImGui::DragFloat3("target",&target.x);
+		ImGui::End();
+	}
+#endif
+	UpdateViewProjection();
 }
 
 void DebugCamera::RotateCamera(float elapsed_time)

@@ -35,6 +35,10 @@ public:
     //-----通常時時に呼ぶ更新処理-----//
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
 
+    //<デバッグ用に追加したUpdate>//
+    //-----通常時時に呼ぶ更新処理-----//
+    void fDebugUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_);
+
     //-----マルチプレイ時のホストが呼ぶ更新処理-----//
     void fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data);
 
@@ -322,5 +326,7 @@ private:
 
     //<ボスの出現チェックのデータ送信頻度>//
     const float CheckBossAiTime = 3.0f;
-
+public:
+    //<デバッグ用のデータロード>//
+    void DebugLoadEnemyParam();
 };

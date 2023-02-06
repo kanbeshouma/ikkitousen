@@ -11,6 +11,7 @@
 #include "SceneMultiGameClient.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
+#include"SceneParamCheck.h"
 #include "ModelCashe.h"
 #include"SceneTutorial.h"
 #include "WaveManager.h"
@@ -327,7 +328,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		CorrespondenceManager::Instance().AcquisitionMyIpAddress();
 	}
 
-
 	ImGui::InputTextAbove("UdpPort", CorrespondenceManager::Instance().udp_port, sizeof(CorrespondenceManager::Instance().udp_port), ImGuiInputTextFlags_CharsDecimal);
 	ImGui::SliderInt("kind", &CorrespondenceManager::Instance().my_player_color, 0, 8);
 	player->SetColor(static_cast<BasePlayer::PlayerColor> (CorrespondenceManager::Instance().my_player_color));
@@ -530,7 +530,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		else
 		{
-			SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			SceneManager::scene_switching(new SceneLoading(new SceneParamCheck()), DISSOLVE_TYPE::HORIZON, 2.0f);
 			CorrespondenceManager::Instance().SetMultiPlay(false);
 		}
 

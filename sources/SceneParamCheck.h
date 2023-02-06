@@ -27,6 +27,7 @@ public:
 private:
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     std::unique_ptr<CameraManager> cameraManager;
+    std::unique_ptr<EnemyManager> enemy_manager;
 
 
 

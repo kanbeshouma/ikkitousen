@@ -35,6 +35,17 @@ void ShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     {
         ImGui::Begin(name.c_str());
         ImGui::RadioButton("Master", master);
+        if (ImGui::TreeNode("EnemyParam"))
+        {
+            ImGui::Text("MaxHp :%d", mMaxHp);
+            ImGui::Text("AttackPower :%d", mAttackPower);
+            ImGui::Text("InvincibleTime :%f", mAttackInvTime);
+            ImGui::Text("BodyCapsuleRad :%f", mBodyCapsule.mRadius);
+            ImGui::Text("AttackCapsuleRad :%f", mAttackCapsule.mRadius);
+            ImGui::Text("StunTime :%f", mStunTime);
+            ImGui::TreePop();
+        }
+
         ImGui::End();
     }
 #endif

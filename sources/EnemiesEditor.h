@@ -22,7 +22,7 @@ public:
     ~EnemyEditor();
      const EnemyParamPack fGetParam(EnemyType Type_);
      void fGuiMenu();
-
+     void HttpLoad();
 private:
     void fLoad();
     void TestLoad();

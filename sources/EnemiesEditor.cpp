@@ -78,6 +78,25 @@
 
 }
 
+ void EnemyEditor::HttpLoad()
+ {
+     mEnemyParamMap.clear();
+     //<¬Œ÷‚µ‚½ê‡‚Íƒf[ƒ^‚ðMAP‚É“o˜^‚·‚é>//
+     for (auto& data : CorrespondenceManager::Instance().GetWebEnemyParamPack())
+     {
+         EnemyParamPack param;
+         param.MaxHp = data.MaxHp;
+         param.AttackPower = data.AttackPower;
+         param.InvincibleTime = data.InvincibleTime;
+         param.BodyCapsuleRad = data.BodyCapsuleRad;
+         param.AttackCapsuleRad = data.AttackCapsuleRad;
+         param.StunTime = data.StunTime;
+
+         mEnemyParamMap.insert(std::make_pair(data.enemy_name, param));
+     }
+
+ }
+
  void EnemyEditor::fLoad()
 {
 

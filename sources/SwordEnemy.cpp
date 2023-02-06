@@ -43,6 +43,18 @@ void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
             ImGui::DragInt("master_ai_state", &master_ai_state, 0.0f);
             ImGui::DragInt("master_target_id", &master_target_id, 0.0f);
         }
+
+        if (ImGui::TreeNode("EnemyParam"))
+        {
+            ImGui::Text("MaxHp :%d", mMaxHp);
+            ImGui::Text("AttackPower :%d", mAttackPower);
+            ImGui::Text("InvincibleTime :%f", mAttackInvTime);
+            ImGui::Text("BodyCapsuleRad :%f", mBodyCapsule.mRadius);
+            ImGui::Text("AttackCapsuleRad :%f", mAttackCapsule.mRadius);
+            ImGui::Text("StunTime :%f", mStunTime);
+            ImGui::TreePop();
+        }
+
         ImGui::End();
     }
 #endif

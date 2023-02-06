@@ -163,6 +163,18 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     }
 }
 
+void EnemyManager::fDebugUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_)
+{
+    for (const auto enemy : mEnemyVec)
+    {
+        //-----敵の更新-----//
+        enemy->fUpdate(graphics_, elapsedTime_);
+    }
+    // ImGuiのメニュー
+    fGuiMenu(graphics_, Func_);
+
+}
+
 void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, AddBulletFunc Func_, EnemyAllDataStruct& receive_data)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
@@ -1588,6 +1600,11 @@ void EnemyManager::TransferMaster(int grope)
     if (e != nullptr)e->fSetMaster(true);
     //-----値が入っていないなら譲渡先がいないのでそのデータは消す-----//
     else master_enemy_data->DeleteSpecificData(grope);
+}
+
+void EnemyManager::DebugLoadEnemyParam()
+{
+    mEditor.HttpLoad();
 }
 
 void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
