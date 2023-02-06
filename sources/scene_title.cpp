@@ -530,7 +530,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		else
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneParamCheck()), DISSOLVE_TYPE::HORIZON, 2.0f);
+			SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f);
 			CorrespondenceManager::Instance().SetMultiPlay(false);
 		}
 
