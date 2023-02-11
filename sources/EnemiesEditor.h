@@ -9,6 +9,8 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/string.hpp>
 #include"imgui_include.h"
+
+
 //****************************************************************
 //
 // 敵の情報を作成・編集するクラス

@@ -979,7 +979,7 @@ void CommunicationSystem::UdpSend(int id, char* data, int size)
     {
         //コンソール画面に出力
         int error = WSAGetLastError();
-        DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+        DebugConsole::Instance().WriteDebugConsole("Udp send failed", TextColor::Red);
         std::string text = "error number:" + std::to_string(error);
         DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
     }
@@ -1016,7 +1016,7 @@ void CommunicationSystem::UdpSend(char* data, int size)
         {
             //コンソール画面に出力
             int error = WSAGetLastError();
-            DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+            DebugConsole::Instance().WriteDebugConsole("Udp send failed", TextColor::Red);
             std::string text = "error number:" + std::to_string(error);
             DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
         }
@@ -1149,7 +1149,7 @@ void CommunicationSystem::MultiCastSend(char* data, int size)
     {
         //コンソール画面に出力
         int error = WSAGetLastError();
-        DebugConsole::Instance().WriteDebugConsole("send failed", TextColor::Red);
+        DebugConsole::Instance().WriteDebugConsole("MultiCast send failed", TextColor::Red);
         std::string text = "error number:" + std::to_string(error);
         DebugConsole::Instance().WriteDebugConsole(text, TextColor::Red);
     }

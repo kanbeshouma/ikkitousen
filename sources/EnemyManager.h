@@ -325,7 +325,7 @@ private:
     const float EnemyInvincibleTime = 0.1f;
 
     //<ボスの出現チェックのデータ送信頻度>//
-    const float CheckBossAiTime = 3.0f;
+    const float CheckBossAiTime = 1.0f;
 public:
     //<デバッグ用のデータロード>//
     void DebugLoadEnemyParam();

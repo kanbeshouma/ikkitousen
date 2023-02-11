@@ -421,7 +421,7 @@ private:
     const float mkPercentToDragon{ 0.5f }; // ドラゴン形態に遷移する体力の割合
 
     //<船状態の時のビームを発射するまでの時間>/
-    static constexpr float START_BEAM_CHARGE = 5;
+    static constexpr float START_BEAM_CHARGE = 20.0f;
 
     const float mkWaitHeartEffect = 0.5f;
     const float mkHumanAllShotDelay{ 0.1f };

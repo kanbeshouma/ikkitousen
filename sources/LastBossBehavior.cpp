@@ -205,6 +205,56 @@ void LastBoss::fShipBeamStartInit()
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_shot_start);
     //-----ステート設定-----//
     ai_state = AiState::ShipBeamStart;
+
+    //if (CorrespondenceManager::Instance().GetMultiPlay() && CorrespondenceManager::Instance().GetHost())
+    //{
+    //    using namespace EnemySendData;
+    //    char data[512]{};
+    //    //-----コマンドを設定する-----//
+    //    data[ComLocation::ComList] = CommandList::Update;
+    //    data[ComLocation::UpdateCom] = UpdateCommand::EnemiesMoveCommand;
+
+    //    int data_set_count = 0;
+
+    //    EnemySendData::EnemyData enemy_d;
+
+    //    //-----マスターのデータを送信する-----//
+
+    //        //-----オブジェクト番号設定-----//
+    //        enemy_d.enemy_data[EnemyDataArray::ObjectId] = fGetObjectId();
+
+    //        //-----AIのステート設定-----//
+    //        enemy_d.enemy_data[EnemyDataArray::AiState] = fGetEnemyAiState();
+
+    //        //-----ターゲットしているプレイヤーのId-----//
+    //        enemy_d.enemy_data[EnemyDataArray::TargetId] = fGetTargetPlayerId();
+
+    //        //-----敵のタイプ-----//
+    //        enemy_d.enemy_data[EnemyDataArray::EnemyTypeId] = static_cast<char>(GetEnemyType());
+
+    //        //-----体力-----//
+    //        enemy_d.hp = static_cast<int>(fGetCurrentHitPoint());
+
+    //        //-----自分の位置を設定-----//
+    //        enemy_d.pos.x = static_cast<int16_t>(fGetPosition().x);
+    //        enemy_d.pos.y = static_cast<int16_t>(fGetPosition().y);
+    //        enemy_d.pos.z = static_cast<int16_t>(fGetPosition().z);
+
+    //        std::memcpy(data + 4 + (sizeof(EnemyData) * data_set_count), (char*)&enemy_d, sizeof(EnemyData));
+
+    //        data_set_count++;
+
+    //    //-----送るデータが無いときはここで終わる-----//
+    //    if (data_set_count <= 0) return;
+
+    //    //-----データサイズを設定-----//
+    //    data[ComLocation::Other] = data_set_count;
+
+    //    int size = 4 + (sizeof(EnemyData) * data_set_count);
+
+    //    CorrespondenceManager::Instance().MultiCastSend(data, size);
+
+    //}
 }
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -224,6 +274,8 @@ void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fShipBeamChargeInit()
 {
+    mpEnemyManager->fReserveDeleteEnemies();
+
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_idle, true);
     mTimer = mkShipBeamChargeSec;
 
@@ -273,6 +325,8 @@ void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
 void LastBoss::fShipBeamShootInit()
 {
+    mpEnemyManager->fReserveDeleteEnemies();
+
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_shot_start);
     mTimer = mkShipBeamShootSec;
 
@@ -353,6 +407,8 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fShipBeamEndInit()
 {
+    mpEnemyManager->fReserveDeleteEnemies();
+
     //-----ステート設定-----//
     ai_state = AiState::ShipBeamEnd;
 
@@ -2184,21 +2240,17 @@ void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graph
     {
         if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
         {
-            //-----カウントを増やす-----//
-            if (CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
-            end_event = true;
-            SendWatchEndEvent();
+            fChangeState(DivideState::DragonDieEnd);
+            DebugConsole::Instance().WriteDebugConsole("ドラゴン死亡エンドに遷移");
         }
     }
     else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
     {
-        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)dragon_die_event = true;
-    }
-
-    if (dragon_die_event)
-    {
-        DebugConsole::Instance().WriteDebugConsole("遷移", TextColor::Pink);
-        fChangeState(DivideState::DragonDieEnd);
+        if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
+        {
+            DebugConsole::Instance().WriteDebugConsole("遷移", TextColor::Pink);
+            fChangeState(DivideState::DragonDieEnd);
+        }
     }
 
 
@@ -2209,19 +2261,38 @@ void LastBoss::fDragonDieMiddleInit()
     mDissolve = 0.0f;
     //-----ステート設定-----//
     ai_state = AiState::DragonDieEnd;
-
+    DebugConsole::Instance().WriteDebugConsole("ドラゴン死亡エンド初期化");
 }
 
 void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mDissolve += elapsedTime_;
+
+
     if(mDissolve>=1.0f)
     {
-        mIsAlive = false;
-        BaseEnemy::fDie(Graphics_);
-        mCurrentMode = Mode::BossDieEnd;
-        mpEnemyManager->fSetBossMode(mCurrentMode);
-        mpDieEffect->play(effect_manager->get_effekseer_manager(), mPosition, 10.0f);
+        //<マルチプレイの時、イベントが終了していないときしか入らない>//
+        if (CorrespondenceManager::Instance().GetMultiPlay() && end_event == false)
+        {
+            //-----カウントを増やす-----//
+            if (CorrespondenceManager::Instance().GetHost())mpEnemyManager->EndEnventCount(1);
+            end_event = true;
+            SendWatchEndEvent();
+            DebugConsole::Instance().WriteDebugConsole("ドラゴン死亡エンド終了");
+        }
+        else if (CorrespondenceManager::Instance().GetMultiPlay() == false)
+        {
+              dragon_die_event = true;
+        }
+
+        if (dragon_die_event)
+        {
+            mIsAlive = false;
+            BaseEnemy::fDie(Graphics_);
+            mCurrentMode = Mode::BossDieEnd;
+            mpEnemyManager->fSetBossMode(mCurrentMode);
+            mpDieEffect->play(effect_manager->get_effekseer_manager(), mPosition, 10.0f);
+        }
     }
 }
 
@@ -2332,9 +2403,10 @@ void LastBoss::SetEndEvent(bool arg)
         human_to_dragon_event = arg;
         SendEndEvent();
         break;
-    case AiState::DragonDieStart:
+    case AiState::DragonDieEnd:
             dragon_die_event = arg;
-        break;
+            SendEndEvent();
+            break;
     default:
         break;
     }
@@ -2443,6 +2515,15 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
             {
                 fonts->yu_gothic->Begin(graphics.get_dc().Get());
                 r_font_render("HumanToDragonWait", wait_text);
+                fonts->yu_gothic->End(graphics.get_dc().Get());
+
+            }
+            break;
+        case AiState::DragonDieEnd:
+            if (dragon_die_event == false)
+            {
+                fonts->yu_gothic->Begin(graphics.get_dc().Get());
+                r_font_render("DragonDieEndWait", wait_text);
                 fonts->yu_gothic->End(graphics.get_dc().Get());
 
             }

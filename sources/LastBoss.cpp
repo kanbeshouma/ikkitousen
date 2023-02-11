@@ -209,6 +209,9 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
         case AiState::HumanToDragon:
             if (human_to_dragon_event == false)StepString(elapsedTime_, wait_text, true);
             break;
+        case AiState::DragonDieEnd:
+            if (dragon_die_event == false) StepString(elapsedTime_, wait_text, true);
+            break;
         default:
             break;
         }
@@ -246,7 +249,11 @@ void LastBoss::fSetEnemyState(int state)
     //-----今のAIと同じなら処理をしない-----//
     if (ai_state == state) return;
     //-----スタンしてるなら処理をしない-----//
-    if (mIsStun) return;
+    if (mIsStun)
+    {
+        DebugConsole::Instance().WriteDebugConsole("ボスがスタンしています。",TextColor::Yellow);
+        return;
+    }
 
     if (ai_state == AiState::ShipStart || ai_state == AiState::ShipToHuman || ai_state == AiState::HumanToDragon) return;
     std::string text = "ReceiveState : " + std::to_string(state);
@@ -259,12 +266,36 @@ void LastBoss::fSetEnemyState(int state)
         if(ship_event == false)fChangeState(DivideState::ShipStart);
         break;
     }
-    case AiState::ShipIdle: fChangeState(DivideState::ShipIdle); break;
+    case AiState::ShipIdle:
+    {
+        fChangeState(DivideState::ShipIdle);
+        break;
+    }
     case AiState::ShipAttack: fChangeState(DivideState::ShipAttack); break;
-    case AiState::ShipBeamStart: fChangeState(DivideState::ShipBeamStart); break;
-    case AiState::ShipBeamCharge: fChangeState(DivideState::ShipBeamCharge); break;
-    case AiState::ShipBeamShoot: fChangeState(DivideState::ShipBeamShoot); break;
-    case AiState::ShipBeamEnd: fChangeState(DivideState::ShipBeamEnd); break;
+    case AiState::ShipBeamStart:
+    {
+        fChangeState(DivideState::ShipBeamStart);
+        DebugConsole::Instance().WriteDebugConsole("ビームスタート", TextColor::SkyBlue);
+        break;
+    }
+    case AiState::ShipBeamCharge:
+    {
+        fChangeState(DivideState::ShipBeamCharge);
+        DebugConsole::Instance().WriteDebugConsole("ビームチャージ", TextColor::SkyBlue);
+        break;
+    }
+    case AiState::ShipBeamShoot:
+    {
+        fChangeState(DivideState::ShipBeamShoot);
+        DebugConsole::Instance().WriteDebugConsole("ビーム発射", TextColor::SkyBlue);
+        break;
+    }
+    case AiState::ShipBeamEnd:
+    {
+        fChangeState(DivideState::ShipBeamEnd);
+        DebugConsole::Instance().WriteDebugConsole("ビーム終了", TextColor::SkyBlue);
+        break;
+    }
     case AiState::ShipToHuman:
     {
         if (ship_to_human_event == false)fChangeState(DivideState::ShipToHuman);
@@ -300,7 +331,7 @@ void LastBoss::fSetEnemyState(int state)
     }
     case AiState::DragonIdle: fChangeState(DivideState::DragonIdle); break;
     case AiState::DragonDieStart: fChangeState(DivideState::DragonDieStart); break;
-    case AiState::DragonDieEnd: fChangeState(DivideState::DragonDieEnd); break;
+    //case AiState::DragonDieEnd: fChangeState(DivideState::DragonDieEnd); break;
     case AiState::DragonHideStart: fChangeState(DivideState::DragonHideStart); break;
     case AiState::DragonAppear: fChangeState(DivideState::DragonAppear); break;
     case AiState::DragonBreathCharge: fChangeState(DivideState::DragonBreathCharge); break;
@@ -803,6 +834,7 @@ void LastBoss::fGuiMenu()
     {
         ImGui::Begin("LastBoss");
         ImGui::Text("ID%d", object_id);
+        ImGui::Text("ai_state%d", ai_state);
         ImGui::Text("Type%d", type);
         ImGui::DragFloat3("Position", &mPosition.x);
         ImGui::DragFloat3("Scale", &mScale.x);

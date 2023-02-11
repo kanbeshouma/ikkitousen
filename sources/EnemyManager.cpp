@@ -273,15 +273,29 @@ void EnemyManager::fHostUpdate(GraphicsPipeline& graphics_, float elapsedTime_, 
     fCreateBossUnit(graphics_);
 
     bool isCreate{};
-    for (const auto& source : mReserveVec)
+    if (mReserveVec.empty() == false)
     {
-        isCreate = true;
-        fSpawn(source, graphics_);
+        std::map<int, EnemySource> s_data;
+
+        for (const auto& source : mReserveVec)
+        {
+            isCreate = true;
+            s_data.insert(std::make_pair(object_count, source));
+            fSpawn(source, graphics_);
+        }
+        if (s_data.empty() == false)
+        {
+            fSendSpawnData(s_data);
+        }
+
     }
     if (isCreate)
     {
         mReserveVec.clear();
     }
+
+
+
 
     // ザコ的だけを全消しする
     if (mIsReserveDelete)
@@ -514,7 +528,8 @@ void EnemyManager::fSendEnemyData(float elapsedTime_)
 
     int size = SendEnemyDataComSize + (sizeof(EnemyData) * data_set_count);
 
-    CorrespondenceManager::Instance().MultiCastSend(data,size);
+    if(CorrespondenceManager::Instance().GetHost())CorrespondenceManager::Instance().MultiCastSend(data,size);
+    else CorrespondenceManager::Instance().UdpSend(data, size);
 
 }
 
