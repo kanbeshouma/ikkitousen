@@ -210,7 +210,7 @@ public:
     //戻り値   : ポート番号が一致しているアドレス
     //第1引数 : 受信したアドレス
     //第2引数 : 送り先のポート番号
-    sockaddr_in SetSendPortAddress(sockaddr_in addr, char* port);
+        sockaddr_in SetSendPortAddress(sockaddr_in addr, char* port);
 
 private:
     ////-------ログインするホストのアドレスを取得-----//

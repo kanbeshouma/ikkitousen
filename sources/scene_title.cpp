@@ -4,6 +4,7 @@
 #include <wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
 
+
 #include "framework.h"
 #include "scene_title.h"
 #include "scene_game.h"
@@ -36,6 +37,7 @@ float SceneTitle::standby_matching_timer = 0.0f;
 
 //-----ブロッキング-----//
 std::mutex SceneTitle::mutex;
+
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {

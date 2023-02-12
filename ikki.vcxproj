@@ -182,7 +182,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;Telecommunications;DEBUG_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\DirectXTK-master\Inc;.\External\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;.\External\openssl\x64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\DirectXTK-master\Inc;.\External\FBX\FBX SDK\2020.2\include;.\External\cereal-master\include;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;.\External\openssl\x64\include;.\External\zip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -468,6 +468,7 @@
     <ClInclude Include="sources\UI.h" />
     <ClInclude Include="sources\user.h" />
     <ClInclude Include="sources\counter.h" />
+    <ClInclude Include="sources\zip.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt" />
