@@ -19,7 +19,7 @@
 #include "LastBoss.h"
 #include"SocketCommunication.h"
 #include"Correspondence.h"
-
+#include"zip.h"
 
 
 
@@ -41,6 +41,35 @@ std::mutex SceneTitle::mutex;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
+	LoginData login;
+
+	char text[2048] = { "IN THE YEAR 1878 I took my degree of Doctor of Medicine of the University of London, and proceeded to Netley to go through the course prescribed for surgeons in the Army. Having completed my studies there, I was duly attached to the Fifth Northumberland Fusiliers as assistant surgeon. The regiment was stationed in India at the time, and before I could join it, the second Afghan war had broken out. On landing at Bombay, I learned that my corps had advanced through the passes, and was already deep in the enemy’s country. I followed, however, with many other officers who were in the same situation as myself, and succeeded in reaching Candahar in safety, where I found my regiment, and at once entered upon my new duties.The campaign brought honoursand promotion to many, but for me it had nothing but misfortuneand disaster.I was removed from my brigadeand attached to the Berkshires, with whom I served at the fatal battle of Maiwand.There I was struck on the shoulder by a Jezail bullet, which shattered the boneand grazed the subclavian artery.I should have fallen into the hands of the murderous Ghazis had it not been for the devotionand courage shown by Murray, my orderly, who threw me across a pack - horse,and succeeded in bringing me safely to the British lines." };
+	char encode_data[2048];
+	Hahuman::HahumanEncode encode;
+	encode.Encode(text, encode_data);
+
+	//int size = std::strlen(encode_data);
+
+	Hahuman::HahumanDecode decode;
+	char decode_data[2048];
+	decode.Decode(encode_data, decode_data);
+
+	std::cout << decode_data << std::endl;
+
+
+#if 0
+	auto rawData = std::string("hello world");
+	DebugConsole::Instance().WriteDebugConsole(std::to_string(std::strlen(rawData.c_str())), TextColor::SkyBlue);
+	// 圧縮する
+	auto compressed = ZlibCompression(rawData, Z_BEST_COMPRESSION);
+	DebugConsole::Instance().WriteDebugConsole(std::to_string(std::strlen(compressed.c_str())), TextColor::Pink);
+	// 展開する
+	auto decompressed = ZlibDevelopment(compressed);
+	DebugConsole::Instance().WriteDebugConsole(std::to_string(std::strlen(decompressed.c_str())), TextColor::SkyBlue);
+
+	DebugConsole::Instance().WriteDebugConsole(decompressed, TextColor::SkyBlue);
+
+#endif // 0
 
 	//--タイトル前ロード--//
 	ModelCashes::Load_PreTitle(graphics.get_device().Get());

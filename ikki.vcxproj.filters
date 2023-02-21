@@ -660,6 +660,9 @@
     <ClCompile Include="sources\SceneParamCheck.cpp">
       <Filter>Sources\Scene\SceneParamCheck</Filter>
     </ClCompile>
+    <ClCompile Include="sources\zip.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\user.h">

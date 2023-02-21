@@ -337,6 +337,7 @@
     <ClCompile Include="sources\WaveManager.cpp" />
     <ClCompile Include="sources\UI.cpp" />
     <ClCompile Include="sources\counter.cpp" />
+    <ClCompile Include="sources\zip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h" />

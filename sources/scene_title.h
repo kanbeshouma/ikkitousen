@@ -299,7 +299,9 @@ private:
 
     static bool start_matching;
 private:
-    //------------マッチング--------------//
+    /// <summary>
+    /// マッチング
+    /// </summary>
     static void StandbyMatching();
 private:
     bool re_name{ false };
