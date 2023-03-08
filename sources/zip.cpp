@@ -84,6 +84,7 @@ void Hahuman::HahumanDecode::Decode(char* encode_data, char* decode_data)
 		//<ファイルから１バイト分読み込み>//
 		//chr = fgetc(fi);
 		std::memcpy(&chr, encode_data + data_count, sizeof(chr));
+		std::cout << chr << std::endl;
 		data_count++;
 
 
@@ -111,6 +112,7 @@ void Hahuman::HahumanDecode::Decode(char* encode_data, char* decode_data)
 			//<そのようなCODE構造体がある場合は、そのCODE構造体のchrをファイルへ書き出し>//
 			if (code != NULL)
 			{
+				if (code->chr == '0')code->chr = 0;
 				std::memcpy(decode_data + decode_count, &code->chr, sizeof(code->chr));
 				decode_count += sizeof(code->chr);
 
@@ -160,7 +162,7 @@ Hahuman::Node* Hahuman::HahumanEncode::NewNode(char chr)
 	return node;
 }
 
-Hahuman::Node* Hahuman::HahumanEncode::MakeNodes(std::string data)
+Hahuman::Node* Hahuman::HahumanEncode::MakeNodes(char* data,int d_size)
 {
 	//<リストの先頭>//
 	Node* head{ nullptr };
@@ -169,13 +171,20 @@ Hahuman::Node* Hahuman::HahumanEncode::MakeNodes(std::string data)
 	Node* add{ nullptr };
 	Node* search{ nullptr };
 
-	for (auto c : data)
+	for (int s = 0; s < d_size; s++)
 	{
+		char c = *data;
+
 		search = SearchNode(head, c);
 
 		//-----節がなかったら新しく節を追加-----//
 		if (search == nullptr)
 		{
+
+			//数字が0(null)の時は文字の0を入れておく
+			//ここで文字を入れている理由はヘッダー情報の終わりや親ノードで
+			//0(null)を使用するからそれとは別で存在していないといけないから
+			if (c == '\0') c = '0';
 			add = NewNode(c);
 			if (add == nullptr)
 			{
@@ -204,7 +213,7 @@ Hahuman::Node* Hahuman::HahumanEncode::MakeNodes(std::string data)
 			//-----その文字に対応する節があるなら出現回数をカウントする-----//
 			search->freq++;
 		}
-
+		data++;
 	}
 	return head;
 }
@@ -410,6 +419,8 @@ Hahuman::Code* Hahuman::HahumanEncode::SearchCode(Code* head, char chr)
 {
 	while (head != nullptr)
 	{
+		if (chr == '\0') chr = '0';
+
 		if (head->chr == chr) return head;
 
 		head = head->next;
@@ -417,7 +428,7 @@ Hahuman::Code* Hahuman::HahumanEncode::SearchCode(Code* head, char chr)
 	return nullptr;
 }
 
-void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Code* head)
+void Hahuman::HahumanEncode::EncodeData(char* data,char* encode_data, int d_size,Code* head)
 {
 	Code* code{ nullptr };
 	unsigned char byte{};
@@ -434,9 +445,9 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 	//<最終的な圧縮データサイズ>//
 	int count{ 0 };
 
-	text_length = 0;
+	text_length = d_size;
 	//-----入力文字数をカウント-----//
-	for (auto t : data) text_length++;
+	//for (auto t : data) text_length++;
 
 	//-----ヘッダーを書き込む-----//
 	header_size = 0;
@@ -449,15 +460,18 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 	while (code != nullptr)
 	{
 		//<ヘッダーデータ>//
-		HeaderData data;
+		HeaderData h_data;
 		//<文字を書き込む>//
-		data.chr = code->chr;
+		h_data.chr = code->chr;
 
 		//<符号化文字のビット数を書き込む>//
-		data.bit = code->bit;
+		h_data.bit = code->bit;
 
 		//<この文字のエンコード結果を書き込む>//
-		data.value = code->value;
+		h_data.value = code->value;
+
+
+		printf("chr = %c, bit = %d, value = %x\n", h_data.chr, h_data.bit, h_data.value);
 
 		//<ヘッダーサイズを増やす>//
 		header_size += sizeof(HeaderData);
@@ -466,7 +480,7 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 		//-----次の符号化情報書き出しに移る-----//
 		code = code->next;
 
-		std::memcpy(encode_data + (sizeof(HeaderData) * header_count), (char*)&data, sizeof(HeaderData));
+		std::memcpy(encode_data + (sizeof(HeaderData) * header_count), (char*)&h_data, sizeof(HeaderData));
 
 		//<ヘッダー情報を書き込んだ回数を増やす>//
 		header_count++;
@@ -494,8 +508,9 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 	empty_bits = 8;
 
 	int byte_count{};
-	for (auto t : data)
+	for (int s = 0; s < d_size; s++)
 	{
+		char t = *data;
 		//-----文字からCode構造体を取得-----//
 		code = SearchCode(head, t);
 
@@ -519,6 +534,8 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 			{
 				std::memcpy(encode_data + hedder_max_size + (sizeof(byte) * byte_count), (char*)&byte, sizeof(byte));
 
+				std::cout << byte << std::endl;
+
 				//-----ファイルに書き出したので空きビットとbyteを0で初期化-----//
 				empty_bits = 8;
 				byte = 0;
@@ -526,6 +543,7 @@ void Hahuman::HahumanEncode::EncodeData(std::string data, char* encode_data, Cod
 				byte_count++;
 			}
 		}
+		data++;
 	}
 
 	//-----1バイト分つまらなかった分を最後にファイルへ書き出し-----//
@@ -547,13 +565,13 @@ void Hahuman::HahumanEncode::FreeCode(Code* node)
 	}
 }
 
-void Hahuman::HahumanEncode::Encode(char* data, char* encode_data)
+void Hahuman::HahumanEncode::Encode(char* data, int d_size, char* encode_data)
 {
 	Node* nodes{ nullptr };
 	Code* codes{ nullptr };
 
 	//作成したNodeのリストの先頭のポインタが帰ってくる
-	nodes = MakeNodes(data);
+	nodes = MakeNodes(data, d_size);
 
 	if (nodes == nullptr)
 	{
@@ -573,7 +591,7 @@ void Hahuman::HahumanEncode::Encode(char* data, char* encode_data)
 
 	FreeNode(nodes);
 
-	EncodeData(data, encode_data, codes);
+	EncodeData(data, encode_data, d_size,codes);
 
 	FreeCode(codes);
 }

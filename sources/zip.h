@@ -211,8 +211,9 @@ namespace Hahuman
 		/// 文から文字を読み取ってそれぞれの節を作成する
 		/// </summary>
 		/// <param name="data">データ</param>
+		/// <param name="d_size">データのサイズ</param>
 		/// <returns></returns>
-		Node* MakeNodes(std::string data);
+		Node* MakeNodes(char* data, int d_size);
 
 
 		/// <summary>
@@ -257,8 +258,9 @@ namespace Hahuman
 		/// </summary>
 		/// <param name="data">元データ</param>
 		/// <param name="encode_data">圧縮データ</param>
+		/// <param name="d_size">元データサイズ</param>
 		/// <param name="head">Code構造体リストの先頭</param>
-		void EncodeData(std::string data, char* encode_data, Code* head);
+		void EncodeData(char* data, char* encode_data,int d_size, Code* head);
 
 		/// <summary>
 		/// codeが先頭を指す構造体リストを全削除する
@@ -272,8 +274,9 @@ namespace Hahuman
 		/// ハフマン符号化を使用した圧縮
 		/// </summary>
 		/// <param name="data">圧縮前のデータ</param>
+		/// <param name="data">圧縮前のデータサイズ</param>
 		/// <param name="encode_data">圧縮データ</param>
-		void Encode(char* data, char* encode_data);
+		void Encode(char* data,int d_size, char* encode_data);
 
 	};
 

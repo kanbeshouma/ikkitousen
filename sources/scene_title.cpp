@@ -43,31 +43,33 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
 	LoginData login;
 
-	PlayerPositionData t;
+	PlayerMoveData t;
 	t.cmd[0] = 1;
 	t.cmd[1] = 2;
-	t.cmd[2] = 3;
-	t.cmd[3] = 3;
-	t.position.x = 4;
-	t.position.y = 5;
-	t.move_vec.x = 6;
-	t.move_vec.y = 7;
+	t.cmd[2] = 0;
+	t.cmd[3] = 0;
+	t.move_vec.x = -13;
+	t.move_vec.y = 333;
+	t.lock_on = true;
 
-	char text[2048] = { "IN THE YEAR 1878 I took my degree of Doctor of Medicine of the University of London, and proceeded to Netley to go through the course prescribed for surgeons in the Army. Having completed my studies there, I was duly attached to the Fifth Northumberland Fusiliers as assistant surgeon. The regiment was stationed in India at the time, and before I could join it, the second Afghan war had broken out. On landing at Bombay, I learned that my corps had advanced through the passes, and was already deep in the enemyÅfs country. I followed, however, with many other officers who were in the same situation as myself, and succeeded in reaching Candahar in safety, where I found my regiment, and at once entered upon my new duties.The campaign brought honoursand promotion to many, but for me it had nothing but misfortuneand disaster.I was removed from my brigadeand attached to the Berkshires, with whom I served at the fatal battle of Maiwand.There I was struck on the shoulder by a Jezail bullet, which shattered the boneand grazed the subclavian artery.I should have fallen into the hands of the murderous Ghazis had it not been for the devotionand courage shown by Murray, my orderly, who threw me across a pack - horse,and succeeded in bringing me safely to the British lines." };
+	char text[2048] = {};
 
-	std::memcpy(text, &t, sizeof(PlayerPositionData));
+    std::memcpy(text, &t, sizeof(PlayerMoveData));
+
 
 	char encode_data[2048]{};
 	Hahuman::HahumanEncode encode;
-	encode.Encode(text, encode_data);
+	encode.Encode(text,sizeof(PlayerMoveData),encode_data);
 
-	//int size = std::strlen(encode_data);
+	DebugConsole::Instance().WriteDebugConsole("-----------------------------------------------",TextColor::Red);
+	int size = std::strlen(encode_data);
 
 	Hahuman::HahumanDecode decode;
 	char decode_data[2048]{};
 	decode.Decode(encode_data, decode_data);
 
-	PlayerPositionData* d = (PlayerPositionData*)decode_data;
+
+	PlayerMoveData* d = (PlayerMoveData*)decode_data;
 
 	std::cout << decode_data << std::endl;
 
